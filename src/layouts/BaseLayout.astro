@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import Navbar from '../components/common/Navbar.astro';
+import Footer from '../components/common/Footer.astro';
 
 interface Props {
   title: string;
@@ -18,8 +20,22 @@ const { title, description = '' } = Astro.props;
     <link rel="icon" href="/favicon.ico" />
     {description && <meta name="description" content={description} />}
     <title>{title}</title>
+
+    <!-- Figtree (UI/buttons) via Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap"
+    />
+
+    <!-- Preload critical Aileron weights -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Regular.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-SemiBold.woff2" crossorigin />
   </head>
-  <body>
+  <body class="font-display text-text bg-white">
+    <Navbar />
     <slot />
+    <Footer />
   </body>
 </html>

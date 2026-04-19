@@ -1,5 +1,78 @@
 @import "tailwindcss";
 
+/* --- Aileron font faces --- */
+@font-face {
+  font-family: 'Aileron';
+  src: url('/fonts/Aileron-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aileron';
+  src: url('/fonts/Aileron-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aileron';
+  src: url('/fonts/Aileron-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aileron';
+  src: url('/fonts/Aileron-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  /* Design tokens will be populated from the Framer design audit */
+  /* Breakpoints — tablet: 810–1399px, desktop: 1400px+ */
+  --breakpoint-tablet: 810px;
+  --breakpoint-desktop: 1400px;
+
+  /* Brand colors */
+  --color-brand: #D84A29;
+  --color-text: #181818;
+
+  /* Font families */
+  --font-display: 'Aileron', sans-serif;
+  --font-ui: 'Figtree', sans-serif;
+
+  /* Layout sizing */
+  --spacing-navbar: 67px;
+  --spacing-layout: 1600px;
+
+  /* Button padding (9px 13px) */
+  --spacing-btn-y: 9px;
+  --spacing-btn-x: 13px;
+
+  /* Typography scale */
+  --text-nav: 24px;
+  --text-marquee: 3rem;
+
+  /* Line heights */
+  --leading-nav: 40px;
+
+  /* Letter spacing */
+  --tracking-nav: -0.02em;
+  --tracking-cta: -0.04em;
+
+  /* Border radius */
+  --radius-btn: 6px;
+  --radius-pill: 18px;
+  --radius-cta: 12px;
+
+  /* Extended palette */
+  --color-ink: #171616;
+  --color-cream: #FFFCF3;
+  --color-brand-red: #D84A29;
+
 }
