@@ -1,0 +1,173 @@
+/* ============================================================
+   Unify Design System — Colors & Type
+   Source of truth: Figma Branding-Guidelines + Unify codebase
+   (constants/Theme.ts, constants/Colors.ts)
+   ============================================================ */
+
+/* ---- Google Font imports (substitutes flagged in README) ---- */
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anek+Latin:wght@100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+/* Aeonik is proprietary → fall back to Funnel Sans for headers.
+   Flag in README. */
+
+:root {
+  /* --------------------------------------------------------
+     CORE BRAND PALETTE  (from Figma Branding Guidelines)
+     -------------------------------------------------------- */
+  --unify-red:        #D8492C;   /* Primary — core brand red-orange */
+  --unify-red-ink:    #B93A20;   /* Deeper red for hover / pressed */
+  --unify-cream:      #FFFCF3;   /* Warm off-white background */
+  --unify-ink:        #171616;   /* Near-black "Core Accent" */
+
+  --unify-peach:      #FFB570;   /* Primary accent — warm peach/orange */
+  --unify-blue:       #5182C7;   /* Secondary — confident blue */
+  --unify-lemon:      #DFE07C;   /* Optional accent — lemon */
+  --unify-pink:       #F3B0DB;   /* Optional accent — soft pink */
+
+  /* Soft tints (used for chips, card fills) */
+  --unify-cream-tint: #F9EBE1;
+  --unify-gray-chip:  #E8E8E8;
+
+  /* --------------------------------------------------------
+     PRODUCT COLORS (from unify-front-end/constants/Theme.ts)
+     -------------------------------------------------------- */
+  --prod-gather-orange:      #F68B26;  /* In-app "primaryGatherRed" — accent orange */
+  --prod-gather-orange-dim:  rgba(246, 139, 38, 0.6);
+  --prod-surface-blue:       #5182C7;
+  --prod-destructive:        #FF3B30;
+  --prod-highlight-yellow:   #FEF3C7;
+  --prod-highlight-yellow-active: #FDE68A;
+
+  /* --------------------------------------------------------
+     NEUTRAL SCALE  (derived from Theme.ts + Figma usage counts)
+     -------------------------------------------------------- */
+  --neutral-0:    #FFFFFF;
+  --neutral-50:   #F9F9F9;     /* surfaceEventCard */
+  --neutral-100:  #F3F2F2;     /* backgroundChatbot */
+  --neutral-150:  #F0F0F0;     /* surfaceGray / tab divider */
+  --neutral-200:  #E6E6E6;     /* surfaceTextInput */
+  --neutral-300:  #D3D3D3;     /* imagePlaceholder */
+  --neutral-350:  #CDCBCB;     /* borderCard */
+  --neutral-400:  #C1C1C1;     /* borderInfoText */
+  --neutral-500:  #B5B1B1;     /* textInactiveTab */
+  --neutral-600:  #9F9D9D;     /* textPostTime */
+  --neutral-700:  #878787;     /* tab-inactive */
+  --neutral-800:  #686464;     /* textInput */
+  --neutral-850:  #575757;     /* textAlternateGray */
+  --neutral-900:  #171616;     /* secondaryBlack / Core Accent */
+  --neutral-1000: #000000;
+
+  /* --------------------------------------------------------
+     SEMANTIC TOKENS
+     -------------------------------------------------------- */
+  --bg-app:       var(--unify-cream);        /* warm cream — brand backdrop */
+  --bg-surface:   var(--neutral-0);          /* cards, sheets */
+  --bg-muted:     var(--neutral-100);        /* chat bubbles, chips */
+  --bg-input:     var(--neutral-150);        /* search / text input */
+
+  --fg-primary:   var(--neutral-900);        /* body + headings */
+  --fg-secondary: var(--neutral-850);        /* secondary text */
+  --fg-tertiary:  var(--neutral-600);        /* timestamps / captions */
+  --fg-muted:     var(--neutral-500);        /* disabled / inactive */
+  --fg-on-brand:  var(--unify-cream);        /* text on red surfaces */
+
+  --accent:       var(--unify-red);          /* primary CTA, brand red */
+  --accent-ink:   var(--unify-red-ink);
+  --accent-soft:  var(--unify-cream-tint);
+
+  --warn:         var(--prod-gather-orange);
+  --danger:       var(--prod-destructive);
+
+  --border-hair:  var(--neutral-200);
+  --border-card:  var(--neutral-350);
+
+  /* --------------------------------------------------------
+     RADII  (from Figma: cards 16–20, chips 9999, slides 15–25)
+     -------------------------------------------------------- */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;
+  --radius-pill: 9999px;
+
+  /* --------------------------------------------------------
+     SHADOWS  (derived from Figma rgba(0,0,0,0.1|0.25) + product)
+     -------------------------------------------------------- */
+  --shadow-sm:    0 1px 2px rgba(0,0,0,0.06);
+  --shadow-card:  0 2px 10px rgba(0,0,0,0.08);
+  --shadow-lg:    0 10px 30px rgba(23,22,22,0.15);
+  --shadow-focus: 0 0 0 3px rgba(216,73,44,0.25);
+
+  /* --------------------------------------------------------
+     SPACING  (4pt grid — iOS-native, matches codebase)
+     -------------------------------------------------------- */
+  --sp-0:   0;
+  --sp-1:   4px;
+  --sp-2:   8px;
+  --sp-3:   12px;
+  --sp-4:   16px;
+  --sp-5:   20px;
+  --sp-6:   24px;
+  --sp-8:   32px;
+  --sp-10:  40px;
+  --sp-12:  48px;
+  --sp-16:  64px;
+
+  /* --------------------------------------------------------
+     TYPOGRAPHY — FONT FAMILIES
+     -------------------------------------------------------- */
+  --font-display: "Funnel Sans", "Aeonik", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-body:    "Funnel Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-ui:      "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-logo:    "Anek Latin", "Funnel Sans", sans-serif;
+
+  /* --------------------------------------------------------
+     TYPE SCALE  (print/marketing 12–128; mobile UI from codebase)
+     Headlines are tight (-5% tracking matches Figma)
+     -------------------------------------------------------- */
+  --type-display-xl: 700 128px/1 var(--font-display);  /* splash title */
+  --type-display-lg: 700 88px/1  var(--font-display);
+  --type-display-md: 700 64px/1  var(--font-display);
+  --type-h1:         700 44px/1.05 var(--font-display);
+  --type-h2:         600 32px/1.1 var(--font-display);
+  --type-h3:         600 24px/1.2 var(--font-display);
+  --type-h4:         600 20px/1.25 var(--font-display);
+  --type-h5:         600 18px/1.3 var(--font-display);
+
+  --type-body-lg:    400 18px/1.4 var(--font-body);
+  --type-body:       400 16px/1.45 var(--font-body);
+  --type-body-sm:    400 14px/1.45 var(--font-body);
+  --type-caption:    400 12px/1.4  var(--font-body);
+  --type-micro:      500 10px/1.3  var(--font-ui);     /* tab labels */
+
+  --type-label:      600 14px/1.3 var(--font-body);
+  --type-button:     600 16px/1.2 var(--font-body);
+  --type-eyebrow:    500 12px/1.3 var(--font-body);
+
+  --letter-tight:   -0.02em;
+  --letter-display: -0.03em;   /* Figma uses -5% on display text */
+}
+
+/* ============================================================
+   Semantic element defaults (optional — opt in with .unify-type)
+   ============================================================ */
+.unify-type h1, .unify-type .h1 { font: var(--type-h1);   letter-spacing: var(--letter-display); color: var(--fg-primary); margin: 0 0 var(--sp-4); }
+.unify-type h2, .unify-type .h2 { font: var(--type-h2);   letter-spacing: var(--letter-display); color: var(--fg-primary); margin: 0 0 var(--sp-3); }
+.unify-type h3, .unify-type .h3 { font: var(--type-h3);   letter-spacing: var(--letter-tight);   color: var(--fg-primary); margin: 0 0 var(--sp-3); }
+.unify-type h4, .unify-type .h4 { font: var(--type-h4);   letter-spacing: var(--letter-tight);   color: var(--fg-primary); margin: 0 0 var(--sp-2); }
+.unify-type p,  .unify-type .p  { font: var(--type-body); color: var(--fg-primary); margin: 0 0 var(--sp-3); }
+.unify-type .caption { font: var(--type-caption); color: var(--fg-tertiary); }
+.unify-type .eyebrow { font: var(--type-eyebrow); color: var(--fg-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.unify-type code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--neutral-100); padding: 2px 6px; border-radius: 4px; }
+
+/* ============================================================
+   Brand backgrounds (quick utility mixins)
+   ============================================================ */
+.unify-bg-cream { background: var(--unify-cream); }
+.unify-bg-red   { background: var(--unify-red); color: var(--fg-on-brand); }
+.unify-bg-ink   { background: var(--unify-ink); color: var(--fg-on-brand); }
+.unify-bg-blue  { background: var(--unify-blue); color: var(--fg-on-brand); }
+.unify-bg-peach { background: var(--unify-peach); color: var(--unify-ink); }

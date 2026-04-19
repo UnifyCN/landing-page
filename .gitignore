@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Local Claude Code settings
+.claude/
+
+# Extracted design handoff bundle (source material, not the site)
+unify-website/
+
+# Generated preview bundle — regenerate from index.html + assets
+index.inlined.html
