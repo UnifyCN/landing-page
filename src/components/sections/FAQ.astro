@@ -1,0 +1,255 @@
+---
+const faqs: { q: string; a: string }[] = [
+  {
+    q: "What is Unify Social?",
+    a: `<p>Unify Social is a Canadian platform and community designed to help newcomers and international students navigate life in Canada.</p>
+<p>It combines practical settlement resources, career guidance, and in-person events into one centralized hub.<br>Unify Social helps newcomers understand systems that are often confusing, including banking, taxes, housing, healthcare, internships, and job searching in Canada. Instead of searching across dozens of websites, users can find curated, newcomer-specific information in one place.</p>
+<p>Beyond information, Unify Social also helps users find their community. Members can meet other people who are new to Canada, connect with peers facing similar challenges, and ask questions in a supportive environment. It is not just an information platform, but a space to build relationships and grow together.</p>`,
+  },
+  {
+    q: "Who is Unify Social best for?",
+    a: `<p>Unify Social is best for:</p>
+<ul>
+  <li>International students studying in Canada</li>
+  <li>Recent immigrants and permanent residents</li>
+  <li>First-generation Canadians</li>
+  <li>Newcomers preparing to move to Canada</li>
+  <li>Students looking for internships and entry-level jobs</li>
+</ul>
+<p>If you are new to Canada and unsure how things work, Unify Social is designed specifically for you.</p>`,
+  },
+  {
+    q: "How do I connect with other immigrants on Unify Social?",
+    a: `<p>Unify Social offers multiple ways for newcomers and international students to connect with others who are also new to Canada.</p>
+<p><strong>Community Events and Workshops:</strong><br>Users can attend in-person and virtual events designed for networking, learning, and peer connection. These include career workshops, newcomer panels, skill-building sessions, and social meetups where participants can build relationships in a structured environment.</p>
+<p><strong>Discussion Forum:</strong><br>Unify Social includes a community discussion space where users can ask questions, share experiences, and get advice from other immigrants and international students. Members can post questions about topics such as housing, banking, internships, or navigating Canadian culture, and receive responses from peers who have gone through similar experiences.</p>
+<p><strong>Interest-Based Groups:</strong><br>Users can join groups based on shared interests, career goals, industries, cultural backgrounds, or life stages. These smaller communities allow members to connect with people who have similar experiences and priorities.</p>
+<p><strong>Unify Circles:</strong><br>Unify Circles is a small-group matching feature that connects users with up to three other newcomers who have similar backgrounds and arrived in Canada around the same time. Each Circle is placed into a group chat, making it easier to build deeper connections, share resources, and support one another through the early stages of settling in.</p>
+<p>Together, these features make Unify Social more than a resource platform. It is an active community where newcomers can ask questions, build friendships, and grow alongside others navigating life in Canada.</p>`,
+  },
+  {
+    q: "What workshops does Unify Social offer, and how can I join one?",
+    a: `<p>Unify Social offers practical, newcomer-focused workshops designed to help immigrants and international students navigate life in Canada.</p>
+<p>Workshop topics include:</p>
+<ul>
+  <li>Navigating your first months in Canada</li>
+  <li>Understanding the Canadian education system for newcomer parents</li>
+  <li>Information sessions for international students</li>
+  <li>Study permits and co-op eligibility guidance</li>
+  <li>Resume building for the Canadian job market</li>
+  <li>Financial literacy for newcomers</li>
+  <li>Understanding Canadian workplace culture</li>
+</ul>
+<p>Workshops are offered through campus partnerships and community collaborations. Users can join by registering through the Unify Social website or Eventbrite when new sessions are announced. In the coming months, recorded workshop sessions will be uploaded to YouTube so Canadian newcomers can access the material even if they are unable to attend live.</p>`,
+  },
+  {
+    q: "Is Unify Social free to use?",
+    a: `<p>Yes. Unify is completely free. No credit card, no subscription.</p>`,
+  },
+];
+---
+
+<section class="faq-wrap">
+  <div class="faq-inner">
+    <header class="faq-header">
+      <p class="faq-eyebrow">FAQ</p>
+      <h2 class="faq-title">Frequently asked questions</h2>
+    </header>
+
+    <div class="faq-list">
+      {
+        faqs.map((item) => (
+          <details class="faq-item">
+            <summary class="faq-summary">
+              <span class="faq-question">{item.q}</span>
+              <span class="faq-icon" aria-hidden="true" />
+            </summary>
+            <div class="faq-answer" set:html={item.a} />
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-wrap {
+    background-color: var(--color-cream);
+    padding: 4.5rem 0 5.5rem;
+  }
+
+  .faq-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .faq-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 0.625rem;
+  }
+
+  .faq-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3-mobile);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .faq-list {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .faq-item {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    color: var(--color-text);
+  }
+
+  .faq-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .faq-icon::before,
+  .faq-icon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    background-color: var(--color-text);
+    border-radius: 2px;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+
+  .faq-icon::before {
+    width: 14px;
+    height: 2px;
+  }
+
+  .faq-icon::after {
+    width: 2px;
+    height: 14px;
+  }
+
+  details[open] .faq-icon::after {
+    transform: rotate(90deg);
+    opacity: 0;
+  }
+
+  /* Answer rich text */
+  .faq-answer {
+    padding: 0 0 1.5rem;
+    max-width: 720px;
+  }
+
+  .faq-answer p {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    margin: 0 0 0.875rem;
+  }
+
+  .faq-answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-answer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.875rem;
+  }
+
+  .faq-answer ul li {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .faq-answer ul li::before {
+    content: "*";
+    position: absolute;
+    left: 0;
+    color: var(--color-muted);
+  }
+
+  .faq-answer strong {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  @media (min-width: 810px) {
+    .faq-wrap {
+      padding: 5.5rem 0 6.5rem;
+    }
+
+    .faq-inner {
+      padding: 0 3rem;
+    }
+
+    .faq-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .faq-wrap {
+      padding: 7rem 0 8rem;
+    }
+
+    .faq-inner {
+      padding: 0 2rem;
+      gap: 3rem;
+    }
+
+    .faq-title {
+      font-size: var(--text-h3);
+    }
+
+    .faq-question {
+      font-size: 1.125rem;
+    }
+
+    .faq-answer p,
+    .faq-answer ul li {
+      font-size: 1rem;
+    }
+  }
+</style>

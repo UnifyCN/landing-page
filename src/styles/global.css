@@ -68,6 +68,8 @@
   --text-footer-heading: 3.5rem;
   --text-journey-quote: 2.5rem;
   --text-journey-quote-mobile: 1.625rem;
+  --text-h3: 2.75rem;
+  --text-h3-mobile: 2rem;
 
   /* Line heights */
   --leading-nav: 28px;

@@ -1,0 +1,160 @@
+---
+const APP_STORE_URL =
+  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+---
+
+<section class="cta-wrap">
+  <div class="cta-inner">
+    <h2 class="cta-title">
+      Take the guesswork out of your newcomer journey with
+      <span class="cta-emphasis">the full <em>Unify</em> experience.</span>
+    </h2>
+    <p class="cta-sub">
+      Be the first to experience Unify and shape the future of newcomer support
+      in Canada
+    </p>
+    <a
+      href={APP_STORE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="cta-btn"
+    >
+      Download the App Now
+    </a>
+  </div>
+</section>
+
+<style>
+  .cta-wrap {
+    background-color: #ffffff;
+    padding: 5rem 0 6rem;
+  }
+
+  .cta-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .cta-wrap.visible .cta-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-h3-mobile);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .cta-emphasis {
+    color: var(--color-muted);
+  }
+
+  .cta-emphasis em {
+    font-style: italic;
+  }
+
+  .cta-sub {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 520px;
+  }
+
+  .cta-btn {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-align: center;
+    text-decoration: none;
+    padding: 1.25rem 2rem;
+    border-radius: var(--radius-cta);
+    margin-top: 0.5rem;
+    transition: opacity 0.2s ease;
+  }
+
+  .cta-btn:hover {
+    opacity: 0.88;
+  }
+
+  @media (min-width: 810px) {
+    .cta-wrap {
+      padding: 6rem 0 7rem;
+    }
+
+    .cta-inner {
+      padding: 0 3rem;
+    }
+
+    .cta-title {
+      font-size: 2.5rem;
+    }
+
+    .cta-sub {
+      font-size: 1.0625rem;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .cta-wrap {
+      padding: 7.5rem 0 8.5rem;
+    }
+
+    .cta-inner {
+      padding: 0 2rem;
+      gap: 2rem;
+      max-width: 900px;
+    }
+
+    .cta-title {
+      font-size: var(--text-h3);
+    }
+
+    .cta-sub {
+      font-size: 1.125rem;
+    }
+
+    .cta-btn {
+      font-size: 1.25rem;
+      padding: 1.375rem 2.5rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".cta-wrap");
+  if (section) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(section);
+  }
+</script>

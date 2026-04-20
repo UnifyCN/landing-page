@@ -1,11 +1,3 @@
-Here’s the improved full CLAUDE.md with the main fixes applied:
-
-- Problem stays checked off
-- Problem quote updated to the new version
-- Problem notes updated to reflect manual line breaks/editorial treatment
-- Hero notes updated so future Claude sessions don’t reintroduce old exploratory ideas
-- Footer left unchanged for now since you haven’t refined it yet
-
 # Project: Unify Website (Framer → Code)
 
 Astro-based rebuild of the Unify marketing + content website.
@@ -13,6 +5,7 @@ Astro-based rebuild of the Unify marketing + content website.
 ## Goal
 
 Rebuild the current Framer site into a clean, maintainable Astro codebase.
+
 Stack:
 
 - Astro 6
@@ -20,7 +13,9 @@ Stack:
 - Sanity CMS (existing instance)
 - Cloudflare Workers (deployment)
 - PostHog (analytics)
-  The new site must:
+
+The new site must:
+
 - match the existing design closely on desktop and mobile
 - be easy to maintain
 - support CMS-driven content
@@ -100,26 +95,33 @@ Stack:
 ## Backend Scope
 
 There is NO full backend.
+
 Only 2 API routes:
 
 - POST /api/contact
 - POST /api/waitlist
-  Each should:
+
+Each should:
+
 - validate input (Zod)
 - send email (Resend)
 - optionally store data (Sanity or Cloudflare KV)
 - use Turnstile for spam protection
-  Do NOT introduce:
+
+Do NOT introduce:
+
 - auth systems
 - databases
 - servers
-  unless explicitly requested
+
+unless explicitly requested
 
 ---
 
 ## SEO Rules
 
 SEO is a core requirement.
+
 For every page:
 
 - proper `<title>`
@@ -128,9 +130,13 @@ For every page:
 - semantic HTML (`<section>`, `<nav>`, `<article>`, etc.)
 - clean URLs
 - fast load times
-  Optimize for:
+
+Optimize for:
+
 - newcomer / immigrant / settlement keywords
-  DO NOT:
+
+DO NOT:
+
 - keyword stuff
 - harm readability
 
@@ -166,9 +172,11 @@ Before coding:
 3. Propose plan
 4. State assumptions explicitly
 5. Surface ambiguity — do not resolve it silently
-   For multi-step work:
-6. [Step] → verify: [check]
-7. [Step] → verify: [check]
+
+For multi-step work:
+
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
 
 ---
 
@@ -182,7 +190,8 @@ When rebuilding a UI section:
 4. Wire Sanity data only after layout is confirmed correct
 5. Compare visually against live Framer site (unifysocial.ca)
 6. Flag any mobile layout gaps where Framer has no design
-   Goal = visually indistinguishable from Framer output
+
+Goal = visually indistinguishable from Framer output
 
 ---
 
@@ -202,12 +211,12 @@ src/
 │   └── BaseLayout.astro
 ├── components/
 │   ├── ui/
-│   ├── sections/             # One file per homepage section
+│   ├── sections/
 │   │   ├── Hero.astro
 │   │   ├── Problem.astro
 │   │   ├── Partners.astro
 │   │   ├── Journey.astro
-│   │   ├── StatVoice.astro
+│   │   ├── ProductOverview.astro
 │   │   ├── FAQ.astro
 │   │   └── CTABand.astro
 │   └── common/
@@ -227,6 +236,7 @@ src/
     └── assets/
         ├── logo/
         ├── screenshots/
+        ├── demos/
         ├── blobs/
         ├── illustrations/
         ├── images/
@@ -382,11 +392,10 @@ Structure:
 * White background throughout
 * Bold heading with 3px brand-red left border: “Unify,” / “Your journey to Canada, simplified.”
 * Two-column body: left = full brand description, right = Pages + Socials
-* Bottom bar: © 2026 – Unify Social as blue link to unifysocial.ca
+* Bottom bar: © 2026 – Unify Social
 * No logo in footer
 
 Section labels: “Pages” and “Socials”
-All link styling: text-blue-600 hover:underline
 
 Social URLs:
 
@@ -418,6 +427,17 @@ Screenshots:
 * /assets/screenshots/community.png — Community feature
 * /assets/screenshots/community-feed.png — Community feed
 * /assets/screenshots/learn-hero.avif — Hero phone mockup
+
+Demo videos:
+
+* /assets/demos/checklist.mp4
+* /assets/demos/ai-companion.mp4
+* /assets/demos/learn.mp4
+* /assets/demos/community.mp4
+* /assets/demos/community-events.mp4
+* /assets/demos/community-events2.mp4
+
+These demo videos came from Framer and should be used for the product overview / guided demo section.
 
 App Store:
 
@@ -459,13 +479,13 @@ Each section is a standalone component in src/components/sections/, imported int
 
 Status:
 
-* Hero — Hero.astro
-* Problem — Problem.astro
-* Partners — Partners.astro
-* Journey — Journey.astro
-* StatVoice — StatVoice.astro
-* FAQ — FAQ.astro
-* CTABand — CTABand.astro
+* ✅ Hero — Hero.astro
+* ✅ Problem — Problem.astro
+* ✅ Partners — Partners.astro
+* ✅ Journey — Journey.astro
+* ✅ ProductOverview — ProductOverview.astro
+* ✅ FAQ — FAQ.astro
+* ✅ CTABand — CTABand.astro
 
 ⸻
 
@@ -482,12 +502,9 @@ App Store badge: /assets/app-store-badge-en.svg → https://apps.apple.com/ca/ap
 Creative direction — DO NOT copy Savar’s layout:
 
 * The hero layout, animation, and visual treatment must be original
-* Savar used centered two-column with a halo glow — do something different
-* Consider: large left-aligned headline with phone mockup breaking out of its container, asymmetric layout, staggered CSS text animation, bold typographic treatment
+* The hero must feel premium and human — not generic SaaS
 * CSS animations only — no Framer Motion, no motion/react, no JS animation libraries
 * Phone mockup: /assets/screenshots/learn-hero.avif
-* Decorative blobs from /assets/blobs/ are available for background accents
-* The hero must feel premium and human — not generic SaaS
 
 Current implementation notes:
 
@@ -496,6 +513,7 @@ Current implementation notes:
 * Eyebrow removed
 * Decorative blobs removed
 * The goal is subtle breakout, not dramatic overlap
+* Do NOT reintroduce earlier exploratory hero ideas unless explicitly requested
 
 ⸻
 
@@ -514,8 +532,9 @@ Partners section
 
 * Label: “Our Partners”
 * CSS scroll animation only — no JS, no libraries
-* Logos from /assets/images/partners/ — greyscale, opacity 0.6
+* Logos from /assets/images/partners/
 * Fade edges with CSS mask gradient
+* Greyscale / opacity treatment is allowed only if it still feels visible and premium
 
 ⸻
 
@@ -523,28 +542,73 @@ Journey section
 
 Vertical timeline, 4 stages. Each stage: human emotional moment (large type) + phone screenshot. Alternates left/right on desktop, stacks on mobile. A vertical line connects the stages. Stage labels (Day 1, Week 1, etc.) in brand red.
 
-* Day 1: “You don’t know what to do first.” → /assets/screenshots/checklist.png
-* Week 1: “Questions pile up at 2am.” → /assets/screenshots/companion.png
-* Month 1: “You want to understand how Canada actually works.” → /assets/screenshots/learn.png
-* Month 3: “You’re ready to stop figuring it out alone.” → /assets/screenshots/community.png
+* Day 1: “You don’t know where to start.” → /assets/screenshots/checklist.png
+* Week 1: “You need answers you can trust.” → /assets/screenshots/companion.png
+* Month 1: “You want to understand how life in Canada works.” → /assets/screenshots/learn.png
+* Month 3: “You’re ready to find belonging.” → /assets/screenshots/community.png
+
+The timeline idea is strong and should be preserved unless explicitly changed.
 
 ⸻
 
-StatVoice section
+ProductOverview section
 
-* “2,700+” — ~96px Aileron Bold, centered
-* Below: “newcomers have found their footing in Canada with Unify.”
-* One placeholder quote: “I had no idea what a SIN was or how to get a phone plan. Unify walked me through it.” — Newcomer, Vancouver
-* No avatar, no card, just text
-* White background, generous vertical padding
+This is the next section after Journey.
+
+Purpose:
+
+* Explain what Unify actually helps users do
+* Feel like a guided product demo, not a feature grid
+
+Structure:
+
+* section intro
+* compact row of feature buttons / tabs
+* one large showcase area
+* active demo video swaps when user clicks a tab
+* concise supporting copy per active feature
+
+Features to include:
+
+* Checklist
+* AI Companion
+* Learn
+* Community
+
+Behavior:
+
+* click tab → switch active demo
+* active video autoplay muted loop playsinline
+* inactive demos should not visibly keep playing in layout
+* JS should stay minimal
+
+Design notes:
+
+* the demo/video should be the hero of the section
+* copy and tabs support the demo, not the other way around
+* warm, polished, product-led
+* avoid another alternating feature row
+* avoid giant empty containers
+* avoid harsh black monitor-like shells unless there is a very strong reason
+
+Implementation notes (do not revert):
+
+* Split editorial layout: left column (feature list) + right column (video stage)
+* NO white card or box around the video — phone floats on the cream background
+* filter: drop-shadow() on .po-video only — traces the phone bezel, not a rectangular box
+* All panels share the same CSS grid cell (grid-column:1; grid-row:1) — no height reflow on tab switch
+* Desktop stage gets transform: translateY(-1.5rem) to feel intentionally placed, not default-centered
+* Source .mp4 files have baked-in cream padding around the phone — do NOT attempt to crop or scale aggressively
+* Stage max-widths: mobile 365px, tablet 415px, desktop 480px
 
 ⸻
 
 FAQ section
 
 Native HTML <details>/<summary> — zero JS required.
+Background: var(--color-cream). Full-width bordered rows, +/× icon on right (CSS only via details[open]), expands inline.
 
-Questions:
+Questions and answer wording sourced from Framer (exact copy — do not rewrite):
 
 1. What is Unify Social?
 2. Who is Unify Social best for?
@@ -552,15 +616,21 @@ Questions:
 4. What workshops does Unify Social offer, and how can I join one?
 5. Is Unify Social free to use?
 
-Style: full-width bordered rows, black + button on right, expands inline.
+Answers use rich HTML (multi-paragraph, <ul> lists, <strong> sub-headings) rendered via set:html.
+List items use * prefix via CSS ::before — do not use actual <ul> bullets.
+Answer copy is verbatim from Framer screenshots — do not paraphrase or shorten.
 
 ⸻
 
 CTA band section
 
+* Background: #ffffff (white) — NOT dark ink
 * Headline: “Take the guesswork out of your newcomer journey with the full Unify experience.”
-* Subtext: “Be the first to experience Unify and shape the future of newcomer support in Canada”
+  — First part (“Take the guesswork…journey with”) in var(--color-text) dark
+  — “the full Unify experience.” wrapped in <span class=”cta-emphasis”> in var(--color-muted) grey, with “Unify” in <em> italic
+* Subtext: “Be the first to experience Unify and shape the future of newcomer support in Canada” — muted grey, centered
 * Large brand-red full-width button: “Download the App Now” → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762
+* Fade-up on scroll via IntersectionObserver (same pattern as Problem.astro)
 
 ⸻
 
@@ -572,6 +642,4 @@ Rules for all sections
 * Semantic HTML throughout (<section>, <h2>, etc.)
 * Build one section at a time, verify with npm run build before moving to next
 * Use Playwright to screenshot after each section is built
-
-The only other thing I’d consider changing later is the **Footer section description**, but only after you actually refine the footer so the doc matches reality.
 ```
