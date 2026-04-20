@@ -1,11 +1,11 @@
 ---
 const pages = [
-  { label: 'Home',             href: '/'               },
-  { label: 'About',            href: '/about'          },
-  { label: 'Blog',             href: '/blog'           },
-  { label: 'Contact',          href: '/contact'        },
-  { label: 'Privacy Policy',   href: '/privacy'        },
-  { label: 'Terms of Service', href: '/terms'          },
+  { label: 'Home',             href: '/',               external: false },
+  { label: 'About',            href: '/about',           external: false },
+  { label: 'Blog',             href: '/blog',            external: false },
+  { label: 'Contact',          href: '/contact',         external: false },
+  { label: 'Privacy Policy',   href: 'https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c?source=copy_link', external: true },
+  { label: 'Terms of Service', href: 'https://www.notion.so/Unify-s-End-User-License-Agreement-Terms-of-Service-3185af89dddb80a68410fa8d65d615c7?source=copy_link', external: true },
 ];
 
 const social = [
@@ -49,11 +49,13 @@ const social = [
             Pages
           </h3>
           <ul role="list" class="list-none m-0 p-0 flex flex-col gap-3">
-            {pages.map(({ label, href }) => (
+            {pages.map(({ label, href, external }) => (
               <li>
                 <a
                   href={href}
                   class="font-display text-blue-600 text-sm hover:underline"
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noopener noreferrer' : undefined}
                 >
                   {label}
                 </a>

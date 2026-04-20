@@ -199,7 +199,7 @@ Goal = visually indistinguishable from Framer output
 ```
 src/
 ├── pages/
-│   ├── index.astro
+│   ├── index.astro           # Homepage — imports all section components in order
 │   ├── about.astro
 │   ├── community.astro
 │   ├── contact.astro
@@ -210,7 +210,14 @@ src/
 │   └── BaseLayout.astro
 ├── components/
 │   ├── ui/
-│   ├── sections/
+│   ├── sections/             # One file per homepage section
+│   │   ├── Hero.astro
+│   │   ├── Problem.astro
+│   │   ├── Partners.astro
+│   │   ├── Journey.astro
+│   │   ├── StatVoice.astro
+│   │   ├── FAQ.astro
+│   │   └── CTABand.astro
 │   └── common/
 │       ├── Navbar.astro
 │       └── Footer.astro
@@ -223,17 +230,21 @@ src/
 ├── styles/
 │   └── global.css
 └── public/
-    ├── fonts/          # Aileron woff2 files
+    ├── fonts/
     ├── images/
-    └── assets/         # Copied from Savar's branch
+    └── assets/
         ├── logo/
         ├── screenshots/
         ├── blobs/
         ├── illustrations/
         ├── images/
+        │   └── partners/
         ├── app-store-badge.svg
+        ├── app-store-badge-en.svg
         └── phone-learn.avif
 ```
+
+All homepage sections live in `src/components/sections/` and are imported into `src/pages/index.astro` in order. One page, multiple focused components — do not build everything into a single file.
 
 ---
 
@@ -285,6 +296,17 @@ Do not code against Astro's strengths.
 
 ---
 
+## Do NOT implement
+
+- React components
+- Framer Motion or motion/react
+- Any animation libraries (embla, carousel, etc.)
+- next/image or Next.js specific code
+- Dark mode
+- Arbitrary Tailwind values — add tokens to `@theme` instead
+
+---
+
 ## Decisions Log
 
 ### Design Tokens (extracted from Framer)
@@ -296,15 +318,16 @@ Do not code against Astro's strengths.
 - White: `#FFFFFF`
 - Ink dark: `#171616`
 - Cream: `#FFFCF3`
+- Muted: `#575757`
 
 **Fonts:**
 
 - Aileron: self-hosted woff2 in `public/fonts/` — Regular (400), SemiBold (600), Bold (700), Light (300)
 - Figtree: Google Fonts — CTA button and UI elements only
 
-**Nav links:** Aileron SemiBold 24px, line-height 40px, letter-spacing -0.02em, color #181818
+**Nav links:** Aileron SemiBold 16px, color #181818
 
-**CTA button:** bg #D84A29 (navbar) / #171616 (pill CTA), Figtree Medium 24px, letter-spacing -0.04em, radius 6px, padding 9px 13px
+**CTA button:** bg #171616, hover bg #D84A29 (transition 0.2s), Figtree Medium 15px, radius 12px
 
 **Breakpoints:**
 
@@ -312,7 +335,7 @@ Do not code against Astro's strengths.
 - Tablet: 810px–1399px — hamburger nav
 - Desktop: ≥1400px — full inline nav
 
-**Container:** max-width 1600px, no horizontal padding on outer wrapper
+**Container:** max-width 1600px
 
 **Type scale:**
 
@@ -321,79 +344,230 @@ Do not code against Astro's strengths.
 - H3: 44px / 52px
 - H4: 32px / 40px
 - H5: 24px / 32px
-- Body sizes: 24/20/16/14px with matching line heights
+- Body: 24/20/16/14px
 
-### Site Shell Decisions
+---
 
-**Logo behavior:** Logo is NOT a link. Plain `<div>`. Do not wrap in `<a>`.
+### Navbar — Critical Design Notes
 
-**Logo asset:** `/assets/logo/logo-with-name.png` — used in Navbar pill and mobile overlay
+**The navbar pill must feel light and unobtrusive.** The goal is for the user's eye to go TO the content inside the pill (logo, links, CTA) — not to the pill container itself.
 
-**CTA button URL:** "Download Unify" → `https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762` — opens new tab
+**Shadow and border — keep subtle:**
 
-**Navbar style:** Floating white pill, `position: sticky`, `top: 20px`, solid `#ffffff` background (no frosted glass), border `1px solid rgba(0,0,0,0.08)`, border-radius 18px. On scroll: shadow deepens via `.is-scrolled` class toggled by inline script.
+- Border: `1px solid rgba(0,0,0,0.08)` — very subtle, never dark
+- Box shadow: `0 10px 28px -14px rgba(23,22,22,0.18)` — soft and low
+- On scroll (.is-scrolled): shadow deepens slightly, never becomes prominent
+- Background: solid `#ffffff` — no frosted glass, no blur
+- The pill floats gently — it does not stamp itself onto the page
+- If shadow or border ever draws more attention than the logo or links, reduce them
 
-**Nav links:** Home, About, Community, Blog, Resources. Hover = red underline grows from center.
+**Logo and spacing — HIGH PRIORITY:**
 
-**Footer dark band:** Removed entirely. No marquee, no animation, no dark section.
+- Logo (`logo-with-name.png`) must have generous left padding inside the pill
+- Logo and "Download Unify" button must NOT feel cramped against each other or the pill edges
+- Logo height: `h-7` (28px)
+- Pill internal padding: generous — if anything feels tight, increase padding first before anything else
+- Nav links: evenly spaced, not crowded
+- The logo should feel like the visual anchor of the navbar, not an afterthought
 
-**Footer structure:**
+**CTA button:**
+
+- Label: "Download Unify" with small arrow icon (→)
+- Background: `#171616`, hover: `#D84A29`, transition 0.2s
+- Must not appear oversized relative to nav links
+
+**Logo behavior:** Plain `<div>`, NOT a link. Clicking does nothing.
+**Logo asset:** `/assets/logo/logo-with-name.png`
+**CTA URL:** `https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762` — new tab
+**Nav links:** Home, About, Community, Blog, Resources
+**Mobile:** hamburger at ≤1399px, full overlay with stacked links + CTA
+
+---
+
+### Footer
+
+**Structure:**
 
 - White background throughout
 - Bold heading with 3px brand-red left border: "Unify," / "Your journey to Canada, _simplified._"
 - Two-column body: left = full brand description, right = Pages + Socials
 - Bottom bar: `© 2026 – Unify Social` as blue link to unifysocial.ca
+- No logo in footer
 
-**Footer section labels:** "Pages" and "Socials"
+**Section labels:** "Pages" and "Socials"
+**All link styling:** `text-blue-600 hover:underline`
 
-**Footer social URLs:**
+**Social URLs:**
 
 - Instagram: https://www.instagram.com/unifysocial.ca/
 - Facebook: https://www.facebook.com/p/Unify-Social-61570879043328/
 - LinkedIn: https://www.linkedin.com/company/unify-social/posts/?feedView=all
 - Twitter: https://x.com/unifysocialca
 
-**All links styling:** `text-blue-600 hover:underline` for both Pages and Socials
+**Legal URLs (open new tab):**
 
-**Dark mode:** Out of scope.
+- Privacy Policy: https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c?source=copy_link
+- Terms of Service: https://www.notion.so/Unify-s-End-User-License-Agreement-Terms-of-Service-3185af89dddb80a68410fa8d65d615c7?source=copy_link
+
+---
 
 ### Assets
 
-- All assets copied from Savar's static branch into `public/assets/`
-- Logo with wordmark: `/assets/logo/logo-with-name.png`
-- Logo SVG mark only: `/assets/logo/unify-logo.svg`
-- Phone mockup: `/assets/phone-learn.avif`
-- App Store badge: `/assets/app-store-badge.svg`
-- App screenshots: `/assets/screenshots/`
-- Decorative blobs: `/assets/blobs/`
+**Logo:**
 
-### Completed — Milestone 1 (Site Shell)
+- With wordmark: `/assets/logo/logo-with-name.png`
+- SVG mark only: `/assets/logo/unify-logo.svg`
 
-- ✅ Astro 6 + Cloudflare Workers adapter configured
-- ✅ Tailwind v4 with full `@theme` token set in `global.css`
+**Screenshots:**
+
+- `/assets/screenshots/checklist.png` — Checklist feature
+- `/assets/screenshots/learn.png` — Learn feature
+- `/assets/screenshots/learn-mockup.png` — Learn alternate
+- `/assets/screenshots/companion.png` — AI Companion
+- `/assets/screenshots/community.png` — Community feature
+- `/assets/screenshots/community-feed.png` — Community feed
+- `/assets/screenshots/learn-hero.avif` — Hero phone mockup
+
+**App Store:**
+
+- `/assets/app-store-badge-en.svg` — EN/US badge
+
+**Partner logos in `/assets/images/partners/`:**
+
+- RBC Foundation
+- Newcomer Jobs Canada
+- Global Connect Immigration
+- SFU
+- EY
+
+**Decorative:**
+
+- `/assets/blobs/` — SVG blob shapes for section backgrounds
+
+---
+
+### Completed — Milestone 1
+
+- ✅ Astro 6 + Cloudflare Workers adapter
+- ✅ Tailwind v4 + full `@theme` token set
 - ✅ Aileron self-hosted, Figtree via Google Fonts
-- ✅ `BaseLayout.astro` with head, fonts, Navbar, Footer
-- ✅ `Navbar.astro` — floating pill, sticky, scroll behavior, hamburger mobile
-- ✅ `Footer.astro` — full rebuild with exact copy and correct styling
+- ✅ BaseLayout.astro with head, fonts, Navbar, Footer
+- ✅ Navbar — floating white pill, sticky, scroll behavior, hamburger mobile
+- ✅ Footer — full rebuild with exact copy and correct styling
 - ✅ Pages: index, about, community, contact, blog/index, blog/[slug]
-- ✅ Sanity lib stubs created
-- ✅ Build clean on Cloudflare Workers adapter
+- ✅ Sanity lib stubs
+- ✅ Build clean on Cloudflare Workers
 
-### Next — Milestone 2 (Homepage Sections)
+---
 
-Build `src/pages/index.astro` section by section, each as a component in `src/components/sections/`.
+### Milestone 2 — Homepage (A+C structure)
 
-Order:
+The homepage uses an emotional/narrative + journey-based structure. This is NOT a copy of Savar's reference or the Framer site. It is original.
 
-1. Hero — headline, subtext, App Store button, phone mockup image
-2. Features — Checklist, Learn, AI Companion, Community (from Framer)
-3. FAQ — accordion (needs small JS island)
-4. CTA band — "Download the App Now"
+Each section is a standalone component in `src/components/sections/`, imported into `src/pages/index.astro` in this order:
 
-For each section:
+**Status:**
 
-1. Inspect unifysocial.ca for exact values
-2. Extract tokens → add to `@theme`
-3. Build as static component first
-4. Compare visually
-5. Flag mobile gaps
+- [ ] Hero — `Hero.astro`
+- [ ] Problem — `Problem.astro`
+- [ ] Partners — `Partners.astro`
+- [ ] Journey — `Journey.astro`
+- [ ] StatVoice — `StatVoice.astro`
+- [ ] FAQ — `FAQ.astro`
+- [ ] CTABand — `CTABand.astro`
+
+---
+
+### Hero section
+
+**Copy (confirmed, do not change until Savar meeting Friday):**
+
+- H1: "The all-in-one newcomer settlement app"
+- Subtext: "Unify makes settling in Canada simpler, clearer, and more connected"
+- "No credit card required" below App Store badge
+
+**App Store badge:** `/assets/app-store-badge-en.svg` → `https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762` new tab, height 52px
+
+**Creative direction — DO NOT copy Savar's layout:**
+
+- The hero layout, animation, and visual treatment must be original
+- Savar used centered two-column with a halo glow — do something different
+- Consider: large left-aligned headline with phone mockup breaking out of its container, asymmetric layout, staggered CSS text animation, bold typographic treatment
+- CSS animations only — no Framer Motion, no motion/react, no JS animation libraries
+- Phone mockup: `/assets/screenshots/learn-hero.avif`
+- Decorative blobs from `/assets/blobs/` are available for background accents
+- The hero must feel premium and human — not generic SaaS
+
+---
+
+### Problem section
+
+- Background: `#171616`
+- Large italic white text: _"You just arrived. You have 40 tabs open, three WhatsApp groups giving conflicting advice, and no idea what to do first."_
+- Below: "That's the gap Unify fills." — brand red `#D84A29`, centered, smaller
+- No images. Pure typography. The contrast does the work.
+
+---
+
+### Partners section
+
+- Label: "Our Partners"
+- CSS scroll animation only — no JS, no libraries
+- Logos from `/assets/images/partners/` — greyscale, opacity 0.6
+- Fade edges with CSS mask gradient
+
+---
+
+### Journey section
+
+Vertical timeline, 4 stages. Each stage: human emotional moment (large type) + phone screenshot. Alternates left/right on desktop, stacks on mobile. A vertical line connects the stages. Stage labels (Day 1, Week 1, etc.) in brand red.
+
+- **Day 1:** "You don't know what to do first." → `/assets/screenshots/checklist.png`
+- **Week 1:** "Questions pile up at 2am." → `/assets/screenshots/companion.png`
+- **Month 1:** "You want to understand how Canada actually works." → `/assets/screenshots/learn.png`
+- **Month 3:** "You're ready to stop figuring it out alone." → `/assets/screenshots/community.png`
+
+---
+
+### StatVoice section
+
+- "2,700+" — ~96px Aileron Bold, centered
+- Below: "newcomers have found their footing in Canada with Unify."
+- One placeholder quote: _"I had no idea what a SIN was or how to get a phone plan. Unify walked me through it."_ — Newcomer, Vancouver
+- No avatar, no card, just text
+- White background, generous vertical padding
+
+---
+
+### FAQ section
+
+Native HTML `<details>/<summary>` — zero JS required.
+
+Questions:
+
+1. What is Unify Social?
+2. Who is Unify Social best for?
+3. How do I connect with other immigrants on Unify Social?
+4. What workshops does Unify Social offer, and how can I join one?
+5. Is Unify Social free to use?
+
+Style: full-width bordered rows, black `+` button on right, expands inline.
+
+---
+
+### CTA band section
+
+- Headline: "Take the guesswork out of your newcomer journey with the full Unify experience."
+- Subtext: "Be the first to experience Unify and shape the future of newcomer support in Canada"
+- Large brand-red full-width button: "Download the App Now" → `https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762`
+
+---
+
+### Rules for all sections
+
+- No React, no animation libraries, no Framer Motion
+- CSS animations only — Intersection Observer inline script where scroll-triggered fade is needed
+- No arbitrary Tailwind values — add tokens to `@theme`
+- Semantic HTML throughout (`<section>`, `<h2>`, etc.)
+- Build one section at a time, verify with `npm run build` before moving to next
+- Use Playwright to screenshot after each section is built

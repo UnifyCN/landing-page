@@ -49,17 +49,23 @@
   /* Layout sizing */
   --spacing-navbar: 67px;
   --spacing-layout: 1600px;
+  --spacing-nav-pill: 832px;
 
-  /* Button padding (9px 13px) */
+  /* Button padding */
   --spacing-btn-y: 9px;
   --spacing-btn-x: 13px;
 
   /* Typography scale */
-  --text-nav: 24px;
+  --text-nav: 18px;
+  --text-hero: 64px;
+  --text-hero-mobile: 44px;
+  --text-h1: 80px;
+  --text-h1-mobile: 48px;
+  --text-micro: 13px;
   --text-marquee: 3rem;
 
   /* Line heights */
-  --leading-nav: 40px;
+  --leading-nav: 28px;
 
   /* Letter spacing */
   --tracking-nav: -0.02em;
@@ -74,5 +80,6 @@
   --color-ink: #171616;
   --color-cream: #FFFCF3;
   --color-brand-red: #D84A29;
+  --color-muted: #575757;
 
 }

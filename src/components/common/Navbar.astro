@@ -12,16 +12,20 @@ const navLinks = [
 <div class="sticky top-5 z-50 flex justify-center px-4 pointer-events-none">
   <div
     id="nav-pill"
-    class="nav-pill pointer-events-auto flex items-center justify-between w-full max-w-4xl px-5 py-3"
+    class="nav-pill pointer-events-auto flex items-center w-full max-w-3xl pl-5 pr-3 py-2.5"
   >
     <!-- Logo — plain div, not a link -->
     <div class="flex-shrink-0">
-      <img src="/assets/logo/unify-logo.svg" alt="Unify" class="h-8 w-auto" />
+      <img
+        src="/assets/logo/logo-with-name.png"
+        alt="Unify"
+        class="h-10 w-auto"
+      />
     </div>
 
     <!-- Desktop nav links -->
     <nav
-      class="hidden desktop:flex items-center gap-6"
+      class="hidden desktop:flex flex-1 justify-center items-center gap-6"
       aria-label="Main navigation"
     >
       <ul role="list" class="flex items-center gap-6 list-none m-0 p-0">
@@ -41,7 +45,7 @@ const navLinks = [
     </nav>
 
     <!-- Right side: CTA (desktop) + hamburger (mobile/tablet) -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-shrink-0">
       <a
         href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
         target="_blank"
