@@ -1,27 +1,42 @@
 ---
 const pages = [
-  { label: 'Home',             href: '/',               external: false },
-  { label: 'About',            href: '/about',           external: false },
-  { label: 'Blog',             href: '/blog',            external: false },
-  { label: 'Contact',          href: '/contact',         external: false },
-  { label: 'Privacy Policy',   href: 'https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c?source=copy_link', external: true },
-  { label: 'Terms of Service', href: 'https://www.notion.so/Unify-s-End-User-License-Agreement-Terms-of-Service-3185af89dddb80a68410fa8d65d615c7?source=copy_link', external: true },
+  { label: "Home", href: "/", external: false },
+  { label: "About", href: "/about", external: false },
+  { label: "Blog", href: "/blog", external: false },
+  { label: "Contact", href: "/contact", external: false },
+  {
+    label: "Privacy Policy",
+    href: "https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c?source=copy_link",
+    external: true,
+  },
+  {
+    label: "Terms of Service",
+    href: "https://www.notion.so/Unify-s-End-User-License-Agreement-Terms-of-Service-3185af89dddb80a68410fa8d65d615c7?source=copy_link",
+    external: true,
+  },
 ];
 
 const social = [
-  { label: 'Instagram', href: 'https://www.instagram.com/unifysocial.ca/'                                        },
-  { label: 'Facebook',  href: 'https://www.facebook.com/p/Unify-Social-61570879043328/'                          },
-  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/unify-social/posts/?feedView=all'                },
-  { label: 'Twitter',   href: 'https://x.com/unifysocialca'                                                      },
+  { label: "Instagram", href: "https://www.instagram.com/unifysocial.ca/" },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/p/Unify-Social-61570879043328/",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/unify-social/posts/?feedView=all",
+  },
+  { label: "Twitter", href: "https://x.com/unifysocialca" },
 ];
 ---
 
-<footer class="bg-white">
-  <div class="mx-auto max-w-layout px-6 desktop:px-10 pt-16 pb-10">
-
+<footer class="bg-white border-t border-gray-100">
+  <div class="mx-auto max-w-6xl px-6 desktop:px-10 pt-16 pb-10">
     <!-- Heading with brand-red left border -->
     <div class="footer-heading mb-12">
-      <h2 class="font-display font-bold text-marquee text-ink leading-tight">
+      <h2
+        class="font-display font-bold text-footer-heading text-ink leading-tight"
+      >
         Unify,<br />
         Your journey to Canada, <em>simplified.</em>
       </h2>
@@ -29,81 +44,80 @@ const social = [
 
     <!-- Two-column body: description left, links right -->
     <div class="flex flex-col tablet:flex-row gap-12 tablet:gap-16 mb-16">
-
       <!-- Left: brand description -->
-      <div class="flex-1 max-w-2xl">
-        <p class="font-display text-text text-base leading-relaxed">
-          Newcomers to Canada are expected to navigate life in a new country, yet many face a maze of disconnected resources, complex processes, and limited access to community. While support exists, there is no central digital platform that brings trusted information, guidance, and human connection together in one place.
-        </p>
-        <p class="font-display text-text text-base leading-relaxed mt-4">
-          Unify is a digital platform designed to support newcomers by centralizing essential resources, providing step-by-step guidance, and fostering meaningful community connections. The platform includes five core features: Learn, offering curated content on essential topics, an AI Companion that provides personalized, 24/7 guidance; a Personalized Settlement Checklist that organizes tasks based on each user's goals and status; a Community layer with Q&amp;A forums, interest and cultural groups, and a local events calendar; and Community Meets, which help newcomers build real relationships. Together, Unify reduces confusion, builds confidence, and ensures newcomers never have to navigate their settlement journey alone.
+      <div class="flex-1">
+        <p class="font-display text-text text-base leading-relaxed max-w-2xl">
+          Newcomers to Canada face a maze of disconnected resources, complex
+          processes, and no clear starting point. Unify brings trusted
+          information, step-by-step guidance, and real community into one place
+          — so you never have to navigate the settlement journey alone.
         </p>
       </div>
 
       <!-- Right: Pages + Socials -->
       <div class="flex gap-12 tablet:gap-16 flex-shrink-0">
-
         <!-- Pages -->
         <div>
-          <h3 class="font-display font-semibold text-ink text-sm tracking-wide uppercase mb-5">
+          <h3
+            class="font-display font-semibold text-muted text-sm tracking-wide uppercase mb-5"
+          >
             Pages
           </h3>
           <ul role="list" class="list-none m-0 p-0 flex flex-col gap-3">
-            {pages.map(({ label, href, external }) => (
-              <li>
-                <a
-                  href={href}
-                  class="font-display text-blue-600 text-sm hover:underline"
-                  target={external ? '_blank' : undefined}
-                  rel={external ? 'noopener noreferrer' : undefined}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
+            {
+              pages.map(({ label, href, external }) => (
+                <li>
+                  <a
+                    href={href}
+                    class="font-display text-ink text-sm hover:text-brand hover:underline transition-colors duration-150"
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </div>
 
         <!-- Socials -->
         <div>
-          <h3 class="font-display font-semibold text-ink text-sm tracking-wide uppercase mb-5">
+          <h3
+            class="font-display font-semibold text-muted text-sm tracking-wide uppercase mb-5"
+          >
             Socials
           </h3>
           <ul role="list" class="list-none m-0 p-0 flex flex-col gap-3">
-            {social.map(({ label, href }) => (
-              <li>
-                <a
-                  href={href}
-                  class="font-display text-blue-600 text-sm hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
+            {
+              social.map(({ label, href }) => (
+                <li>
+                  <a
+                    href={href}
+                    class="font-display text-ink text-sm hover:text-brand hover:underline transition-colors duration-150"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </div>
-
       </div>
     </div>
 
     <!-- Bottom bar -->
     <div class="border-t border-gray-200 pt-6">
-      <a
-        href="https://unifysocial.ca"
-        class="font-display text-sm text-blue-600 hover:underline"
-      >
-        © 2026 – Unify Social
-      </a>
+      <span class="font-display text-sm text-muted">© 2026 – Unify Social</span>
     </div>
-
   </div>
 </footer>
 
 <style>
   .footer-heading {
     border-left: 3px solid var(--color-brand);
-    padding-left: 20px;
+    padding-left: 24px;
   }
 </style>

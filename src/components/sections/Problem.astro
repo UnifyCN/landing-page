@@ -1,0 +1,69 @@
+---
+
+---
+
+<section class="problem bg-ink pt-20 pb-20 desktop:pt-40 desktop:pb-28">
+  <div class="mx-auto max-w-layout px-6 desktop:px-16">
+    <div class="mx-auto max-w-3xl desktop:max-w-4xl">
+      <p
+        class="problem-quote font-display font-bold italic text-white text-center leading-snug text-problem-mobile desktop:text-problem"
+      >
+        “You just arrived.<br />
+        There’s too much information,<br />
+        too many opinions,<br />
+        and no clear first step.”
+      </p>
+
+      <p
+        class="problem-tagline font-display text-brand text-center text-2xl mt-10 desktop:mt-12"
+      >
+        That's the gap Unify fills.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Pre-animation state — invisible until IntersectionObserver fires */
+  .problem-quote,
+  .problem-tagline {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  /* Triggered state */
+  .problem.visible .problem-quote {
+    animation: problem-fade-up 0.8s ease-out 0.1s both;
+  }
+
+  .problem.visible .problem-tagline {
+    animation: problem-fade-up 0.7s ease-out 0.45s both;
+  }
+
+  @keyframes problem-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".problem");
+  if (section) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(section);
+  }
+</script>

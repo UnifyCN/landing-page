@@ -1,0 +1,267 @@
+---
+const stages = [
+  {
+    label: "Day 1",
+    quote: "You don’t know where to start.",
+    screenshot: "/assets/screenshots/checklist.png",
+    alt: "Unify app – Checklist screen",
+  },
+  {
+    label: "Week 1",
+    quote: "You need answers you can trust.",
+    screenshot: "/assets/screenshots/companion.png",
+    alt: "Unify app – AI Companion screen",
+  },
+  {
+    label: "Month 1",
+    quote: "You want to understand how life in Canada works.",
+    screenshot: "/assets/screenshots/learn.png",
+    alt: "Unify app – Learn screen",
+  },
+  {
+    label: "Month 3",
+    quote: "You’re ready to find belonging.",
+    screenshot: "/assets/screenshots/community.png",
+    alt: "Unify app – Community screen",
+  },
+];
+---
+
+<section class="journey bg-white py-20 desktop:py-32">
+  <div class="mx-auto max-w-layout px-6 desktop:px-16">
+
+    <p class="journey-eyebrow font-display font-semibold text-muted text-sm tracking-widest uppercase text-center mb-4">
+      How Unify fits your journey
+    </p>
+    <h2 class="journey-heading font-display font-bold text-text text-center text-3xl desktop:text-4xl mb-20 desktop:mb-28 tracking-cta">
+      From arrival to belonging
+    </h2>
+
+    <div class="journey-stages">
+      {stages.map((stage, i) => (
+        <div class={`journey-stage stage-${i} ${i % 2 === 1 ? "reverse" : ""}`}>
+
+          <!-- Text side -->
+          <div class="stage-text">
+<span class="stage-label font-display font-semibold text-brand text-base tracking-widest uppercase">
+              {stage.label}
+            </span>
+            <p class="stage-quote font-display font-bold text-text leading-tight text-journey-quote-mobile desktop:text-journey-quote">
+              {stage.quote}
+            </p>
+          </div>
+
+          <!-- Spine node -->
+          <div class="stage-node" aria-hidden="true">
+            <div class="node-dot"></div>
+          </div>
+
+          <!-- Screenshot side -->
+          <div class="stage-visual">
+            <img
+              src={stage.screenshot}
+              alt={stage.alt}
+              class="stage-phone"
+              loading="lazy"
+            />
+          </div>
+
+        </div>
+      ))}
+
+      <!-- Vertical spine line -->
+      <div class="spine" aria-hidden="true"></div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .journey-stages {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .spine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1rem;
+    width: 2px;
+    background: #e5e5e5;
+    z-index: 0;
+  }
+
+  .journey-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "visual";
+    gap: 1.5rem;
+    padding-left: 3rem;
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .journey-stage.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stage-0 { transition-delay: 0s; }
+  .stage-1 { transition-delay: 0.1s; }
+  .stage-2 { transition-delay: 0.1s; }
+  .stage-3 { transition-delay: 0.1s; }
+
+  .stage-text {
+    grid-area: text;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .stage-visual {
+    grid-area: visual;
+    display: flex;
+    justify-content: center;
+  }
+
+  .stage-phone {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    border-radius: 24px;
+    box-shadow: 0 20px 48px -12px rgba(23, 22, 22, 0.18);
+    object-fit: contain;
+  }
+
+  .stage-node {
+    display: none;
+  }
+
+  .node-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--color-brand);
+  }
+
+  /* ---- Desktop ---- */
+
+  @media (min-width: 1400px) {
+    .journey-stages {
+      gap: 6rem;
+    }
+
+    .spine {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .journey-stage {
+      grid-template-columns: 1fr 80px 1fr;
+      grid-template-areas: "text node visual";
+      align-items: center;
+      padding-left: 0;
+      gap: 0;
+    }
+
+    .journey-stage.reverse {
+      grid-template-areas: "visual node text";
+    }
+
+    .stage-node {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      grid-area: node;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stage-text {
+      gap: 1rem;
+    }
+
+    .journey-stage:not(.reverse) .stage-text {
+      padding-right: 3rem;
+      text-align: right;
+      align-items: flex-end;
+    }
+
+    .journey-stage.reverse .stage-text {
+      padding-left: 3rem;
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .journey-stage:not(.reverse) .stage-visual {
+      justify-content: flex-start;
+      padding-left: 3rem;
+    }
+
+    .journey-stage.reverse .stage-visual {
+      justify-content: flex-end;
+      padding-right: 3rem;
+    }
+
+    .stage-phone {
+      max-width: 280px;
+    }
+  }
+
+  /* ---- Tablet ---- */
+
+  @media (min-width: 810px) and (max-width: 1399px) {
+    .journey-stages {
+      gap: 5rem;
+    }
+
+    .journey-stage {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: "text visual";
+      align-items: center;
+      padding-left: 0;
+      gap: 2rem;
+    }
+
+    .journey-stage.reverse {
+      grid-template-areas: "visual text";
+    }
+
+    .spine {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .stage-phone {
+      max-width: 240px;
+    }
+  }
+</style>
+
+<script>
+  const stages = document.querySelectorAll(".journey-stage");
+  if (stages.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    stages.forEach((stage) => observer.observe(stage));
+  }
+</script>

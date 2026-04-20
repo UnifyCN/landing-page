@@ -1,0 +1,115 @@
+---
+const partners = [
+  { src: "/assets/images/partners/rbc_foundation.png", alt: "RBC Foundation" },
+  {
+    src: "/assets/images/partners/newcomer_jobs_canada.png",
+    alt: "Newcomer Jobs Canada",
+  },
+  {
+    src: "/assets/images/partners/global_connect_immigration.png",
+    alt: "Global Connect Immigration",
+  },
+  { src: "/assets/images/partners/sfu.png", alt: "SFU" },
+  { src: "/assets/images/partners/ey.png", alt: "EY" },
+  { src: "/assets/images/partners/enactus.png", alt: "Enactus" },
+  {
+    src: "/assets/images/partners/fraser_international_college.png",
+    alt: "Fraser International College",
+  },
+  {
+    src: "/assets/images/partners/burnaby_neighbourhood_house.png",
+    alt: "Burnaby Neighbourhood House",
+  },
+  {
+    src: "/assets/images/partners/surrey_libraries.png",
+    alt: "Surrey Libraries",
+  },
+  {
+    src: "/assets/images/partners/trout_lake_community_centre.png",
+    alt: "Trout Lake Community Centre",
+  },
+  { src: "/assets/images/partners/united_way_bc.png", alt: "United Way BC" },
+  {
+    src: "/assets/images/partners/vancouver_public_library.png",
+    alt: "Vancouver Public Library",
+  },
+];
+---
+
+<section class="partners bg-white py-14 desktop:py-20">
+  <p
+    class="partners-label font-display font-semibold text-ink text-base tracking-[0.14em] uppercase text-center mb-12"
+  >
+    Our Partners
+  </p>
+
+  <div class="partners-track-wrapper overflow-hidden relative">
+    <div class="partners-track" aria-hidden="true">
+      {
+        partners.map((p) => (
+          <img src={p.src} alt={p.alt} class="partner-logo" loading="lazy" />
+        ))
+      }
+      {
+        partners.map((p) => (
+          <img src={p.src} alt="" class="partner-logo" loading="lazy" />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .partners-track-wrapper {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 12%,
+      black 88%,
+      transparent
+    );
+  }
+
+  .partners-track {
+    display: flex;
+    align-items: center;
+    gap: 3.5rem;
+    width: max-content;
+    animation: marquee 36s linear infinite;
+  }
+
+  .partner-logo {
+    height: 48px;
+    width: auto;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  @media (min-width: 1400px) {
+    .partner-logo {
+      height: 56px;
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partners-track {
+      animation: none;
+    }
+  }
+</style>

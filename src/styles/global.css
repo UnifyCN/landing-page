@@ -63,6 +63,11 @@
   --text-h1-mobile: 48px;
   --text-micro: 13px;
   --text-marquee: 3rem;
+  --text-problem: 2.75rem;
+  --text-problem-mobile: 1.875rem;
+  --text-footer-heading: 3.5rem;
+  --text-journey-quote: 2.5rem;
+  --text-journey-quote-mobile: 1.625rem;
 
   /* Line heights */
   --leading-nav: 28px;

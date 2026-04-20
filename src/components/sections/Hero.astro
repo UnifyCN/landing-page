@@ -1,32 +1,21 @@
 ---
-const APP_STORE_URL = 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762';
+const APP_STORE_URL =
+  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
 ---
 
-<section class="hero relative bg-white pt-16 pb-16 desktop:pt-20 desktop:pb-20">
-
-  <!-- Amber blob — right side, desktop only, CSS-positioned -->
-  <div class="hero-blob-amber" aria-hidden="true"></div>
-
+<section class="hero relative bg-white pt-20 pb-12 desktop:pt-28 desktop:pb-0">
   <div class="mx-auto max-w-layout px-6 desktop:px-16">
-    <!--
-      DOM order: [text, phone]
-      flex-col-reverse on mobile → phone renders above text visually
-      tablet:flex-row → side by side, text left / phone right
-      items-center → vertically centered, balanced composition
-    -->
-    <div class="flex flex-col-reverse tablet:flex-row items-center gap-10 desktop:gap-16">
-
-      <!-- LEFT: headline, subtext, badge -->
-      <div class="hero-content flex-1 flex flex-col gap-6 desktop:gap-8">
-
-        <span class="hero-eyebrow font-display font-semibold text-brand uppercase tracking-wider text-micro">
-          Settlement App for Canada
-        </span>
-
-        <h1 class="font-display font-bold text-h1-mobile desktop:text-h1 leading-none tracking-cta text-text">
-          <span class="hero-line hero-line-1 block">The all-in-one</span>
-          <span class="hero-line hero-line-2 block">newcomer</span>
-          <span class="hero-line hero-line-3 block">settlement app</span>
+    <div
+      class="flex flex-col-reverse tablet:flex-row items-center gap-8 desktop:gap-10"
+    >
+      <div class="hero-content flex flex-col gap-6 desktop:gap-8">
+        <h1
+          class="font-display font-bold text-h1-mobile desktop:text-h1 leading-none tracking-cta text-text"
+        >
+          <span class="hero-line hero-line-1 block"
+            >The all-in-one newcomer</span
+          >
+          <span class="hero-line hero-line-2 block">settlement app</span>
         </h1>
 
         <p class="hero-subtext font-display text-xl text-muted leading-relaxed">
@@ -46,74 +35,30 @@ const APP_STORE_URL = 'https://apps.apple.com/ca/app/unify-newcomer-support/id67
               class="h-13 w-auto"
             />
           </a>
-          <p class="font-display text-micro text-muted">No credit card required</p>
+          <p class="font-display text-micro text-muted">
+            No credit card required
+          </p>
         </div>
-
       </div>
 
-      <!-- RIGHT: phone mockup -->
-      <div class="hero-visual flex-1 flex justify-center">
+      <div class="hero-visual flex justify-center">
         <img
           src="/assets/screenshots/learn-hero.avif"
           alt="Unify app – Learn screen"
           class="hero-phone"
         />
       </div>
-
     </div>
   </div>
 </section>
 
 <style>
-  /* === Blob decorations — radial gradients using logo palette === */
-
-  /* Red blob — top-left corner */
-  .hero::before {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    width: 640px;
-    height: 640px;
-    top: -160px;
-    left: -160px;
-    background: radial-gradient(circle, rgba(216, 73, 44, 0.08) 0%, transparent 65%);
-  }
-
-  /* Blue blob — bottom-left, anchors the section */
-  .hero::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    width: 520px;
-    height: 520px;
-    bottom: -60px;
-    left: 12%;
-    background: radial-gradient(circle, rgba(81, 130, 199, 0.07) 0%, transparent 65%);
-  }
-
-  /* Amber blob — right side, sits behind the phone */
-  .hero-blob-amber {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    width: 700px;
-    height: 700px;
-    top: -40px;
-    right: -120px;
-    background: radial-gradient(circle, rgba(255, 181, 112, 0.10) 0%, transparent 65%);
-    animation: fade-in 1.4s ease-out both;
-  }
-
-  /* Text content and phone sit above blobs */
   .hero-content,
   .hero-visual {
     position: relative;
     z-index: 1;
   }
 
-  /* === Phone === */
   .hero-phone {
     width: 100%;
     max-height: 360px;
@@ -121,15 +66,15 @@ const APP_STORE_URL = 'https://apps.apple.com/ca/app/unify-newcomer-support/id67
     filter: drop-shadow(0 24px 40px rgba(23, 22, 22, 0.14));
   }
 
-  /* === Desktop column sizing (50/50 flex split) === */
   @media (min-width: 810px) {
-    .hero-content,
-    .hero-visual {
-      flex: 1;
+    .hero-content {
+      flex: 55 1 0%;
     }
 
     .hero-visual {
+      flex: 45 1 0%;
       justify-content: flex-end;
+      align-self: flex-end;
     }
 
     .hero-phone {
@@ -137,46 +82,58 @@ const APP_STORE_URL = 'https://apps.apple.com/ca/app/unify-newcomer-support/id67
     }
   }
 
-  /* === Keyframe definitions === */
+  @media (min-width: 1400px) {
+    .hero-content {
+      margin-top: -32px;
+    }
+
+    .hero-visual {
+      animation: fade-in-right 0.9s ease-out 0.3s both;
+      bottom: -80px;
+    }
+  }
+
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @keyframes fade-in-right {
-    from { opacity: 0; transform: translateX(40px); }
-    to   { opacity: 1; transform: translateX(0); }
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+  .hero-line-1 {
+    animation: fade-up 0.6s ease-out 0.1s both;
   }
 
-  /* === Staggered text animations === */
-  .hero-eyebrow { animation: fade-up 0.5s ease-out 0.10s both; }
-  .hero-line-1  { animation: fade-up 0.6s ease-out 0.20s both; }
-  .hero-line-2  { animation: fade-up 0.6s ease-out 0.35s both; }
-  .hero-line-3  { animation: fade-up 0.6s ease-out 0.50s both; }
-  .hero-subtext { animation: fade-up 0.5s ease-out 0.65s both; }
-  .hero-badge   { animation: fade-up 0.5s ease-out 0.80s both; }
-
-  /* Phone slides in from right on desktop */
-  @media (min-width: 1400px) {
-    .hero-visual { animation: fade-in-right 0.9s ease-out 0.30s both; }
+  .hero-line-2 {
+    animation: fade-up 0.6s ease-out 0.25s both;
   }
 
-  /* Phone fades up on mobile/tablet */
+  .hero-subtext {
+    animation: fade-up 0.5s ease-out 0.4s both;
+  }
+
+  .hero-badge {
+    animation: fade-up 0.5s ease-out 0.55s both;
+  }
+
   @media (max-width: 1399px) {
-    .hero-visual { animation: fade-up 0.6s ease-out 0.20s both; }
-  }
-
-  /* Hide blobs on mobile — too noisy at small sizes */
-  @media (max-width: 809px) {
-    .hero::before,
-    .hero::after,
-    .hero-blob-amber {
-      display: none;
+    .hero-visual {
+      animation: fade-up 0.6s ease-out 0.2s both;
     }
   }
 </style>
