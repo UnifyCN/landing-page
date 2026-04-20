@@ -5,18 +5,14 @@
 <section class="problem bg-ink pt-20 pb-20 desktop:pt-40 desktop:pb-28">
   <div class="mx-auto max-w-layout px-6 desktop:px-16">
     <div class="mx-auto max-w-3xl desktop:max-w-4xl">
-      <p
-        class="problem-quote font-display font-bold italic text-white text-center leading-snug text-problem-mobile desktop:text-problem"
-      >
-        “You just arrived.<br />
-        There’s too much information,<br />
+      <p class="problem-quote">
+        "You just arrived.<br />
+        There's too much information,<br />
         too many opinions,<br />
-        and no clear first step.”
+        and no clear first step."
       </p>
 
-      <p
-        class="problem-tagline font-display text-brand text-center text-2xl mt-10 desktop:mt-12"
-      >
+      <p class="problem-tagline">
         That's the gap Unify fills.
       </p>
     </div>
@@ -24,30 +20,59 @@
 </section>
 
 <style>
-  /* Pre-animation state — invisible until IntersectionObserver fires */
-  .problem-quote,
+  .problem-quote {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: var(--text-problem-mobile);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    color: #ffffff;
+    text-align: center;
+    margin: 0;
+    text-wrap: balance;
+    transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+  }
+
   .problem-tagline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--color-brand-red);
+    text-align: center;
+    margin: 2.75rem 0 0;
+    letter-spacing: -0.01em;
+    transition: opacity 0.65s var(--ease-out) 0.3s, transform 0.65s var(--ease-out) 0.3s;
+  }
+
+  /* JS adds .animate → hide initially, then .visible → transition to visible */
+  .problem.animate .problem-quote,
+  .problem.animate .problem-tagline {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(24px);
   }
 
-  /* Triggered state */
-  .problem.visible .problem-quote {
-    animation: problem-fade-up 0.8s ease-out 0.1s both;
+  .problem.animate.visible .problem-quote,
+  .problem.animate.visible .problem-tagline {
+    opacity: 1;
+    transform: translateY(0);
   }
 
-  .problem.visible .problem-tagline {
-    animation: problem-fade-up 0.7s ease-out 0.45s both;
-  }
-
-  @keyframes problem-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(28px);
+  @media (min-width: 810px) {
+    .problem-tagline {
+      font-size: 1.625rem;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  }
+
+  @media (min-width: 1400px) {
+    .problem-quote {
+      font-size: 3.125rem;
+      line-height: 1.16;
+    }
+
+    .problem-tagline {
+      font-size: 1.875rem;
+      margin-top: 3.5rem;
     }
   }
 </style>
@@ -55,6 +80,7 @@
 <script>
   const section = document.querySelector(".problem");
   if (section) {
+    section.classList.add("animate");
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -62,7 +88,7 @@
           observer.disconnect();
         }
       },
-      { threshold: 0.2 },
+      { threshold: 0.15 },
     );
     observer.observe(section);
   }

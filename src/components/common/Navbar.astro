@@ -4,22 +4,28 @@ const navLinks = [
   { label: "About", href: "/about" },
   { label: "Community", href: "/community" },
   { label: "Blog", href: "/blog" },
-  { label: "Resources", href: "/resources" },
 ];
+
+const pathname = Astro.url.pathname;
+
+function isActive(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname.startsWith(href);
+}
 ---
 
 <!-- Sticky wrapper — pointer-events-none so it doesn't block page content below the pill -->
 <div class="sticky top-5 z-50 flex justify-center px-4 pointer-events-none">
   <div
     id="nav-pill"
-    class="nav-pill pointer-events-auto flex items-center justify-between desktop:justify-start w-full max-w-3xl pl-5 pr-3 py-2.5"
+    class="nav-pill pointer-events-auto flex items-center gap-6 desktop:gap-8 w-auto pl-5 pr-3 py-2.5"
   >
     <!-- Logo — plain div, not a link -->
     <div class="flex-shrink-0">
       <img
         src="/assets/logo/logo-with-name.png"
         alt="Unify"
-        class="h-10 w-auto"
+        class="h-8 w-auto"
       />
     </div>
 
@@ -34,7 +40,8 @@ const navLinks = [
             <li>
               <a
                 href={href}
-                class="nav-link font-display text-nav leading-nav tracking-nav font-semibold text-ink no-underline"
+                aria-current={isActive(href) ? "page" : undefined}
+                class={`nav-link font-display text-nav leading-nav tracking-nav font-semibold text-ink no-underline${isActive(href) ? " nav-link-active" : ""}`}
               >
                 {label}
               </a>
@@ -72,14 +79,14 @@ const navLinks = [
       <button
         id="nav-toggle"
         type="button"
-        class="desktop:hidden flex flex-col justify-center items-center gap-1.5 w-8 h-8 bg-transparent border-0 cursor-pointer p-0"
+        class="hamburger desktop:hidden flex flex-col justify-center items-center w-8 h-8 bg-transparent border-0 cursor-pointer p-0 relative"
         aria-expanded="false"
         aria-controls="mobile-nav"
         aria-label="Open navigation menu"
       >
-        <span class="block w-6 h-0.5 bg-ink rounded-full"></span>
-        <span class="block w-6 h-0.5 bg-ink rounded-full"></span>
-        <span class="block w-6 h-0.5 bg-ink rounded-full"></span>
+        <span class="ham-line ham-line-1"></span>
+        <span class="ham-line ham-line-2"></span>
+        <span class="ham-line ham-line-3"></span>
       </button>
     </div>
   </div>
@@ -91,8 +98,8 @@ const navLinks = [
   role="dialog"
   aria-modal="true"
   aria-label="Navigation menu"
-  style="display:none; z-index:60"
-  class="fixed inset-0 bg-white flex-col"
+  class="mobile-nav fixed inset-0 flex flex-col"
+  style="z-index:60; background-color: var(--color-cream);"
 >
   <!-- Top bar: logo + close -->
   <div class="px-6 h-navbar flex items-center justify-between flex-shrink-0">
@@ -110,34 +117,36 @@ const navLinks = [
       aria-label="Close navigation menu"
     >
       <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
+        width="22"
+        height="22"
+        viewBox="0 0 22 22"
         fill="none"
         stroke="currentColor"
-        stroke-width="2"
+        stroke-width="1.75"
         stroke-linecap="round"
         stroke-linejoin="round"
         aria-hidden="true"
       >
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
+        <line x1="17" y1="5" x2="5" y2="17"></line>
+        <line x1="5" y1="5" x2="17" y2="17"></line>
       </svg>
     </button>
   </div>
 
-  <!-- Stacked links + CTA -->
+  <!-- Links + bottom CTA -->
   <nav
-    class="flex-1 flex flex-col items-center justify-center gap-10"
+    class="flex-1 flex flex-col px-10 pt-10 pb-10"
     aria-label="Mobile navigation"
   >
-    <ul role="list" class="flex flex-col items-center gap-6 list-none m-0 p-0">
+    <!-- Editorial left-aligned links with brand-red accent border -->
+    <ul role="list" class="mobile-link-list flex flex-col gap-2 list-none m-0 p-0">
       {
-        navLinks.map(({ label, href }) => (
-          <li>
+        navLinks.map(({ label, href }, i) => (
+          <li class="mobile-nav-item" style={`--i: ${i}`}>
             <a
               href={href}
-              class="font-display text-nav leading-nav tracking-nav font-semibold text-ink no-underline"
+              aria-current={isActive(href) ? "page" : undefined}
+              class={`mobile-nav-link font-display font-bold text-ink no-underline${isActive(href) ? " mobile-nav-link-active" : ""}`}
             >
               {label}
             </a>
@@ -145,28 +154,33 @@ const navLinks = [
         ))
       }
     </ul>
-    <a
-      href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="cta-btn flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
-    >
-      Download Unify
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        aria-hidden="true"
+
+    <!-- CTA anchored to bottom -->
+    <div class="mobile-nav-item mt-auto" style="--i: 5">
+      <a
+        href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cta-btn inline-flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
       >
-        <path
-          d="M2 7h10M8 3l4 4-4 4"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"></path>
-      </svg>
-    </a>
+        Download Unify
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M2 7h10M8 3l4 4-4 4"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </a>
+      <p class="mobile-cta-note">Free to download. No credit card required.</p>
+    </div>
   </nav>
 </div>
 
@@ -183,7 +197,7 @@ const navLinks = [
     box-shadow: 0 16px 36px -10px rgba(23, 22, 22, 0.28);
   }
 
-  /* Nav link red underline grows from center on hover */
+  /* Desktop nav link — red underline grows from center on hover */
   .nav-link {
     position: relative;
   }
@@ -195,51 +209,141 @@ const navLinks = [
     left: 50%;
     width: 100%;
     height: 2px;
-    background: #d84a29;
+    background: var(--color-brand-red);
     border-radius: 1px;
     transform: translateX(-50%) scaleX(0);
     transform-origin: center;
     transition: transform 0.2s ease;
   }
 
-  .nav-link:hover::after {
+  .nav-link:hover::after,
+  .nav-link-active::after {
     transform: translateX(-50%) scaleX(1);
   }
 
   .cta-btn {
     border-radius: var(--radius-cta);
   }
+
+  /* Hamburger morph */
+  .ham-line {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background-color: var(--color-ink);
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    transform-origin: center;
+    transition: transform 0.26s var(--ease-out), opacity 0.18s ease;
+  }
+
+  .ham-line-1 { transform: translateX(-50%) translateY(-7px); }
+  .ham-line-2 { transform: translateX(-50%) translateY(0px); }
+  .ham-line-3 { transform: translateX(-50%) translateY(7px); }
+
+  .hamburger.is-open .ham-line-1 {
+    transform: translateX(-50%) translateY(0) rotate(45deg);
+  }
+  .hamburger.is-open .ham-line-2 {
+    opacity: 0;
+    transform: translateX(-50%) scaleX(0);
+  }
+  .hamburger.is-open .ham-line-3 {
+    transform: translateX(-50%) translateY(0) rotate(-45deg);
+  }
+
+  /* Mobile nav overlay */
+  .mobile-nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.22s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0.22s;
+  }
+
+  .mobile-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity 0.22s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0s;
+  }
+
+  /* Editorial mobile links */
+  .mobile-link-list {
+    border-left: 3px solid var(--color-brand-red);
+    padding-left: 1.5rem;
+  }
+
+  .mobile-nav-link {
+    font-size: clamp(2rem, 6vw, 2.75rem);
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.2;
+    display: block;
+    padding: 0.3rem 0;
+    color: var(--color-text);
+    transition: color 0.15s ease;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link-active {
+    color: var(--color-brand-red);
+  }
+
+  .mobile-cta-note {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    opacity: 0.6;
+    margin: 0.5rem 0 0;
+  }
+
+  /* Staggered reveals */
+  .mobile-nav-item {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.28s ease, transform 0.28s var(--ease-out);
+    transition-delay: calc(var(--i) * 50ms + 60ms);
+  }
+
+  .mobile-nav.is-open .mobile-nav-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 
 <script>
   const pill = document.getElementById("nav-pill");
-  const toggle = document.getElementById("nav-toggle");
+  const toggle = document.getElementById("nav-toggle") as HTMLButtonElement | null;
   const close = document.getElementById("nav-close");
   const menu = document.getElementById("mobile-nav");
 
-  // Scroll: add is-scrolled class when page is not at top
   function updateScrollState() {
     if (!pill) return;
-    if (window.scrollY > 10) {
-      pill.classList.add("is-scrolled");
-    } else {
-      pill.classList.remove("is-scrolled");
-    }
+    pill.classList.toggle("is-scrolled", window.scrollY > 10);
   }
   window.addEventListener("scroll", updateScrollState, { passive: true });
   updateScrollState();
 
-  // Mobile menu
   function openMenu() {
     if (!menu || !toggle) return;
-    menu.style.display = "flex";
+    menu.classList.add("is-open");
+    toggle.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
     if (!menu || !toggle) return;
-    menu.style.display = "none";
+    menu.classList.remove("is-open");
+    toggle.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
   }
@@ -248,6 +352,6 @@ const navLinks = [
   close?.addEventListener("click", closeMenu);
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && menu?.style.display === "flex") closeMenu();
+    if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
   });
 </script>

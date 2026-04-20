@@ -30,12 +30,8 @@ const stages = [
 <section class="journey bg-white py-20 desktop:py-32">
   <div class="mx-auto max-w-layout px-6 desktop:px-16">
 
-    <p class="journey-eyebrow font-display font-semibold text-muted text-sm tracking-widest uppercase text-center mb-4">
-      How Unify fits your journey
-    </p>
-    <h2 class="journey-heading font-display font-bold text-text text-center text-3xl desktop:text-4xl mb-20 desktop:mb-28 tracking-cta">
-      From arrival to belonging
-    </h2>
+    <p class="journey-eyebrow">How Unify fits your journey</p>
+    <h2 class="journey-heading">From arrival<br>to belonging</h2>
 
     <div class="journey-stages">
       {stages.map((stage, i) => (
@@ -43,10 +39,8 @@ const stages = [
 
           <!-- Text side -->
           <div class="stage-text">
-<span class="stage-label font-display font-semibold text-brand text-base tracking-widest uppercase">
-              {stage.label}
-            </span>
-            <p class="stage-quote font-display font-bold text-text leading-tight text-journey-quote-mobile desktop:text-journey-quote">
+            <span class="stage-label">{stage.label}</span>
+            <p class="stage-quote">
               {stage.quote}
             </p>
           </div>
@@ -62,7 +56,7 @@ const stages = [
               src={stage.screenshot}
               alt={stage.alt}
               class="stage-phone"
-              loading="lazy"
+              loading="eager"
             />
           </div>
 
@@ -84,13 +78,60 @@ const stages = [
     gap: 4rem;
   }
 
+  .journey-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-align: center;
+    margin: 0 0 0.875rem;
+  }
+
+  .journey-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2.25rem;
+    line-height: 1.06;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    text-align: center;
+    margin: 0 0 5rem;
+    text-wrap: balance;
+  }
+
+  .stage-label {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: #ffffff;
+    background-color: var(--color-brand-red);
+    padding: 0.3rem 0.75rem;
+    border-radius: 99px;
+  }
+
+  .stage-quote {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-journey-quote-mobile);
+    line-height: 1.12;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    margin: 0;
+    text-wrap: balance;
+  }
+
   .spine {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 1rem;
     width: 2px;
-    background: #e5e5e5;
+    background: linear-gradient(to bottom, transparent, rgba(216, 74, 41, 0.3) 20%, rgba(216, 74, 41, 0.3) 80%, transparent);
     z-index: 0;
   }
 
@@ -103,26 +144,30 @@ const stages = [
       "visual";
     gap: 1.5rem;
     padding-left: 3rem;
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
-  .journey-stage.visible {
+  /* JS applies animate class — stages hidden until observed */
+  body.js-ready .journey-stage {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  body.js-ready .journey-stage.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
   .stage-0 { transition-delay: 0s; }
-  .stage-1 { transition-delay: 0.1s; }
-  .stage-2 { transition-delay: 0.1s; }
-  .stage-3 { transition-delay: 0.1s; }
+  .stage-1 { transition-delay: 0.12s; }
+  .stage-2 { transition-delay: 0.12s; }
+  .stage-3 { transition-delay: 0.12s; }
 
   .stage-text {
     grid-area: text;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
     justify-content: center;
   }
 
@@ -137,7 +182,7 @@ const stages = [
     max-width: 260px;
     height: auto;
     border-radius: 24px;
-    box-shadow: 0 20px 48px -12px rgba(23, 22, 22, 0.18);
+    box-shadow: 0 24px 56px -10px rgba(23, 22, 22, 0.22);
     object-fit: contain;
   }
 
@@ -157,8 +202,17 @@ const stages = [
   /* ---- Desktop ---- */
 
   @media (min-width: 1400px) {
+    .journey-heading {
+      font-size: 3.25rem;
+      margin-bottom: 7rem;
+    }
+
+    .stage-quote {
+      font-size: var(--text-journey-quote);
+    }
+
     .journey-stages {
-      gap: 6rem;
+      gap: 7rem;
     }
 
     .spine {
@@ -221,6 +275,11 @@ const stages = [
   /* ---- Tablet ---- */
 
   @media (min-width: 810px) and (max-width: 1399px) {
+    .journey-heading {
+      font-size: 2.75rem;
+      margin-bottom: 5.5rem;
+    }
+
     .journey-stages {
       gap: 5rem;
     }
@@ -240,6 +299,7 @@ const stages = [
     .spine {
       left: 50%;
       transform: translateX(-50%);
+      background: linear-gradient(to bottom, transparent, rgba(216, 74, 41, 0.25) 15%, rgba(216, 74, 41, 0.25) 85%, transparent);
     }
 
     .stage-phone {
@@ -249,6 +309,7 @@ const stages = [
 </style>
 
 <script>
+  document.body.classList.add("js-ready");
   const stages = document.querySelectorAll(".journey-stage");
   if (stages.length) {
     const observer = new IntersectionObserver(
@@ -260,7 +321,7 @@ const stages = [
           }
         });
       },
-      { threshold: 0.15 },
+      { threshold: 0.12 },
     );
     stages.forEach((stage) => observer.observe(stage));
   }

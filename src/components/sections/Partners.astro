@@ -37,14 +37,12 @@ const partners = [
 ---
 
 <section class="partners bg-white py-14 desktop:py-20">
-  <p
-    class="partners-label font-display font-semibold text-ink text-base tracking-[0.14em] uppercase text-center mb-12"
-  >
+  <p class="partners-label">
     Our Partners
   </p>
 
-  <div class="partners-track-wrapper overflow-hidden relative">
-    <div class="partners-track" aria-hidden="true">
+  <div class="partners-track-wrapper">
+    <div class="partners-track">
       {
         partners.map((p) => (
           <img src={p.src} alt={p.alt} class="partner-logo" loading="lazy" />
@@ -52,7 +50,7 @@ const partners = [
       }
       {
         partners.map((p) => (
-          <img src={p.src} alt="" class="partner-logo" loading="lazy" />
+          <img src={p.src} alt="" class="partner-logo" loading="lazy" aria-hidden="true" />
         ))
       }
     </div>
@@ -60,19 +58,32 @@ const partners = [
 </section>
 
 <style>
+  .partners-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-align: center;
+    margin: 0 0 3rem;
+  }
+
   .partners-track-wrapper {
+    overflow: hidden;
+    position: relative;
     mask-image: linear-gradient(
       to right,
       transparent,
-      black 12%,
-      black 88%,
+      black 10%,
+      black 90%,
       transparent
     );
     -webkit-mask-image: linear-gradient(
       to right,
       transparent,
-      black 12%,
-      black 88%,
+      black 10%,
+      black 90%,
       transparent
     );
   }
@@ -80,16 +91,32 @@ const partners = [
   .partners-track {
     display: flex;
     align-items: center;
-    gap: 3.5rem;
+    gap: 4rem;
     width: max-content;
     animation: marquee 36s linear infinite;
+  }
+
+  /* Pause on hover for entire track */
+  @media (hover: hover) and (pointer: fine) {
+    .partners-track-wrapper:hover .partners-track {
+      animation-play-state: paused;
+    }
   }
 
   .partner-logo {
     height: 48px;
     width: auto;
     flex-shrink: 0;
-    opacity: 0.7;
+    opacity: 0.72;
+    filter: grayscale(0.2);
+    transition: opacity 0.25s ease, filter 0.25s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .partner-logo:hover {
+      opacity: 1;
+      filter: grayscale(0);
+    }
   }
 
   @media (min-width: 1400px) {
@@ -99,12 +126,8 @@ const partners = [
   }
 
   @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 
   @media (prefers-reduced-motion: reduce) {

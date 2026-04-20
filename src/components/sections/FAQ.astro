@@ -53,7 +53,7 @@ const faqs: { q: string; a: string }[] = [
   <div class="faq-inner">
     <header class="faq-header">
       <p class="faq-eyebrow">FAQ</p>
-      <h2 class="faq-title">Frequently asked questions</h2>
+      <h2 class="faq-title">Frequently asked<br>questions</h2>
     </header>
 
     <div class="faq-list">
@@ -62,9 +62,15 @@ const faqs: { q: string; a: string }[] = [
           <details class="faq-item">
             <summary class="faq-summary">
               <span class="faq-question">{item.q}</span>
-              <span class="faq-icon" aria-hidden="true" />
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
             </summary>
-            <div class="faq-answer" set:html={item.a} />
+            <div class="faq-answer-wrap">
+              <div class="faq-answer" set:html={item.a} />
+            </div>
           </details>
         ))
       }
@@ -91,10 +97,10 @@ const faqs: { q: string; a: string }[] = [
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.8125rem;
-    letter-spacing: 0.12em;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-brand-red);
-    margin: 0 0 0.625rem;
+    margin: 0 0 0.75rem;
   }
 
   .faq-title {
@@ -102,9 +108,10 @@ const faqs: { q: string; a: string }[] = [
     font-weight: 700;
     font-size: var(--text-h3-mobile);
     line-height: 1.06;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--tracking-tight);
     color: var(--color-text);
     margin: 0;
+    text-wrap: balance;
   }
 
   .faq-list {
@@ -113,6 +120,7 @@ const faqs: { q: string; a: string }[] = [
 
   .faq-item {
     border-top: 1px solid rgba(0, 0, 0, 0.08);
+    transition: background-color 0.15s ease;
   }
 
   .faq-summary {
@@ -120,13 +128,24 @@ const faqs: { q: string; a: string }[] = [
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    padding: 1.25rem 0;
+    padding: 1.375rem 1rem 1.375rem 1rem;
     cursor: pointer;
     list-style: none;
+    user-select: none;
   }
 
   .faq-summary::-webkit-details-marker {
     display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .faq-item:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .faq-item:hover .faq-question {
+      color: var(--color-brand-red);
+    }
   }
 
   .faq-question {
@@ -135,51 +154,48 @@ const faqs: { q: string; a: string }[] = [
     font-size: 1.0625rem;
     line-height: 1.4;
     color: var(--color-text);
+    transition: color 0.15s ease;
   }
 
-  .faq-icon {
-    position: relative;
+  /* Chevron icon */
+  .faq-chevron {
     flex-shrink: 0;
-    width: 1.25rem;
-    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.625rem;
+    height: 1.625rem;
+    color: var(--color-muted);
+    transition: transform 0.28s var(--ease-out), color 0.15s ease;
   }
 
-  .faq-icon::before,
-  .faq-icon::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    background-color: var(--color-text);
-    border-radius: 2px;
-    transition: transform 0.22s ease, opacity 0.22s ease;
+  details[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--color-text);
   }
 
-  .faq-icon::before {
-    width: 14px;
-    height: 2px;
-  }
-
-  .faq-icon::after {
-    width: 2px;
-    height: 14px;
-  }
-
-  details[open] .faq-icon::after {
-    transform: rotate(90deg);
+  /* Animated answer wrapper using JS-driven max-height */
+  .faq-answer-wrap {
+    overflow: hidden;
+    max-height: 0;
     opacity: 0;
+    transition: max-height 0.38s var(--ease-out), opacity 0.28s ease;
+  }
+
+  .faq-answer-wrap.is-open {
+    opacity: 1;
   }
 
   /* Answer rich text */
   .faq-answer {
-    padding: 0 0 1.5rem;
+    padding: 0.25rem 1rem 1.75rem 1rem;
     max-width: 720px;
   }
 
   .faq-answer p {
     font-family: var(--font-display);
     font-size: 0.9375rem;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--color-muted);
     margin: 0 0 0.875rem;
   }
@@ -197,17 +213,18 @@ const faqs: { q: string; a: string }[] = [
   .faq-answer ul li {
     font-family: var(--font-display);
     font-size: 0.9375rem;
-    line-height: 1.7;
+    line-height: 1.75;
     color: var(--color-muted);
     padding-left: 1.25rem;
     position: relative;
   }
 
   .faq-answer ul li::before {
-    content: "*";
+    content: "–";
     position: absolute;
     left: 0;
-    color: var(--color-muted);
+    color: var(--color-brand-red);
+    font-weight: 600;
   }
 
   .faq-answer strong {
@@ -253,3 +270,37 @@ const faqs: { q: string; a: string }[] = [
     }
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach(details => {
+    const summary = details.querySelector('summary')!;
+    const wrap = details.querySelector<HTMLElement>('.faq-answer-wrap')!;
+
+    // Prevent default toggle; we control open state manually
+    summary.addEventListener('click', e => {
+      e.preventDefault();
+      const isOpen = details.hasAttribute('open');
+
+      if (isOpen) {
+        // Collapse: set explicit height then animate to 0
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        wrap.classList.remove('is-open');
+        requestAnimationFrame(() => {
+          wrap.style.maxHeight = '0px';
+        });
+        wrap.addEventListener('transitionend', () => {
+          details.removeAttribute('open');
+        }, { once: true });
+      } else {
+        // Expand
+        details.setAttribute('open', '');
+        wrap.style.maxHeight = wrap.scrollHeight + 'px';
+        wrap.classList.add('is-open');
+        wrap.addEventListener('transitionend', () => {
+          // Allow content to resize naturally after animation
+          wrap.style.maxHeight = 'none';
+        }, { once: true });
+      }
+    });
+  });
+</script>

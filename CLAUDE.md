@@ -144,9 +144,9 @@ DO NOT:
 
 ## UI / UX Rules
 
-- Match Framer visually on desktop and mobile
-- Preserve layout, spacing, typography
-- Maintain mobile + desktop behavior
+- The homepage has been deliberately redesigned beyond the Framer original — do NOT revert to Framer's layout or copy without explicit request
+- The visual direction is editorial and bold: asymmetric composition, strong typographic hierarchy, fluid type via clamp(), physical micro-interactions
+- Preserve layout, spacing, typography as implemented
 - Avoid generic AI-looking UI
 - Do not redesign unless explicitly requested
 - Enforce proper HTML semantics — Framer output often lacks heading hierarchy and semantic structure. The Astro rebuild must fix this, not replicate it.
@@ -310,20 +310,20 @@ Do NOT implement
 
 Decisions Log
 
-Design Tokens (extracted from Framer)
+Design Tokens (extracted from Framer + extended for editorial redesign)
 
 Colors:
 
-* Brand/CTA: #D84A29
-* Text/Ink: #181818
+* Brand/CTA: #D84A29 — var(--color-brand-red)
+* Text/Ink: #181818 — var(--color-text)
+* Ink dark: #171616 — var(--color-ink)
 * White: #FFFFFF
-* Ink dark: #171616
-* Cream: #FFFCF3
-* Muted: #575757
+* Cream: #FFFCF3 — var(--color-cream) — also set as html/body background
+* Muted: #575757 — var(--color-muted)
 
 Fonts:
 
-* Aileron: self-hosted woff2 in public/fonts/ — Regular (400), SemiBold (600), Bold (700), Light (300)
+* Aileron: self-hosted woff2 in public/fonts/ — Light (300), Regular (400), SemiBold (600), Bold (700)
 * Figtree: Google Fonts — CTA button and UI elements only
 
 Nav links: Aileron SemiBold 16px, color #181818
@@ -338,7 +338,7 @@ Breakpoints:
 
 Container: max-width 1600px
 
-Type scale:
+Type scale (sections use fluid clamp() — do not override with fixed px):
 
 * H1: 80px / 80px
 * H2: 60px / 68px
@@ -346,6 +346,20 @@ Type scale:
 * H4: 32px / 40px
 * H5: 24px / 32px
 * Body: 24/20/16/14px
+
+Letter-spacing tokens (in @theme):
+
+* --tracking-display: -0.05em — use on hero H1 big word
+* --tracking-tight: -0.04em — use on large headings
+* --tracking-label: 0.08em — use on eyebrows/overlines (uppercase)
+
+Easing tokens (in @theme, Emil Kowalski principles):
+
+* --ease-out: cubic-bezier(0.23, 1, 0.32, 1) — all enter/reveal transitions
+* --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)
+* --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1)
+
+Global grain texture: body::after with SVG fractalNoise at opacity 0.028 — do not remove
 
 ⸻
 
@@ -380,7 +394,7 @@ CTA button:
 Logo behavior: Plain <div>, NOT a link. Clicking does nothing.
 Logo asset: /assets/logo/logo-with-name.png
 CTA URL: https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 — new tab
-Nav links: Home, About, Community, Blog, Resources
+Nav links: Home, About, Community, Blog
 Mobile: hamburger at ≤1399px, full overlay with stacked links + CTA
 
 ⸻
@@ -471,13 +485,7 @@ Completed — Milestone 1
 
 ⸻
 
-Milestone 2 — Homepage (A+C structure)
-
-The homepage uses an emotional/narrative + journey-based structure. This is NOT a copy of Savar’s reference or the Framer site. It is original.
-
-Each section is a standalone component in src/components/sections/, imported into src/pages/index.astro in this order:
-
-Status:
+Completed — Milestone 2 — Homepage sections
 
 * ✅ Hero — Hero.astro
 * ✅ Problem — Problem.astro
@@ -489,31 +497,49 @@ Status:
 
 ⸻
 
+Completed — Milestone 3 — Visual revamp (editorial redesign)
+
+Goal: escape generic AI-slop aesthetics. All sections redesigned with editorial character. Build remains shippable — same brand identity, no new dependencies.
+
+* ✅ Global: html/body background set to cream (#FFFCF3) — no white flash at top
+* ✅ Global: grain texture overlay (body::after, SVG fractalNoise, opacity 0.028)
+* ✅ Global: easing + tracking tokens added to @theme
+* ✅ Hero: fluid clamp() type hierarchy (newcomer at clamp(3.5rem,10.5vw,9rem)), staggered CSS entrance animations, blob-3.svg decoration, tight padding under navbar, phone top-aligned
+* ✅ Problem: progressive-enhancement scroll reveal using CSS transitions (not keyframe animations)
+* ✅ Partners: pause-on-hover, grayscale-to-color on logo hover
+* ✅ Journey: loading="eager" on images, progressive enhancement animation (js-ready pattern), brand-red pill stage labels, spine gradient
+* ✅ ProductOverview: faint background numerals via ::before, deeper video drop-shadow with warm red tint
+* ✅ FAQ: SVG chevron (rotates 180°), JS-driven max-height animation, hover warmth, 1rem left/right padding on summary + answer
+* ✅ Navbar: hamburger morphs to X via CSS transforms, mobile overlay uses opacity/visibility transition, link stagger via CSS --i variable
+* ✅ CTABand: redesigned to dark ink background, editorial split layout, "Stop guessing. / Start settling." headline, blob decoration
+
+⸻
+
 Hero section
 
-Copy (confirmed, do not change until Savar meeting Friday):
+Copy:
 
-* H1: “The all-in-one newcomer settlement app”
+* Overline: “Newcomer settlement app” (brand-red, uppercase, tracking-label)
+* H1 structure: “The all-in-one” (light, muted) / “newcomer” (bold display, clamp 3.5rem→9rem) / “settlement app” (bold, italic brand-red “app”)
 * Subtext: “Unify makes settling in Canada simpler, clearer, and more connected”
-* “No credit card required” below App Store badge
+* App Store badge → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 new tab, height 52px
+* “No credit card required” below badge
 
-App Store badge: /assets/app-store-badge-en.svg → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 new tab, height 52px
+Layout (do not revert):
 
-Creative direction — DO NOT copy Savar’s layout:
+* Two-column grid at tablet+: `1fr 480px`, gap 1rem, padding 0 5rem desktop
+* `align-items: flex-start` on the grid — text and phone both pin to the top
+* Phone: `align-items: flex-start` on .hero-visual (top-aligned, not bottom)
+* Phone: `justify-content: center` on .hero-visual (centered in column, not flush-right)
+* padding-top: 4.5rem mobile / 5rem tablet / 5.5rem desktop (tight under navbar)
+* Decorative blob-3.svg top-right at opacity 0.28
+* Phone: /assets/screenshots/learn-hero.avif, max-height 680px desktop, loading=”eager”
 
-* The hero layout, animation, and visual treatment must be original
-* The hero must feel premium and human — not generic SaaS
-* CSS animations only — no Framer Motion, no motion/react, no JS animation libraries
-* Phone mockup: /assets/screenshots/learn-hero.avif
+Animations (CSS only, animation-fill-mode: forwards):
 
-Current implementation notes:
-
-* Left-aligned headline with asymmetric composition
-* Phone mockup breaks subtly into the Problem section on desktop
-* Eyebrow removed
-* Decorative blobs removed
-* The goal is subtle breakout, not dramatic overlap
-* Do NOT reintroduce earlier exploratory hero ideas unless explicitly requested
+* Overline, h1-small, h1-big, h1-sub, desc, cta-row: staggered hero-fade-up (translateY 20px → 0), delays 0.1s–0.52s
+* Phone: hero-phone-in (translateX 32px + translateY 12px → 0), 0.8s delay 0.2s
+* All use --ease-out easing
 
 ⸻
 
@@ -605,10 +631,11 @@ Implementation notes (do not revert):
 
 FAQ section
 
-Native HTML <details>/<summary> — zero JS required.
-Background: var(--color-cream). Full-width bordered rows, +/× icon on right (CSS only via details[open]), expands inline.
+Native HTML <details>/<summary> with JS-driven max-height animation (not CSS-only — native details can't CSS-transition).
+Background: var(--color-cream). SVG chevron rotates 180° on open. Rows have hover background + brand-red question color on hover.
+Summary and answer both have padding: 1rem left/right so text breathes away from the hover border.
 
-Questions and answer wording sourced from Framer (exact copy — do not rewrite):
+Questions (exact copy — do not rewrite):
 
 1. What is Unify Social?
 2. Who is Unify Social best for?
@@ -616,30 +643,70 @@ Questions and answer wording sourced from Framer (exact copy — do not rewrite)
 4. What workshops does Unify Social offer, and how can I join one?
 5. Is Unify Social free to use?
 
-Answers use rich HTML (multi-paragraph, <ul> lists, <strong> sub-headings) rendered via set:html.
-List items use * prefix via CSS ::before — do not use actual <ul> bullets.
-Answer copy is verbatim from Framer screenshots — do not paraphrase or shorten.
+Answers use rich HTML rendered via set:html. List bullets are brand-red “–“ via CSS ::before.
 
 ⸻
 
 CTA band section
 
-* Background: #ffffff (white) — NOT dark ink
-* Headline: “Take the guesswork out of your newcomer journey with the full Unify experience.”
-  — First part (“Take the guesswork…journey with”) in var(--color-text) dark
-  — “the full Unify experience.” wrapped in <span class=”cta-emphasis”> in var(--color-muted) grey, with “Unify” in <em> italic
-* Subtext: “Be the first to experience Unify and shape the future of newcomer support in Canada” — muted grey, centered
-* Large brand-red full-width button: “Download the App Now” → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762
-* Fade-up on scroll via IntersectionObserver (same pattern as Problem.astro)
+* Background: var(--color-ink) #171616 — dark, NOT white
+* Layout: two-column flex at tablet+ (left: headline, right: sub + button)
+* Headline: “Stop guessing.” / “Start settling.” — white, italic brand-red “Start settling.”
+* Eyebrow: “Ready to get started?” — brand-red, uppercase
+* Sub: “Join thousands of newcomers who use Unify to navigate life in Canada — from day one to finding home.”
+* Button: “Download the App Now” → App Store URL, brand-red bg with red glow shadow on hover
+* Decorative blob-8.svg bottom-right at low opacity
+* Scroll fade-up via IntersectionObserver + js-ready progressive enhancement pattern
+
+⸻
+
+Journey section (do not revert)
+
+* Section images use loading="eager" — NOT lazy (lazy breaks screenshots and above-fold rendering)
+* Stage labels (Day 1, Week 1, etc.) are brand-red pills: white text, border-radius 99px
+* Timeline spine: linear-gradient transparent → brand-red → transparent
+* Scroll animation uses progressive enhancement: JS adds body.js-ready → stages hidden; observer adds .visible → CSS transition reveals them
+* Pattern ensures stages are visible when JS hasn't run (SSR/screenshot context)
+
+⸻
+
+Problem section (do not revert)
+
+* Uses CSS transitions (NOT keyframe animations) for scroll reveal — avoids animation-fill-mode: both opacity bug
+* JS adds .animate class to section immediately, then .visible when observed
+* Default (no JS): text is visible. With JS: hidden until in view, then transitions in.
+
+⸻
+
+Scroll animation pattern (use this for all new sections)
+
+Progressive enhancement — never set opacity: 0 globally without a JS-gated class:
+
+```css
+/* Default: visible */
+.my-element { transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+
+/* JS-gated: hidden until observed */
+.my-section.animate .my-element { opacity: 0; transform: translateY(24px); }
+.my-section.animate.visible .my-element { opacity: 1; transform: translateY(0); }
+```
+
+```js
+section.classList.add('animate');
+observer fires → section.classList.add('visible');
+```
+
+Do NOT use `animation-fill-mode: both` with a delay on scroll-triggered elements — it causes opacity: 0 to persist before the animation starts, breaking static renders and slow JS contexts.
 
 ⸻
 
 Rules for all sections
 
 * No React, no animation libraries, no Framer Motion
-* CSS animations only — Intersection Observer inline script where scroll-triggered fade is needed
+* CSS animations on page-load elements (hero), CSS transitions on scroll-reveal elements
 * No arbitrary Tailwind values — add tokens to @theme
 * Semantic HTML throughout (<section>, <h2>, etc.)
 * Build one section at a time, verify with npm run build before moving to next
-* Use Playwright to screenshot after each section is built
+* Playwright installed as dev dependency — use for visual QA: `npx playwright screenshot http://localhost:4321 /tmp/out.png --viewport-size="1440,900" --full-page`
+* MCP config at .mcp.json — Playwright MCP server available after Claude Code restart
 ```

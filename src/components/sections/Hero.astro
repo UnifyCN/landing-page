@@ -3,102 +3,229 @@ const APP_STORE_URL =
   "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
 ---
 
-<section class="hero relative bg-white pt-20 pb-12 desktop:pt-28 desktop:pb-0">
-  <div class="mx-auto max-w-layout px-6 desktop:px-16">
-    <div
-      class="flex flex-col-reverse tablet:flex-row items-center gap-8 desktop:gap-6"
-    >
-      <div class="hero-content flex flex-col gap-6 desktop:gap-8">
-        <h1
-          class="font-display font-bold text-h1-mobile desktop:text-h1 leading-none tracking-cta text-text"
+<section class="hero">
+  <div class="hero-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-3.svg" alt="" />
+  </div>
+
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hero-overline">Newcomer settlement app</p>
+
+      <h1 class="hero-h1">
+        <span class="hero-h1-small">The all-in-one</span>
+        <strong class="hero-h1-big">newcomer</strong>
+        <span class="hero-h1-sub">settlement <em>app</em></span>
+      </h1>
+
+      <p class="hero-desc">
+        Unify makes settling in Canada simpler, clearer, and more connected
+      </p>
+
+      <div class="hero-cta-row">
+        <a
+          href={APP_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hero-badge-link"
+          aria-label="Download Unify on the App Store"
         >
-          <span class="hero-line hero-line-1 block"
-            >The all-in-one newcomer</span
-          >
-          <span class="hero-line hero-line-2 block">settlement app</span>
-        </h1>
-
-        <p class="hero-subtext font-display text-xl text-muted leading-relaxed">
-          Unify makes settling in Canada simpler, clearer, and more connected
-        </p>
-
-        <div class="hero-badge flex flex-col items-start gap-2">
-          <a
-            href={APP_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Download Unify on the App Store"
-          >
-            <img
-              src="/assets/app-store-badge-en.svg"
-              alt="Download on the App Store"
-              class="h-13 w-auto"
-            />
-          </a>
-          <p class="font-display text-micro text-muted">
-            No credit card required
-          </p>
-        </div>
+          <img
+            src="/assets/app-store-badge-en.svg"
+            alt="Download on the App Store"
+            class="hero-badge"
+          />
+        </a>
+        <p class="hero-note">No credit card required</p>
       </div>
+    </div>
 
-      <div class="hero-visual flex justify-center">
-        <img
-          src="/assets/screenshots/learn-hero.avif"
-          alt="Unify app – Learn screen"
-          class="hero-phone"
-        />
-      </div>
+    <div class="hero-visual">
+      <img
+        src="/assets/screenshots/learn-hero.avif"
+        alt="Unify app – learn screen"
+        class="hero-phone"
+        loading="eager"
+      />
     </div>
   </div>
 </section>
 
 <style>
-  .hero-content,
-  .hero-visual {
+  .hero {
+    position: relative;
+    background-color: var(--color-cream);
+    overflow: hidden;
+    padding-top: 4.5rem;
+    padding-bottom: 0;
+  }
+
+  /* Decorative blob — top right, warm tint */
+  .hero-blob {
+    position: absolute;
+    top: -8%;
+    right: -8%;
+    width: 52%;
+    max-width: 640px;
+    opacity: 0.28;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+    filter: hue-rotate(-10deg) saturate(0.6);
+  }
+
+  .hero-blob img {
+    width: 100%;
+    height: auto;
+  }
+
+  .hero-inner {
     position: relative;
     z-index: 1;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  /* ── Overline ── */
+  .hero-overline {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+  }
+
+  /* ── Headline ── */
+  .hero-h1 {
+    margin: 0;
+    line-height: 0.92;
+  }
+
+  .hero-h1-small {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
+    letter-spacing: -0.01em;
+    color: var(--color-muted);
+    margin-bottom: 0.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.18s forwards;
+  }
+
+  .hero-h1-big {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3.5rem, 10.5vw, 9rem);
+    letter-spacing: var(--tracking-display);
+    line-height: 0.88;
+    color: var(--color-text);
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.24s forwards;
+  }
+
+  .hero-h1-sub {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 4.8vw, 4.25rem);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    margin-top: 0.375rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.3s forwards;
+  }
+
+  .hero-h1-sub em {
+    font-style: italic;
+    color: var(--color-brand-red);
+  }
+
+  /* ── Body copy ── */
+  .hero-desc {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.4vw, 1.1875rem);
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin: 1.75rem 0 0;
+    max-width: 44ch;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.42s forwards;
+  }
+
+  /* ── CTA row ── */
+  .hero-cta-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 2.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.52s forwards;
+  }
+
+  .hero-badge-link {
+    display: inline-block;
+    transition: transform 0.2s var(--ease-out), filter 0.2s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hero-badge-link:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: drop-shadow(0 6px 16px rgba(23, 22, 22, 0.15));
+    }
+  }
+
+  .hero-badge-link:active {
+    transform: scale(0.97);
+  }
+
+  .hero-badge {
+    height: 52px;
+    width: auto;
+    display: block;
+  }
+
+  .hero-note {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    opacity: 0.65;
+    margin: 0;
+  }
+
+  /* ── Phone ── */
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    opacity: 0;
+    animation: hero-phone-in 0.8s var(--ease-out) 0.2s forwards;
   }
 
   .hero-phone {
     width: 100%;
     max-height: 360px;
     object-fit: contain;
-    filter: drop-shadow(0 24px 40px rgba(23, 22, 22, 0.14));
+    filter: drop-shadow(0 28px 48px rgba(23, 22, 22, 0.16));
   }
 
-  @media (min-width: 810px) {
-    .hero-content {
-      flex: 50 1 0%;
-      max-width: 520px;
-    }
-    .hero-visual {
-      flex: 42 1 0%;
-      justify-content: flex-start;
-      padding-left: 2.5rem;
-      align-self: flex-end;
-    }
-
-    .hero-phone {
-      max-height: 700px;
-    }
-  }
-
-  @media (min-width: 1400px) {
-    .hero-content {
-      margin-top: -32px;
-    }
-
-    .hero-visual {
-      animation: fade-in-right 0.9s ease-out 0.3s both;
-
-      bottom: 0;
-    }
-  }
-
-  @keyframes fade-up {
+  /* ── Entrance animations ── */
+  @keyframes hero-fade-up {
     from {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
@@ -106,36 +233,65 @@ const APP_STORE_URL =
     }
   }
 
-  @keyframes fade-in-right {
+  @keyframes hero-phone-in {
     from {
       opacity: 0;
-      transform: translateX(40px);
+      transform: translateX(32px) translateY(12px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(0) translateY(0);
     }
   }
 
-  .hero-line-1 {
-    animation: fade-up 0.6s ease-out 0.1s both;
-  }
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .hero {
+      padding-top: 5rem;
+    }
 
-  .hero-line-2 {
-    animation: fade-up 0.6s ease-out 0.25s both;
-  }
+    .hero-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 0 3rem;
+      align-items: center;
+    }
 
-  .hero-subtext {
-    animation: fade-up 0.5s ease-out 0.4s both;
-  }
-
-  .hero-badge {
-    animation: fade-up 0.5s ease-out 0.55s both;
-  }
-
-  @media (max-width: 1399px) {
     .hero-visual {
-      animation: fade-up 0.6s ease-out 0.2s both;
+      justify-content: center;
+    }
+
+    .hero-phone {
+      max-height: 540px;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .hero {
+      padding-top: 5.5rem;
+    }
+
+    .hero-inner {
+      /* Wider right column brings phone closer to text */
+      grid-template-columns: 1fr 480px;
+      gap: 1rem;
+      padding: 0 5rem;
+      align-items: center;
+    }
+
+    .hero-blob {
+      right: -4%;
+      width: 42%;
+    }
+
+    .hero-visual {
+      justify-content: center;
+    }
+
+    .hero-phone {
+      max-height: 680px;
+      max-width: 380px;
     }
   }
 </style>

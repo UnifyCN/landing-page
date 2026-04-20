@@ -49,6 +49,7 @@ const features = [
               aria-selected={i === 0 ? "true" : "false"}
               aria-controls={`pov-${f.id}`}
               data-target={f.id}
+              data-num={f.num}
               type="button"
             >
               <span class="po-num">{f.num}</span>
@@ -117,11 +118,11 @@ const features = [
   .po-eyebrow {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.8125rem;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
     color: var(--color-muted);
-    margin: 0 0 0.625rem;
+    margin: 0 0 0.75rem;
   }
 
   .po-title {
@@ -129,7 +130,7 @@ const features = [
     font-weight: 700;
     font-size: var(--text-h3-mobile);
     line-height: 1.06;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--tracking-tight);
     color: var(--color-text);
     margin: 0;
   }
@@ -152,6 +153,30 @@ const features = [
     padding: 1.0625rem 0;
     cursor: pointer;
     width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Faint large numeral behind the active item */
+  .po-item::before {
+    content: attr(data-num);
+    position: absolute;
+    right: -0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 5.5rem;
+    line-height: 1;
+    color: var(--color-text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    user-select: none;
+  }
+
+  .po-item.active::before {
+    opacity: 0.045;
   }
 
   .po-num {
@@ -256,7 +281,7 @@ const features = [
     width: 100%;
     height: auto;
     /* drop-shadow traces the phone bezel, not a rectangular box */
-    filter: drop-shadow(0 20px 64px rgba(23, 22, 22, 0.20));
+    filter: drop-shadow(0 24px 64px rgba(23, 22, 22, 0.24)) drop-shadow(0 4px 16px rgba(216, 74, 41, 0.06));
   }
 
   /* ── Tablet: side-by-side ── */

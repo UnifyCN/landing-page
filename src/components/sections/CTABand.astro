@@ -4,141 +4,197 @@ const APP_STORE_URL =
 ---
 
 <section class="cta-wrap">
+  <div class="cta-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-8.svg" alt="" />
+  </div>
   <div class="cta-inner">
-    <h2 class="cta-title">
-      Take the guesswork out of your newcomer journey with
-      <span class="cta-emphasis">the full <em>Unify</em> experience.</span>
-    </h2>
-    <p class="cta-sub">
-      Be the first to experience Unify and shape the future of newcomer support
-      in Canada
-    </p>
-    <a
-      href={APP_STORE_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="cta-btn"
-    >
-      Download the App Now
-    </a>
+    <div class="cta-left">
+      <p class="cta-eyebrow">Ready to get started?</p>
+      <h2 class="cta-title">
+        Stop guessing.<br />
+        <em>Start settling.</em>
+      </h2>
+    </div>
+    <div class="cta-right">
+      <p class="cta-sub">
+        Join thousands of newcomers who use Unify to navigate life in Canada — from day one to finding home.
+      </p>
+      <a
+        href={APP_STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cta-btn"
+      >
+        Download the App Now
+      </a>
+      <p class="cta-note">Free to download. No credit card required.</p>
+    </div>
   </div>
 </section>
 
 <style>
   .cta-wrap {
-    background-color: #ffffff;
-    padding: 5rem 0 6rem;
+    position: relative;
+    background-color: var(--color-ink);
+    overflow: hidden;
+    padding: 6rem 0 7rem;
+  }
+
+  .cta-blob {
+    position: absolute;
+    bottom: -20%;
+    right: -10%;
+    width: 55%;
+    max-width: 680px;
+    opacity: 0.07;
+    pointer-events: none;
+    user-select: none;
+    filter: hue-rotate(330deg) saturate(0.4) invert(1);
+  }
+
+  .cta-blob img {
+    width: 100%;
+    height: auto;
   }
 
   .cta-inner {
-    max-width: 800px;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    gap: 3rem;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
-  .cta-wrap.visible .cta-inner {
+  body.js-ready .cta-inner {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  body.js-ready .cta-wrap.visible .cta-inner {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* ── Left: headline ── */
+  .cta-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
   }
 
   .cta-title {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: var(--text-h3-mobile);
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--color-text);
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: var(--tracking-display);
+    color: #ffffff;
     margin: 0;
   }
 
-  .cta-emphasis {
-    color: var(--color-muted);
+  .cta-title em {
+    font-style: italic;
+    color: var(--color-brand-red);
   }
 
-  .cta-emphasis em {
-    font-style: italic;
+  /* ── Right: sub + CTA ── */
+  .cta-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
   }
 
   .cta-sub {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
     line-height: 1.65;
-    color: var(--color-muted);
+    color: rgba(255, 255, 255, 0.6);
     margin: 0;
-    max-width: 520px;
+    max-width: 42ch;
   }
 
   .cta-btn {
-    display: block;
-    width: 100%;
-    max-width: 100%;
+    display: inline-block;
     background-color: var(--color-brand-red);
     color: #ffffff;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.125rem;
+    font-size: 1rem;
     line-height: 1;
     letter-spacing: -0.01em;
-    text-align: center;
     text-decoration: none;
-    padding: 1.25rem 2rem;
+    padding: 1rem 2rem;
     border-radius: var(--radius-cta);
-    margin-top: 0.5rem;
-    transition: opacity 0.2s ease;
+    box-shadow: 0 4px 20px -4px rgba(216, 74, 41, 0.5);
+    transition: transform 0.18s var(--ease-out), box-shadow 0.18s ease;
   }
 
-  .cta-btn:hover {
-    opacity: 0.88;
+  @media (hover: hover) and (pointer: fine) {
+    .cta-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 12px 32px -6px rgba(216, 74, 41, 0.55);
+    }
   }
 
+  .cta-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px -2px rgba(216, 74, 41, 0.3);
+  }
+
+  .cta-note {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+  }
+
+  /* ── Tablet ── */
   @media (min-width: 810px) {
     .cta-wrap {
-      padding: 6rem 0 7rem;
+      padding: 7rem 0 8rem;
     }
 
     .cta-inner {
       padding: 0 3rem;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 4rem;
     }
 
-    .cta-title {
-      font-size: 2.5rem;
+    .cta-left {
+      flex: 0 0 auto;
     }
 
-    .cta-sub {
-      font-size: 1.0625rem;
+    .cta-right {
+      flex: 1;
+      justify-content: flex-end;
+      padding-top: 0.5rem;
     }
   }
 
+  /* ── Desktop ── */
   @media (min-width: 1400px) {
     .cta-wrap {
-      padding: 7.5rem 0 8.5rem;
+      padding: 8.5rem 0 9.5rem;
     }
 
     .cta-inner {
-      padding: 0 2rem;
-      gap: 2rem;
-      max-width: 900px;
-    }
-
-    .cta-title {
-      font-size: var(--text-h3);
-    }
-
-    .cta-sub {
-      font-size: 1.125rem;
+      padding: 0 5rem;
+      gap: 5rem;
     }
 
     .cta-btn {
-      font-size: 1.25rem;
-      padding: 1.375rem 2.5rem;
+      font-size: 1.125rem;
+      padding: 1.125rem 2.25rem;
     }
   }
 </style>
@@ -153,7 +209,7 @@ const APP_STORE_URL =
           observer.disconnect();
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0.12 },
     );
     observer.observe(section);
   }
