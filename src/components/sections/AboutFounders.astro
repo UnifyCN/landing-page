@@ -2,7 +2,10 @@
 ---
 
 <section class="founders">
-  <div class="founders-inner">
+  <div class="founders-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-10.svg" alt="" />
+  </div>
+  <div class="founders-inner" style="position:relative;z-index:1">
     <div class="founders-left">
       <p class="founders-eyebrow">Our journey</p>
       <h2 class="founders-headline">Hi, we're Cedric<br>and Savar&nbsp;👋</h2>
@@ -28,8 +31,23 @@
 </section>
 
 <style>
+  .founders-blob {
+    position: absolute;
+    bottom: -12%;
+    right: -8%;
+    width: 42rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.09;
+    transform: rotate(-10deg);
+    z-index: 0;
+  }
+  .founders-blob img { width: 100%; height: auto; }
+
   .founders {
     background-color: var(--color-cream);
+    position: relative;
+    overflow: hidden;
     padding: 5.5rem 0 6rem;
     transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }

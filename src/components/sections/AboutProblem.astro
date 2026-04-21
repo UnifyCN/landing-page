@@ -22,7 +22,10 @@ const problems = [
 ---
 
 <section class="ap">
-  <div class="ap-inner">
+  <div class="ap-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-3.svg" alt="" />
+  </div>
+  <div class="ap-inner" style="position:relative;z-index:1">
     <header class="ap-header">
       <p class="ap-eyebrow">The Problem</p>
       <h2 class="ap-headline">Settling in Canada<br>feels harder than<br>it should</h2>
@@ -47,8 +50,23 @@ const problems = [
 </section>
 
 <style>
+  .ap-blob {
+    position: absolute;
+    top: -8%;
+    right: -10%;
+    width: 46rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.05;
+    transform: rotate(30deg);
+    z-index: 0;
+  }
+  .ap-blob img { width: 100%; height: auto; }
+
   .ap {
     background-color: var(--color-ink);
+    position: relative;
+    overflow: hidden;
     padding: 5.5rem 0 6.5rem;
   }
 

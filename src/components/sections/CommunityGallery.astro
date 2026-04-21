@@ -1,0 +1,201 @@
+---
+const photos = [
+  {
+    src: "/assets/images/community/banner-photo.jpg",
+    alt: "Newcomers at a Unify Gather event",
+    class: "cg-photo-main",
+  },
+  {
+    src: "/assets/images/community/heart-unify.jpg",
+    alt: "Community members at Unify event",
+    class: "cg-photo-a",
+  },
+  {
+    src: "/assets/images/community/presentation.jpg",
+    alt: "Workshop presentation at Unify Gather",
+    class: "cg-photo-b",
+  },
+];
+---
+
+<section class="cg">
+  <div class="cg-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-11.svg" alt="" />
+  </div>
+  <div class="cg-inner" style="position:relative;z-index:1">
+    <p class="cg-eyebrow">From our events</p>
+
+    <div class="cg-grid">
+      {photos.map((p, i) => (
+        <div class={`cg-photo-wrap ${p.class}`} style={`--i: ${i}`}>
+          <img
+            src={p.src}
+            alt={p.alt}
+            class="cg-photo"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cg-blob {
+    position: absolute;
+    bottom: -15%;
+    left: -8%;
+    width: 40rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.05;
+    transform: rotate(-20deg);
+    z-index: 0;
+  }
+  .cg-blob img { width: 100%; height: auto; }
+
+  .cg {
+    background-color: var(--color-ink);
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 0 6rem;
+  }
+
+  .cg-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .cg-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 2rem;
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  }
+
+  .cg.animate .cg-eyebrow {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .cg.animate.visible .cg-eyebrow {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Mobile: stacked ── */
+  .cg-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cg-photo-wrap {
+    overflow: hidden;
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+    transition-delay: calc(var(--i) * 80ms + 60ms);
+  }
+
+  .cg.animate .cg-photo-wrap {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .cg.animate.visible .cg-photo-wrap {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cg-photo-main { aspect-ratio: 16 / 9; }
+  .cg-photo-a    { aspect-ratio: 4 / 3; }
+  .cg-photo-b    { aspect-ratio: 4 / 3; }
+
+  .cg-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cg-photo-wrap:hover .cg-photo {
+      transform: scale(1.03);
+    }
+  }
+
+  /* ── Tablet+: asymmetric grid ── */
+  @media (min-width: 810px) {
+    .cg {
+      padding: 6rem 0 7rem;
+    }
+
+    .cg-inner {
+      padding: 0 3rem;
+    }
+
+    .cg-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0.75rem;
+      height: 600px;
+    }
+
+    .cg-photo-main {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      aspect-ratio: unset;
+    }
+
+    .cg-photo-a {
+      grid-column: 2;
+      grid-row: 1;
+      aspect-ratio: unset;
+    }
+
+    .cg-photo-b {
+      grid-column: 2;
+      grid-row: 2;
+      aspect-ratio: unset;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .cg {
+      padding: 7rem 0 8rem;
+    }
+
+    .cg-inner {
+      padding: 0 5rem;
+    }
+
+    .cg-grid {
+      height: 700px;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".cg");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.08 },
+    );
+    observer.observe(section);
+  }
+</script>

@@ -1,10 +1,207 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostNav from "../../components/blog/PostNav.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { getCollection, render } from "astro:content";
+import "../../styles/prose.css";
 
-// Article data will come from Sanity once CMS is wired up
 const { slug } = Astro.params;
+const allPosts = await getCollection("blog");
+const sorted = allPosts.sort((a, b) => b.data.order - a.data.order);
+
+const getSlug = (id: string) => id.replace(/\.mdx?$/, '');
+
+const postIndex = sorted.findIndex((p) => getSlug(p.id) === slug);
+const post = sorted[postIndex];
+
+if (!post) {
+  return Astro.redirect("/blog");
+}
+
+const { Content } = await render(post);
+
+const prev = postIndex < sorted.length - 1 ? sorted[postIndex + 1] : null;
+const next = postIndex > 0 ? sorted[postIndex - 1] : null;
+
+const updatedDate = (post.data.updatedAt ?? post.data.publishedAt).toLocaleDateString("en-CA", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+});
 ---
 
-<BaseLayout title="Article — Unify">
-  <main></main>
+<BaseLayout
+  title={`${post.data.title} | Unify Social`}
+  description={post.data.description}
+  bodyBg="#FFFCF3"
+>
+  <main class="post-main">
+    <!-- ── Post header ── -->
+    <header class="post-header">
+      <a href="/blog" class="post-back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M11.5 7H2.5M2.5 7L6.5 3M2.5 7L6.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        All articles
+      </a>
+      <h1 class="post-title">{post.data.title}</h1>
+    </header>
+
+    <!-- ── Hero image ── -->
+    <div class="post-hero-img-wrap">
+      <img
+        src={post.data.thumbnail}
+        alt={post.data.title}
+        class="post-hero-img"
+        loading="eager"
+      />
+    </div>
+
+    <!-- ── Metadata ── -->
+    <div class="post-meta">
+      <span>Last updated: <strong>{updatedDate}</strong></span>
+      {post.data.craReference && (
+        <>
+          <span class="post-meta-sep" aria-hidden="true">|</span>
+          <span>CRA Reference: <span class="post-meta-ref">{post.data.craReference}</span></span>
+        </>
+      )}
+    </div>
+
+    <!-- ── Prose body ── -->
+    <article class="prose">
+      <Content />
+    </article>
+  </main>
+
+  <!-- ── Prev / Next ── -->
+  <PostNav
+    prev={prev ? { title: prev.data.title, slug: getSlug(prev.id) } : null}
+    next={next ? { title: next.data.title, slug: getSlug(next.id) } : null}
+  />
+
+  <CTABand />
 </BaseLayout>
+
+<style>
+  .post-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: calc(67px + 0.75rem) 1.5rem 0;
+  }
+
+  /* ── Back link ── */
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .post-back:hover {
+    color: var(--color-brand-red);
+  }
+
+  /* ── Title ── */
+  .post-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.875rem, 5vw, 3.25rem);
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+  }
+
+  /* ── Hero image ── */
+  .post-hero-img-wrap {
+    max-width: 1200px;
+    margin: 0 auto 0;
+    padding: 0 1.5rem;
+    /* break out of 800px column on desktop */
+    width: calc(100% + 3rem);
+    margin-left: -1.5rem;
+  }
+
+  .post-hero-img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+  }
+
+  /* ── Metadata ── */
+  .post-meta {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin: 1.25rem 0 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .post-meta strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .post-meta-sep {
+    opacity: 0.4;
+  }
+
+  .post-meta-ref {
+    color: var(--color-brand-red);
+  }
+
+  /* ── Prose ── */
+  .prose {
+    padding-bottom: 3rem;
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .post-main {
+      padding: calc(67px + 0.75rem) 3rem 0;
+    }
+
+    .post-hero-img-wrap {
+      width: calc(100% + 6rem);
+      margin-left: -3rem;
+      padding: 0 3rem;
+    }
+
+    .post-hero-img {
+      height: 420px;
+      border-radius: 10px;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .post-main {
+      padding: calc(67px + 0.75rem) 5rem 0;
+      max-width: 900px;
+    }
+
+    .post-hero-img-wrap {
+      width: calc(100% + 10rem);
+      margin-left: -5rem;
+      padding: 0 5rem;
+    }
+
+    .post-hero-img {
+      height: 480px;
+    }
+  }
+</style>

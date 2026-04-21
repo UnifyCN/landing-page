@@ -1,0 +1,127 @@
+---
+---
+
+<section class="ch">
+  <img
+    src="/assets/images/community/group-photo.jpg"
+    alt="Unify Gather community event"
+    class="ch-photo"
+    loading="eager"
+  />
+  <div class="ch-overlay" aria-hidden="true"></div>
+
+  <div class="ch-content">
+    <p class="ch-eyebrow">In-person community</p>
+    <h1 class="ch-headline">Unify<br>Gather</h1>
+    <p class="ch-sub">Where newcomers meet, learn,<br>and build community.</p>
+  </div>
+</section>
+
+<style>
+  .ch {
+    position: relative;
+    background-color: var(--color-ink);
+    overflow: hidden;
+    margin-top: -67px;
+    min-height: calc(100vh + 67px);
+    min-height: calc(100dvh + 67px);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .ch-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+  }
+
+  .ch-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(23, 22, 22, 0.92) 0%,
+      rgba(23, 22, 22, 0.55) 50%,
+      rgba(23, 22, 22, 0.2) 100%
+    );
+  }
+
+  .ch-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  .ch-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+  }
+
+  .ch-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(4.5rem, 14vw, 11rem);
+    line-height: 0.88;
+    letter-spacing: var(--tracking-display);
+    color: #ffffff;
+    margin: 0 0 1.75rem;
+    opacity: 0;
+    animation: hero-fade-up 0.7s var(--ease-out) 0.18s forwards;
+  }
+
+  .ch-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.34s forwards;
+  }
+
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .ch {
+      align-items: flex-end;
+    }
+
+    .ch-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(23, 22, 22, 0.15) 30%,
+        rgba(23, 22, 22, 0.85) 100%
+      );
+    }
+
+    .ch-content {
+      padding: 0 3rem 5rem;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .ch-content {
+      padding: 0 5rem 6rem;
+    }
+  }
+</style>

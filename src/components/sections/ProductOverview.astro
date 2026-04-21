@@ -32,7 +32,10 @@ const features = [
 ---
 
 <section class="po-wrap">
-  <div class="po-inner">
+  <div class="po-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-12.svg" alt="" />
+  </div>
+  <div class="po-inner" style="position:relative;z-index:1">
     <!-- Left: editorial column -->
     <div class="po-left">
       <header class="po-header">
@@ -93,10 +96,26 @@ const features = [
 </section>
 
 <style>
+  /* ── Blob ── */
+  .po-blob {
+    position: absolute;
+    bottom: -10%;
+    right: -8%;
+    width: 44rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.08;
+    transform: rotate(10deg);
+    z-index: 0;
+  }
+  .po-blob img { width: 100%; height: auto; }
+
   /* ── Shell ── */
   .po-wrap {
     background-color: var(--color-cream);
     padding: 4.5rem 0 5.5rem;
+    position: relative;
+    overflow: hidden;
   }
 
   .po-inner {

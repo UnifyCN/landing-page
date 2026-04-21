@@ -3,6 +3,9 @@
 ---
 
 <section class="about-hero">
+  <div class="about-hero-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-12.svg" alt="" />
+  </div>
   <!-- Photo fills left column on desktop, stacks first on mobile -->
   <div class="about-hero-photo-col">
     <img
@@ -29,8 +32,22 @@
 </section>
 
 <style>
+  .about-hero-blob {
+    position: absolute;
+    bottom: -10%;
+    right: -8%;
+    width: 38rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.05;
+    transform: rotate(15deg);
+    z-index: 0;
+  }
+  .about-hero-blob img { width: 100%; height: auto; }
+
   .about-hero {
     background-color: var(--color-ink);
+    position: relative;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 300px auto;

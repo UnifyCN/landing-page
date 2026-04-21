@@ -28,7 +28,10 @@ const values = [
 ---
 
 <section class="av">
-  <div class="av-inner">
+  <div class="av-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-12.svg" alt="" />
+  </div>
+  <div class="av-inner" style="position:relative;z-index:1">
     <header class="av-header">
       <p class="av-eyebrow">How we work</p>
       <h2 class="av-headline">
@@ -53,8 +56,23 @@ const values = [
 </section>
 
 <style>
+  .av-blob {
+    position: absolute;
+    bottom: -10%;
+    left: -8%;
+    width: 40rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.08;
+    transform: rotate(-25deg);
+    z-index: 0;
+  }
+  .av-blob img { width: 100%; height: auto; }
+
   .av {
     background-color: var(--color-cream);
+    position: relative;
+    overflow: hidden;
     padding: 5.5rem 0 6.5rem;
   }
 

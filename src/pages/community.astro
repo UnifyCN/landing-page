@@ -1,7 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import CommunityHero from "../components/sections/CommunityHero.astro";
+import CommunityStats from "../components/sections/CommunityStats.astro";
+import CommunityGallery from "../components/sections/CommunityGallery.astro";
+import CommunityEventCTA from "../components/sections/CommunityEventCTA.astro";
+import CTABand from "../components/sections/CTABand.astro";
 ---
 
-<BaseLayout title="Community — Unify">
-  <main></main>
+<BaseLayout
+  title="Unify Social | Make Settling in Canada Simpler, Clearer, and Connected"
+  description="Unify Gather — in-person workshops, events, and community for newcomers across Metro Vancouver."
+  bodyBg="#171616"
+>
+  <main>
+    <CommunityHero />
+    <CommunityStats />
+    <CommunityGallery />
+    <CommunityEventCTA />
+    <CTABand />
+  </main>
 </BaseLayout>

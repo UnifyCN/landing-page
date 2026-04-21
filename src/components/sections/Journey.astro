@@ -27,8 +27,11 @@ const stages = [
 ];
 ---
 
-<section class="journey bg-white py-20 desktop:py-32">
-  <div class="mx-auto max-w-layout px-6 desktop:px-16">
+<section class="journey bg-white relative overflow-hidden py-20 desktop:py-32">
+  <div class="journey-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-10.svg" alt="" />
+  </div>
+  <div class="mx-auto max-w-layout px-6 desktop:px-16 relative" style="z-index:1">
 
     <p class="journey-eyebrow">How Unify fits your journey</p>
     <h2 class="journey-heading">From arrival<br>to belonging</h2>
@@ -71,6 +74,19 @@ const stages = [
 </section>
 
 <style>
+  .journey-blob {
+    position: absolute;
+    top: -5%;
+    left: -8%;
+    width: 40rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.10;
+    transform: rotate(-15deg);
+    z-index: 0;
+  }
+  .journey-blob img { width: 100%; height: auto; }
+
   .journey-stages {
     position: relative;
     display: flex;

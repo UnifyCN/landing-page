@@ -1,0 +1,192 @@
+---
+const stats = [
+  { number: "17+", label: "events hosted" },
+  { number: "350+", label: "newcomers connected" },
+];
+---
+
+<section class="cs">
+  <div class="cs-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-10.svg" alt="" />
+  </div>
+  <div class="cs-inner" style="position:relative;z-index:1">
+    <!-- Left: large typographic stats -->
+    <div class="cs-stats">
+      {stats.map((s) => (
+        <div class="cs-stat">
+          <span class="cs-num">{s.number}</span>
+          <span class="cs-label">{s.label}</span>
+        </div>
+      ))}
+    </div>
+
+    <!-- Right: description + partners -->
+    <div class="cs-desc">
+      <p class="cs-eyebrow">What we do</p>
+      <p class="cs-body">
+        Unify Gather is the in-person community and workshop arm of Unify, built to help newcomers learn, connect, and feel supported. We've hosted practical sessions on résumés, cover letters, interviews, financial literacy, and PR support, along with community events like Back-to-School and Halloween socials.
+      </p>
+      <p class="cs-body cs-partners">
+        In partnership with <strong>United Way</strong>, <strong>Surrey Libraries</strong>, and <strong>Global Connect Migration (RCIC)</strong> to deliver accessible, high-impact workshops across the Lower Mainland. Each event gives newcomers a place to meet others, build skills, and gain clarity on their Canadian journey.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cs-blob {
+    position: absolute;
+    top: -10%;
+    right: -8%;
+    width: 44rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.08;
+    transform: rotate(20deg);
+    z-index: 0;
+  }
+  .cs-blob img { width: 100%; height: auto; }
+
+  .cs {
+    background-color: var(--color-cream);
+    position: relative;
+    overflow: hidden;
+    padding: 5.5rem 0 6rem;
+  }
+
+  .cs-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .cs.animate .cs-inner {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .cs.animate.visible .cs-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Stats ── */
+  .cs-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .cs-stat {
+    border-left: 3px solid var(--color-brand-red);
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .cs-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-brand-red);
+  }
+
+  .cs-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* ── Description ── */
+  .cs-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+  }
+
+  .cs-body {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.3vw, 1.0625rem);
+    line-height: 1.75;
+    color: var(--color-muted);
+    margin: 0 0 1rem;
+    max-width: 58ch;
+  }
+
+  .cs-body:last-child {
+    margin-bottom: 0;
+  }
+
+  .cs-body strong {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .cs-partners {
+    padding-top: 0.25rem;
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .cs {
+      padding: 7rem 0 7.5rem;
+    }
+
+    .cs-inner {
+      grid-template-columns: 1fr 1.4fr;
+      gap: 5rem;
+      align-items: start;
+      padding: 0 3rem;
+    }
+
+    .cs-stats {
+      flex-direction: column;
+      gap: 2.5rem;
+      position: sticky;
+      top: 5rem;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .cs {
+      padding: 8.5rem 0 9rem;
+    }
+
+    .cs-inner {
+      padding: 0 5rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".cs");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(section);
+  }
+</script>

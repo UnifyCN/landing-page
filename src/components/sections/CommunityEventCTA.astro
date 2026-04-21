@@ -1,0 +1,181 @@
+---
+const EVENTBRITE_URL = "https://www.eventbrite.ca/o/unify-105574869881";
+---
+
+<section class="cec">
+  <div class="cec-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-12.svg" alt="" />
+  </div>
+  <div class="cec-inner" style="position:relative;z-index:1">
+    <p class="cec-eyebrow">Join us</p>
+    <h2 class="cec-headline">
+      Every event is a chance to meet<br class="cec-br">
+      someone who <em>gets it.</em>
+    </h2>
+    <p class="cec-sub">
+      Free and accessible workshops and community meetups across Metro Vancouver. All skill levels, all backgrounds, all welcome.
+    </p>
+    <a
+      href={EVENTBRITE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="cec-btn"
+    >
+      Find Our Next Event
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 13L13 3M13 3H6M13 3V10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<style>
+  .cec-blob {
+    position: absolute;
+    top: -12%;
+    right: -8%;
+    width: 36rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.08;
+    transform: rotate(-15deg);
+    z-index: 0;
+  }
+  .cec-blob img { width: 100%; height: auto; }
+
+  .cec {
+    background-color: var(--color-cream);
+    position: relative;
+    overflow: hidden;
+    padding: 6rem 0 7rem;
+  }
+
+  .cec-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .cec.animate .cec-inner {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .cec.animate.visible .cec-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cec-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+  }
+
+  .cec-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
+  }
+
+  .cec-headline em {
+    font-style: italic;
+    color: var(--color-brand-red);
+  }
+
+  .cec-br {
+    display: none;
+  }
+
+  .cec-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.3vw, 1.0625rem);
+    line-height: 1.7;
+    color: var(--color-muted);
+    margin: 0 0 2.5rem;
+    max-width: 52ch;
+  }
+
+  .cec-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    padding: 1.0625rem 2rem;
+    border-radius: 99px;
+    box-shadow: 0 4px 20px -4px rgba(216, 74, 41, 0.45);
+    transition: transform 0.18s var(--ease-out), box-shadow 0.18s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cec-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 10px 28px -6px rgba(216, 74, 41, 0.5);
+    }
+  }
+
+  .cec-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .cec {
+      padding: 7.5rem 0 8.5rem;
+    }
+
+    .cec-inner {
+      padding: 0 3rem;
+    }
+
+    .cec-br {
+      display: block;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .cec {
+      padding: 9rem 0 10rem;
+    }
+
+    .cec-inner {
+      padding: 0 5rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".cec");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12 },
+    );
+    observer.observe(section);
+  }
+</script>

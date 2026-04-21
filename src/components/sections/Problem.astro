@@ -2,8 +2,11 @@
 
 ---
 
-<section class="problem bg-ink pt-20 pb-20 desktop:pt-40 desktop:pb-28">
-  <div class="mx-auto max-w-layout px-6 desktop:px-16">
+<section class="problem bg-ink relative overflow-hidden pt-20 pb-20 desktop:pt-40 desktop:pb-28">
+  <div class="problem-blob" aria-hidden="true">
+    <img src="/assets/blobs/blob-11.svg" alt="" />
+  </div>
+  <div class="mx-auto max-w-layout px-6 desktop:px-16 relative" style="z-index:1">
     <div class="mx-auto max-w-3xl desktop:max-w-4xl">
       <p class="problem-quote">
         "You just arrived.<br />
@@ -20,6 +23,19 @@
 </section>
 
 <style>
+  .problem-blob {
+    position: absolute;
+    bottom: -15%;
+    right: -10%;
+    width: 48rem;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.06;
+    transform: rotate(25deg);
+    z-index: 0;
+  }
+  .problem-blob img { width: 100%; height: auto; }
+
   .problem-quote {
     font-family: var(--font-display);
     font-weight: 700;
