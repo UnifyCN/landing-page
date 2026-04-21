@@ -2,13 +2,15 @@
 import '../styles/global.css';
 import Navbar from '../components/common/Navbar.astro';
 import Footer from '../components/common/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
   description?: string;
+  bodyBg?: string;
 }
 
-const { title, description = '' } = Astro.props;
+const { title, description = '', bodyBg = '#FFFCF3' } = Astro.props;
 ---
 
 <html lang="en">
@@ -16,8 +18,8 @@ const { title, description = '' } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <!-- SVG favicon only — remove .ico so browser doesn't fall back to Astro's default -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
     {description && <meta name="description" content={description} />}
     <title>{title}</title>
 
@@ -32,9 +34,27 @@ const { title, description = '' } = Astro.props;
     <!-- Preload critical Aileron weights -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Regular.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-SemiBold.woff2" crossorigin />
+
+    <ClientRouter />
   </head>
-  <body class="font-display text-text bg-white">
-    <Navbar />
+  <body class="font-display text-text" style={`background-color: ${bodyBg};`}>
+    <style is:global>
+      /* Pure opacity fade — no translate, no layout shifts */
+      ::view-transition-old(root) {
+        animation: vt-fade-out 0.15s ease forwards;
+      }
+      ::view-transition-new(root) {
+        animation: vt-fade-in 0.2s ease forwards;
+      }
+      @keyframes vt-fade-out {
+        to { opacity: 0; }
+      }
+      @keyframes vt-fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+    </style>
+    <Navbar transition:persist />
     <slot />
     <Footer />
   </body>

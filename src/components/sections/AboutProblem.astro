@@ -1,0 +1,210 @@
+---
+const problems = [
+  {
+    num: "01",
+    title: "Scattered information",
+    stat: "62% of newly arrived newcomers report struggling to find the settlement resources they need — with government sites, Reddit threads, and WhatsApp chats all giving different answers.",
+    source: "Statistics Canada, General Social Survey on Social Identity, 2020",
+  },
+  {
+    num: "02",
+    title: "Doing it alone",
+    stat: "70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers — without a supportive newcomer community to lean on.",
+    source: "Canadian Index for Measuring Integration",
+  },
+  {
+    num: "03",
+    title: "No clear roadmap",
+    stat: "Without step-by-step guidance, it's easy to waste time, miss IRCC deadlines, or make costly mistakes on your newcomer journey in Canada.",
+    source: null,
+  },
+];
+---
+
+<section class="ap">
+  <div class="ap-inner">
+    <header class="ap-header">
+      <p class="ap-eyebrow">The Problem</p>
+      <h2 class="ap-headline">Settling in Canada<br>feels harder than<br>it should</h2>
+      <p class="ap-sub">
+        Moving to a new country is more than paperwork — it's rebuilding your life from scratch. Yet most newcomers run into three avoidable problems:
+      </p>
+    </header>
+
+    <ol class="ap-list" role="list">
+      {problems.map((p, i) => (
+        <li class="ap-entry" style={`--i: ${i}`}>
+          <span class="ap-num" aria-hidden="true">{p.num}</span>
+          <div class="ap-entry-body">
+            <h3 class="ap-title">{p.title}</h3>
+            <p class="ap-stat">{p.stat}</p>
+            {p.source && <p class="ap-source">{p.source}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .ap {
+    background-color: var(--color-ink);
+    padding: 5.5rem 0 6.5rem;
+  }
+
+  .ap-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .ap-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+  }
+
+  .ap-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1.0;
+    letter-spacing: var(--tracking-tight);
+    color: #ffffff;
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
+  }
+
+  .ap-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  .ap-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ap-entry {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    padding: 2.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    align-items: start;
+    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+    transition-delay: calc(var(--i) * 80ms + 60ms);
+  }
+
+  .ap.animate .ap-entry {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  .ap.animate.visible .ap-entry {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .ap-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: 1;
+    color: var(--color-brand-red);
+    letter-spacing: var(--tracking-display);
+    user-select: none;
+    min-width: 2ch;
+  }
+
+  .ap-entry-body {
+    padding-top: 0.5rem;
+  }
+
+  .ap-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+    color: #ffffff;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .ap-stat {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 0.5rem;
+    max-width: 60ch;
+  }
+
+  .ap-source {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.28);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .ap {
+      padding: 7rem 0 8rem;
+    }
+
+    .ap-inner {
+      padding: 0 3rem;
+      gap: 5rem;
+    }
+
+    .ap-entry {
+      gap: 2.5rem;
+      padding: 2.5rem 0;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .ap {
+      padding: 8.5rem 0 9.5rem;
+    }
+
+    .ap-inner {
+      padding: 0 5rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".ap");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(section);
+  }
+</script>

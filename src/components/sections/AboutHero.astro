@@ -1,0 +1,173 @@
+---
+
+---
+
+<section class="about-hero">
+  <!-- Photo fills left column on desktop, stacks first on mobile -->
+  <div class="about-hero-photo-col">
+    <img
+      src="/assets/images/about/founders-portrait.jpg"
+      alt="Cedric and Savar, founders of Unify"
+      class="about-hero-photo"
+      loading="eager"
+    />
+    <!-- Warm overlay so text on mobile stays legible -->
+    <div class="about-hero-overlay" aria-hidden="true"></div>
+  </div>
+
+  <div class="about-hero-text-col">
+    <p class="about-hero-eyebrow">Our story</p>
+    <h1 class="about-hero-headline">
+      From newcomers,<br />
+      <em>for newcomers.</em>
+    </h1>
+    <p class="about-hero-sub">
+      We arrived in Canada and felt what you're feeling.
+    </p>
+    <p class="about-hero-sub">So we built the platform we wished existed.</p>
+  </div>
+</section>
+
+<style>
+  .about-hero {
+    background-color: var(--color-ink);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 300px auto;
+    min-height: calc(100vh + 67px);
+    min-height: calc(100dvh + 67px);
+    overflow: hidden;
+    /* Pull section up behind the floating navbar */
+    margin-top: -67px;
+  }
+
+  /* ── Photo column ── */
+  .about-hero-photo-col {
+    position: relative;
+    overflow: hidden;
+    grid-row: 1;
+  }
+
+  .about-hero-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    display: block;
+    filter: sepia(0.08) saturate(0.95) contrast(1.04);
+  }
+
+  .about-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(23, 22, 22, 0.6) 100%
+    );
+  }
+
+  /* ── Text column ── */
+  .about-hero-text-col {
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .about-hero-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+  }
+
+  .about-hero-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: var(--tracking-display);
+    color: #ffffff;
+    margin: 0 0 1.75rem;
+    opacity: 0;
+    animation: hero-fade-up 0.65s var(--ease-out) 0.2s forwards;
+  }
+
+  .about-hero-headline em {
+    font-style: italic;
+    color: var(--color-brand-red);
+  }
+
+  .about-hero-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
+    max-width: 44ch;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.34s forwards;
+  }
+
+  @keyframes hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .about-hero {
+      grid-template-columns: 480px 1fr;
+      grid-template-rows: 1fr;
+      min-height: calc(100vh + 67px);
+    min-height: calc(100dvh + 67px);
+    }
+
+    .about-hero-photo-col {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .about-hero-overlay {
+      background: linear-gradient(
+        to right,
+        transparent 60%,
+        rgba(23, 22, 22, 0.35) 100%
+      );
+    }
+
+    .about-hero-text-col {
+      grid-column: 2;
+      grid-row: 1;
+      /* Extra top padding compensates for the negative margin-top on the section */
+      padding: calc(67px + 4rem) 3rem 5rem;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .about-hero {
+      grid-template-columns: 560px 1fr;
+      min-height: calc(100vh + 67px);
+    min-height: calc(100dvh + 67px);
+    }
+
+    .about-hero-text-col {
+      padding: calc(67px + 5rem) 5rem 6rem;
+    }
+  }
+</style>

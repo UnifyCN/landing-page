@@ -1,0 +1,161 @@
+---
+---
+
+<section class="founders">
+  <div class="founders-inner">
+    <div class="founders-left">
+      <p class="founders-eyebrow">Our journey</p>
+      <h2 class="founders-headline">Hi, we're Cedric<br>and Savar&nbsp;👋</h2>
+      <div class="founders-photo-wrap">
+        <img
+          src="/assets/images/about/founders-portrait2.jpg"
+          alt="Cedric and Savar"
+          class="founders-photo"
+          loading="lazy"
+        />
+      </div>
+    </div>
+
+    <div class="founders-right">
+      <p class="founders-body">
+        We're building Unify to make settling in Canada simpler, clearer, and more connected. After hearing the same story of confusion, unclear answers, and isolation, we built one platform that brings together guidance and community support.
+      </p>
+      <p class="founders-body">
+        We've experienced how confusing and isolating this journey can be. That's why we're building Unify — so no one has to figure it out alone. We hope it helps you feel at home faster and we're listening to make it better every week&nbsp;:)
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .founders {
+    background-color: var(--color-cream);
+    padding: 5.5rem 0 6rem;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .founders.animate .founders-inner {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .founders.animate.visible .founders-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .founders-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .founders-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1rem;
+  }
+
+  .founders-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    margin: 0 0 2rem;
+  }
+
+  .founders-left {
+    border-left: 3px solid var(--color-brand-red);
+    padding-left: 1.75rem;
+  }
+
+  .founders-photo-wrap {
+    margin-top: 1rem;
+  }
+
+  .founders-photo {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    box-shadow: -8px 8px 0 var(--color-brand-red);
+  }
+
+  .founders-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: center;
+  }
+
+  .founders-body {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .founders {
+      padding: 7rem 0 7.5rem;
+    }
+
+    .founders-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding: 0 3rem;
+      align-items: start;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .founders {
+      padding: 8rem 0 9rem;
+    }
+
+    .founders-inner {
+      padding: 0 5rem;
+      gap: 5rem;
+    }
+
+    .founders-photo {
+      max-width: 280px;
+      height: 360px;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".founders");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12 },
+    );
+    observer.observe(section);
+  }
+</script>

@@ -1,0 +1,218 @@
+---
+const values = [
+  {
+    icon: "/assets/images/about/handshake.png",
+    iconAlt: "Handshake",
+    title: "Built on trusted sources",
+    desc: "Our lessons and AI answers are curated from the Government of Canada, IRCC, CRA, public universities, and established settlement organizations.",
+  },
+  {
+    icon: "/assets/images/about/hyperlink.png",
+    iconAlt: "Link",
+    title: "Source-first answers",
+    desc: "We show you where information comes from so you can verify it yourself.",
+  },
+  {
+    icon: "/assets/images/about/human.png",
+    iconAlt: "Person",
+    title: "Human-reviewed & updated",
+    desc: "We maintain a vetted knowledge base and update content as soon as policies change.",
+  },
+  {
+    icon: "/assets/images/about/lock.png",
+    iconAlt: "Lock",
+    title: "Privacy-first",
+    desc: "Your data is protected. We never sell your personal information.",
+  },
+];
+---
+
+<section class="av">
+  <div class="av-inner">
+    <header class="av-header">
+      <p class="av-eyebrow">How we work</p>
+      <h2 class="av-headline">
+        You can trust<br><em>Unify.</em>
+      </h2>
+    </header>
+
+    <ol class="av-list" role="list">
+      {values.map((v, i) => (
+        <li class="av-item" style={`--i: ${i}`}>
+          <div class="av-icon-wrap">
+            <img src={v.icon} alt={v.iconAlt} class="av-icon" loading="lazy" />
+          </div>
+          <div class="av-item-body">
+            <h3 class="av-title">{v.title}</h3>
+            <p class="av-desc">{v.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .av {
+    background-color: var(--color-cream);
+    padding: 5.5rem 0 6.5rem;
+  }
+
+  .av-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .av-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin: 0 0 1rem;
+  }
+
+  .av-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 0.96;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .av-headline em {
+    font-style: italic;
+    color: var(--color-brand-red);
+  }
+
+  .av-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .av-item {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.75rem 0;
+    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+    transition-delay: calc(var(--i) * 70ms + 50ms);
+  }
+
+  .av.animate .av-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .av.animate.visible .av-item {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .av-icon-wrap {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .av-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
+
+  .av-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--color-text);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .av-desc {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 58ch;
+  }
+
+  /* ── Tablet: 2-column grid ── */
+  @media (min-width: 810px) {
+    .av {
+      padding: 7rem 0 8rem;
+    }
+
+    .av-inner {
+      padding: 0 3rem;
+      gap: 4rem;
+    }
+
+    .av-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 3rem;
+    }
+
+    .av-item {
+      padding: 2rem 0;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .av {
+      padding: 8.5rem 0 9.5rem;
+    }
+
+    .av-inner {
+      padding: 0 5rem;
+      gap: 4.5rem;
+    }
+
+    .av-title {
+      font-size: 1.25rem;
+    }
+
+    .av-desc {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector(".av");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(section);
+  }
+</script>

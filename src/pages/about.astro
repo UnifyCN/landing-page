@@ -1,7 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import AboutHero from "../components/sections/AboutHero.astro";
+import AboutFounders from "../components/sections/AboutFounders.astro";
+import AboutProblem from "../components/sections/AboutProblem.astro";
+import AboutValues from "../components/sections/AboutValues.astro";
+import CTABand from "../components/sections/CTABand.astro";
 ---
 
-<BaseLayout title="About — Unify">
-  <main></main>
+<BaseLayout
+  title="About | Unify Social"
+  description="Meet Cedric and Savar, the founders of Unify. Learn why they built the all-in-one newcomer settlement app for Canada."
+  bodyBg="#171616"
+>
+  <main>
+    <AboutHero />
+    <AboutFounders />
+    <AboutProblem />
+    <AboutValues />
+    <CTABand />
+  </main>
 </BaseLayout>

@@ -515,6 +515,21 @@ Goal: escape generic AI-slop aesthetics. All sections redesigned with editorial 
 
 ⸻
 
+Completed — Milestone 4 — About page
+
+* ✅ AboutHero: dark ink background, asymmetric 2-col grid (text + photo), editorial "We've been there." headline, staggered hero-fade-up animations
+* ✅ AboutFounders: cream background, brand-red left border on headline column, offset box-shadow on founders photo-2, founders story copy
+* ✅ AboutProblem: dark ink background, typographic problem entries with large brand-red 01/02/03 numbers, statistics + sources
+* ✅ AboutValues: cream background, editorial "Built differently." headline, 2-col values grid with brand-red — prefix
+* ✅ about.astro: wires all 4 sections + reuses CTABand; Footer auto-included via BaseLayout
+
+About page image assets (user-supplied):
+
+* /assets/images/about/founders-portrait.jpg — used in AboutHero (right column, full height)
+* /assets/images/about/founders-photo-2.jpg — used in AboutFounders (left column, offset red shadow)
+
+⸻
+
 Hero section
 
 Copy:
