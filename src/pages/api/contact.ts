@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { Resend } from "resend";
+import { env } from "cloudflare:workers";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -9,10 +10,8 @@ const schema = z.object({
   turnstileToken: z.string().min(1, "Verification required"),
 });
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
-    const runtime = (locals as any).runtime?.env ?? {};
-
     let body: unknown;
     try {
       body = await request.json();
@@ -35,7 +34,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { name, email, message, turnstileToken } = parsed.data;
 
     // Verify Turnstile token
-    const turnstileSecret = runtime.TURNSTILE_SECRET_KEY ?? import.meta.env.TURNSTILE_SECRET_KEY;
+    const turnstileSecret = (env as any).TURNSTILE_SECRET_KEY;
     if (turnstileSecret) {
       try {
         const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -51,7 +50,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           });
         }
       } catch (err) {
-        console.error("[contact] Turnstile verification error:", err);
+        console.error("[contact] Turnstile error:", err);
         return new Response(JSON.stringify({ success: false, error: "Verification failed. Please try again." }), {
           status: 422,
           headers: { "Content-Type": "application/json" },
@@ -60,10 +59,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Send email via Resend
-    const resendKey = runtime.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
-    const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
-
-    console.log("[contact] resendKey present:", !!resendKey, "| toEmail:", toEmail);
+    const resendKey = (env as any).RESEND_API_KEY;
+    const toEmail = (env as any).CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
 
     if (resendKey) {
       const resend = new Resend(resendKey);
