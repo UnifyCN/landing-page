@@ -126,7 +126,7 @@ const APP_STORE_URL =
     display: block;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(3.5rem, 10.5vw, 9rem);
+    font-size: clamp(2.75rem, 10.5vw, 9rem);
     letter-spacing: var(--tracking-display);
     line-height: 0.88;
     color: var(--color-text);
@@ -223,25 +223,13 @@ const APP_STORE_URL =
 
   /* ── Entrance animations ── */
   @keyframes hero-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes hero-phone-in {
-    from {
-      opacity: 0;
-      transform: translateX(32px) translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0) translateY(0);
-    }
+    from { opacity: 0; transform: translateX(32px) translateY(12px); }
+    to   { opacity: 1; transform: none; }
   }
 
   /* ── Tablet ── */

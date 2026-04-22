@@ -1,0 +1,203 @@
+---
+---
+
+<section class="ph-section">
+  <img
+    src="/assets/blobs/blob-3.svg"
+    class="ph-blob"
+    alt=""
+    aria-hidden="true"
+    loading="eager"
+  />
+
+  <div class="ph-inner">
+    <span class="ph-eyebrow">Our Community Network</span>
+    <h1 class="ph-headline">
+      Together, we <em class="ph-accent">unify</em><br class="ph-br" />
+      newcomers<span class="ph-period">.</span>
+    </h1>
+    <p class="ph-sub">
+      Unify Social works alongside schools, libraries, community centres,<br class="ph-br" />
+      and service organizations to make sure every newcomer has the tools<br class="ph-br" />
+      and support they need to thrive in Canada.
+    </p>
+
+    <div class="ph-stats">
+      <div class="ph-stat">
+        <span class="ph-stat-num">15+</span>
+        <span class="ph-stat-label">Active Partners</span>
+      </div>
+      <div class="ph-stat-divider" aria-hidden="true"></div>
+      <div class="ph-stat">
+        <span class="ph-stat-num">5+</span>
+        <span class="ph-stat-label">Cities Covered</span>
+      </div>
+      <div class="ph-stat-divider" aria-hidden="true"></div>
+      <div class="ph-stat">
+        <span class="ph-stat-num">1,000s</span>
+        <span class="ph-stat-label">Newcomers Served</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ph-section {
+    position: relative;
+    margin-top: -67px;
+    min-height: 52vh;
+    background: var(--color-ink);
+    display: flex;
+    align-items: flex-end;
+    padding: calc(67px + 3.5rem) 2rem 4.5rem;
+    overflow: hidden;
+  }
+
+  .ph-blob {
+    position: absolute;
+    top: -8%;
+    right: -6%;
+    width: clamp(300px, 44vw, 620px);
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .ph-inner {
+    position: relative;
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .ph-eyebrow {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.1s forwards;
+  }
+
+  .ph-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 7.5vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    color: #fff;
+    margin: 0 0 1.5rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.2s forwards;
+  }
+
+  .ph-accent {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  .ph-period {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  .ph-br {
+    display: none;
+  }
+
+  .ph-sub {
+    font-family: var(--font-display);
+    font-size: clamp(0.9375rem, 1.8vw, 1.125rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 3rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.3s forwards;
+  }
+
+  /* Stats */
+  .ph-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.42s forwards;
+  }
+
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ph-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .ph-stat-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    color: #fff;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+  }
+
+  .ph-stat-label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .ph-stat-divider {
+    width: 1px;
+    height: 2.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 479px) {
+    .ph-section {
+      padding: calc(67px + 1.5rem) 1.25rem 3rem;
+    }
+
+    .ph-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .ph-stat-divider {
+      display: none;
+    }
+  }
+
+  @media (min-width: 810px) {
+    .ph-section {
+      padding: calc(67px + 4.5rem) 3rem 5.5rem;
+    }
+
+    .ph-br {
+      display: inline;
+    }
+
+    .ph-stats {
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .ph-section {
+      padding: calc(67px + 5rem) 5rem 6rem;
+    }
+  }
+
+</style>

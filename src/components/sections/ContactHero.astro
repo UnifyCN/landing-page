@@ -1,0 +1,124 @@
+---
+---
+
+<section class="ch-section">
+  <img
+    src="/assets/blobs/blob-3.svg"
+    class="ch-blob"
+    alt=""
+    aria-hidden="true"
+    loading="eager"
+  />
+
+  <div class="ch-inner">
+    <span class="ch-eyebrow">Contact us</span>
+    <h1 class="ch-headline">
+      Get in touch<span class="ch-period">.</span>
+    </h1>
+    <p class="ch-sub">
+      Questions, feedback, or partnership inquiries —<br class="ch-br" />
+      we read every message.
+    </p>
+  </div>
+</section>
+
+<style>
+  .ch-section {
+    position: relative;
+    margin-top: -67px;
+    min-height: 42vh;
+    background: var(--color-ink);
+    display: flex;
+    align-items: flex-end;
+    padding: calc(67px + 3.5rem) 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .ch-blob {
+    position: absolute;
+    top: -10%;
+    right: -8%;
+    width: clamp(320px, 45vw, 640px);
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .ch-inner {
+    position: relative;
+    max-width: 1600px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .ch-eyebrow {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.1s forwards;
+  }
+
+  .ch-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    color: #fff;
+    margin: 0 0 1.25rem;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.2s forwards;
+  }
+
+  .ch-period {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  .ch-sub {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2vw, 1.1875rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.32s forwards;
+  }
+
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ch-br {
+    display: none;
+  }
+
+  @media (max-width: 479px) {
+    .ch-section {
+      padding: calc(67px + 1.5rem) 1.25rem 3rem;
+    }
+  }
+
+  @media (min-width: 810px) {
+    .ch-section {
+      padding: calc(67px + 4.5rem) 3rem 5rem;
+    }
+
+    .ch-br {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .ch-section {
+      padding: calc(67px + 5rem) 5rem 6rem;
+    }
+  }
+</style>

@@ -16,8 +16,10 @@
     "@astrojs/cloudflare": "^13.1.10",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.7",
+    "resend": "^6.12.2",
     "tailwindcss": "^4.2.2",
-    "wrangler": "^4.83.0"
+    "wrangler": "^4.83.0",
+    "zod": "^4.3.6"
   },
   "overrides": {
     "vite": "^7"

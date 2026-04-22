@@ -74,7 +74,7 @@
   .ch-headline {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(4.5rem, 14vw, 11rem);
+    font-size: clamp(3rem, 14vw, 11rem);
     line-height: 0.88;
     letter-spacing: var(--tracking-display);
     color: #ffffff;
@@ -97,6 +97,13 @@
   @keyframes hero-fade-up {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Phone ── */
+  @media (max-width: 479px) {
+    .ch-content {
+      padding: 0 1.25rem 3rem;
+    }
   }
 
   /* ── Tablet ── */

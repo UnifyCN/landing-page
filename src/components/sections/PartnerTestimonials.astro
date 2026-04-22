@@ -1,0 +1,345 @@
+---
+// Replace these with real testimonials from Cedric/Savar when ready
+const testimonials = [
+  {
+    quote:
+      "Partnering with Unify Social has been one of the most rewarding decisions we've made. Their platform genuinely connects newcomers to our programs in a way we couldn't achieve on our own.",
+    name: "Simon Fraser University",
+    role: "Education Partner",
+    logo: "/assets/images/partners/sfu.png",
+  },
+  {
+    quote:
+      "Unify Social understands the real challenges newcomers face. Our collaboration has helped dozens of families access the financial tools they need to build a stable future in Canada.",
+    name: "RBC — Royal Bank of Canada",
+    role: "Financial Partner",
+    logo: "/assets/images/partners/rbc_foundation.png",
+  },
+  {
+    quote:
+      "The referrals we receive through Unify Social are warm and well-informed. Newcomers arrive at our branches already knowing what programs are available — it makes a huge difference.",
+    name: "Vancouver Public Library",
+    role: "Library Partner",
+    logo: "/assets/images/partners/vancouver_public_library.png",
+  },
+];
+---
+
+<section class="pt-section">
+  <div class="pt-inner">
+    <div class="pt-header">
+      <span class="pt-eyebrow">What Partners Say</span>
+      <h2 class="pt-headline">
+        Voices from our <em class="pt-accent">network</em>
+      </h2>
+    </div>
+
+    <div class="pt-carousel-wrap">
+      <div class="pt-track" id="pt-track">
+        {testimonials.map((t, i) => (
+          <article class="pt-card" aria-label={`Testimonial from ${t.name}`}>
+            <blockquote class="pt-quote">
+              <span class="pt-quote-mark" aria-hidden="true">"</span>
+              {t.quote}
+            </blockquote>
+            <footer class="pt-attribution">
+              <img src={t.logo} alt={t.name} class="pt-logo" loading="lazy" />
+              <div class="pt-attr-text">
+                <span class="pt-attr-name">{t.name}</span>
+                <span class="pt-attr-role">{t.role}</span>
+              </div>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      <div class="pt-nav" aria-label="Testimonial navigation">
+        <button class="pt-arrow" id="pt-prev" aria-label="Previous testimonial">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="pt-dots" id="pt-dots">
+          {testimonials.map((_, i) => (
+            <button
+              class={`pt-dot${i === 0 ? " is-active" : ""}`}
+              aria-label={`Go to testimonial ${i + 1}`}
+              data-index={i}
+            ></button>
+          ))}
+        </div>
+        <button class="pt-arrow" id="pt-next" aria-label="Next testimonial">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initTestimonials() {
+    const track = document.getElementById("pt-track") as HTMLElement | null;
+    const dots = document.querySelectorAll<HTMLButtonElement>(".pt-dot");
+    const prevBtn = document.getElementById("pt-prev");
+    const nextBtn = document.getElementById("pt-next");
+    const total = dots.length;
+    let current = 0;
+
+    function goTo(index: number) {
+      current = (index + total) % total;
+      if (track) track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle("is-active", i === current));
+    }
+
+    // Clone to remove stale listeners
+    if (prevBtn) {
+      const np = prevBtn.cloneNode(true) as HTMLElement;
+      prevBtn.parentNode?.replaceChild(np, prevBtn);
+      np.addEventListener("click", () => goTo(current - 1));
+    }
+    if (nextBtn) {
+      const nn = nextBtn.cloneNode(true) as HTMLElement;
+      nextBtn.parentNode?.replaceChild(nn, nextBtn);
+      nn.addEventListener("click", () => goTo(current + 1));
+    }
+    dots.forEach((d) => {
+      const nd = d.cloneNode(true) as HTMLButtonElement;
+      d.parentNode?.replaceChild(nd, d);
+      nd.addEventListener("click", () => {
+        const i = parseInt(nd.dataset.index ?? "0", 10);
+        goTo(i);
+      });
+    });
+
+    // Reset to first slide on re-init
+    goTo(0);
+  }
+
+  document.addEventListener("astro:page-load", initTestimonials);
+</script>
+
+<style>
+  .pt-section {
+    background: var(--color-cream);
+    padding: 5rem 2rem 5.5rem;
+  }
+
+  .pt-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .pt-header {
+    margin-bottom: 3rem;
+  }
+
+  .pt-eyebrow {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin-bottom: 0.75rem;
+  }
+
+  .pt-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .pt-accent {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  /* Carousel */
+  .pt-carousel-wrap {
+    overflow: hidden;
+  }
+
+  .pt-track {
+    display: flex;
+    transition: transform 0.5s var(--ease-out);
+    will-change: transform;
+  }
+
+  .pt-card {
+    min-width: 100%;
+    padding: 2.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .pt-quote {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.75;
+    color: var(--color-ink);
+    margin: 0;
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--color-brand-red);
+  }
+
+  .pt-quote-mark {
+    display: none;
+  }
+
+  .pt-attribution {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pt-logo {
+    height: 36px;
+    width: auto;
+    flex-shrink: 0;
+    opacity: 0.75;
+    filter: grayscale(0.3);
+  }
+
+  .pt-attr-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .pt-attr-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+  }
+
+  .pt-attr-role {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+  }
+
+  /* Nav */
+  .pt-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .pt-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(23, 22, 22, 0.2);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .pt-arrow:hover {
+    border-color: var(--color-brand-red);
+    color: var(--color-brand-red);
+  }
+
+  .pt-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pt-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(23, 22, 22, 0.2);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    padding: 0;
+  }
+
+  .pt-dot.is-active {
+    background: var(--color-brand-red);
+    transform: scale(1.4);
+  }
+
+  @media (max-width: 479px) {
+    .pt-section {
+      padding: 3.5rem 1.25rem 4rem;
+    }
+
+    .pt-card {
+      padding: 1.75rem 0 0;
+      gap: 1.5rem;
+    }
+
+    .pt-quote {
+      font-size: 0.9375rem;
+    }
+
+    .pt-dot {
+      width: 8px;
+      height: 8px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  /* Desktop: show 3 cards side by side */
+  @media (min-width: 900px) {
+    .pt-section {
+      padding: 5.5rem 3rem 6rem;
+    }
+
+    .pt-track {
+      gap: 2rem;
+    }
+
+    .pt-card {
+      min-width: calc((100% - 4rem) / 3);
+      padding: 2rem;
+      border: 1px solid rgba(23, 22, 22, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Override JS translate so all 3 are always visible on desktop */
+    .pt-track {
+      transform: none !important;
+      flex-wrap: nowrap;
+    }
+
+    .pt-nav {
+      display: none;
+    }
+
+    .pt-quote {
+      flex: 1;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .pt-section {
+      padding: 6rem 5rem 7rem;
+    }
+  }
+</style>

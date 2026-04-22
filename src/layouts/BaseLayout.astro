@@ -37,14 +37,14 @@ const { title, description = '', bodyBg = '#FFFCF3' } = Astro.props;
 
     <ClientRouter />
   </head>
-  <body class="font-display text-text" style={`background-color: ${bodyBg};`}>
+  <body class="font-display text-text" style={`background-color: ${bodyBg};`} data-body-bg={bodyBg}>
     <style is:global>
-      /* Pure opacity fade — no translate, no layout shifts */
+      /* Symmetric cross-dissolve */
       ::view-transition-old(root) {
-        animation: vt-fade-out 0.15s ease forwards;
+        animation: vt-fade-out 0.18s ease forwards;
       }
       ::view-transition-new(root) {
-        animation: vt-fade-in 0.2s ease forwards;
+        animation: vt-fade-in 0.22s ease forwards;
       }
       @keyframes vt-fade-out {
         to { opacity: 0; }
@@ -53,7 +53,20 @@ const { title, description = '', bodyBg = '#FFFCF3' } = Astro.props;
         from { opacity: 0; }
         to   { opacity: 1; }
       }
+
+      /* Navbar excluded from root fade — persists across transitions */
+      ::view-transition-old(navbar-pill),
+      ::view-transition-new(navbar-pill) {
+        animation: none;
+      }
     </style>
+    <script is:inline>
+      // Sync body background before swap so it doesn't flash mid-transition
+      document.addEventListener("astro:before-swap", (e) => {
+        const newBg = e.newDocument.body.dataset.bodyBg ?? "#FFFCF3";
+        document.body.style.backgroundColor = newBg;
+      });
+    </script>
     <Navbar transition:persist />
     <slot />
     <Footer />

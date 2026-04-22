@@ -1,10 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactHero from "../components/sections/ContactHero.astro";
+import ContactForm from "../components/sections/ContactForm.astro";
+import CTABand from "../components/sections/CTABand.astro";
 ---
 
 <BaseLayout
-  title="Unify Social | Make Settling in Canada Simpler, Clearer, and Connected"
-  description="Get in touch with the Unify team"
+  title="Contact | Unify Social"
+  description="Get in touch with the Unify team. Questions, feedback, or partnership inquiries — we read every message."
+  bodyBg="#171616"
 >
-  <main></main>
+  <main>
+    <ContactHero />
+    <ContactForm />
+    <CTABand />
+  </main>
 </BaseLayout>

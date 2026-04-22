@@ -204,6 +204,12 @@ src/
 │   ├── about.astro
 │   ├── community.astro
 │   ├── contact.astro
+│   ├── partners.astro
+│   ├── partners/
+│   │   └── [slug].astro
+│   ├── api/
+│   │   ├── contact.ts
+│   │   └── partner-inquiry.ts
 │   └── blog/
 │       ├── index.astro
 │       └── [slug].astro
@@ -214,15 +220,28 @@ src/
 │   ├── sections/
 │   │   ├── Hero.astro
 │   │   ├── Problem.astro
-│   │   ├── Partners.astro
+│   │   ├── Partners.astro          # Homepage logo marquee
 │   │   ├── Journey.astro
 │   │   ├── ProductOverview.astro
 │   │   ├── FAQ.astro
-│   │   └── CTABand.astro
+│   │   ├── CTABand.astro
+│   │   ├── AboutHero.astro
+│   │   ├── AboutFounders.astro
+│   │   ├── AboutProblem.astro
+│   │   ├── AboutValues.astro
+│   │   ├── ContactHero.astro
+│   │   ├── ContactForm.astro
+│   │   ├── PartnersHero.astro
+│   │   ├── PartnerTestimonials.astro
+│   │   ├── PartnersGrid.astro
+│   │   └── BecomePartner.astro
+│   ├── blog/
+│   │   └── PostNav.astro
 │   └── common/
 │       ├── Navbar.astro
 │       └── Footer.astro
 ├── lib/
+│   ├── partners.ts
 │   ├── sanity/
 │   │   ├── client.ts
 │   │   ├── queries.ts
@@ -527,6 +546,86 @@ About page image assets (user-supplied):
 
 * /assets/images/about/founders-portrait.jpg — used in AboutHero (right column, full height)
 * /assets/images/about/founders-photo-2.jpg — used in AboutFounders (left column, offset red shadow)
+
+⸻
+
+Completed — Milestone 5 — Blog
+
+* ✅ Astro Content Collections — `src/content/blog/` with Zod schema (title, description, publishedAt, updatedAt, thumbnail, order, craReference)
+* ✅ `src/pages/blog/index.astro` — blog listing page, cards sorted by `order` desc, cream background
+* ✅ `src/pages/blog/[slug].astro` — individual post page, hero image, metadata bar, prose body, prev/next nav
+* ✅ `src/components/blog/PostNav.astro` — previous/next post navigation
+* ✅ `src/styles/prose.css` — full prose typography: headings, body, tables, blockquotes, lists, code
+* ✅ 15 blog posts in `src/content/blog/` — Canadian immigration, tax, career, newcomer topics
+* ✅ Prose link styling: always underlined with brand-red, partial opacity strengthens on hover
+
+⸻
+
+Completed — Milestone 6 — Blog content polish
+
+* ✅ Added markdown hyperlinks throughout all 15 blog posts (NOC codes, CRA references, IRCC, Express Entry, PNP, App Store, etc.)
+* ✅ Converted plain-text URLs to proper `[text](url)` hyperlinks
+* ✅ Fixed `accesemployment.ca` plain text → `[accesemployment.ca/pre-arrival](http://accesemployment.ca/pre-arrival)`
+* ✅ Reduced excessive spacing above blog post titles — padding tightened to `calc(67px + 0.75rem)` across all breakpoints
+* ✅ `.post-back` margin-bottom reduced (2.5rem → 1.25rem); `.post-title` bottom margin reduced (2.5rem → 1.5rem)
+
+⸻
+
+Completed — Milestone 4.5 — Community page
+
+* ✅ `src/pages/community.astro` — page shell with `bodyBg="#171616"`, wires CommunityHero + CommunityFeatures + CommunityEvents + CTABand
+* ✅ `src/components/sections/CommunityHero.astro` — dark ink hero, margin-top: -67px, editorial headline, staggered hero-fade-up animations
+* ✅ `src/components/sections/CommunityFeatures.astro` — cream section, feature highlights
+* ✅ `src/components/sections/CommunityEvents.astro` — events listings section
+
+⸻
+
+Completed — Milestone 7 — Contact page
+
+* ✅ `src/pages/contact.astro` — page shell with `bodyBg="#171616"`, wires ContactHero + ContactForm + CTABand
+* ✅ `src/components/sections/ContactHero.astro` — dark ink hero, margin-top: -67px, "Get in touch." headline at clamp(3rem,8vw,5.5rem), staggered hero-fade-up animations, blob decoration
+* ✅ `src/components/sections/ContactForm.astro` — cream section, 2-col layout at desktop (form left, contact sidebar right), name+email side-by-side, Turnstile widget slot, loading spinner, inline field errors, success state, vanilla JS fetch handler
+* ✅ `src/pages/api/contact.ts` — POST route: Zod validation → Turnstile siteverify → Resend email delivery. Gracefully skips steps when keys are absent (safe for local dev without keys).
+
+⸻
+
+Completed — Milestone 8 — Partners page
+
+* ✅ `src/lib/partners.ts` — typed Partner interface, 17 partners with full copy from PDF, getPartnerBySlug() helper, exported categories array
+* ✅ `src/pages/partners.astro` — page shell with bodyBg="#171616", wires PartnersHero + PartnerTestimonials + PartnersGrid + BecomePartner + CTABand
+* ✅ `src/pages/partners/[slug].astro` — static detail pages: back link, logo box, name/city/badge, divider, partnership description, org description, live "Visit website →" button
+* ✅ `src/pages/api/partner-inquiry.ts` — POST: Zod validation → Turnstile → Resend, same graceful degradation as contact.ts
+* ✅ `src/components/sections/PartnersHero.astro` — dark ink, "Together, we unify newcomers" H1, stats row (15+ partners | 5+ cities | 1,000s served), staggered animations
+* ✅ `src/components/sections/PartnerTestimonials.astro` — 3 placeholder testimonials (SFU/RBC/VPL), prev/next arrows + dot nav, desktop shows all 3 side-by-side, editorial left-border quote style
+* ✅ `src/components/sections/PartnersGrid.astro` — 17-partner grid, filter tabs (All/Education/Community/Libraries/Financial/Nonprofit), vanilla JS classList filter, cards link to /partners/[slug]
+* ✅ `src/components/sections/BecomePartner.astro` — dark ink split layout, headline + 4 benefits left, form right, POST to /api/partner-inquiry
+* ✅ `src/components/sections/Partners.astro` — updated homepage marquee with 5 new partners (YMCA BC, Capilano University, Burnaby Public Library, Promise Vancouver, Big Brothers Big Sisters)
+* ✅ `src/components/common/Navbar.astro` — added Partners + Contact links (order: Home | About | Community | Partners | Blog | Contact)
+
+Note: 5 new logo images must be placed in public/assets/images/partners/:
+  ymca_bc.png, capilano_university.png, burnaby_public_library.png, promise_vancouver.png, big_brothers_big_sisters.png
+
+Note: BecomePartner.astro Turnstile placeholder key (0x4AAAAAAA_PLACEHOLDER_KEY) must be replaced at deploy time (same as ContactForm).
+
+⸻
+
+Pending — Contact form: deploy-time setup
+
+These steps are NOT needed for local development. The form works locally without any keys (skips email send, skips Turnstile verification, shows success state). Come back to this when deploying to Cloudflare Workers.
+
+1. **Resend API key**
+   - Sign up at resend.com → API Keys → Create API Key
+   - Verify domain `unifysocial.ca` in Resend (add SPF/DKIM/DMARC DNS records at registrar)
+   - Add `RESEND_API_KEY=re_...` to `.dev.vars` (local) and Cloudflare Workers secrets (production)
+
+2. **Cloudflare Turnstile**
+   - Cloudflare dashboard → Turnstile → Add site → get **Site Key** (public) + **Secret Key** (private)
+   - Replace `0x4AAAAAAA_PLACEHOLDER_KEY` in `src/components/sections/ContactForm.astro` with the real site key
+   - Replace `0x4AAAAAAA_PLACEHOLDER_KEY` in `src/components/sections/BecomePartner.astro` with the real site key
+   - Add `TURNSTILE_SECRET_KEY=...` to `.dev.vars` (local) and Cloudflare Workers secrets (production)
+
+3. **Optional**
+   - Add `CONTACT_TO_EMAIL=contact@unifysocial.ca` if you want submissions going to a different inbox (defaults to `contact@unifysocial.ca` if unset)
 
 ⸻
 

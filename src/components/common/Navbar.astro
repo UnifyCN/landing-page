@@ -3,7 +3,9 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Community", href: "/community" },
+  { label: "Partners", href: "/partners" },
   { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const pathname = Astro.url.pathname;
@@ -320,38 +322,85 @@ function isActive(href: string) {
 </style>
 
 <script>
-  const pill = document.getElementById("nav-pill");
-  const toggle = document.getElementById("nav-toggle") as HTMLButtonElement | null;
-  const close = document.getElementById("nav-close");
-  const menu = document.getElementById("mobile-nav");
+  function initNavbar() {
+    const pill = document.getElementById("nav-pill");
+    const toggle = document.getElementById("nav-toggle") as HTMLButtonElement | null;
+    const close = document.getElementById("nav-close");
+    const menu = document.getElementById("mobile-nav");
 
-  function updateScrollState() {
-    if (!pill) return;
-    pill.classList.toggle("is-scrolled", window.scrollY > 10);
+    function updateScrollState() {
+      if (!pill) return;
+      pill.classList.toggle("is-scrolled", window.scrollY > 10);
+    }
+
+    // Remove any previous scroll listener before adding a new one
+    window.removeEventListener("scroll", updateScrollState);
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+    updateScrollState();
+
+    function openMenu() {
+      if (!menu || !toggle) return;
+      menu.classList.add("is-open");
+      toggle.classList.add("is-open");
+      toggle.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeMenu() {
+      if (!menu || !toggle) return;
+      menu.classList.remove("is-open");
+      toggle.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+    }
+
+    // Clean up old listeners by cloning elements
+    if (toggle) {
+      const newToggle = toggle.cloneNode(true) as HTMLButtonElement;
+      toggle.parentNode?.replaceChild(newToggle, toggle);
+      newToggle.addEventListener("click", openMenu);
+    }
+    if (close) {
+      const newClose = close.cloneNode(true) as HTMLElement;
+      close.parentNode?.replaceChild(newClose, close);
+      newClose.addEventListener("click", closeMenu);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
+    });
   }
-  window.addEventListener("scroll", updateScrollState, { passive: true });
-  updateScrollState();
 
-  function openMenu() {
-    if (!menu || !toggle) return;
-    menu.classList.add("is-open");
-    toggle.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeMenu() {
-    if (!menu || !toggle) return;
-    menu.classList.remove("is-open");
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
+  // Reset body overflow and close menu before every navigation
+  document.addEventListener("astro:before-preparation", () => {
     document.body.style.overflow = "";
+    const menu = document.getElementById("mobile-nav");
+    const toggle = document.getElementById("nav-toggle");
+    if (menu) menu.classList.remove("is-open");
+    if (toggle) {
+      toggle.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  function updateActiveLinks() {
+    const path = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-nav-link").forEach((a) => {
+      const href = a.getAttribute("href") ?? "";
+      const isActive = href === "/" ? path === "/" : path.startsWith(href);
+      a.classList.toggle("nav-link-active", a.classList.contains("nav-link") && isActive);
+      a.classList.toggle("mobile-nav-link-active", a.classList.contains("mobile-nav-link") && isActive);
+      if (isActive) {
+        a.setAttribute("aria-current", "page");
+      } else {
+        a.removeAttribute("aria-current");
+      }
+    });
   }
 
-  toggle?.addEventListener("click", openMenu);
-  close?.addEventListener("click", closeMenu);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
+  // Re-init on every page load (initial + soft navigations)
+  document.addEventListener("astro:page-load", () => {
+    initNavbar();
+    updateActiveLinks();
   });
 </script>

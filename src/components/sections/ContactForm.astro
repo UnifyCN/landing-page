@@ -1,0 +1,527 @@
+---
+---
+
+<section class="cf-section">
+  <div class="cf-inner">
+
+    <!-- ── Left: Form ── -->
+    <div class="cf-form-col">
+      <form class="cf-form" id="contact-form" novalidate>
+
+        <div class="cf-row-two">
+          <div class="cf-field">
+            <label class="cf-label" for="cf-name">Name</label>
+            <input
+              id="cf-name"
+              name="name"
+              type="text"
+              class="cf-input"
+              placeholder="Your name"
+              autocomplete="name"
+            />
+            <span class="cf-error" id="cf-name-error"></span>
+          </div>
+          <div class="cf-field">
+            <label class="cf-label" for="cf-email">Email</label>
+            <input
+              id="cf-email"
+              name="email"
+              type="email"
+              class="cf-input"
+              placeholder="your@email.com"
+              autocomplete="email"
+            />
+            <span class="cf-error" id="cf-email-error"></span>
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label class="cf-label" for="cf-message">Message</label>
+          <textarea
+            id="cf-message"
+            name="message"
+            class="cf-textarea"
+            placeholder="Your message…"
+            rows="6"
+          ></textarea>
+          <span class="cf-error" id="cf-message-error"></span>
+        </div>
+
+        <!-- Turnstile widget -->
+        <div
+          class="cf-turnstile"
+          id="cf-turnstile-widget"
+          data-sitekey="0x4AAAAAAA_PLACEHOLDER_KEY"
+          data-theme="light"
+        ></div>
+        <span class="cf-error" id="cf-turnstile-error"></span>
+
+        <span class="cf-error cf-error-global" id="cf-global-error"></span>
+
+        <button type="submit" class="cf-submit" id="cf-submit-btn">
+          <span class="cf-submit-label">Send message →</span>
+          <span class="cf-spinner" aria-hidden="true"></span>
+        </button>
+
+      </form>
+
+      <!-- Success state -->
+      <div class="cf-success" id="cf-success" aria-live="polite">
+        <div class="cf-success-mark" aria-hidden="true">✓</div>
+        <h2 class="cf-success-headline">Message sent.</h2>
+        <p class="cf-success-sub">We'll be in touch soon.</p>
+      </div>
+    </div>
+
+    <!-- ── Right: Sidebar ── -->
+    <aside class="cf-sidebar">
+      <div class="cf-sidebar-block">
+        <span class="cf-sidebar-label">Email us directly</span>
+        <a href="mailto:contact@unifysocial.ca" class="cf-sidebar-email">
+          contact@unifysocial.ca
+        </a>
+      </div>
+
+      <div class="cf-sidebar-block">
+        <span class="cf-sidebar-label">Response time</span>
+        <p class="cf-sidebar-note">We typically reply within 1–2 business days.</p>
+      </div>
+
+      <div class="cf-sidebar-block">
+        <span class="cf-sidebar-label">Follow us</span>
+        <div class="cf-socials">
+          <a
+            href="https://www.instagram.com/unifysocial.ca/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cf-social-link"
+            aria-label="Instagram"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+            </svg>
+            Instagram
+          </a>
+          <a
+            href="https://www.linkedin.com/company/unify-social/posts/?feedView=all"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cf-social-link"
+            aria-label="LinkedIn"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <div class="cf-sidebar-divider" aria-hidden="true"></div>
+
+      <p class="cf-sidebar-tagline">
+        Building the settlement app<br />newcomers deserve.
+      </p>
+    </aside>
+
+  </div>
+</section>
+
+<!-- Load Turnstile async -->
+<script
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  async
+  defer
+></script>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const successEl = document.getElementById("cf-success");
+  const submitBtn = document.getElementById("cf-submit-btn") as HTMLButtonElement | null;
+
+  function setError(id: string, msg: string) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = msg;
+  }
+
+  function clearErrors() {
+    ["cf-name-error", "cf-email-error", "cf-message-error", "cf-turnstile-error", "cf-global-error"].forEach(
+      (id) => setError(id, "")
+    );
+  }
+
+  function setLoading(loading: boolean) {
+    if (!submitBtn) return;
+    submitBtn.disabled = loading;
+    submitBtn.classList.toggle("is-loading", loading);
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const nameVal = (document.getElementById("cf-name") as HTMLInputElement)?.value ?? "";
+    const emailVal = (document.getElementById("cf-email") as HTMLInputElement)?.value ?? "";
+    const messageVal = (document.getElementById("cf-message") as HTMLTextAreaElement)?.value ?? "";
+
+    // Get Turnstile token from rendered widget
+    const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
+    const turnstileToken = turnstileInput?.value ?? "";
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameVal,
+          email: emailVal,
+          message: messageVal,
+          turnstileToken,
+        }),
+      });
+
+      const data = await res.json() as {
+        success: boolean;
+        error?: string;
+        fieldErrors?: Record<string, string[]>;
+      };
+
+      if (data.success) {
+        form.style.display = "none";
+        if (successEl) successEl.classList.add("is-visible");
+        return;
+      }
+
+      if (data.fieldErrors) {
+        const fe = data.fieldErrors;
+        if (fe.name?.[0]) setError("cf-name-error", fe.name[0]);
+        if (fe.email?.[0]) setError("cf-email-error", fe.email[0]);
+        if (fe.message?.[0]) setError("cf-message-error", fe.message[0]);
+        if (fe.turnstileToken?.[0]) setError("cf-turnstile-error", fe.turnstileToken[0]);
+      } else if (data.error) {
+        setError("cf-global-error", data.error);
+      }
+    } catch {
+      setError("cf-global-error", "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  });
+</script>
+
+<style>
+  .cf-section {
+    background: var(--color-cream);
+    padding: 5rem 2rem 6rem;
+  }
+
+  .cf-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  /* ── Form column ── */
+  .cf-form-col {
+    position: relative;
+    min-height: 420px;
+  }
+
+  .cf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .cf-row-two {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .cf-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .cf-input,
+  .cf-textarea {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border: 1px solid rgba(23, 22, 22, 0.2);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .cf-input::placeholder,
+  .cf-textarea::placeholder {
+    color: rgba(23, 22, 22, 0.35);
+  }
+
+  .cf-input:focus,
+  .cf-textarea:focus {
+    border-color: var(--color-brand-red);
+    box-shadow: 0 0 0 3px rgba(216, 74, 41, 0.12);
+  }
+
+  .cf-textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+  }
+
+  .cf-error {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-brand-red);
+    min-height: 1em;
+    display: block;
+  }
+
+  .cf-error-global {
+    text-align: center;
+    margin-top: -0.5rem;
+  }
+
+  /* ── Turnstile ── */
+  .cf-turnstile {
+    margin-top: -0.25rem;
+  }
+
+  /* ── Submit button ── */
+  .cf-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+    color: #fff;
+    background: var(--color-ink);
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem 2rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cf-submit:hover:not(:disabled) {
+    background: var(--color-brand-red);
+  }
+
+  .cf-submit:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .cf-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Loading state */
+  .cf-spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: cf-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .cf-submit.is-loading .cf-submit-label::after {
+    content: "…";
+  }
+
+  .cf-submit.is-loading .cf-spinner {
+    display: inline-block;
+  }
+
+  @keyframes cf-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Success state ── */
+  .cf-success {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 0;
+    animation: hero-fade-up 0.5s var(--ease-out) both;
+  }
+
+  .cf-success.is-visible {
+    display: flex;
+  }
+
+  .cf-success-mark {
+    font-size: 2.5rem;
+    color: var(--color-brand-red);
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .cf-success-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .cf-success-sub {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  /* ── Sidebar ── */
+  .cf-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .cf-sidebar-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cf-sidebar-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .cf-sidebar-email {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .cf-sidebar-email:hover {
+    color: var(--color-brand-red);
+  }
+
+  .cf-sidebar-note {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .cf-socials {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .cf-social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .cf-social-link:hover {
+    color: var(--color-brand-red);
+  }
+
+  .cf-sidebar-divider {
+    width: 2.5rem;
+    height: 2px;
+    background: var(--color-brand-red);
+    border-radius: 2px;
+  }
+
+  .cf-sidebar-tagline {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── Phone ── */
+  @media (max-width: 479px) {
+    .cf-section {
+      padding: 3.5rem 1.25rem 4.5rem;
+    }
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .cf-section {
+      padding: 5.5rem 3rem 7rem;
+    }
+
+    .cf-inner {
+      grid-template-columns: 1fr 280px;
+      gap: 3.5rem;
+      align-items: start;
+    }
+
+    .cf-row-two {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1100px) {
+    .cf-section {
+      padding: 6rem 5rem 8rem;
+    }
+
+    .cf-inner {
+      grid-template-columns: 1fr 320px;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+</style>

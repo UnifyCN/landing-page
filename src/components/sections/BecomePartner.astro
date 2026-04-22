@@ -1,0 +1,537 @@
+---
+---
+
+<section class="bp-section">
+  <img
+    src="/assets/blobs/blob-8.svg"
+    class="bp-blob"
+    alt=""
+    aria-hidden="true"
+    loading="lazy"
+  />
+
+  <div class="bp-inner">
+
+    <!-- Left: headline + benefits -->
+    <div class="bp-left">
+      <span class="bp-eyebrow">Become a Partner</span>
+      <h2 class="bp-headline">
+        Let's build<br />
+        something<br />
+        <em class="bp-accent">meaningful</em>
+      </h2>
+      <p class="bp-sub">
+        We're always looking to grow our network with organizations that share our commitment to newcomers — whether you're a school, library, community centre, or social enterprise.
+      </p>
+
+      <ul class="bp-benefits">
+        <li class="bp-benefit">
+          <span class="bp-benefit-title">Shared Mission, Bigger Impact</span>
+          <span class="bp-benefit-desc"> — Co-create programs that reach more newcomers across BC.</span>
+        </li>
+        <li class="bp-benefit">
+          <span class="bp-benefit-title">Visibility & Recognition</span>
+          <span class="bp-benefit-desc"> — Get featured on our platform, seen by thousands of newcomers every month.</span>
+        </li>
+        <li class="bp-benefit">
+          <span class="bp-benefit-title">Network Access</span>
+          <span class="bp-benefit-desc"> — Connect with partner organizations for collaboration and warm referrals.</span>
+        </li>
+        <li class="bp-benefit">
+          <span class="bp-benefit-title">Community Insights</span>
+          <span class="bp-benefit-desc"> — Access data to better understand and serve newcomers together.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Right: form -->
+    <div class="bp-form-col">
+      <div class="bp-form-card">
+        <p class="bp-form-heading">Send a Partnership Inquiry</p>
+
+        <form class="bp-form" id="bp-form" novalidate>
+
+          <div class="bp-row-two">
+            <div class="bp-field">
+              <label class="bp-label" for="bp-org-name">Organization Name</label>
+              <input id="bp-org-name" name="orgName" type="text" class="bp-input" placeholder="e.g. Community House BC" />
+              <span class="bp-error" id="bp-orgName-error"></span>
+            </div>
+            <div class="bp-field">
+              <label class="bp-label" for="bp-contact-name">Contact Name</label>
+              <input id="bp-contact-name" name="contactName" type="text" class="bp-input" placeholder="Your full name" autocomplete="name" />
+              <span class="bp-error" id="bp-contactName-error"></span>
+            </div>
+          </div>
+
+          <div class="bp-field">
+            <label class="bp-label" for="bp-email">Email Address</label>
+            <input id="bp-email" name="email" type="email" class="bp-input" placeholder="you@organization.org" autocomplete="email" />
+            <span class="bp-error" id="bp-email-error"></span>
+          </div>
+
+          <div class="bp-row-two">
+            <div class="bp-field">
+              <label class="bp-label" for="bp-org-type">Organization Type</label>
+              <select id="bp-org-type" name="orgType" class="bp-select">
+                <option value="">Select type</option>
+                <option value="School / University">School / University</option>
+                <option value="Library">Library</option>
+                <option value="Community Centre">Community Centre</option>
+                <option value="Nonprofit">Nonprofit</option>
+                <option value="Government">Government</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="bp-error" id="bp-orgType-error"></span>
+            </div>
+            <div class="bp-field">
+              <label class="bp-label" for="bp-city">City / Region</label>
+              <input id="bp-city" name="city" type="text" class="bp-input" placeholder="e.g. Vancouver, BC" />
+              <span class="bp-error" id="bp-city-error"></span>
+            </div>
+          </div>
+
+          <div class="bp-field">
+            <label class="bp-label" for="bp-message">How can we collaborate?</label>
+            <textarea id="bp-message" name="message" class="bp-textarea" rows="4" placeholder="Tell us about your organization and what a partnership could look like…"></textarea>
+            <span class="bp-error" id="bp-message-error"></span>
+          </div>
+
+          <div
+            class="bp-turnstile"
+            id="bp-turnstile-widget"
+            data-sitekey="0x4AAAAAAA_PLACEHOLDER_KEY"
+            data-theme="light"
+          ></div>
+          <span class="bp-error" id="bp-turnstile-error"></span>
+
+          <span class="bp-error bp-error-global" id="bp-global-error"></span>
+
+          <button type="submit" class="bp-submit" id="bp-submit-btn">
+            <span class="bp-submit-label">Send Inquiry →</span>
+            <span class="bp-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <!-- Success -->
+        <div class="bp-success" id="bp-success" aria-live="polite">
+          <div class="bp-success-mark" aria-hidden="true">✓</div>
+          <h3 class="bp-success-headline">Inquiry sent.</h3>
+          <p class="bp-success-sub">We'll be in touch within a few business days.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("bp-form") as HTMLFormElement | null;
+  const successEl = document.getElementById("bp-success");
+  const submitBtn = document.getElementById("bp-submit-btn") as HTMLButtonElement | null;
+
+  function setError(id: string, msg: string) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = msg;
+  }
+
+  function clearErrors() {
+    ["bp-orgName-error", "bp-contactName-error", "bp-email-error", "bp-orgType-error",
+     "bp-city-error", "bp-message-error", "bp-turnstile-error", "bp-global-error"]
+      .forEach((id) => setError(id, ""));
+  }
+
+  function setLoading(loading: boolean) {
+    if (!submitBtn) return;
+    submitBtn.disabled = loading;
+    submitBtn.classList.toggle("is-loading", loading);
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const get = (id: string) =>
+      (document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? "";
+
+    const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/partner-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orgName: get("bp-org-name"),
+          contactName: get("bp-contact-name"),
+          email: get("bp-email"),
+          orgType: get("bp-org-type"),
+          city: get("bp-city"),
+          message: get("bp-message"),
+          turnstileToken: turnstileInput?.value ?? "",
+        }),
+      });
+
+      const data = await res.json() as {
+        success: boolean;
+        error?: string;
+        fieldErrors?: Record<string, string[]>;
+      };
+
+      if (data.success) {
+        if (form) form.style.display = "none";
+        successEl?.classList.add("is-visible");
+        return;
+      }
+
+      if (data.fieldErrors) {
+        const fe = data.fieldErrors;
+        if (fe.orgName?.[0]) setError("bp-orgName-error", fe.orgName[0]);
+        if (fe.contactName?.[0]) setError("bp-contactName-error", fe.contactName[0]);
+        if (fe.email?.[0]) setError("bp-email-error", fe.email[0]);
+        if (fe.orgType?.[0]) setError("bp-orgType-error", fe.orgType[0]);
+        if (fe.city?.[0]) setError("bp-city-error", fe.city[0]);
+        if (fe.message?.[0]) setError("bp-message-error", fe.message[0]);
+        if (fe.turnstileToken?.[0]) setError("bp-turnstile-error", fe.turnstileToken[0]);
+      } else if (data.error) {
+        setError("bp-global-error", data.error);
+      }
+    } catch {
+      setError("bp-global-error", "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  });
+</script>
+
+<style>
+  .bp-section {
+    position: relative;
+    background: var(--color-ink);
+    padding: 5rem 2rem 6rem;
+    overflow: hidden;
+  }
+
+  .bp-blob {
+    position: absolute;
+    bottom: -15%;
+    right: -8%;
+    width: clamp(280px, 40vw, 560px);
+    opacity: 0.04;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .bp-inner {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  /* Left */
+  .bp-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .bp-eyebrow {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+  }
+
+  .bp-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-tight);
+    color: #fff;
+    margin: 0;
+  }
+
+  .bp-accent {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  .bp-sub {
+    font-family: var(--font-display);
+    font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .bp-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .bp-benefit {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .bp-benefit::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--color-brand-red);
+    font-weight: 700;
+  }
+
+  .bp-benefit-title {
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Form card */
+  .bp-form-card {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    position: relative;
+  }
+
+  .bp-form-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--color-ink);
+    margin: 0 0 1.75rem;
+    letter-spacing: 0.01em;
+  }
+
+  .bp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .bp-row-two {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .bp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .bp-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .bp-input,
+  .bp-select,
+  .bp-textarea {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border: 1px solid rgba(23, 22, 22, 0.2);
+    border-radius: 6px;
+    padding: 0.625rem 0.875rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bp-input::placeholder,
+  .bp-textarea::placeholder {
+    color: rgba(23, 22, 22, 0.35);
+  }
+
+  .bp-input:focus,
+  .bp-select:focus,
+  .bp-textarea:focus {
+    border-color: var(--color-brand-red);
+    box-shadow: 0 0 0 3px rgba(216, 74, 41, 0.12);
+  }
+
+  .bp-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 7L11 1' stroke='%23575757' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  .bp-textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+  }
+
+  .bp-error {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--color-brand-red);
+    min-height: 1em;
+    display: block;
+  }
+
+  .bp-error-global {
+    text-align: center;
+    margin-top: -0.25rem;
+  }
+
+  .bp-turnstile {
+    margin-top: -0.25rem;
+  }
+
+  .bp-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #fff;
+    background: var(--color-ink);
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem 1.5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .bp-submit:hover:not(:disabled) {
+    background: var(--color-brand-red);
+  }
+
+  .bp-submit:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .bp-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .bp-spinner {
+    display: none;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: bp-spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .bp-submit.is-loading .bp-spinner {
+    display: inline-block;
+  }
+
+  @keyframes bp-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Success */
+  .bp-success {
+    display: none;
+    flex-direction: column;
+    padding: 2rem 0;
+    animation: hero-fade-up 0.5s var(--ease-out) both;
+  }
+
+  .bp-success.is-visible {
+    display: flex;
+  }
+
+  .bp-success-mark {
+    font-size: 2rem;
+    color: var(--color-brand-red);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .bp-success-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-ink);
+    margin: 0 0 0.5rem;
+  }
+
+  .bp-success-sub {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 479px) {
+    .bp-section {
+      padding: 3rem 1.25rem 4rem;
+    }
+
+    .bp-form-card {
+      padding: 1.5rem 1.25rem;
+    }
+
+    .bp-headline {
+      font-size: clamp(1.875rem, 10vw, 2.5rem);
+    }
+  }
+
+  @media (min-width: 600px) {
+    .bp-row-two {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .bp-form-card {
+      padding: 2.5rem 2rem;
+    }
+  }
+
+  @media (min-width: 810px) {
+    .bp-section {
+      padding: 5.5rem 3rem 7rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .bp-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .bp-section {
+      padding: 6rem 5rem 8rem;
+    }
+  }
+</style>

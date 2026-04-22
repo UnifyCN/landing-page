@@ -50,7 +50,7 @@
     position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 300px auto;
+    grid-template-rows: min(40vh, 300px) auto;
     min-height: calc(100vh + 67px);
     min-height: calc(100dvh + 67px);
     overflow: hidden;
@@ -135,13 +135,14 @@
   }
 
   @keyframes hero-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Phone ── */
+  @media (max-width: 479px) {
+    .about-hero-text-col {
+      padding: 2rem 1.25rem 3rem;
     }
   }
 
