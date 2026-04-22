@@ -61,7 +61,7 @@ const { title, description = '', bodyBg = '#FFFCF3' } = Astro.props;
       }
     </style>
     <script is:inline>
-      // Sync body background before swap so it doesn't flash mid-transition
+      history.scrollRestoration = "manual";
       document.addEventListener("astro:before-swap", (e) => {
         const newBg = e.newDocument.body.dataset.bodyBg ?? "#FFFCF3";
         document.body.style.backgroundColor = newBg;
