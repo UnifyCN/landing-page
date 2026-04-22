@@ -57,7 +57,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (resendKey) {
     const resend = new Resend(resendKey);
     const { error } = await resend.emails.send({
-      from: "Unify Contact <noreply@daisli.resend.app>",
+      from: "Unify Contact <onboarding@resend.dev>",
       to: toEmail,
       replyTo: email,
       subject: `New contact message from ${name}`,
