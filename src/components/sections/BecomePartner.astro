@@ -197,8 +197,10 @@
       } else if (data.error) {
         setError("bp-global-error", data.error);
       }
+      (window as any).turnstile?.reset();
     } catch {
       setError("bp-global-error", "Something went wrong. Please try again.");
+      (window as any).turnstile?.reset();
     } finally {
       setLoading(false);
     }
