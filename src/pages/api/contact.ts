@@ -10,52 +10,62 @@ const schema = z.object({
 });
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const runtime = (locals as any).runtime?.env ?? {};
-
-  let body: unknown;
   try {
-    body = await request.json();
-  } catch {
-    return new Response(JSON.stringify({ success: false, error: "Invalid request body" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+    const runtime = (locals as any).runtime?.env ?? {};
 
-  const parsed = schema.safeParse(body);
-  if (!parsed.success) {
-    const fieldErrors = parsed.error.flatten().fieldErrors;
-    return new Response(JSON.stringify({ success: false, fieldErrors }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const { name, email, message, turnstileToken } = parsed.data;
-
-  // Verify Turnstile token
-  const turnstileSecret = runtime.TURNSTILE_SECRET_KEY ?? import.meta.env.TURNSTILE_SECRET_KEY;
-  if (turnstileSecret) {
-    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ secret: turnstileSecret, response: turnstileToken }),
-    });
-    const verifyData = await verifyRes.json() as { success: boolean };
-    if (!verifyData.success) {
-      return new Response(JSON.stringify({ success: false, error: "Verification failed. Please try again." }), {
-        status: 422,
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ success: false, error: "Invalid request body" }), {
+        status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
-  }
 
-  // Send email via Resend
-  const resendKey = runtime.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
-  const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      return new Response(JSON.stringify({ success: false, fieldErrors }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-  if (resendKey) {
-    try {
+    const { name, email, message, turnstileToken } = parsed.data;
+
+    // Verify Turnstile token
+    const turnstileSecret = runtime.TURNSTILE_SECRET_KEY ?? import.meta.env.TURNSTILE_SECRET_KEY;
+    if (turnstileSecret) {
+      try {
+        const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ secret: turnstileSecret, response: turnstileToken }),
+        });
+        const verifyData = await verifyRes.json() as { success: boolean };
+        if (!verifyData.success) {
+          return new Response(JSON.stringify({ success: false, error: "Verification failed. Please try again." }), {
+            status: 422,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+      } catch (err) {
+        console.error("[contact] Turnstile verification error:", err);
+        return new Response(JSON.stringify({ success: false, error: "Verification failed. Please try again." }), {
+          status: 422,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    // Send email via Resend
+    const resendKey = runtime.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
+    const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
+
+    console.log("[contact] resendKey present:", !!resendKey, "| toEmail:", toEmail);
+
+    if (resendKey) {
       const resend = new Resend(resendKey);
       const { error } = await resend.emails.send({
         from: "Unify Contact <noreply@unifysocial.ca>",
@@ -74,21 +84,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
         `,
       });
       if (error) {
+        console.error("[contact] Resend error:", error);
         return new Response(JSON.stringify({ success: false, error: "Failed to send message. Please try again." }), {
           status: 500,
           headers: { "Content-Type": "application/json" },
         });
       }
-    } catch {
-      return new Response(JSON.stringify({ success: false, error: "Failed to send message. Please try again." }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
     }
-  }
 
-  return new Response(JSON.stringify({ success: true }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("[contact] Unhandled error:", err);
+    return new Response(JSON.stringify({ success: false, error: "Failed to send message. Please try again." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 };
