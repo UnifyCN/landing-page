@@ -12,7 +12,9 @@ const schema = z.object({
   turnstileToken: z.string().min(1, "Verification required"),
 });
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const runtime = (locals as any).runtime?.env ?? {};
+
   let body: unknown;
   try {
     body = await request.json();
@@ -35,7 +37,7 @@ export const POST: APIRoute = async ({ request }) => {
   const { orgName, contactName, email, orgType, city, message, turnstileToken } = parsed.data;
 
   // Verify Turnstile token
-  const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY;
+  const turnstileSecret = runtime.TURNSTILE_SECRET_KEY ?? import.meta.env.TURNSTILE_SECRET_KEY;
   if (turnstileSecret) {
     const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
@@ -52,8 +54,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // Send email via Resend
-  const resendKey = import.meta.env.RESEND_API_KEY;
-  const toEmail = import.meta.env.CONTACT_TO_EMAIL || "contact@unifysocial.ca";
+  const resendKey = runtime.RESEND_API_KEY ?? import.meta.env.RESEND_API_KEY;
+  const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
 
   if (resendKey) {
     const resend = new Resend(resendKey);
