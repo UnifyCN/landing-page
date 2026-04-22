@@ -1,0 +1,468 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/sections/CTABand.astro";
+import { resources, categoryLabels, type ResourceCategory } from "../lib/resources";
+
+const categories: ResourceCategory[] = [
+  "employment",
+  "finance",
+  "healthcare",
+  "indigenous",
+  "transportation",
+  "other",
+];
+---
+
+<BaseLayout
+  title="Newcomer Resources | Unify Social"
+  description="Videos on employment, finance, healthcare, and settlement basics for newcomers and immigrants across Canada."
+  bodyBg="#171616"
+>
+  <main>
+
+    <!-- ── Hero ── -->
+    <section class="rv-hero">
+      <img src="/assets/blobs/blob-3.svg" class="rv-blob" alt="" aria-hidden="true" loading="eager" />
+      <div class="rv-hero-inner">
+        <span class="rv-eyebrow">For Newcomers &amp; Immigrants</span>
+        <h1 class="rv-headline">Newcomer Resources<span class="rv-period">.</span></h1>
+        <p class="rv-sub">We provide newcomers and immigrants across Canada with videos on employment, finance, healthcare, and settlement basics.</p>
+      </div>
+    </section>
+
+    <!-- ── Grid ── -->
+    <section class="rv-grid-section" id="rv-grid-section">
+
+      <!-- Filter tabs -->
+      <div class="rv-filters" role="tablist" aria-label="Filter resources by category">
+        <button class="rv-filter-btn rv-filter-active" data-filter="all" role="tab" aria-selected="true">All</button>
+        {categories.map((cat) => (
+          <button class="rv-filter-btn" data-filter={cat} role="tab" aria-selected="false">
+            {categoryLabels[cat]}
+          </button>
+        ))}
+      </div>
+
+      <!-- Cards -->
+      <div class="rv-grid" id="rv-grid">
+        {resources.map((resource) => (
+          <a
+            href={`/resources/${resource.slug}`}
+            class="rv-card"
+            data-category={resource.category}
+          >
+            <!-- Thumbnail -->
+            <div class="rv-thumb">
+              {(resource.thumbnail || resource.youtubeId) ? (
+                <>
+                  <img
+                    src={resource.thumbnail ?? `https://img.youtube.com/vi/${resource.youtubeId}/maxresdefault.jpg`}
+                    alt={resource.title}
+                    class="rv-thumb-img"
+                    loading="lazy"
+                  />
+                  <div class="rv-thumb-overlay" aria-hidden="true"></div>
+                </>
+              ) : null}
+              <span class="rv-cat-badge">{categoryLabels[resource.category]}</span>
+              <div class="rv-play-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="9.25" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 7.268l5 2.732-5 2.732V7.268z" fill="currentColor"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="rv-card-body">
+              <h2 class="rv-card-title">{resource.title}</h2>
+              <p class="rv-card-creator">
+                <strong>{resource.creatorName}</strong>
+                {resource.creatorRole ? <> · {resource.creatorRole}</> : null}
+              </p>
+              <p class="rv-card-desc">{resource.description}</p>
+              <span class="rv-card-cta">
+                Learn More
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                  <path d="M2.5 10.5L10.5 2.5M10.5 2.5H5M10.5 2.5V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Empty state (shown when filter matches nothing) -->
+      <p class="rv-empty" id="rv-empty" hidden>No resources in this category yet — check back soon.</p>
+
+    </section>
+
+    <CTABand />
+  </main>
+</BaseLayout>
+
+<style>
+  /* ── Hero ── */
+  .rv-hero {
+    position: relative;
+    background-color: var(--color-ink);
+    overflow: hidden;
+    margin-top: -67px;
+    display: flex;
+    align-items: flex-end;
+    padding: calc(67px + 3.5rem) 2rem 5.5rem;
+  }
+
+  .rv-blob {
+    position: absolute;
+    top: -10%;
+    right: -8%;
+    width: clamp(300px, 44vw, 620px);
+    opacity: 0.05;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .rv-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .rv-eyebrow {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+  }
+
+  .rv-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: var(--tracking-display);
+    color: #fff;
+    margin: 0 0 1.5rem;
+    opacity: 0;
+    animation: hero-fade-up 0.7s var(--ease-out) 0.2s forwards;
+  }
+
+  .rv-period {
+    color: var(--color-brand-red);
+    font-style: italic;
+  }
+
+  .rv-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    max-width: 60ch;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.34s forwards;
+  }
+
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Grid section ── */
+  .rv-grid-section {
+    background-color: var(--color-cream);
+    padding: 4rem 2rem 7rem;
+  }
+
+  /* ── Filter tabs ── */
+  .rv-filters {
+    max-width: 1200px;
+    margin: 0 auto 3.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .rv-filter-btn {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    padding: 0.5rem 1.125rem;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    background: rgba(23, 22, 22, 0.07);
+    color: var(--color-muted);
+    transition: background 0.18s ease, color 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .rv-filter-btn:hover {
+    background: rgba(23, 22, 22, 0.12);
+    color: var(--color-text);
+  }
+
+  .rv-filter-btn.rv-filter-active {
+    background: var(--color-brand-red);
+    color: #fff;
+  }
+
+  /* ── Cards grid ── */
+  .rv-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* ── Card ── */
+  .rv-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 12px rgba(23, 22, 22, 0.06);
+    transition: transform 0.22s var(--ease-out), box-shadow 0.22s ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .rv-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(23, 22, 22, 0.12);
+    }
+
+    .rv-card:hover .rv-play-icon {
+      color: var(--color-brand-red);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .rv-card:hover .rv-card-title {
+      color: var(--color-brand-red);
+    }
+  }
+
+  /* Thumbnail */
+  .rv-thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--color-ink);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .rv-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .rv-card:hover .rv-thumb-img {
+    transform: scale(1.04);
+  }
+
+  .rv-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(23, 22, 22, 0.35);
+  }
+
+  .rv-cat-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.625rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--color-brand-red);
+    padding: 0.25rem 0.625rem;
+    border-radius: 99px;
+  }
+
+  .rv-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.75);
+    transition: color 0.18s ease, transform 0.22s var(--ease-out);
+  }
+
+  /* Card body */
+  .rv-card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.25rem 1.5rem;
+    flex: 1;
+  }
+
+  .rv-card-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0 0 0.375rem;
+    transition: color 0.18s ease;
+  }
+
+  .rv-card-creator {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .rv-card-creator strong {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .rv-card-desc {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    margin: 0 0 1.25rem;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .rv-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: var(--color-brand-red);
+    margin-top: auto;
+    transition: gap 0.18s var(--ease-out);
+  }
+
+  .rv-card:hover .rv-card-cta {
+    gap: 0.625rem;
+  }
+
+  /* Empty state */
+  .rv-empty {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--color-muted);
+    text-align: center;
+    padding: 4rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 479px) {
+    .rv-hero {
+      padding: calc(67px + 2rem) 1.25rem 4rem;
+    }
+
+    .rv-grid-section {
+      padding: 3rem 1.25rem 5rem;
+    }
+
+    .rv-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+      margin-bottom: 2.5rem;
+    }
+
+    .rv-filters::-webkit-scrollbar { display: none; }
+  }
+
+  @media (min-width: 640px) {
+    .rv-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 810px) {
+    .rv-hero {
+      padding: calc(67px + 4.5rem) 3rem 6rem;
+    }
+
+    .rv-grid-section {
+      padding: 5rem 3rem 8rem;
+    }
+
+    .rv-filters {
+      margin-bottom: 4rem;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .rv-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .rv-hero {
+      padding: calc(67px + 5rem) 5rem 7rem;
+    }
+
+    .rv-grid-section {
+      padding: 5.5rem 5rem 9rem;
+    }
+  }
+</style>
+
+<script>
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>(".rv-filter-btn");
+  const cards = document.querySelectorAll<HTMLElement>(".rv-card");
+  const emptyState = document.getElementById("rv-empty");
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter ?? "all";
+
+      // Update active button
+      filterBtns.forEach((b) => {
+        b.classList.remove("rv-filter-active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("rv-filter-active");
+      btn.setAttribute("aria-selected", "true");
+
+      // Show/hide cards
+      let visible = 0;
+      cards.forEach((card) => {
+        const match = filter === "all" || card.dataset.category === filter;
+        card.hidden = !match;
+        if (match) visible++;
+      });
+
+      if (emptyState) emptyState.hidden = visible > 0;
+    });
+  });
+</script>

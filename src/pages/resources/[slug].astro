@@ -1,0 +1,302 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { resources, getResourceBySlug, categoryLabels } from "../../lib/resources";
+
+const { slug } = Astro.params;
+const resource = getResourceBySlug(slug ?? "");
+
+if (!resource) return Astro.redirect("/resources");
+---
+
+<BaseLayout
+  title={`${resource.title} | Unify Resources`}
+  description={resource.description}
+>
+  <main class="rd-main">
+
+    <!-- Back -->
+    <a href="/resources" class="rd-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M11.5 7H2.5M2.5 7L6.5 3M2.5 7L6.5 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      All Resources
+    </a>
+
+    <!-- Header -->
+    <div class="rd-header">
+      <span class="rd-badge">{categoryLabels[resource.category]}</span>
+      <h1 class="rd-title">{resource.title}</h1>
+      <p class="rd-creator">
+        <strong>{resource.creatorName}</strong>
+        {resource.creatorRole ? <> · <span>{resource.creatorRole}</span></> : null}
+      </p>
+    </div>
+
+    <!-- Video area -->
+    <div class="rd-video-area">
+      {resource.youtubeId ? (
+        <iframe
+          class="rd-video-iframe"
+          src={`https://www.youtube-nocookie.com/embed/${resource.youtubeId}?rel=0&modestbranding=1`}
+          title={resource.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      ) : (
+        <div class="rd-video-placeholder" aria-label="Video player — coming soon">
+          {resource.thumbnail ? (
+            <img src={resource.thumbnail} alt={resource.title} class="rd-video-thumb" />
+          ) : null}
+          <div class="rd-play-circle" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M10 9.268l10 5.732-10 5.732V9.268z" fill="currentColor"/>
+            </svg>
+          </div>
+          <p class="rd-video-label">Video coming soon</p>
+        </div>
+      )}
+    </div>
+
+    <div class="rd-divider" aria-hidden="true"></div>
+
+    <!-- Description -->
+    <section class="rd-section" aria-labelledby="rd-desc-heading">
+      <h2 class="rd-section-title" id="rd-desc-heading">About this resource</h2>
+      <p class="rd-p">{resource.description}</p>
+    </section>
+
+    <!-- What you'll learn -->
+    {resource.whatYoullLearn?.length > 0 && (
+      <section class="rd-section" aria-labelledby="rd-learn-heading">
+        <div class="rd-divider" aria-hidden="true"></div>
+        <h2 class="rd-section-title" id="rd-learn-heading">What you'll learn</h2>
+        <ul class="rd-list">
+          {resource.whatYoullLearn.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  .rd-main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: calc(67px + 2rem) 2rem 0;
+  }
+
+  /* Back */
+  .rd-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color 0.2s ease;
+    opacity: 0;
+    animation: rd-fade-up 0.4s var(--ease-out) 0.05s forwards;
+  }
+
+  .rd-back:hover { color: var(--color-brand-red); }
+
+  /* Header */
+  .rd-header {
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: rd-fade-up 0.45s var(--ease-out) 0.12s forwards;
+  }
+
+  .rd-badge {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.625rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--color-brand-red);
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+  }
+
+  .rd-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+  }
+
+  .rd-creator {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  .rd-creator strong {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  /* Video area */
+  .rd-video-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--color-ink);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: rd-fade-up 0.5s var(--ease-out) 0.22s forwards;
+  }
+
+  .rd-video-iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .rd-video-thumb {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+  }
+
+  .rd-video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .rd-play-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .rd-video-label {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+  }
+
+  /* Divider */
+  .rd-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(23, 22, 22, 0.08);
+    margin: 2rem 0;
+  }
+
+  /* Sections */
+  .rd-section {
+    margin-bottom: 0;
+    opacity: 0;
+    animation: rd-fade-up 0.45s var(--ease-out) 0.32s forwards;
+  }
+
+  .rd-section + .rd-section {
+    animation-delay: 0.4s;
+  }
+
+  .rd-section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    border-left: 2px solid var(--color-brand-red);
+    padding-left: 0.875rem;
+    margin: 0 0 1.125rem;
+  }
+
+  .rd-p {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  /* What you'll learn */
+  .rd-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem;
+  }
+
+  .rd-list li {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-text);
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: 0.25rem;
+  }
+
+  .rd-list li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--color-brand-red);
+    font-weight: 600;
+  }
+
+  @keyframes rd-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Responsive ── */
+  @media (min-width: 810px) {
+    .rd-main {
+      padding: calc(67px + 2.5rem) 3rem 0;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .rd-main {
+      padding: calc(67px + 3rem) 5rem 0;
+      max-width: 900px;
+    }
+  }
+</style>
