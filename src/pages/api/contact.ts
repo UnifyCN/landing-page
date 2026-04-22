@@ -55,24 +55,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
 
   if (resendKey) {
-    const resend = new Resend(resendKey);
-    const { error } = await resend.emails.send({
-      from: "Unify Contact <onboarding@resend.dev>",
-      to: toEmail,
-      replyTo: email,
-      subject: `New contact message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #171616;">New contact message</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 1.5rem 0;" />
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-      `,
-    });
-    if (error) {
+    try {
+      const resend = new Resend(resendKey);
+      const { error } = await resend.emails.send({
+        from: "Unify Contact <noreply@unifysocial.ca>",
+        to: toEmail,
+        replyTo: email,
+        subject: `New contact message from ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #171616;">New contact message</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 1.5rem 0;" />
+            <p style="white-space: pre-wrap;">${message}</p>
+          </div>
+        `,
+      });
+      if (error) {
+        return new Response(JSON.stringify({ success: false, error: "Failed to send message. Please try again." }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch {
       return new Response(JSON.stringify({ success: false, error: "Failed to send message. Please try again." }), {
         status: 500,
         headers: { "Content-Type": "application/json" },

@@ -58,28 +58,35 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const toEmail = runtime.CONTACT_TO_EMAIL ?? import.meta.env.CONTACT_TO_EMAIL ?? "contact@unifysocial.ca";
 
   if (resendKey) {
-    const resend = new Resend(resendKey);
-    const { error } = await resend.emails.send({
-      from: "Unify Partner Inquiries <onboarding@resend.dev>",
-      to: toEmail,
-      replyTo: email,
-      subject: `New partner inquiry from ${orgName}`,
-      text: `Organization: ${orgName}\nContact: ${contactName}\nEmail: ${email}\nType: ${orgType}\nCity: ${city}\n\nHow can we collaborate:\n${message}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #171616;">New partner inquiry</h2>
-          <p><strong>Organization:</strong> ${orgName}</p>
-          <p><strong>Contact:</strong> ${contactName}</p>
-          <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-          <p><strong>Type:</strong> ${orgType}</p>
-          <p><strong>City / Region:</strong> ${city}</p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 1.5rem 0;" />
-          <p><strong>How can we collaborate:</strong></p>
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-      `,
-    });
-    if (error) {
+    try {
+      const resend = new Resend(resendKey);
+      const { error } = await resend.emails.send({
+        from: "Unify Partner Inquiries <noreply@unifysocial.ca>",
+        to: toEmail,
+        replyTo: email,
+        subject: `New partner inquiry from ${orgName}`,
+        text: `Organization: ${orgName}\nContact: ${contactName}\nEmail: ${email}\nType: ${orgType}\nCity: ${city}\n\nHow can we collaborate:\n${message}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #171616;">New partner inquiry</h2>
+            <p><strong>Organization:</strong> ${orgName}</p>
+            <p><strong>Contact:</strong> ${contactName}</p>
+            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+            <p><strong>Type:</strong> ${orgType}</p>
+            <p><strong>City / Region:</strong> ${city}</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 1.5rem 0;" />
+            <p><strong>How can we collaborate:</strong></p>
+            <p style="white-space: pre-wrap;">${message}</p>
+          </div>
+        `,
+      });
+      if (error) {
+        return new Response(JSON.stringify({ success: false, error: "Failed to send inquiry. Please try again." }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch {
       return new Response(JSON.stringify({ success: false, error: "Failed to send inquiry. Please try again." }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
