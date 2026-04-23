@@ -1,25 +1,38 @@
 ---
 const APP_STORE_URL =
   "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+
+const avatars = [
+  { initials: "JP", color: "#D4A948" },
+  { initials: "MA", color: "#E47793" },
+  { initials: "LO", color: "#6E54B8" },
+  { initials: "RN", color: "#D84A6E" },
+  { initials: "+", color: "#D4B148" },
+];
 ---
 
 <section class="hero">
-  <div class="hero-blob" aria-hidden="true">
-    <img src="/assets/blobs/blob-3.svg" alt="" />
-  </div>
-
   <div class="hero-inner">
     <div class="hero-text">
-      <p class="hero-overline">Newcomer settlement app</p>
+      <div class="hero-rating" aria-label="Rated 4.9 out of 5 by over 2,700 newcomers">
+        <span class="hero-stars" aria-hidden="true">
+          {[...Array(5)].map(() => (
+            <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 1.5l2.62 5.31 5.86.85-4.24 4.13 1 5.84L10 14.88l-5.24 2.75 1-5.84L1.52 7.66l5.86-.85L10 1.5z" />
+            </svg>
+          ))}
+        </span>
+        <span class="hero-rating-text">
+          Rated <strong>4.9</strong> by <strong>2,700+</strong> newcomers
+        </span>
+      </div>
 
       <h1 class="hero-h1">
-        <span class="hero-h1-small">The all-in-one</span>
-        <strong class="hero-h1-big">newcomer</strong>
-        <span class="hero-h1-sub">settlement <em>app</em></span>
+        The all-in-one newcomer settlement app
       </h1>
 
       <p class="hero-desc">
-        Unify makes settling in Canada simpler, clearer, and more connected
+        Unify makes settling in Canada simpler, clearer, and more connected.
       </p>
 
       <div class="hero-cta-row">
@@ -38,6 +51,19 @@ const APP_STORE_URL =
         </a>
         <p class="hero-note">No credit card required</p>
       </div>
+
+      <div class="hero-social">
+        <div class="hero-avatars" aria-hidden="true">
+          {avatars.map((a) => (
+            <span class="hero-avatar" style={`background-color: ${a.color};`}>
+              {a.initials}
+            </span>
+          ))}
+        </div>
+        <p class="hero-social-text">
+          Join 2,700+ newcomers settling in from 84 countries
+        </p>
+      </div>
     </div>
 
     <div class="hero-visual">
@@ -54,34 +80,13 @@ const APP_STORE_URL =
 <style>
   .hero {
     position: relative;
-    background-color: var(--color-cream);
-    overflow: hidden;
+    background-color: #ffffff;
     padding-top: 4.5rem;
-    padding-bottom: 0;
-  }
-
-  /* Decorative blob — top right, warm tint */
-  .hero-blob {
-    position: absolute;
-    top: -8%;
-    right: -8%;
-    width: 52%;
-    max-width: 640px;
-    opacity: 0.28;
-    pointer-events: none;
-    user-select: none;
-    z-index: 0;
-    filter: hue-rotate(-10deg) saturate(0.6);
-  }
-
-  .hero-blob img {
-    width: 100%;
-    height: auto;
+    padding-bottom: 2.5rem;
   }
 
   .hero-inner {
     position: relative;
-    z-index: 1;
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 1.5rem;
@@ -91,64 +96,63 @@ const APP_STORE_URL =
     align-items: center;
   }
 
-  /* ── Overline ── */
-  .hero-overline {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-brand-red);
-    margin: 0 0 1.25rem;
+  /* ── Rating pill ── */
+  .hero-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.875rem 0.5rem 0.75rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.1);
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(23, 22, 22, 0.04);
+    margin-bottom: 1.5rem;
     opacity: 0;
     animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+  }
+
+  .hero-stars {
+    display: inline-flex;
+    gap: 0.125rem;
+    color: #F5A623;
+  }
+
+  .hero-stars svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+  }
+
+  .hero-rating-text {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--color-text);
+    letter-spacing: -0.005em;
+    line-height: 1;
+  }
+
+  .hero-rating-text strong {
+    font-weight: 700;
   }
 
   /* ── Headline ── */
   .hero-h1 {
     margin: 0;
-    line-height: 0.92;
-  }
-
-  .hero-h1-small {
-    display: block;
-    font-family: var(--font-display);
-    font-weight: 300;
-    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
-    letter-spacing: -0.01em;
-    color: var(--color-muted);
-    margin-bottom: 0.25rem;
-    opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.18s forwards;
-  }
-
-  .hero-h1-big {
-    display: block;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.75rem, 10.5vw, 9rem);
+    font-size: clamp(2.5rem, 7.5vw, 5.5rem);
+    line-height: 1.02;
     letter-spacing: var(--tracking-display);
-    line-height: 0.88;
     color: var(--color-text);
+    text-wrap: balance;
     opacity: 0;
-    animation: hero-fade-up 0.6s var(--ease-out) 0.24s forwards;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.22s forwards;
   }
 
-  .hero-h1-sub {
-    display: block;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1.75rem, 4.8vw, 4.25rem);
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-text);
-    margin-top: 0.375rem;
-    opacity: 0;
-    animation: hero-fade-up 0.6s var(--ease-out) 0.3s forwards;
-  }
-
-  .hero-h1-sub em {
+  .hero-h1 em {
     font-style: italic;
-    color: var(--color-brand-red);
+    font-weight: 700;
   }
 
   /* ── Body copy ── */
@@ -156,12 +160,12 @@ const APP_STORE_URL =
     font-family: var(--font-display);
     font-weight: 400;
     font-size: clamp(1rem, 1.4vw, 1.1875rem);
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--color-muted);
-    margin: 1.75rem 0 0;
+    margin: 1.5rem 0 0;
     max-width: 44ch;
     opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.42s forwards;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.36s forwards;
   }
 
   /* ── CTA row ── */
@@ -170,9 +174,9 @@ const APP_STORE_URL =
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-    margin-top: 2.25rem;
+    margin-top: 2rem;
     opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.52s forwards;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.46s forwards;
   }
 
   .hero-badge-link {
@@ -201,12 +205,55 @@ const APP_STORE_URL =
     font-family: var(--font-display);
     font-size: 0.8125rem;
     color: var(--color-muted);
-    opacity: 0.65;
+    opacity: 0.7;
     margin: 0;
+  }
+
+  /* ── Social proof row ── */
+  .hero-social {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.56s forwards;
+  }
+
+  .hero-avatars {
+    display: inline-flex;
+  }
+
+  .hero-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 2px rgba(23, 22, 22, 0.06);
+  }
+
+  .hero-avatar + .hero-avatar {
+    margin-left: -0.5rem;
+  }
+
+  .hero-social-text {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin: 0;
+    line-height: 1.4;
   }
 
   /* ── Phone ── */
   .hero-visual {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -214,7 +261,44 @@ const APP_STORE_URL =
     animation: hero-phone-in 0.8s var(--ease-out) 0.2s forwards;
   }
 
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: -20% -25%;
+    background: radial-gradient(
+      ellipse 55% 55% at 50% 50%,
+      rgba(110, 160, 215, 0.55) 0%,
+      rgba(125, 170, 215, 0.35) 35%,
+      rgba(140, 180, 220, 0.15) 60%,
+      rgba(147, 180, 220, 0) 80%
+    );
+    pointer-events: none;
+    z-index: 0;
+    transform-origin: center;
+    animation: hero-glow-pulse 6s var(--ease-in-out, ease-in-out) 1.2s infinite;
+    will-change: opacity, transform;
+  }
+
+  @keyframes hero-glow-pulse {
+    0%, 100% {
+      opacity: 0.82;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-visual::before {
+      animation: none;
+    }
+  }
+
   .hero-phone {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-height: 360px;
     object-fit: contain;
@@ -236,6 +320,7 @@ const APP_STORE_URL =
   @media (min-width: 810px) {
     .hero {
       padding-top: 5rem;
+      padding-bottom: 3rem;
     }
 
     .hero-inner {
@@ -252,25 +337,30 @@ const APP_STORE_URL =
     .hero-phone {
       max-height: 540px;
     }
+
+    .hero-avatar {
+      width: 2.25rem;
+      height: 2.25rem;
+      font-size: 0.6875rem;
+    }
+
+    .hero-social-text {
+      font-size: 0.875rem;
+    }
   }
 
   /* ── Desktop ── */
   @media (min-width: 1400px) {
     .hero {
       padding-top: 5.5rem;
+      padding-bottom: 4rem;
     }
 
     .hero-inner {
-      /* Wider right column brings phone closer to text */
       grid-template-columns: 1fr 480px;
       gap: 1rem;
       padding: 0 5rem;
       align-items: center;
-    }
-
-    .hero-blob {
-      right: -4%;
-      width: 42%;
     }
 
     .hero-visual {

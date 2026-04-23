@@ -21,20 +21,20 @@ function isActive(href: string) {
 <div class="sticky top-5 z-50 flex justify-center px-4 pointer-events-none">
   <div
     id="nav-pill"
-    class="nav-pill pointer-events-auto flex items-center gap-6 desktop:gap-8 w-auto pl-5 pr-3 py-2.5"
+    class="nav-pill pointer-events-auto flex items-center gap-6 w-auto pl-5 pr-3 py-2.5"
   >
     <!-- Logo — plain div, not a link -->
     <div class="flex-shrink-0">
       <img
         src="/assets/logo/logo-with-name.png"
         alt="Unify"
-        class="h-8 w-auto"
+        class="h-10 w-auto"
       />
     </div>
 
     <!-- Desktop nav links -->
     <nav
-      class="hidden desktop:flex desktop:flex-1 justify-center items-center gap-6"
+      class="hidden desktop:flex items-center gap-6"
       aria-label="Main navigation"
     >
       <ul role="list" class="flex items-center gap-6 list-none m-0 p-0">
@@ -110,7 +110,7 @@ function isActive(href: string) {
       <img
         src="/assets/logo/logo-with-name.png"
         alt="Unify"
-        class="h-8 w-auto"
+        class="h-10 w-auto"
       />
     </div>
     <button
@@ -189,15 +189,52 @@ function isActive(href: string) {
 
 <style>
   .nav-pill {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    position: relative;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.5) 100%
+    );
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: var(--radius-pill);
-    box-shadow: 0 10px 28px -14px rgba(23, 22, 22, 0.18);
-    transition: box-shadow 0.25s ease;
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.2),
+      0 8px 24px -8px rgba(23, 22, 22, 0.14),
+      0 2px 6px -2px rgba(23, 22, 22, 0.08);
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  /* Subtle top gloss highlight — simulates liquid refraction */
+  .nav-pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0) 45%
+    );
+    pointer-events: none;
+    mix-blend-mode: overlay;
   }
 
   .nav-pill.is-scrolled {
-    box-shadow: 0 16px 36px -10px rgba(23, 22, 22, 0.28);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.65) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.25),
+      0 14px 32px -10px rgba(23, 22, 22, 0.22),
+      0 3px 10px -2px rgba(23, 22, 22, 0.1);
   }
 
   /* Desktop nav link — red underline grows from center on hover */

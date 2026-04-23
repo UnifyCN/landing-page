@@ -65,11 +65,11 @@ const partners = [
 <style>
   .partners-label {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-muted);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
     text-align: center;
     margin: 0 0 3rem;
   }
@@ -96,9 +96,9 @@ const partners = [
   .partners-track {
     display: flex;
     align-items: center;
-    gap: 4rem;
+    gap: 5.5rem;
     width: max-content;
-    animation: marquee 36s linear infinite;
+    animation: marquee 40s linear infinite;
   }
 
   /* Pause on hover for entire track */
@@ -109,24 +109,29 @@ const partners = [
   }
 
   .partner-logo {
-    height: 48px;
+    height: 56px;
     width: auto;
     flex-shrink: 0;
-    opacity: 0.72;
-    filter: grayscale(0.2);
-    transition: opacity 0.25s ease, filter 0.25s ease;
+    opacity: 0.85;
+    transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
   }
 
   @media (hover: hover) and (pointer: fine) {
     .partner-logo:hover {
       opacity: 1;
-      filter: grayscale(0);
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (min-width: 810px) {
+    .partner-logo {
+      height: 64px;
     }
   }
 
   @media (min-width: 1400px) {
     .partner-logo {
-      height: 56px;
+      height: 72px;
     }
   }
 
