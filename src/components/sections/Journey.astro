@@ -33,8 +33,10 @@ const stages = [
   </div>
   <div class="mx-auto max-w-layout px-6 desktop:px-16 relative" style="z-index:1">
 
-    <p class="journey-eyebrow">How Unify fits your journey</p>
-    <h2 class="journey-heading">From arrival<br>to belonging</h2>
+    <div class="journey-eyebrow-wrap">
+      <span class="journey-eyebrow">Core Features</span>
+    </div>
+    <h2 class="journey-heading">Key Benefits</h2>
 
     <div class="journey-stages">
       {stages.map((stage, i) => (
@@ -94,15 +96,23 @@ const stages = [
     gap: 4rem;
   }
 
+  .journey-eyebrow-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 1.25rem;
+  }
+
   .journey-eyebrow {
+    display: inline-block;
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-muted);
-    text-align: center;
-    margin: 0 0 0.875rem;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    background-color: #ebebeb;
+    padding: 0.5rem 1.125rem;
+    border-radius: 999px;
+    line-height: 1.2;
   }
 
   .journey-heading {
