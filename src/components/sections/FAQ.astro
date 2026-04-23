@@ -1,14 +1,14 @@
 ---
 const faqs: { q: string; a: string }[] = [
   {
-    q: "What is Unify Social?",
-    a: `<p>Unify Social is a Canadian platform and community designed to help newcomers and international students navigate life in Canada.</p>
-<p>It combines practical settlement resources, career guidance, and in-person events into one centralized hub.<br>Unify Social helps newcomers understand systems that are often confusing, including banking, taxes, housing, healthcare, internships, and job searching in Canada. Instead of searching across dozens of websites, users can find curated, newcomer-specific information in one place.</p>
-<p>Beyond information, Unify Social also helps users find their community. Members can meet other people who are new to Canada, connect with peers facing similar challenges, and ask questions in a supportive environment. It is not just an information platform, but a space to build relationships and grow together.</p>`,
+    q: "What is Unify?",
+    a: `<p>Unify is a Canadian platform and community designed to help newcomers and international students navigate life in Canada.</p>
+<p>It combines practical settlement resources, career guidance, and in-person events into one centralized hub. Unify helps newcomers understand systems that are often confusing, including banking, taxes, housing, healthcare, internships, and job searching in Canada. Instead of searching across dozens of websites, users can find curated, newcomer-specific information in one place.</p>
+<p>Beyond information, Unify also helps users find their community. Members can meet other people who are new to Canada, connect with peers facing similar challenges, and ask questions in a supportive environment. It is not just an information platform, but a space to build relationships and grow together.</p>`,
   },
   {
-    q: "Who is Unify Social best for?",
-    a: `<p>Unify Social is best for:</p>
+    q: "Who is Unify best for?",
+    a: `<p>Unify is best for:</p>
 <ul>
   <li>International students studying in Canada</li>
   <li>Recent immigrants and permanent residents</li>
@@ -16,20 +16,20 @@ const faqs: { q: string; a: string }[] = [
   <li>Newcomers preparing to move to Canada</li>
   <li>Students looking for internships and entry-level jobs</li>
 </ul>
-<p>If you are new to Canada and unsure how things work, Unify Social is designed specifically for you.</p>`,
+<p>If you are new to Canada and unsure how things work, Unify is designed specifically for you.</p>`,
   },
   {
-    q: "How do I connect with other immigrants on Unify Social?",
-    a: `<p>Unify Social offers multiple ways for newcomers and international students to connect with others who are also new to Canada.</p>
+    q: "How do I connect with other newcomers on Unify?",
+    a: `<p>Unify offers multiple ways for newcomers and international students to connect with others who are also new to Canada.</p>
 <p><strong>Community Events and Workshops:</strong><br>Users can attend in-person and virtual events designed for networking, learning, and peer connection. These include career workshops, newcomer panels, skill-building sessions, and social meetups where participants can build relationships in a structured environment.</p>
-<p><strong>Discussion Forum:</strong><br>Unify Social includes a community discussion space where users can ask questions, share experiences, and get advice from other immigrants and international students. Members can post questions about topics such as housing, banking, internships, or navigating Canadian culture, and receive responses from peers who have gone through similar experiences.</p>
+<p><strong>Discussion Forum:</strong><br>Unify includes a community discussion space where users can ask questions, share experiences, and get advice from other immigrants and international students. Members can post questions about topics such as housing, banking, internships, or navigating Canadian culture, and receive responses from peers who have gone through similar experiences.</p>
 <p><strong>Interest-Based Groups:</strong><br>Users can join groups based on shared interests, career goals, industries, cultural backgrounds, or life stages. These smaller communities allow members to connect with people who have similar experiences and priorities.</p>
 <p><strong>Unify Circles:</strong><br>Unify Circles is a small-group matching feature that connects users with up to three other newcomers who have similar backgrounds and arrived in Canada around the same time. Each Circle is placed into a group chat, making it easier to build deeper connections, share resources, and support one another through the early stages of settling in.</p>
-<p>Together, these features make Unify Social more than a resource platform. It is an active community where newcomers can ask questions, build friendships, and grow alongside others navigating life in Canada.</p>`,
+<p>Together, these features make Unify more than a resource platform. It is an active community where newcomers can ask questions, build friendships, and grow alongside others navigating life in Canada.</p>`,
   },
   {
-    q: "What workshops does Unify Social offer, and how can I join one?",
-    a: `<p>Unify Social offers practical, newcomer-focused workshops designed to help immigrants and international students navigate life in Canada.</p>
+    q: "What workshops does Unify offer, and how can I join one?",
+    a: `<p>Unify offers practical, newcomer-focused workshops designed to help immigrants and international students navigate life in Canada.</p>
 <p>Workshop topics include:</p>
 <ul>
   <li>Navigating your first months in Canada</li>
@@ -40,23 +40,20 @@ const faqs: { q: string; a: string }[] = [
   <li>Financial literacy for newcomers</li>
   <li>Understanding Canadian workplace culture</li>
 </ul>
-<p>Workshops are offered through campus partnerships and community collaborations. Users can join by registering through the Unify Social website or Eventbrite when new sessions are announced. In the coming months, recorded workshop sessions will be uploaded to YouTube so Canadian newcomers can access the material even if they are unable to attend live.</p>`,
+<p>Workshops are offered through campus partnerships and community collaborations. Users can join by registering through the Unify website or Eventbrite when new sessions are announced. In the coming months, recorded workshop sessions will be uploaded to YouTube so Canadian newcomers can access the material even if they are unable to attend live.</p>`,
   },
   {
-    q: "Is Unify Social free to use?",
+    q: "Is Unify free to use?",
     a: `<p>Yes. Unify is completely free. No credit card, no subscription.</p>`,
   },
 ];
 ---
 
 <section class="faq-wrap">
-  <div class="faq-blob" aria-hidden="true">
-    <img src="/assets/blobs/blob-11.svg" alt="" />
-  </div>
-  <div class="faq-inner" style="position:relative;z-index:1">
+  <div class="faq-inner">
     <header class="faq-header">
-      <p class="faq-eyebrow">FAQ</p>
-      <h2 class="faq-title">Frequently asked<br>questions</h2>
+      <span class="faq-eyebrow">FAQ</span>
+      <h2 class="faq-title">Frequently Asked Questions</h2>
     </header>
 
     <div class="faq-list">
@@ -65,9 +62,10 @@ const faqs: { q: string; a: string }[] = [
           <details class="faq-item">
             <summary class="faq-summary">
               <span class="faq-question">{item.q}</span>
-              <span class="faq-chevron" aria-hidden="true">
+              <span class="faq-toggle" aria-hidden="true">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9 3.75V14.25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M3.75 9H14.25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
                 </svg>
               </span>
             </summary>
@@ -82,50 +80,50 @@ const faqs: { q: string; a: string }[] = [
 </section>
 
 <style>
-  .faq-blob {
-    position: absolute;
-    top: -8%;
-    left: -10%;
-    width: 42rem;
-    pointer-events: none;
-    user-select: none;
-    opacity: 0.07;
-    transform: rotate(-20deg);
-    z-index: 0;
-  }
-  .faq-blob img { width: 100%; height: auto; }
-
   .faq-wrap {
-    background-color: var(--color-cream);
-    padding: 4.5rem 0 5.5rem;
+    background-color: #ffffff;
+    padding: 5rem 0 6rem;
     position: relative;
     overflow: hidden;
   }
 
   .faq-inner {
-    max-width: 860px;
+    max-width: 920px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
   }
 
+  .faq-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
   .faq-eyebrow {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 0.8125rem;
     letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    color: var(--color-brand-red);
-    margin: 0 0 0.75rem;
+    color: var(--color-text);
+    background-color: #f3efe6;
+    padding: 0.45rem 1.05rem;
+    border-radius: 999px;
+    line-height: 1;
   }
 
   .faq-title {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: var(--text-h3-mobile);
-    line-height: 1.06;
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    line-height: 1.05;
     letter-spacing: var(--tracking-tight);
     color: var(--color-text);
     margin: 0;
@@ -133,20 +131,29 @@ const faqs: { q: string; a: string }[] = [
   }
 
   .faq-list {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .faq-item {
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    transition: background-color 0.15s ease;
+    background-color: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.10);
+    border-radius: 18px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: rgba(23, 22, 22, 0.18);
+    box-shadow: 0 6px 22px -16px rgba(23, 22, 22, 0.18);
   }
 
   .faq-summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding: 1.375rem 1rem 1.375rem 1rem;
+    gap: 1.25rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
     cursor: pointer;
     list-style: none;
     user-select: none;
@@ -158,11 +165,7 @@ const faqs: { q: string; a: string }[] = [
 
   @media (hover: hover) and (pointer: fine) {
     .faq-item:hover {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
-
-    .faq-item:hover .faq-question {
-      color: var(--color-brand-red);
+      border-color: rgba(23, 22, 22, 0.20);
     }
   }
 
@@ -170,26 +173,28 @@ const faqs: { q: string; a: string }[] = [
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 1.0625rem;
-    line-height: 1.4;
+    line-height: 1.35;
     color: var(--color-text);
-    transition: color 0.15s ease;
+    text-wrap: balance;
   }
 
-  /* Chevron icon */
-  .faq-chevron {
+  /* Plus / close toggle button */
+  .faq-toggle {
     flex-shrink: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.625rem;
-    height: 1.625rem;
-    color: var(--color-muted);
-    transition: transform 0.28s var(--ease-out), color 0.15s ease;
+    width: 2.25rem;
+    height: 2.25rem;
+    background-color: var(--color-text);
+    color: #ffffff;
+    border-radius: 10px;
+    transition: transform 0.32s var(--ease-out), background-color 0.2s ease;
   }
 
-  details[open] .faq-chevron {
-    transform: rotate(180deg);
-    color: var(--color-text);
+  details[open] .faq-toggle {
+    transform: rotate(45deg);
+    background-color: var(--color-brand-red);
   }
 
   /* Animated answer wrapper using JS-driven max-height */
@@ -197,23 +202,22 @@ const faqs: { q: string; a: string }[] = [
     overflow: hidden;
     max-height: 0;
     opacity: 0;
-    transition: max-height 0.38s var(--ease-out), opacity 0.28s ease;
+    transition: max-height 0.4s var(--ease-out), opacity 0.28s ease;
   }
 
   .faq-answer-wrap.is-open {
     opacity: 1;
   }
 
-  /* Answer rich text */
   .faq-answer {
-    padding: 0.25rem 1rem 1.75rem 1rem;
-    max-width: 720px;
+    padding: 0.25rem 1.5rem 1.5rem 1.5rem;
+    max-width: 760px;
   }
 
   .faq-answer p {
     font-family: var(--font-display);
     font-size: 0.9375rem;
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--color-muted);
     margin: 0 0 0.875rem;
   }
@@ -231,7 +235,7 @@ const faqs: { q: string; a: string }[] = [
   .faq-answer ul li {
     font-family: var(--font-display);
     font-size: 0.9375rem;
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--color-muted);
     padding-left: 1.25rem;
     position: relative;
@@ -252,39 +256,45 @@ const faqs: { q: string; a: string }[] = [
 
   @media (min-width: 810px) {
     .faq-wrap {
-      padding: 5.5rem 0 6.5rem;
+      padding: 6.5rem 0 7.5rem;
     }
 
     .faq-inner {
-      padding: 0 3rem;
-    }
-
-    .faq-title {
-      font-size: 2.25rem;
-    }
-  }
-
-  @media (min-width: 1400px) {
-    .faq-wrap {
-      padding: 7rem 0 8rem;
-    }
-
-    .faq-inner {
-      padding: 0 2rem;
+      padding: 0 2.5rem;
       gap: 3rem;
     }
 
-    .faq-title {
-      font-size: var(--text-h3);
+    .faq-summary {
+      padding: 1.5rem 1.5rem 1.5rem 1.875rem;
     }
 
     .faq-question {
       font-size: 1.125rem;
     }
 
+    .faq-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+    }
+
+    .faq-answer {
+      padding: 0.25rem 1.875rem 1.75rem 1.875rem;
+    }
+
     .faq-answer p,
     .faq-answer ul li {
       font-size: 1rem;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    .faq-wrap {
+      padding: 8rem 0 9rem;
+    }
+
+    .faq-inner {
+      gap: 3.5rem;
     }
   }
 </style>
@@ -294,13 +304,11 @@ const faqs: { q: string; a: string }[] = [
     const summary = details.querySelector('summary')!;
     const wrap = details.querySelector<HTMLElement>('.faq-answer-wrap')!;
 
-    // Prevent default toggle; we control open state manually
     summary.addEventListener('click', e => {
       e.preventDefault();
       const isOpen = details.hasAttribute('open');
 
       if (isOpen) {
-        // Collapse: set explicit height then animate to 0
         wrap.style.maxHeight = wrap.scrollHeight + 'px';
         wrap.classList.remove('is-open');
         requestAnimationFrame(() => {
@@ -310,12 +318,10 @@ const faqs: { q: string; a: string }[] = [
           details.removeAttribute('open');
         }, { once: true });
       } else {
-        // Expand
         details.setAttribute('open', '');
         wrap.style.maxHeight = wrap.scrollHeight + 'px';
         wrap.classList.add('is-open');
         wrap.addEventListener('transitionend', () => {
-          // Allow content to resize naturally after animation
           wrap.style.maxHeight = 'none';
         }, { once: true });
       }

@@ -1,21 +1,7 @@
 ---
-const stages = [
-  {
-    label: "Month 1",
-    quote: "You want to understand how life in Canada works.",
-    screenshot: "/assets/screenshots/learn.png",
-    alt: "Unify app – Learn screen",
-  },
-  {
-    label: "Month 3",
-    quote: "You’re ready to find belonging.",
-    screenshot: "/assets/screenshots/community.png",
-    alt: "Unify app – Community screen",
-  },
-];
 ---
 
-<section class="journey bg-white relative overflow-hidden py-20 desktop:py-32">
+<section class="journey bg-white relative overflow-hidden pt-20 desktop:pt-32 pb-8 desktop:pb-12">
   <div class="journey-blob" aria-hidden="true">
     <img src="/assets/blobs/blob-10.svg" alt="" />
   </div>
@@ -117,7 +103,7 @@ const stages = [
           <span class="card-blob card-blob-tr" aria-hidden="true"></span>
           <span class="card-blob card-blob-bl" aria-hidden="true"></span>
           <img
-            src="/assets/screenshots/companion.png"
+            src="/assets/phone-ai.png"
             alt="Unify app – AI Companion screen"
             class="feature-card-img"
             loading="lazy"
@@ -126,38 +112,54 @@ const stages = [
       </div>
     </div>
 
-    <div class="journey-stages">
-      {stages.map((stage, i) => (
-        <div class={`journey-stage stage-${i} ${i % 2 === 1 ? "reverse" : ""}`}>
-
-          <!-- Text side -->
-          <div class="stage-text">
-            <span class="stage-label">{stage.label}</span>
-            <p class="stage-quote">
-              {stage.quote}
-            </p>
-          </div>
-
-          <!-- Spine node -->
-          <div class="stage-node" aria-hidden="true">
-            <div class="node-dot"></div>
-          </div>
-
-          <!-- Screenshot side -->
-          <div class="stage-visual">
-            <img
-              src={stage.screenshot}
-              alt={stage.alt}
-              class="stage-phone"
-              loading="eager"
-            />
-          </div>
-
+    <!-- Community feature -->
+    <div class="feature-block feature-block--community">
+      <div class="feature-text">
+        <span class="feature-pill">
+          <span class="feature-dot" aria-hidden="true"></span>
+          Community
+        </span>
+        <h3 class="feature-heading">Find your circle.<br />Meet people on<br />the same journey.</h3>
+        <p class="feature-desc">
+          Community Matching pairs you with a small group of newcomers on a similar path &mdash; similar background, similar stage, same city. Small circles beat big feeds, every time.
+        </p>
+        <ul class="feature-bullets">
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Small-group matching, not another endless feed</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Groups, events, and local news that matter where you live</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Real experiences from people 6 months ahead of you</span>
+          </li>
+        </ul>
+        <a href="#" class="feature-link">
+          Find your community
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="feature-visual">
+        <div class="feature-card">
+          <span class="card-blob card-blob-tr" aria-hidden="true"></span>
+          <span class="card-blob card-blob-bl" aria-hidden="true"></span>
+          <img
+            src="/assets/screenshots/community.png"
+            alt="Unify app – Community screen"
+            class="feature-card-img"
+            loading="lazy"
+          />
         </div>
-      ))}
-
-      <!-- Vertical spine line -->
-      <div class="spine" aria-hidden="true"></div>
+      </div>
     </div>
 
   </div>
@@ -234,6 +236,10 @@ const stages = [
   body.js-ready .feature-block.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .feature-block:last-of-type {
+    margin-bottom: 0;
   }
 
   .feature-text {
@@ -447,6 +453,65 @@ const stages = [
 
   .feature-block--companion .feature-link:hover {
     color: #3f53a8;
+  }
+
+  /* Companion uses a self-contained composition image — let it drive the card */
+  .feature-block--companion .feature-card {
+    padding: 0;
+    min-height: 0;
+    aspect-ratio: 447 / 558;
+    background-color: #e9ecf6;
+  }
+
+  .feature-block--companion .card-blob {
+    display: none;
+  }
+
+  .feature-block--companion .feature-card-img {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: none;
+  }
+
+  @media (min-width: 1400px) {
+    .feature-block--companion .feature-card {
+      min-height: 0;
+    }
+  }
+
+  /* ---- Community (warm cream + peach) variant ---- */
+
+  .feature-block--community .feature-card {
+    background-color: #f5e6d2;
+  }
+
+  .feature-block--community .card-blob-tr {
+    background-color: #f0a878;
+  }
+
+  .feature-block--community .card-blob-bl {
+    background-color: #e8b88c;
+  }
+
+  .feature-block--community .feature-dot {
+    background-color: var(--color-brand);
+  }
+
+  .feature-block--community .feature-pill {
+    background-color: #fdeedb;
+    border-color: rgba(216, 74, 41, 0.18);
+    color: var(--color-brand);
+  }
+
+  .feature-block--community .feature-link {
+    color: var(--color-brand);
+  }
+
+  .feature-block--community .feature-link:hover {
+    color: #b03a1f;
   }
 
   @media (min-width: 1400px) {

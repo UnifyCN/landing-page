@@ -5,7 +5,10 @@
       "Bash(/usr/local/bin/node --version)",
       "Read(//usr/local/bin/**)",
       "Read(//Users/luis/.nvm/versions/node/**)",
-      "Bash(nvm use *)"
+      "Bash(nvm use *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(file /Users/savargupta/Github/Unify-Landing-Page/public/assets/logo/*)"
     ]
   }
 }
