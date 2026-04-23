@@ -1,18 +1,6 @@
 ---
 const stages = [
   {
-    label: "Day 1",
-    quote: "You don’t know where to start.",
-    screenshot: "/assets/screenshots/checklist.png",
-    alt: "Unify app – Checklist screen",
-  },
-  {
-    label: "Week 1",
-    quote: "You need answers you can trust.",
-    screenshot: "/assets/screenshots/companion.png",
-    alt: "Unify app – AI Companion screen",
-  },
-  {
     label: "Month 1",
     quote: "You want to understand how life in Canada works.",
     screenshot: "/assets/screenshots/learn.png",
@@ -37,6 +25,106 @@ const stages = [
       <span class="journey-eyebrow">Core Features</span>
     </div>
     <h2 class="journey-heading">Key Benefits</h2>
+
+    <!-- Checklist feature -->
+    <div class="feature-block feature-block--checklist">
+      <div class="feature-text">
+        <span class="feature-pill">
+          <span class="feature-dot" aria-hidden="true"></span>
+          Checklist
+        </span>
+        <h3 class="feature-heading">Your Canadian checklist,<br />personalised to you.</h3>
+        <p class="feature-desc">
+          Phone plans, bank accounts, SIN, healthcare &mdash; the real list that changes depending on your status, province, and how long you've been here. No more 40-tab Google research sessions.
+        </p>
+        <ul class="feature-bullets">
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Persona-aware tasks for students, PRs, workers &amp; more</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>&ldquo;Learn how&rdquo; guides for every step, written in plain English</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Progress you can actually see &mdash; no lost tabs, no dead ends</span>
+          </li>
+        </ul>
+        <a href="#" class="feature-link">
+          See a sample checklist
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="feature-visual">
+        <div class="feature-card">
+          <span class="card-blob card-blob-tr" aria-hidden="true"></span>
+          <span class="card-blob card-blob-bl" aria-hidden="true"></span>
+          <img
+            src="/assets/screenshots/checklist.png"
+            alt="Unify app – Checklist screen"
+            class="feature-card-img"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Companion feature -->
+    <div class="feature-block feature-block--companion feature-block--reverse">
+      <div class="feature-text">
+        <span class="feature-pill">
+          <span class="feature-dot" aria-hidden="true"></span>
+          AI Companion
+        </span>
+        <h3 class="feature-heading">Ask anything, anytime.<br />Guidance tailored to you.</h3>
+        <p class="feature-desc">
+          From &ldquo;how does BC transit work?&rdquo; to &ldquo;what's an MSP number?&rdquo; &mdash; ask it plainly and get answers that know where you are in Canada and how long you've been here.
+        </p>
+        <ul class="feature-bullets">
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Grounded in real government &amp; settlement sources</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Fact-check any claim before you act on it</span>
+          </li>
+          <li>
+            <span class="feature-check" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Step-by-step help with forms, applications &amp; appointments</span>
+          </li>
+        </ul>
+        <a href="#" class="feature-link">
+          Try the Companion
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="feature-visual">
+        <div class="feature-card">
+          <span class="card-blob card-blob-tr" aria-hidden="true"></span>
+          <span class="card-blob card-blob-bl" aria-hidden="true"></span>
+          <img
+            src="/assets/screenshots/companion.png"
+            alt="Unify app – AI Companion screen"
+            class="feature-card-img"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
 
     <div class="journey-stages">
       {stages.map((stage, i) => (
@@ -125,6 +213,267 @@ const stages = [
     text-align: center;
     margin: 0 0 5rem;
     text-wrap: balance;
+  }
+
+  /* ---- Feature block ---- */
+
+  .feature-block {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin: 0 0 6rem;
+    align-items: center;
+    transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+  }
+
+  body.js-ready .feature-block {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  body.js-ready .feature-block.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .feature-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text);
+    background-color: #f3ecd9;
+    border: 1px solid rgba(23, 22, 22, 0.08);
+    padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+    border-radius: 999px;
+    line-height: 1;
+  }
+
+  .feature-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    display: inline-block;
+  }
+
+  .feature-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 4.6vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    margin: 0.25rem 0 0;
+    text-wrap: balance;
+  }
+
+  .feature-desc {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 34rem;
+  }
+
+  .feature-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .feature-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+
+  .feature-check {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    color: #ffffff;
+    display: inline-grid;
+    place-items: center;
+    margin-top: 2px;
+  }
+
+  .feature-check svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .feature-link {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    text-decoration: none;
+    margin-top: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s var(--ease-out), gap 0.25s var(--ease-out);
+  }
+
+  .feature-link:hover {
+    color: var(--color-brand);
+    gap: 0.7rem;
+  }
+
+  .feature-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .feature-card {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    min-height: 580px;
+    background-color: #f5eeda;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .card-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(0.5px);
+  }
+
+  .card-blob-tr {
+    top: -22%;
+    right: -18%;
+    width: 62%;
+    aspect-ratio: 1 / 1;
+    background-color: #bdb094;
+    opacity: 0.9;
+  }
+
+  .card-blob-bl {
+    bottom: -26%;
+    left: -18%;
+    width: 56%;
+    aspect-ratio: 1 / 1;
+    background-color: #efcb9e;
+    opacity: 0.9;
+  }
+
+  .feature-card-img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    filter: drop-shadow(0 22px 36px rgba(23, 22, 22, 0.14));
+  }
+
+  @media (min-width: 810px) {
+    .feature-block {
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      margin: 0 0 7rem;
+    }
+
+    .feature-block--reverse {
+      grid-template-areas: "visual text";
+    }
+
+    .feature-block--reverse .feature-visual {
+      grid-area: visual;
+    }
+
+    .feature-block--reverse .feature-text {
+      grid-area: text;
+    }
+  }
+
+  /* ---- AI Companion (blue) variant ---- */
+
+  .feature-block--companion .feature-card {
+    background-color: #e9ecf6;
+  }
+
+  .feature-block--companion .card-blob-tr {
+    background-color: #9fafd9;
+  }
+
+  .feature-block--companion .card-blob-bl {
+    background-color: #eed6e3;
+  }
+
+  .feature-block--companion .feature-dot {
+    background-color: #5a6fbf;
+  }
+
+  .feature-block--companion .feature-pill {
+    background-color: #eef0f9;
+    border-color: rgba(90, 111, 191, 0.18);
+  }
+
+  .feature-block--companion .feature-link {
+    color: #5a6fbf;
+  }
+
+  .feature-block--companion .feature-link:hover {
+    color: #3f53a8;
+  }
+
+  @media (min-width: 1400px) {
+    .feature-block {
+      gap: 5rem;
+      margin: 0 0 8rem;
+    }
+
+    .feature-heading {
+      font-size: 3rem;
+    }
+
+    .feature-desc {
+      font-size: 1.125rem;
+    }
+
+    .feature-bullets li {
+      font-size: 1.0625rem;
+    }
+
+    .feature-card {
+      min-height: 640px;
+    }
+
+    .feature-card-img {
+      max-width: 275px;
+    }
   }
 
   .stage-label {
@@ -336,8 +685,8 @@ const stages = [
 
 <script>
   document.body.classList.add("js-ready");
-  const stages = document.querySelectorAll(".journey-stage");
-  if (stages.length) {
+  const reveals = document.querySelectorAll(".journey-stage, .feature-block");
+  if (reveals.length) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -349,6 +698,6 @@ const stages = [
       },
       { threshold: 0.12 },
     );
-    stages.forEach((stage) => observer.observe(stage));
+    reveals.forEach((el) => observer.observe(el));
   }
 </script>
