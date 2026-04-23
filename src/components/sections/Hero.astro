@@ -28,7 +28,7 @@ const avatars = [
       </div>
 
       <h1 class="hero-h1">
-        Your first <em>steps</em> in<br />Canada, together.
+        The all-in-one newcomer settlement app
       </h1>
 
       <p class="hero-desc">
@@ -81,14 +81,12 @@ const avatars = [
   .hero {
     position: relative;
     background-color: #ffffff;
-    overflow: hidden;
     padding-top: 4.5rem;
     padding-bottom: 2.5rem;
   }
 
   .hero-inner {
     position: relative;
-    z-index: 1;
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 1.5rem;
@@ -255,6 +253,7 @@ const avatars = [
 
   /* ── Phone ── */
   .hero-visual {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -262,7 +261,44 @@ const avatars = [
     animation: hero-phone-in 0.8s var(--ease-out) 0.2s forwards;
   }
 
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: -20% -25%;
+    background: radial-gradient(
+      ellipse 55% 55% at 50% 50%,
+      rgba(110, 160, 215, 0.55) 0%,
+      rgba(125, 170, 215, 0.35) 35%,
+      rgba(140, 180, 220, 0.15) 60%,
+      rgba(147, 180, 220, 0) 80%
+    );
+    pointer-events: none;
+    z-index: 0;
+    transform-origin: center;
+    animation: hero-glow-pulse 6s var(--ease-in-out, ease-in-out) 1.2s infinite;
+    will-change: opacity, transform;
+  }
+
+  @keyframes hero-glow-pulse {
+    0%, 100% {
+      opacity: 0.82;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-visual::before {
+      animation: none;
+    }
+  }
+
   .hero-phone {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-height: 360px;
     object-fit: contain;
