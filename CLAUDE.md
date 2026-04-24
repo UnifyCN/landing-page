@@ -150,6 +150,8 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Flow: Zod validate → Turnstile siteverify → Resend send.
 - Graceful degradation: if `TURNSTILE_SECRET_KEY` or `RESEND_API_KEY` are absent, the endpoint skips that step and returns success. Safe for local dev without keys.
 - Do NOT introduce auth, a database, or new API routes unless explicitly requested.
+- `from` address must be `contact@noreply.unifysocial.ca` — the verified subdomain in Resend. `@unifysocial.ca` root is NOT verified and will 403.
+- Turnstile tokens are one-time use. After any non-success response, client JS must call `window.turnstile.reset()`. Both `ContactForm.astro` and `BecomePartner.astro` already do this.
 
 ### SEO
 
@@ -404,6 +406,33 @@ CONTACT_TO_EMAIL=contact@unifysocial.ca
 For production: `wrangler secret put <NAME>` or Cloudflare dashboard.
 
 Current site keys in forms still use placeholder (`0x4AAAAAAA_PLACEHOLDER_KEY`) in `ContactForm.astro` and `BecomePartner.astro` — replace at deploy time.
+
+**Pre-launch checklist:**
+1. Replace Turnstile placeholder site key in `ContactForm.astro` and `BecomePartner.astro`.
+2. Add DMARC DNS record to `unifysocial.ca` — **Savar's job** (he manages the DNS):
+   - Type: `TXT` | Name: `_dmarc` | Value: `v=DMARC1; p=none; rua=mailto:contact@unifysocial.ca`
+   - Without this, Google silently drops emails from `noreply.unifysocial.ca`.
+3. Optional: verify `unifysocial.ca` root domain in Resend to send `from: @unifysocial.ca` instead of `@noreply.unifysocial.ca`.
+
+---
+
+## Section Notes — other pages
+
+### Contact (`src/pages/contact.astro`)
+- `bodyBg="#171616"`. Sections: ContactHero → ContactForm → CTABand.
+- Form posts to `/api/contact`. Success state hides form and shows `.cf-success`.
+
+### Partners (`src/pages/partners.astro`)
+- `bodyBg="#171616"`. Sections: PartnersHero → PartnerTestimonials → PartnersGrid → BecomePartner → CTABand.
+- Static detail pages at `/partners/[slug].astro` generated from `src/lib/partners.ts` (typed `Partner` interface, 17 partners).
+- BecomePartner form posts to `/api/partner-inquiry`.
+
+### Community (`src/pages/community.astro`)
+- `bodyBg="#171616"`. Sections: CommunityHero → CommunityStats → CommunityGallery → CommunityEventCTA → CTABand.
+
+### About (`src/pages/about.astro`)
+- `bodyBg="#171616"`. Sections: AboutHero → AboutFounders → AboutProblem → AboutValues → CTABand.
+- Image assets: `/assets/images/about/founders-portrait.jpg` (AboutHero), `/assets/images/about/founders-photo-2.jpg` (AboutFounders).
 
 ---
 

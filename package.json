@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.10",
+    "@portabletext/to-html": "^5.0.2",
+    "@sanity/image-url": "^2.1.1",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.7",
     "resend": "^6.12.2",
@@ -25,6 +27,9 @@
     "vite": "^7"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1"
+    "@playwright/test": "^1.59.1",
+    "@portabletext/markdown": "^1.2.0",
+    "@sanity/client": "^7.21.0",
+    "gray-matter": "^4.0.3"
   }
 }

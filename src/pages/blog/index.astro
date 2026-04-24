@@ -2,21 +2,20 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/blog/PostCard.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { getCollection } from "astro:content";
+import { getAllPosts } from "../../lib/sanity/queries";
+import { urlFor } from "../../lib/sanity/client";
 
-const allPosts = await getCollection("blog");
-const posts = allPosts.sort((a, b) => b.data.order - a.data.order);
-
-const getSlug = (id: string) => id.replace(/\.mdx?$/, '');
-
-const featured = posts[0];
+const posts = await getAllPosts();
+const featured = posts[0] ?? null;
 const rest = posts.slice(1);
 
-const featuredDate = featured.data.publishedAt.toLocaleDateString("en-CA", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-});
+const featuredDate = featured
+  ? new Date(featured.publishedAt).toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  : null;
 ---
 
 <BaseLayout
@@ -42,44 +41,56 @@ const featuredDate = featured.data.publishedAt.toLocaleDateString("en-CA", {
 
     <!-- ── Grid ── -->
     <section class="bl-grid-section">
-      <!-- Featured post -->
-      <div class="bl-featured-wrap">
-        <a href={`/blog/${getSlug(featured.id)}`} class="bl-featured">
-          <div class="bl-featured-img-wrap">
-            <img
-              src={featured.data.thumbnail}
-              alt={featured.data.title}
-              class="bl-featured-img"
-              loading="eager"
-            />
-          </div>
-          <div class="bl-featured-body">
-            <p class="bl-featured-eyebrow">Latest</p>
-            <p class="bl-featured-date">{featuredDate}</p>
-            <h2 class="bl-featured-title">{featured.data.title}</h2>
-            <p class="bl-featured-desc">{featured.data.description}</p>
-            <span class="bl-featured-cta">
-              Read article
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </div>
-        </a>
-      </div>
+      {posts.length === 0 ? (
+        <div class="bl-empty">
+          <p>No posts yet — check back soon.</p>
+        </div>
+      ) : (
+        <>
+          <!-- Featured post -->
+          {featured && (
+            <div class="bl-featured-wrap">
+              <a href={`/blog/${featured.slug.current}`} class="bl-featured">
+                <div class="bl-featured-img-wrap">
+                  <img
+                    src={urlFor(featured.thumbnail).width(900).url()}
+                    alt={featured.title}
+                    class="bl-featured-img"
+                    loading="eager"
+                  />
+                </div>
+                <div class="bl-featured-body">
+                  <p class="bl-featured-eyebrow">Latest</p>
+                  <p class="bl-featured-date">{featuredDate}</p>
+                  <h2 class="bl-featured-title">{featured.title}</h2>
+                  <p class="bl-featured-desc">{featured.description}</p>
+                  <span class="bl-featured-cta">
+                    Read article
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </div>
+          )}
 
-      <!-- Remaining posts grid -->
-      <div class="blog-grid" id="blog-grid">
-        {rest.map((post, i) => (
-          <PostCard
-            title={post.data.title}
-            publishedAt={post.data.publishedAt}
-            thumbnail={post.data.thumbnail}
-            slug={getSlug(post.id)}
-            index={i}
-          />
-        ))}
-      </div>
+          <!-- Remaining posts grid -->
+          {rest.length > 0 && (
+            <div class="blog-grid" id="blog-grid">
+              {rest.map((post, i) => (
+                <PostCard
+                  title={post.title}
+                  publishedAt={new Date(post.publishedAt)}
+                  thumbnail={urlFor(post.thumbnail).width(600).url()}
+                  slug={post.slug.current}
+                  index={i}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </section>
 
     <CTABand />
@@ -156,6 +167,17 @@ const featuredDate = featured.data.publishedAt.toLocaleDateString("en-CA", {
   @keyframes hero-fade-up {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Empty state ── */
+  .bl-empty {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 1.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    color: var(--color-muted);
   }
 
   /* ── Grid section ── */
@@ -267,11 +289,6 @@ const featuredDate = featured.data.publishedAt.toLocaleDateString("en-CA", {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2.5rem 2rem;
-  }
-
-  /* ── Divider between featured + grid ── */
-  .bl-featured-wrap + .blog-grid::before {
-    content: none;
   }
 
   /* ── Tablet ── */
