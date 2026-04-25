@@ -18,8 +18,7 @@ You are an incredibly talented, experienced polyglot with decades of practice in
 - **Resend** — transactional email for forms.
 - **Cloudflare Turnstile** — spam protection on forms.
 - **Zod** — input validation in API routes.
-- **Astro Content Collections** — blog posts are local markdown in `src/content/blog/` (schema in `src/content.config.ts`).
-- **Sanity CMS** — STUBBED but NOT wired up (`src/lib/sanity/client.ts`, `queries.ts`, `types.ts` are empty placeholders). Treat the site as file-based until Sanity is properly integrated.
+- **Sanity CMS** — fully wired. Project `j4gu2dbr`, dataset `production`. Studio scaffold lives in `studio/` (deployed at `unify-landing.sanity.studio`). Frontend client in `src/lib/sanity/`. Body content rendered via `@portabletext/to-html`.
 - **Playwright** — dev dependency for visual QA (MCP server configured in `.mcp.json`).
 - **PostHog** — analytics (MCP available, not yet instrumented in code).
 - **Node >= 22.12.0** (see `package.json`).
@@ -35,6 +34,8 @@ You are an incredibly talented, experienced polyglot with decades of practice in
 | `npm run preview`       | Preview prod build locally                |
 | `npm run generate-types`| Wrangler types for Cloudflare env         |
 | `npx wrangler deploy`   | Deploy to Cloudflare Workers              |
+| `cd studio && npx sanity dev`    | Local Studio at http://localhost:3333    |
+| `cd studio && npx sanity deploy` | Deploy Studio to unify-landing.sanity.studio |
 | `npx playwright screenshot http://localhost:4321 /tmp/out.png --viewport-size="1440,900" --full-page` | Visual QA snapshot |
 
 ---
@@ -58,8 +59,8 @@ src/
 │   │   ├── contact.ts           # POST /api/contact
 │   │   └── partner-inquiry.ts   # POST /api/partner-inquiry
 │   └── blog/
-│       ├── index.astro          # Blog index (Content Collections)
-│       └── [slug].astro         # Blog detail
+│       ├── index.astro          # Blog index — fetches from Sanity, sorts by publishedAt desc
+│       └── [slug].astro         # Blog detail — renders Portable Text + dual-format tables
 ├── layouts/
 │   └── BaseLayout.astro         # html shell, fonts, Navbar/Footer, View Transitions
 ├── components/
@@ -67,17 +68,23 @@ src/
 │   ├── common/                  # Navbar, Footer
 │   ├── blog/                    # PostCard, PostNav
 │   └── ui/                      # shadcn-style primitives (empty for now)
-├── content/
-│   └── blog/*.md                # 15+ newcomer/tax/immigration articles
-├── content.config.ts            # Zod schema for blog collection
+├── content.config.ts            # Empty — content collections deprecated, blog moved to Sanity
 ├── lib/
 │   ├── partners.ts              # Typed Partner[] (17 partners)
 │   ├── resources.ts             # Typed resources list
-│   ├── sanity/                  # STUB — not yet wired up
+│   ├── sanity/                  # createClient + urlFor + GROQ queries + typed results
 │   └── utils.ts
 └── styles/
     ├── global.css               # Tailwind v4 + @theme tokens + grain overlay + fonts
-    └── prose.css                # Blog post typography
+    └── prose.css                # Blog post typography (incl. table styles)
+studio/                          # Sanity Studio v3 (deployed at unify-landing.sanity.studio)
+├── sanity.config.ts             # Plugins: structureTool, visionTool, table, media
+├── structure.ts                 # Custom desk structure with iframe preview pane
+└── schemaTypes/
+    ├── index.ts
+    └── post.ts                  # Blog post schema (title, slug, body w/ table support, etc.)
+scripts/
+└── migrate-blog-to-sanity.mjs   # One-time migration (markdown → Sanity); kept for reference
 public/
 ├── fonts/                       # Self-hosted Aileron (300/400/600/700)
 ├── assets/logo, screenshots, demos, blobs, illustrations, images/partners, images/about, images/blog
@@ -133,16 +140,19 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Use `@layer` only for custom component/utility classes. Don't redeclare tokens there.
 - One global stylesheet imported via `BaseLayout`. Don't add per-component `@import "tailwindcss"`.
 
-### CMS — Current State
+### CMS — Sanity (live)
 
-- **Blog = Astro Content Collections** (local markdown). Schema: `src/content.config.ts`. Posts: `src/content/blog/*.md`.
-- **Sanity is stubbed, not connected.** If asked to wire Sanity:
-  - Read `list_sanity_rules` (MCP) first — then the `astro` rule, `groq` rule, and `get_schema`.
-  - All GROQ queries in `src/lib/sanity/queries.ts` — never inline them in pages/components.
-  - All query result types in `src/lib/sanity/types.ts`. No `any`.
-  - Components receive Sanity data as props; they never import the Sanity client directly.
-  - Use `@sanity/astro` integration; generate types via `sanity typegen generate`.
-  - Don't hardcode CMS-managed content into pages.
+- **Blog is fully on Sanity.** Project `j4gu2dbr`, dataset `production`. Editors author posts at `unify-landing.sanity.studio`.
+- **Studio code** lives in `studio/` inside this repo. Redeploy with `cd studio && npx sanity deploy`.
+- **Frontend** uses `@sanity/client` (read-only, `useCdn: true`) + `@sanity/image-url` + `@portabletext/to-html`.
+- **All GROQ queries** belong in `src/lib/sanity/queries.ts` — never inline them in pages/components.
+- **All query result types** in `src/lib/sanity/types.ts`. No `any` in shared code.
+- **Sorting**: posts sort by `publishedAt desc` so the newest published post is always the featured slot. The `order` field is unused (kept in schema for backwards compat with migrated docs).
+- **Body field** allows `block`, `image`, and `table` types. Tables use `@sanity/table` plugin (cells = plain strings, first row = header).
+- **Migrated tables** (from the original markdown) use `@portabletext/markdown` shape (cells with nested Portable Text + `headerRows` count). The renderer in `src/pages/blog/[slug].astro` detects format via `typeof rows[0].cells[0] === 'string'` and handles both.
+- **Studio plugins installed**: `@sanity/table` (table editor), `sanity-plugin-media` (media library), `sanity-plugin-iframe-pane` (live preview pane). Live preview shows the **published** version — drafts won't render until published. Full draft preview = future task.
+- **Empty-state safety**: `src/pages/blog/index.astro` guards against 0 / 1 posts (empty message + conditional grid).
+- **MCP for Sanity work**: use `list_sanity_rules`, then `astro` + `groq` rules, then `get_schema`. Don't guess GROQ.
 
 ### Forms / API
 

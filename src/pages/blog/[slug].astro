@@ -11,8 +11,27 @@ const toHTMLOptions: any = {
   components: {
     types: {
       table: ({ value }: any) => {
-        const headerCount: number = value.headerRows ?? 0;
         const rows: any[] = value.rows ?? [];
+        if (!rows.length) return '';
+
+        // @sanity/table: cells are plain strings, first row = header
+        // @portabletext/markdown (migrated): cells are objects with a .value array
+        const isSanityTable = typeof rows[0]?.cells?.[0] === 'string';
+
+        if (isSanityTable) {
+          const [headerRow, ...bodyRows] = rows;
+          const thead = `<thead><tr>${
+            (headerRow.cells as string[]).map((c) => `<th>${c}</th>`).join('')
+          }</tr></thead>`;
+          const tbody = bodyRows.length
+            ? `<tbody>${bodyRows.map((row: any) =>
+                `<tr>${(row.cells as string[]).map((c) => `<td>${c}</td>`).join('')}</tr>`
+              ).join('')}</tbody>`
+            : '';
+          return `<table>${thead}${tbody}</table>`;
+        }
+
+        const headerCount: number = value.headerRows ?? 0;
         const header = rows.slice(0, headerCount);
         const body = rows.slice(headerCount);
 
