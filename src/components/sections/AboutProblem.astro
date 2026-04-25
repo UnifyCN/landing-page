@@ -21,25 +21,43 @@ const cards = [
   },
 ];
 
-// Per-word reveal: SSR-tokenize so spans + delays exist in initial HTML.
-const WORD_STAGGER = 0.07;
-const WORD_BASE = 0.2;
+// SSR letter split for the headline. Pre-computing transition-delay per
+// letter at render time means the letter spans exist in the initial HTML —
+// no FOUC and no runtime DOM thrash.
+type Token =
+  | { kind: "space"; text: string }
+  | { kind: "word"; letters: { ch: string; delay: number }[] };
 
-function tokenize(text: string, startIndex: number) {
-  const words = text.split(/\s+/).filter(Boolean);
-  const tokens = words.map((word, idx) => ({
-    word,
-    delay: WORD_BASE + (startIndex + idx) * WORD_STAGGER,
-  }));
-  return { tokens, nextIndex: startIndex + words.length };
+const LETTER_STAGGER = 0.014;
+const LETTER_BASE = 0.2;
+
+function tokenize(text: string, startIndex: number): { tokens: Token[]; nextIndex: number } {
+  const tokens: Token[] = [];
+  let i = startIndex;
+  for (const part of text.split(/(\s+)/)) {
+    if (part.length === 0) continue;
+    if (/^\s+$/.test(part)) {
+      tokens.push({ kind: "space", text: part });
+      continue;
+    }
+    const letters = [...part].map((ch) => {
+      const delay = LETTER_BASE + i * LETTER_STAGGER;
+      i++;
+      return { ch, delay };
+    });
+    tokens.push({ kind: "word", letters });
+  }
+  return { tokens, nextIndex: i };
 }
 
 const strong = tokenize("Settling in Canada", 0);
 const muted = tokenize("feels harder than it should", strong.nextIndex);
-const lastWordDelay =
-  WORD_BASE + (muted.nextIndex - 1) * WORD_STAGGER;
-const subDelay = (lastWordDelay + 0.15).toFixed(3);
-const cardBaseDelay = lastWordDelay + 0.28;
+const lastLetterDelay = LETTER_BASE + (muted.nextIndex - 1) * LETTER_STAGGER;
+// Sub paragraph and cards begin their fade at the same moment as the last
+// letter of "feels harder than it should" — so they arrive together with
+// the headline rather than after it.
+const subDelay = lastLetterDelay.toFixed(3);
+const cardBaseDelay = lastLetterDelay;
 ---
 
 <section class="ap">
@@ -49,20 +67,30 @@ const cardBaseDelay = lastWordDelay + 0.28;
       <span class="ap-pill">The Problem</span>
       <h2 class="ap-headline">
         <span class="ap-headline-strong">
-          {strong.tokens.map((t, i) => (
-            <>
-              <span class="ap-word" style={`transition-delay:${t.delay.toFixed(3)}s`}>{t.word}</span>
-              {i < strong.tokens.length - 1 && " "}
-            </>
-          ))}
+          {strong.tokens.map((tok) =>
+            tok.kind === "space" ? (
+              tok.text
+            ) : (
+              <span class="ap-word">
+                {tok.letters.map((l) => (
+                  <span class="ap-letter" style={`transition-delay:${l.delay.toFixed(3)}s`}>{l.ch}</span>
+                ))}
+              </span>
+            )
+          )}
         </span><br />
         <span class="ap-headline-muted">
-          {muted.tokens.map((t, i) => (
-            <>
-              <span class="ap-word" style={`transition-delay:${t.delay.toFixed(3)}s`}>{t.word}</span>
-              {i < muted.tokens.length - 1 && " "}
-            </>
-          ))}
+          {muted.tokens.map((tok) =>
+            tok.kind === "space" ? (
+              tok.text
+            ) : (
+              <span class="ap-word">
+                {tok.letters.map((l) => (
+                  <span class="ap-letter" style={`transition-delay:${l.delay.toFixed(3)}s`}>{l.ch}</span>
+                ))}
+              </span>
+            )
+          )}
         </span>
       </h2>
       <p class="ap-sub" style={`transition-delay:${subDelay}s`}>
@@ -72,10 +100,10 @@ const cardBaseDelay = lastWordDelay + 0.28;
 
     <!-- 3-box grid -->
     <div class="ap-grid">
-      {cards.map((card, i) => (
+      {cards.map((card) => (
         <article
           class={`ap-card ${card.span === "full" ? "ap-card-full" : ""}`}
-          style={`transition-delay:${(cardBaseDelay + i * 0.12).toFixed(3)}s`}
+          style={`transition-delay:${cardBaseDelay.toFixed(3)}s`}
         >
           <div class="ap-card-head">
             <img src={card.icon} alt="" class="ap-card-icon" aria-hidden="true" />
@@ -208,20 +236,29 @@ const cardBaseDelay = lastWordDelay + 0.28;
      Hidden state is gated on html.js-anim so the inline script that runs
      before the section paints can apply it pre-paint. .visible flips it.
      Per-element transition-delay is set inline via SSR. */
-  .ap-pill,
-  .ap-sub,
-  .ap-card {
+  .ap-pill {
     transition:
       opacity 0.7s var(--ease-out),
       transform 0.7s var(--ease-out);
   }
 
+  .ap-sub,
+  .ap-card {
+    transition:
+      opacity 1.4s var(--ease-out),
+      transform 1.4s var(--ease-out);
+  }
+
   .ap-word {
     display: inline-block;
     white-space: nowrap;
+  }
+
+  .ap-letter {
+    display: inline-block;
     transition:
       opacity 0.55s var(--ease-out),
-      transform 0.7s cubic-bezier(0.22, 1.18, 0.36, 1);
+      transform 0.8s cubic-bezier(0.22, 1.18, 0.36, 1);
   }
 
   body.js-ready .ap .ap-pill,
@@ -231,9 +268,9 @@ const cardBaseDelay = lastWordDelay + 0.28;
     transform: translateY(22px);
   }
 
-  body.js-ready .ap .ap-word {
+  body.js-ready .ap .ap-letter {
     opacity: 0;
-    transform: translateX(-14px);
+    transform: translateX(-16px);
   }
 
   body.js-ready .ap.visible .ap-pill,
@@ -243,7 +280,7 @@ const cardBaseDelay = lastWordDelay + 0.28;
     transform: translateY(0);
   }
 
-  body.js-ready .ap.visible .ap-word {
+  body.js-ready .ap.visible .ap-letter {
     opacity: 1;
     transform: translateX(0);
   }
@@ -254,7 +291,7 @@ const cardBaseDelay = lastWordDelay + 0.28;
     body.js-ready .ap .ap-pill,
     body.js-ready .ap .ap-sub,
     body.js-ready .ap .ap-card,
-    body.js-ready .ap .ap-word {
+    body.js-ready .ap .ap-letter {
       opacity: 1;
       transform: none;
       transition: none;

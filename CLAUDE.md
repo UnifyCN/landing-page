@@ -132,6 +132,8 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Default to server-rendered HTML. Avoid unnecessary client JS.
 - Use islands ONLY when interactivity is needed (FAQ accordion, form handler, mobile menu, product overview tabs).
 - View Transitions are wired globally — preserve them. Navbar uses `transition:persist`; body bg swap is handled via `astro:before-swap` in BaseLayout.
+- **All static pages must `export const prerender = true`** so they bake to HTML at build time and are served from the Cloudflare CDN edge. The repo had every page hitting the worker on every request before this — TTFB on every navigation. Currently prerendered: `/`, `/about`, `/community`, `/contact`, `/partners` (+ all `/partners/[slug]` via `getStaticPaths`), `/resources` (+ all `/resources/[slug]`), `/privacy`, `/terms`. SSR retained for `/blog/*` (live Sanity fetch) and `/api/*`.
+- **Scroll-reveal observers must wrap in `astro:page-load`**, not run at module top-level. With ClientRouter, module scripts only execute once on initial load — on subsequent View Transition navigations the new DOM exists but the old observer is still attached to the detached previous DOM, leaving the section stuck invisible. This is exactly what bit CTABand. Pattern: wrap observer setup in a function, register it with `document.addEventListener("astro:page-load", initFn)`, and add a class-based guard at the top of the function to prevent duplicate registration when the script re-runs.
 
 ### Tailwind v4
 
@@ -293,17 +295,20 @@ Do NOT use `animation-fill-mode: both` with a delay on scroll-triggered elements
 
 ## Navbar — Critical Design Notes
 
-The navbar pill must feel light and unobtrusive. The user's eye should go TO the content inside the pill (logo, links, CTA) — not to the pill container itself.
+The navbar pill is a **liquid-glass** element — translucent white pill with real backdrop-blur, gradient sheen, gloss highlight, and layered shadows. The user's eye should still go TO the content inside the pill (logo, links, CTA) — the pill itself is depth, not focus.
 
-- Border: 1px solid `rgba(0,0,0,0.08)` — very subtle, never dark
-- Box shadow: `0 10px 28px -14px rgba(23,22,22,0.18)` — soft and low
-- On scroll (`.is-scrolled`): shadow deepens slightly, never becomes prominent
-- Background: solid `#ffffff` — no frosted glass, no blur
-- Logo height: `h-7` (28px), generous left padding inside the pill
+- Background: `linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.5))` — translucent so blur reads through
+- **Backdrop blur: `blur(8px) saturate(140%)`** — DO NOT raise. Was previously `blur(22px) saturate(180%)` and that made the entire site lag on macOS/HiDPI because the GPU re-blurred the underlying viewport every scroll frame at 2× pixel density. 8px/140% is the practical ceiling — keeps the glass look at ~3× cheaper compositing cost.
+- Border: `1px solid rgba(255,255,255,0.55)` — light edge, lifts the pill off the page
+- Inset highlights: `inset 0 1px 0 0 rgba(255,255,255,0.8)` (top), `inset 0 -1px 0 0 rgba(255,255,255,0.2)` (bottom) — simulates light refraction through the glass
+- Box shadow: layered `0 8px 24px -8px rgba(23,22,22,0.14), 0 2px 6px -2px rgba(23,22,22,0.08)` — soft elevation
+- Top-gloss highlight via `::before` with `mix-blend-mode: overlay` and a 35%→0% white gradient — the "wet" look
+- On scroll (`.is-scrolled`): background opacity bumps to 0.85→0.65 and shadows deepen slightly. Never becomes opaque.
+- Logo height: `h-10` (40px), generous left padding inside the pill
 - Logo is a plain `<div>`, NOT a link. Clicking does nothing. Asset: `/assets/logo/logo-with-name.png`
 - Logo and "Download Unify" CTA must NOT feel cramped — if anything feels tight, increase padding first
 - CTA: `bg #171616`, `hover #D84A29`, transition `0.2s`, label "Download Unify" + `→`, links to App Store in a new tab
-- Nav links (order): Home | About | Community | Partners | Blog | Contact
+- Nav links (order): Home | About | Community | Partners | Blog | Resources | Contact
 - Mobile: hamburger at ≤1399px, full overlay with stacked links + CTA
 
 ---

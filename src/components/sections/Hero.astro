@@ -274,18 +274,25 @@ const avatars = [
     );
     pointer-events: none;
     z-index: 0;
-    opacity: 0;
-    animation: hero-glow-in 1.2s var(--ease-out) 0.4s forwards;
+    transform-origin: center;
+    animation: hero-glow-pulse 6s var(--ease-in-out, ease-in-out) 1.2s infinite;
+    will-change: opacity, transform;
   }
 
-  @keyframes hero-glow-in {
-    to { opacity: 0.92; }
+  @keyframes hero-glow-pulse {
+    0%, 100% {
+      opacity: 0.82;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.06);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-visual::before {
       animation: none;
-      opacity: 0.92;
     }
   }
 

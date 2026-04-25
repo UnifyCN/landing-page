@@ -1,10 +1,20 @@
 ---
+// Letter-by-letter animated headline — words are kept unbreakable.
+// First phrase: ink. Second phrase: muted.
 const phrase1Words = ["You", "can"];
 const phrase2Words = ["trust", "Unify"];
 
+// Build a flat list of letters across both phrases so the stagger increases
+// continuously left-to-right.
 let i = 0;
-const phrase1 = phrase1Words.map((word) => ({ word, i: i++ }));
-const phrase2 = phrase2Words.map((word) => ({ word, i: i++ }));
+const phrase1 = phrase1Words.map((word) => {
+  const letters = [...word].map((ch) => ({ ch, i: i++ }));
+  return letters;
+});
+const phrase2 = phrase2Words.map((word) => {
+  const letters = [...word].map((ch) => ({ ch, i: i++ }));
+  return letters;
+});
 
 const promises = [
   {
@@ -31,18 +41,26 @@ const promises = [
     <!-- Heading -->
     <div class="av-head">
       <span class="av-pill">Our Promises</span>
-      <h2 class="av-headline reveal-words">
+      <h2 class="av-headline reveal-letters">
         <span class="av-headline-strong">
-          {phrase1.map((w, wi) => (
+          {phrase1.map((word, wi) => (
             <>
-              <span class="rw-word" style={`--i:${w.i}`}>{w.word}</span>
+              <span class="rl-word">
+                {word.map((l) => (
+                  <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+                ))}
+              </span>
               {wi < phrase1.length - 1 && " "}
             </>
           ))}
         </span>{" "}<span class="av-headline-muted">
-          {phrase2.map((w, wi) => (
+          {phrase2.map((word, wi) => (
             <>
-              <span class="rw-word" style={`--i:${w.i}`}>{w.word}</span>
+              <span class="rl-word">
+                {word.map((l) => (
+                  <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+                ))}
+              </span>
               {wi < phrase2.length - 1 && " "}
             </>
           ))}
@@ -107,20 +125,24 @@ const promises = [
   .av-headline-strong { color: var(--color-text); }
   .av-headline-muted  { color: var(--color-muted); }
 
-  /* ── Per-word slide-up animation ── */
-  .reveal-words .rw-word {
+  /* ── Letter-by-letter slide-up animation ── */
+  .reveal-letters .rl-word {
     display: inline-block;
     white-space: nowrap;
+  }
+
+  .reveal-letters .rl-char {
+    display: inline-block;
     transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
-    transition-delay: calc(var(--i) * 80ms);
+    transition-delay: calc(var(--i) * 24ms);
   }
 
   /* Default = visible. JS-gated `animate` hides; `.visible` reveals. */
-  .av.animate .reveal-words .rw-word {
+  .av.animate .reveal-letters .rl-char {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(0.55em);
   }
-  .av.animate.visible .reveal-words .rw-word {
+  .av.animate.visible .reveal-letters .rl-char {
     opacity: 1;
     transform: translateY(0);
   }

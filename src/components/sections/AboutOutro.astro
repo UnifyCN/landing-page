@@ -1,31 +1,41 @@
 ---
-// Per-word animated headline. First phrase: ink. Second phrase: muted, with `Unify` italicized.
+// Letter-by-letter animated headline.
+// First phrase: ink. Second phrase: muted, with `Unify` italicized.
 const phrase1Words = "Take the guesswork out of your newcomer journey with".split(" ");
 const phrase2Words = ["the", "full", "Unify", "experience."];
 
 let i = 0;
-const phrase1 = phrase1Words.map((word) => ({ word, i: i++ }));
+const phrase1 = phrase1Words.map((word) =>
+  [...word].map((ch) => ({ ch, i: i++ }))
+);
 const phrase2 = phrase2Words.map((word) => ({
-  word,
-  i: i++,
+  letters: [...word].map((ch) => ({ ch, i: i++ })),
   italic: word === "Unify",
 }));
 ---
 
 <section class="ao">
   <div class="ao-inner">
-    <h2 class="ao-headline reveal-words">
+    <h2 class="ao-headline reveal-letters">
       <span class="ao-headline-strong">
-        {phrase1.map((w, wi) => (
+        {phrase1.map((word, wi) => (
           <>
-            <span class="rw-word" style={`--i:${w.i}`}>{w.word}</span>
+            <span class="rl-word">
+              {word.map((l) => (
+                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+              ))}
+            </span>
             {wi < phrase1.length - 1 && " "}
           </>
         ))}
       </span>{" "}<span class="ao-headline-muted">
-        {phrase2.map((w, wi) => (
+        {phrase2.map((wordObj, wi) => (
           <>
-            <span class={`rw-word${w.italic ? " ao-italic" : ""}`} style={`--i:${w.i}`}>{w.word}</span>
+            <span class={`rl-word ${wordObj.italic ? "ao-italic" : ""}`}>
+              {wordObj.letters.map((l) => (
+                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+              ))}
+            </span>
             {wi < phrase2.length - 1 && " "}
           </>
         ))}
@@ -68,19 +78,23 @@ const phrase2 = phrase2Words.map((word) => ({
     font-style: italic;
   }
 
-  /* Per-word animation */
-  .reveal-words .rw-word {
+  /* Letter-by-letter animation */
+  .reveal-letters .rl-word {
     display: inline-block;
     white-space: nowrap;
-    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
-    transition-delay: calc(var(--i) * 40ms);
   }
 
-  .ao.animate .reveal-words .rw-word {
-    opacity: 0;
-    transform: translateY(10px);
+  .reveal-letters .rl-char {
+    display: inline-block;
+    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+    transition-delay: calc(var(--i) * 18ms);
   }
-  .ao.animate.visible .reveal-words .rw-word {
+
+  .ao.animate .reveal-letters .rl-char {
+    opacity: 0;
+    transform: translateY(0.55em);
+  }
+  .ao.animate.visible .reveal-letters .rl-char {
     opacity: 1;
     transform: translateY(0);
   }
