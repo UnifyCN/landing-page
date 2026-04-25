@@ -1,225 +1,230 @@
 ---
-const values = [
+// Letter-by-letter animated headline — words are kept unbreakable.
+// First phrase: ink. Second phrase: muted.
+const phrase1Words = ["You", "can"];
+const phrase2Words = ["trust", "Unify"];
+
+// Build a flat list of letters across both phrases so the stagger increases
+// continuously left-to-right.
+let i = 0;
+const phrase1 = phrase1Words.map((word) => {
+  const letters = [...word].map((ch) => ({ ch, i: i++ }));
+  return letters;
+});
+const phrase2 = phrase2Words.map((word) => {
+  const letters = [...word].map((ch) => ({ ch, i: i++ }));
+  return letters;
+});
+
+const promises = [
   {
     icon: "/assets/images/about/handshake.png",
-    iconAlt: "Handshake",
     title: "Built on trusted sources",
-    desc: "Our lessons and AI answers are curated from the Government of Canada, IRCC, CRA, public universities, and established settlement organizations.",
+    body:
+      "Our lessons and AI answers are curated from reputable sources such as the Government of Canada, Immigration Refugees Citizenship Canada (IRCC), provincial newcomer sites, Service Canada, CRA, public universities, and established settlement organizations.",
   },
   {
     icon: "/assets/images/about/hyperlink.png",
-    iconAlt: "Link",
     title: "Source-first answers",
-    desc: "We show you where information comes from so you can verify it yourself.",
+    body: "We show you where information comes from so you can verify it yourself.",
   },
   {
     icon: "/assets/images/about/human.png",
-    iconAlt: "Person",
     title: "Human-reviewed & updated",
-    desc: "We maintain a vetted knowledge base and update content as soon as policies change.",
-  },
-  {
-    icon: "/assets/images/about/lock.png",
-    iconAlt: "Lock",
-    title: "Privacy-first",
-    desc: "Your data is protected. We never sell your personal information.",
+    body: "We maintain a vetted knowledge base and update content as soon as policies change.",
   },
 ];
 ---
 
 <section class="av">
-  <div class="av-blob" aria-hidden="true">
-    <img src="/assets/blobs/blob-12.svg" alt="" />
-  </div>
-  <div class="av-inner" style="position:relative;z-index:1">
-    <header class="av-header">
-      <p class="av-eyebrow">How we work</p>
-      <h2 class="av-headline">
-        You can trust<br><em>Unify.</em>
+  <div class="av-inner">
+    <!-- Heading -->
+    <div class="av-head">
+      <span class="av-pill">Our Promises</span>
+      <h2 class="av-headline reveal-letters">
+        <span class="av-headline-strong">
+          {phrase1.map((word, wi) => (
+            <>
+              <span class="rl-word">
+                {word.map((l) => (
+                  <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+                ))}
+              </span>
+              {wi < phrase1.length - 1 && " "}
+            </>
+          ))}
+        </span>{" "}<span class="av-headline-muted">
+          {phrase2.map((word, wi) => (
+            <>
+              <span class="rl-word">
+                {word.map((l) => (
+                  <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+                ))}
+              </span>
+              {wi < phrase2.length - 1 && " "}
+            </>
+          ))}
+        </span>
       </h2>
-    </header>
+    </div>
 
-    <ol class="av-list" role="list">
-      {values.map((v, i) => (
-        <li class="av-item" style={`--i: ${i}`}>
-          <div class="av-icon-wrap">
-            <img src={v.icon} alt={v.iconAlt} class="av-icon" loading="lazy" />
-          </div>
-          <div class="av-item-body">
-            <h3 class="av-title">{v.title}</h3>
-            <p class="av-desc">{v.desc}</p>
+    <!-- Promises list -->
+    <ul class="av-list">
+      {promises.map((p) => (
+        <li class="av-item">
+          <img src={p.icon} alt="" class="av-icon" aria-hidden="true" />
+          <div class="av-text">
+            <h3 class="av-item-title">{p.title}</h3>
+            <p class="av-item-body">{p.body}</p>
           </div>
         </li>
       ))}
-    </ol>
+    </ul>
   </div>
 </section>
 
 <style>
-  .av-blob {
-    position: absolute;
-    bottom: -10%;
-    left: -8%;
-    width: 40rem;
-    pointer-events: none;
-    user-select: none;
-    opacity: 0.08;
-    transform: rotate(-25deg);
-    z-index: 0;
-  }
-  .av-blob img { width: 100%; height: auto; }
-
   .av {
-    background-color: var(--color-cream);
-    position: relative;
-    overflow: hidden;
-    padding: 5.5rem 0 6.5rem;
+    background-color: #ffffff;
+    padding: 5rem 0 6rem;
   }
 
   .av-inner {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3.5rem;
   }
 
-  .av-eyebrow {
+  /* ── Heading ── */
+  .av-head {
+    text-align: center;
+    margin: 0 auto 4.5rem;
+  }
+
+  .av-pill {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.04);
+    color: var(--color-text);
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-brand-red);
-    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
   }
 
   .av-headline {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 0.96;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    line-height: 1.05;
     letter-spacing: var(--tracking-display);
-    color: var(--color-text);
     margin: 0;
   }
 
-  .av-headline em {
-    font-style: italic;
-    color: var(--color-brand-red);
+  .av-headline-strong { color: var(--color-text); }
+  .av-headline-muted  { color: var(--color-muted); }
+
+  /* ── Letter-by-letter slide-up animation ── */
+  .reveal-letters .rl-word {
+    display: inline-block;
+    white-space: nowrap;
   }
 
-  .av-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .av-item {
-    display: grid;
-    grid-template-columns: 52px 1fr;
-    gap: 1.25rem;
-    align-items: start;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 1.75rem 0;
+  .reveal-letters .rl-char {
+    display: inline-block;
     transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
-    transition-delay: calc(var(--i) * 70ms + 50ms);
+    transition-delay: calc(var(--i) * 24ms);
   }
 
-  .av.animate .av-item {
+  /* Default = visible. JS-gated `animate` hides; `.visible` reveals. */
+  .av.animate .reveal-letters .rl-char {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(0.55em);
   }
-
-  .av.animate.visible .av-item {
+  .av.animate.visible .reveal-letters .rl-char {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .av-icon-wrap {
-    width: 44px;
-    height: 44px;
+  /* ── Promises list ── */
+  .av-list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 920px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 2px;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  .av-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 1.25rem;
+    align-items: start;
   }
 
   .av-icon {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     object-fit: contain;
+    margin-top: 0.25rem;
   }
 
-  .av-title {
+  .av-item-title {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.125rem;
+    font-size: clamp(1.25rem, 1.75vw, 1.5rem);
     color: var(--color-text);
     margin: 0 0 0.5rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
-  .av-desc {
+  .av-item-body {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--color-muted);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--color-text);
     margin: 0;
-    max-width: 58ch;
   }
 
-  /* ── Tablet: 2-column grid ── */
+  /* ── Tablet ── */
   @media (min-width: 810px) {
     .av {
-      padding: 7rem 0 8rem;
+      padding: 6rem 0 7rem;
     }
 
     .av-inner {
       padding: 0 3rem;
-      gap: 4rem;
     }
 
     .av-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: 3rem;
+      gap: 3.25rem;
     }
 
     .av-item {
-      padding: 2rem 0;
+      grid-template-columns: 80px 1fr;
+      gap: 1.5rem;
+    }
+
+    .av-icon {
+      width: 48px;
+      height: 48px;
     }
   }
 
   /* ── Desktop ── */
   @media (min-width: 1400px) {
-    .av {
-      padding: 8.5rem 0 9.5rem;
-    }
-
     .av-inner {
       padding: 0 5rem;
-      gap: 4.5rem;
-    }
-
-    .av-title {
-      font-size: 1.25rem;
-    }
-
-    .av-desc {
-      font-size: 1rem;
     }
   }
 </style>
 
 <script>
-  const section = document.querySelector(".av");
+  const section = document.querySelector<HTMLElement>(".av");
   if (section) {
     section.classList.add("animate");
     const observer = new IntersectionObserver(
@@ -229,7 +234,7 @@ const values = [
           observer.disconnect();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.25 }
     );
     observer.observe(section);
   }

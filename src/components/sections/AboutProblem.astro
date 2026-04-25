@@ -1,217 +1,223 @@
 ---
-const problems = [
+const cards = [
   {
-    num: "01",
+    icon: "/assets/images/about/book.png",
     title: "Scattered information",
-    stat: "62% of newly arrived newcomers report struggling to find the settlement resources they need — with government sites, Reddit threads, and WhatsApp chats all giving different answers.",
+    body: "62% of newly arrived newcomers report struggling to find the settlement resources they need. With government sites, Reddit threads, and WhatsApp chats all giving different answers, it's hard to know what's current or relevant — whether you're looking for help with housing, banking, jobs, or your SIN number.",
     source: "Statistics Canada, General Social Survey on Social Identity, 2020",
   },
   {
-    num: "02",
+    icon: "/assets/images/about/human.png",
     title: "Doing it alone",
-    stat: "70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers — without a supportive newcomer community to lean on.",
+    body: "Starting over in a new country is hard enough — but doing it without a supportive newcomer community to lean on makes it even more overwhelming. 70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers.",
     source: "Canadian Index for Measuring Integration",
   },
   {
-    num: "03",
+    icon: "/assets/images/about/arrows-split.png",
     title: "No clear roadmap",
-    stat: "Without step-by-step guidance, it's easy to waste time, miss IRCC deadlines, or make costly mistakes on your newcomer journey in Canada.",
+    body: "Without step by step guidance, it's easy to waste time, miss IRCC deadlines, or make costly mistakes on your newcomer journey in Canada.",
     source: null,
+    span: "full",
   },
 ];
 ---
 
 <section class="ap">
-  <div class="ap-blob" aria-hidden="true">
-    <img src="/assets/blobs/blob-3.svg" alt="" />
-  </div>
-  <div class="ap-inner" style="position:relative;z-index:1">
-    <header class="ap-header">
-      <p class="ap-eyebrow">The Problem</p>
-      <h2 class="ap-headline">Settling in Canada<br>feels harder than<br>it should</h2>
+  <div class="ap-inner">
+    <!-- Heading -->
+    <div class="ap-head">
+      <span class="ap-pill">The Problem</span>
+      <h2 class="ap-headline">
+        <span class="ap-headline-strong">Settling in Canada</span><br />
+        <span class="ap-headline-muted">feels harder than it should</span>
+      </h2>
       <p class="ap-sub">
-        Moving to a new country is more than paperwork — it's rebuilding your life from scratch. Yet most newcomers run into three avoidable problems:
+        Moving to a new country is more than paperwork – it's rebuilding your life from scratch. Yet most newcomers run into three avoidable problems:
       </p>
-    </header>
+    </div>
 
-    <ol class="ap-list" role="list">
-      {problems.map((p, i) => (
-        <li class="ap-entry" style={`--i: ${i}`}>
-          <span class="ap-num" aria-hidden="true">{p.num}</span>
-          <div class="ap-entry-body">
-            <h3 class="ap-title">{p.title}</h3>
-            <p class="ap-stat">{p.stat}</p>
-            {p.source && <p class="ap-source">{p.source}</p>}
+    <!-- 3-box grid -->
+    <div class="ap-grid">
+      {cards.map((card) => (
+        <article class={`ap-card ${card.span === "full" ? "ap-card-full" : ""}`}>
+          <div class="ap-card-head">
+            <img src={card.icon} alt="" class="ap-card-icon" aria-hidden="true" />
+            <h3 class="ap-card-title">{card.title}</h3>
           </div>
-        </li>
+          <p class="ap-card-body">{card.body}</p>
+          {card.source && <p class="ap-card-source">{card.source}</p>}
+        </article>
       ))}
-    </ol>
+    </div>
   </div>
 </section>
 
 <style>
-  .ap-blob {
-    position: absolute;
-    top: -8%;
-    right: -10%;
-    width: 46rem;
-    pointer-events: none;
-    user-select: none;
-    opacity: 0.05;
-    transform: rotate(30deg);
-    z-index: 0;
-  }
-  .ap-blob img { width: 100%; height: auto; }
-
   .ap {
-    background-color: var(--color-ink);
-    position: relative;
-    overflow: hidden;
-    padding: 5.5rem 0 6.5rem;
+    background-color: #ffffff;
+    padding: 5rem 0 6rem;
   }
 
   .ap-inner {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
   }
 
-  .ap-eyebrow {
+  /* ── Heading ── */
+  .ap-head {
+    text-align: center;
+    margin: 0 auto 4rem;
+    max-width: 880px;
+  }
+
+  .ap-pill {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.04);
+    color: var(--color-text);
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-brand-red);
-    margin: 0 0 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
   }
 
   .ap-headline {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1.0;
-    letter-spacing: var(--tracking-tight);
-    color: #ffffff;
-    margin: 0 0 1.5rem;
-    text-wrap: balance;
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-display);
+    margin: 0 0 1.75rem;
   }
+
+  .ap-headline-strong { color: var(--color-text); }
+  .ap-headline-muted  { color: var(--color-muted); }
 
   .ap-sub {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
     line-height: 1.65;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
-    max-width: 52ch;
+    color: var(--color-muted);
+    margin: 0 auto;
+    max-width: 56ch;
   }
 
-  .ap-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* ── Grid ── */
+  .ap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .ap-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 1.75rem;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
   }
 
-  .ap-entry {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1.5rem;
-    padding: 2.25rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    align-items: start;
-    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
-    transition-delay: calc(var(--i) * 80ms + 60ms);
+  /* Progressive enhancement: hidden only once JS confirms it can animate */
+  .ap.animate .ap-card { opacity: 0; transform: translateY(24px); }
+  .ap.animate.visible .ap-card { opacity: 1; transform: translateY(0); }
+  .ap.animate.visible .ap-card:nth-child(1) { transition-delay: 0.05s; }
+  .ap.animate.visible .ap-card:nth-child(2) { transition-delay: 0.18s; }
+  .ap.animate.visible .ap-card:nth-child(3) { transition-delay: 0.30s; }
+
+  .ap-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 1.25rem;
   }
 
-  .ap.animate .ap-entry {
-    opacity: 0;
-    transform: translateX(-16px);
+  .ap-card-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
   }
 
-  .ap.animate.visible .ap-entry {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .ap-num {
+  .ap-card-title {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.5rem, 7vw, 5rem);
-    line-height: 1;
-    color: var(--color-brand-red);
-    letter-spacing: var(--tracking-display);
-    user-select: none;
-    min-width: 2ch;
+    font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+    color: var(--color-text);
+    margin: 0;
+    letter-spacing: -0.01em;
   }
 
-  .ap-entry-body {
-    padding-top: 0.5rem;
-  }
-
-  .ap-title {
+  .ap-card-body {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
-    color: #ffffff;
-    margin: 0 0 0.75rem;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-text);
+    margin: 0 0 1.5rem;
+    flex: 1;
   }
 
-  .ap-stat {
+  .ap-card-source {
     font-family: var(--font-display);
     font-weight: 400;
     font-size: 0.9375rem;
-    line-height: 1.7;
-    color: rgba(255, 255, 255, 0.55);
-    margin: 0 0 0.5rem;
-    max-width: 60ch;
+    line-height: 1.55;
+    color: var(--color-muted);
+    margin: 0;
   }
 
-  .ap-source {
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.28);
-    margin: 0;
-    font-style: italic;
+  .ap-card-full .ap-card-body {
+    margin-bottom: 0;
   }
 
   /* ── Tablet ── */
   @media (min-width: 810px) {
     .ap {
-      padding: 7rem 0 8rem;
+      padding: 6rem 0 7rem;
     }
 
     .ap-inner {
       padding: 0 3rem;
-      gap: 5rem;
     }
 
-    .ap-entry {
-      gap: 2.5rem;
-      padding: 2.5rem 0;
+    .ap-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .ap-card {
+      padding: 2rem;
+    }
+
+    .ap-card-full {
+      grid-column: 1 / -1;
     }
   }
 
   /* ── Desktop ── */
   @media (min-width: 1400px) {
-    .ap {
-      padding: 8.5rem 0 9.5rem;
-    }
-
     .ap-inner {
       padding: 0 5rem;
+    }
+
+    .ap-grid {
+      gap: 1.75rem;
+    }
+
+    .ap-card {
+      padding: 2.25rem;
     }
   }
 </style>
 
 <script>
-  const section = document.querySelector(".ap");
+  // Progressive enhancement: cards default to visible. JS hides + animates in.
+  const section = document.querySelector<HTMLElement>(".ap");
   if (section) {
     section.classList.add("animate");
     const observer = new IntersectionObserver(
@@ -221,7 +227,7 @@ const problems = [
           observer.disconnect();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.15 }
     );
     observer.observe(section);
   }

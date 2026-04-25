@@ -1,191 +1,242 @@
 ---
-
+const photos = [
+  {
+    src: "/assets/images/about/founders-portrait.jpg",
+    alt: "Cedric and Savar's family arriving at the airport",
+  },
+  {
+    src: "/assets/images/about/founders-portrait2.jpg",
+    alt: "Cedric and Savar — founders of Unify",
+  },
+];
 ---
 
-<section class="about-hero">
-  <div class="about-hero-blob" aria-hidden="true">
-    <img src="/assets/blobs/blob-12.svg" alt="" />
-  </div>
-  <!-- Photo fills left column on desktop, stacks first on mobile -->
-  <div class="about-hero-photo-col">
-    <img
-      src="/assets/images/about/founders-portrait.jpg"
-      alt="Cedric and Savar, founders of Unify"
-      class="about-hero-photo"
-      loading="eager"
-    />
-    <!-- Warm overlay so text on mobile stays legible -->
-    <div class="about-hero-overlay" aria-hidden="true"></div>
-  </div>
+<section class="ah">
+  <div class="ah-inner">
+    <!-- ── Photo carousel ── -->
+    <div class="ah-photo-col">
+      <div class="ah-carousel" data-active="0" data-count={photos.length}>
+        {photos.map((photo, i) => (
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            class="ah-photo"
+            loading={i === 0 ? "eager" : "lazy"}
+            data-index={i}
+          />
+        ))}
+      </div>
+      <div class="ah-controls">
+        <button class="ah-ctrl" data-dir="-1" aria-label="Previous photo">
+          <span class="ah-arrow">←</span>
+          <span>BACK</span>
+        </button>
+        <button class="ah-ctrl" data-dir="1" aria-label="Next photo">
+          <span>NEXT</span>
+          <span class="ah-arrow">→</span>
+        </button>
+      </div>
+    </div>
 
-  <div class="about-hero-text-col">
-    <p class="about-hero-eyebrow">Our story</p>
-    <h1 class="about-hero-headline">
-      From newcomers,<br />
-      <em>for newcomers.</em>
-    </h1>
-    <p class="about-hero-sub">
-      We arrived in Canada and felt what you're feeling.
-    </p>
-    <p class="about-hero-sub">So we built the platform we wished existed.</p>
+    <!-- ── Text column ── -->
+    <div class="ah-text-col">
+      <p class="ah-eyebrow">
+        <span class="ah-eyebrow-dash" aria-hidden="true"></span>
+        <span>Our journey</span>
+      </p>
+      <h1 class="ah-headline">
+        Hi, we're Cedric and Savar <span class="ah-wave" aria-hidden="true">👋</span>
+      </h1>
+      <p class="ah-body">
+        We're building Unify to make settling in Canada simpler, clearer, and more connected. After hearing the same story of confusion, unclear answers, and isolation, we built one platform that brings together guidance and community support. We've experienced how confusing and isolating this journey can be. That's why we're building Unify — so no one has to figure it out alone. We hope it helps you feel at home faster and we're listening to make it better every week :)
+      </p>
+    </div>
   </div>
 </section>
 
 <style>
-  .about-hero-blob {
-    position: absolute;
-    bottom: -10%;
-    right: -8%;
-    width: 38rem;
-    pointer-events: none;
-    user-select: none;
-    opacity: 0.05;
-    transform: rotate(15deg);
-    z-index: 0;
+  .ah {
+    background-color: #ffffff;
+    padding: calc(67px + 4rem) 0 5rem;
   }
-  .about-hero-blob img { width: 100%; height: auto; }
 
-  .about-hero {
-    background-color: var(--color-ink);
-    position: relative;
+  .ah-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: min(40vh, 300px) auto;
-    min-height: calc(100vh + 67px);
-    min-height: calc(100dvh + 67px);
-    overflow: hidden;
-    /* Pull section up behind the floating navbar */
-    margin-top: -67px;
+    gap: 2.5rem;
   }
 
   /* ── Photo column ── */
-  .about-hero-photo-col {
-    position: relative;
-    overflow: hidden;
-    grid-row: 1;
+  .ah-photo-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
 
-  .about-hero-photo {
+  .ah-carousel {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .ah-photo {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 20%;
     display: block;
-    filter: sepia(0.08) saturate(0.95) contrast(1.04);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
   }
 
-  .about-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 50%,
-      rgba(23, 22, 22, 0.6) 100%
-    );
+  .ah-carousel[data-active="0"] .ah-photo[data-index="0"],
+  .ah-carousel[data-active="1"] .ah-photo[data-index="1"],
+  .ah-carousel[data-active="2"] .ah-photo[data-index="2"] {
+    opacity: 1;
+  }
+
+  /* ── Carousel controls ── */
+  .ah-controls {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+
+  .ah-ctrl {
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 0.2s ease, gap 0.2s var(--ease-out);
+  }
+
+  .ah-ctrl:hover {
+    color: var(--color-brand-red);
+  }
+
+  .ah-ctrl[data-dir="-1"]:hover { gap: 0.75rem; }
+  .ah-ctrl[data-dir="1"]:hover  { gap: 0.75rem; }
+
+  .ah-arrow {
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-block;
   }
 
   /* ── Text column ── */
-  .about-hero-text-col {
-    grid-row: 2;
+  .ah-text-col {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3rem 1.5rem 4rem;
   }
 
-  .about-hero-eyebrow {
+  .ah-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.6875rem;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+    font-size: 0.875rem;
     color: var(--color-brand-red);
-    margin: 0 0 1.25rem;
-    opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
+    margin: 0 0 1.5rem;
+    letter-spacing: -0.01em;
   }
 
-  .about-hero-headline {
+  .ah-eyebrow-dash {
+    display: inline-block;
+    width: 2.5rem;
+    height: 1px;
+    background-color: var(--color-brand-red);
+  }
+
+  .ah-headline {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.5rem, 8vw, 7rem);
-    line-height: 0.95;
+    font-size: clamp(2rem, 5.5vw, 4.25rem);
+    line-height: 1.05;
     letter-spacing: var(--tracking-display);
-    color: #ffffff;
+    color: var(--color-text);
     margin: 0 0 1.75rem;
-    opacity: 0;
-    animation: hero-fade-up 0.65s var(--ease-out) 0.2s forwards;
   }
 
-  .about-hero-headline em {
-    font-style: italic;
-    color: var(--color-brand-red);
+  .ah-wave {
+    display: inline-block;
+    transform: translateY(-0.05em);
+    margin-left: 0.25rem;
   }
 
-  .about-hero-sub {
+  .ah-body {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
-    line-height: 1.65;
-    color: rgba(255, 255, 255, 0.55);
+    font-size: clamp(1rem, 1.2vw, 1.0625rem);
+    line-height: 1.75;
+    color: var(--color-text);
     margin: 0;
-    max-width: 44ch;
-    opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.34s forwards;
-  }
-
-  @keyframes hero-fade-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── Phone ── */
-  @media (max-width: 479px) {
-    .about-hero-text-col {
-      padding: 2rem 1.25rem 3rem;
-    }
+    max-width: 56ch;
   }
 
   /* ── Tablet ── */
   @media (min-width: 810px) {
-    .about-hero {
-      grid-template-columns: 480px 1fr;
-      grid-template-rows: 1fr;
-      min-height: calc(100vh + 67px);
-    min-height: calc(100dvh + 67px);
+    .ah {
+      padding: calc(67px + 5rem) 0 6rem;
     }
 
-    .about-hero-photo-col {
-      grid-column: 1;
-      grid-row: 1;
+    .ah-inner {
+      padding: 0 3rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
     }
 
-    .about-hero-overlay {
-      background: linear-gradient(
-        to right,
-        transparent 60%,
-        rgba(23, 22, 22, 0.35) 100%
-      );
-    }
-
-    .about-hero-text-col {
-      grid-column: 2;
-      grid-row: 1;
-      /* Extra top padding compensates for the negative margin-top on the section */
-      padding: calc(67px + 4rem) 3rem 5rem;
+    .ah-carousel {
+      aspect-ratio: 4 / 5;
     }
   }
 
   /* ── Desktop ── */
   @media (min-width: 1400px) {
-    .about-hero {
-      grid-template-columns: 560px 1fr;
-      min-height: calc(100vh + 67px);
-    min-height: calc(100dvh + 67px);
+    .ah {
+      padding: calc(67px + 6rem) 0 7rem;
     }
 
-    .about-hero-text-col {
-      padding: calc(67px + 5rem) 5rem 6rem;
+    .ah-inner {
+      padding: 0 5rem;
+      gap: 5.5rem;
     }
   }
 </style>
+
+<script>
+  const carousels = document.querySelectorAll<HTMLElement>(".ah-carousel");
+  carousels.forEach((carousel) => {
+    const count = parseInt(carousel.dataset.count ?? "1", 10);
+    const controls = carousel.parentElement?.querySelectorAll<HTMLButtonElement>(".ah-ctrl");
+    if (!controls || count <= 1) return;
+
+    controls.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dir = parseInt(btn.dataset.dir ?? "1", 10);
+        const current = parseInt(carousel.dataset.active ?? "0", 10);
+        const next = (current + dir + count) % count;
+        carousel.dataset.active = String(next);
+      });
+    });
+  });
+</script>

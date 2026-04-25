@@ -1,0 +1,153 @@
+---
+// Letter-by-letter animated headline.
+// First phrase: ink. Second phrase: muted, with `Unify` italicized.
+const phrase1Words = "Take the guesswork out of your newcomer journey with".split(" ");
+const phrase2Words = ["the", "full", "Unify", "experience."];
+
+let i = 0;
+const phrase1 = phrase1Words.map((word) =>
+  [...word].map((ch) => ({ ch, i: i++ }))
+);
+const phrase2 = phrase2Words.map((word) => ({
+  letters: [...word].map((ch) => ({ ch, i: i++ })),
+  italic: word === "Unify",
+}));
+---
+
+<section class="ao">
+  <div class="ao-inner">
+    <h2 class="ao-headline reveal-letters">
+      <span class="ao-headline-strong">
+        {phrase1.map((word, wi) => (
+          <>
+            <span class="rl-word">
+              {word.map((l) => (
+                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+              ))}
+            </span>
+            {wi < phrase1.length - 1 && " "}
+          </>
+        ))}
+      </span>{" "}<span class="ao-headline-muted">
+        {phrase2.map((wordObj, wi) => (
+          <>
+            <span class={`rl-word ${wordObj.italic ? "ao-italic" : ""}`}>
+              {wordObj.letters.map((l) => (
+                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
+              ))}
+            </span>
+            {wi < phrase2.length - 1 && " "}
+          </>
+        ))}
+      </span>
+    </h2>
+    <p class="ao-sub">
+      Be the first to experience Unify and shape the<br class="ao-br" />
+      future of newcomer support in Canada
+    </p>
+  </div>
+</section>
+
+<style>
+  .ao {
+    background-color: #ffffff;
+    padding: 6rem 0 6rem;
+  }
+
+  .ao-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+
+  .ao-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5.5vw, 4.5rem);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-display);
+    margin: 0 auto 2rem;
+    max-width: 22ch;
+  }
+
+  .ao-headline-strong { color: var(--color-text); }
+  .ao-headline-muted  { color: var(--color-muted); }
+
+  .ao-italic {
+    font-style: italic;
+  }
+
+  /* Letter-by-letter animation */
+  .reveal-letters .rl-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .reveal-letters .rl-char {
+    display: inline-block;
+    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+    transition-delay: calc(var(--i) * 18ms);
+  }
+
+  .ao.animate .reveal-letters .rl-char {
+    opacity: 0;
+    transform: translateY(0.55em);
+  }
+  .ao.animate.visible .reveal-letters .rl-char {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ao-sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
+    line-height: 1.65;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 810px) {
+    .ao {
+      padding: 7rem 0 7rem;
+    }
+
+    .ao-inner {
+      padding: 0 3rem;
+    }
+
+    .ao-headline {
+      max-width: 28ch;
+    }
+
+    .ao-br {
+      display: none;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .ao-inner {
+      padding: 0 5rem;
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>(".ao");
+  if (section) {
+    section.classList.add("animate");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(section);
+  }
+</script>
