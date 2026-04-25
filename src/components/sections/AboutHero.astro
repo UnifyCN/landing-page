@@ -109,6 +109,46 @@ const photos = [
     gap: 2.5rem;
   }
 
+  /* ── Scroll reveal (progressive enhancement) ──
+     Hidden state is gated on html.js-anim, which an inline script sets
+     synchronously *before* this section paints. That guarantees the
+     element starts hidden — when .visible is added, the browser
+     transitions from a real hidden state, not from a half-faded one. */
+  @keyframes ah-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ah-photo-col {
+    opacity: 0;
+    animation: ah-fade-up 1s var(--ease-out) 0.05s forwards;
+  }
+
+  .ah-eyebrow {
+    opacity: 0;
+    animation: ah-fade-up 0.65s var(--ease-out) 0.18s forwards;
+  }
+
+  .ah-headline {
+    opacity: 0;
+    animation: ah-fade-up 0.65s var(--ease-out) 0.34s forwards;
+  }
+
+  .ah-body {
+    opacity: 0;
+    animation: ah-fade-up 0.65s var(--ease-out) 0.52s forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ah-photo-col,
+    .ah-eyebrow,
+    .ah-headline,
+    .ah-body {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
   .ah-ctrl {
     appearance: none;
     background: none;
@@ -208,6 +248,11 @@ const photos = [
     .ah-carousel {
       aspect-ratio: 4 / 5;
     }
+
+    .ah-controls {
+      justify-content: flex-end;
+      padding-right: 0.5rem;
+    }
   }
 
   /* ── Desktop ── */
@@ -224,19 +269,26 @@ const photos = [
 </style>
 
 <script>
-  const carousels = document.querySelectorAll<HTMLElement>(".ah-carousel");
-  carousels.forEach((carousel) => {
-    const count = parseInt(carousel.dataset.count ?? "1", 10);
-    const controls = carousel.parentElement?.querySelectorAll<HTMLButtonElement>(".ah-ctrl");
-    if (!controls || count <= 1) return;
+  function initCarousel() {
+    const carousels = document.querySelectorAll<HTMLElement>(".ah-carousel");
+    carousels.forEach((carousel) => {
+      if (carousel.dataset.ahCarouselInit) return;
+      carousel.dataset.ahCarouselInit = "1";
+      const count = parseInt(carousel.dataset.count ?? "1", 10);
+      const controls = carousel.parentElement?.querySelectorAll<HTMLButtonElement>(".ah-ctrl");
+      if (!controls || count <= 1) return;
 
-    controls.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const dir = parseInt(btn.dataset.dir ?? "1", 10);
-        const current = parseInt(carousel.dataset.active ?? "0", 10);
-        const next = (current + dir + count) % count;
-        carousel.dataset.active = String(next);
+      controls.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const dir = parseInt(btn.dataset.dir ?? "1", 10);
+          const current = parseInt(carousel.dataset.active ?? "0", 10);
+          const next = (current + dir + count) % count;
+          carousel.dataset.active = String(next);
+        });
       });
     });
-  });
+  }
+
+  initCarousel();
+  document.addEventListener("astro:page-load", initCarousel);
 </script>

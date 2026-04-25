@@ -236,7 +236,7 @@ Say no if you see:
 - Brand/CTA: `#D84A29` → `var(--color-brand-red)` / `var(--color-brand)`
 - Text/Ink: `#181818` → `var(--color-text)`
 - Ink dark: `#171616` → `var(--color-ink)` (dark section backgrounds)
-- Cream: `#FFFCF3` → `var(--color-cream)` (default body bg)
+- Cream: `#ffffff` → `var(--color-cream)` (token kept for compatibility, value is now white — was previously `#FFFCF3`)
 - Muted: `#575757` → `var(--color-muted)`
 - White: `#FFFFFF`
 
@@ -362,18 +362,18 @@ Legal (open new tab):
 ### ProductOverview
 
 - Split editorial layout: left = feature list, right = video stage
-- NO white card around video — phone floats on cream bg
+- NO white card around video — phone floats on white bg
 - `filter: drop-shadow()` on `.po-video` only — traces phone bezel
 - All panels share `grid-column: 1; grid-row: 1` — no height reflow on tab switch
 - Desktop stage: `transform: translateY(-1.5rem)`
-- Source `.mp4` files have baked-in cream padding around the phone — do NOT crop/scale aggressively
+- Source `.mp4` files have baked-in light padding around the phone — do NOT crop/scale aggressively
 - Stage max-widths: mobile 365px, tablet 415px, desktop 480px
 - Features: Checklist | AI Companion | Learn | Community
 
 ### FAQ
 
 - Native `<details>/<summary>` with JS-driven `max-height` animation (CSS alone can't transition native details)
-- Background: `var(--color-cream)`. SVG chevron rotates 180° on open.
+- Background: `var(--color-cream)` (white). SVG chevron rotates 180° on open.
 - Summary + answer: `padding: 1rem` left/right so text breathes away from hover border
 - Questions (exact copy):
   1. What is Unify Social?
