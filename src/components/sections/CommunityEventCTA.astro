@@ -164,8 +164,9 @@ const EVENTBRITE_URL = "https://www.eventbrite.ca/o/unify-105574869881";
 </style>
 
 <script>
-  const section = document.querySelector(".cec");
-  if (section) {
+  function initCommunityEventCTA() {
+    const section = document.querySelector<HTMLElement>(".cec");
+    if (!section || section.classList.contains("visible")) return;
     section.classList.add("animate");
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -178,4 +179,6 @@ const EVENTBRITE_URL = "https://www.eventbrite.ca/o/unify-105574869881";
     );
     observer.observe(section);
   }
+
+  document.addEventListener("astro:page-load", initCommunityEventCTA);
 </script>

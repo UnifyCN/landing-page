@@ -215,8 +215,20 @@ const APP_STORE_URL =
 </style>
 
 <script>
-  const section = document.querySelector(".cta-wrap");
-  if (section) {
+  function initCtaBand() {
+    const section = document.querySelector<HTMLElement>(".cta-wrap");
+    if (!section || section.classList.contains("visible")) return;
+
+    // If the section is already in view on bind (short pages, navigation
+    // landing past it, etc.), reveal immediately. Otherwise observe.
+    const rect = section.getBoundingClientRect();
+    const inView =
+      rect.top < window.innerHeight * 0.88 && rect.bottom > 0;
+    if (inView) {
+      section.classList.add("visible");
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -228,4 +240,6 @@ const APP_STORE_URL =
     );
     observer.observe(section);
   }
+
+  document.addEventListener("astro:page-load", initCtaBand);
 </script>

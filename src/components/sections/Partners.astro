@@ -140,9 +140,32 @@ const partners = [
     to { transform: translateX(-50%); }
   }
 
+  /* Pause marquee when offscreen — saves compositor cycles when not visible */
+  .partners.is-offscreen .partners-track {
+    animation-play-state: paused;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .partners-track {
       animation: none;
     }
   }
 </style>
+
+<script>
+  function initPartnersMarquee() {
+    const section = document.querySelector<HTMLElement>(".partners");
+    if (!section || section.dataset.partnersInit) return;
+    section.dataset.partnersInit = "1";
+    section.classList.add("is-offscreen");
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        section.classList.toggle("is-offscreen", !entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+    observer.observe(section);
+  }
+
+  document.addEventListener("astro:page-load", initPartnersMarquee);
+</script>

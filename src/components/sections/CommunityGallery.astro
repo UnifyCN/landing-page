@@ -184,8 +184,9 @@ const photos = [
 </style>
 
 <script>
-  const section = document.querySelector(".cg");
-  if (section) {
+  function initCommunityGallery() {
+    const section = document.querySelector<HTMLElement>(".cg");
+    if (!section || section.classList.contains("visible")) return;
     section.classList.add("animate");
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -198,4 +199,6 @@ const photos = [
     );
     observer.observe(section);
   }
+
+  document.addEventListener("astro:page-load", initCommunityGallery);
 </script>

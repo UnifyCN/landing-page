@@ -175,8 +175,9 @@ const stats = [
 </style>
 
 <script>
-  const section = document.querySelector(".cs");
-  if (section) {
+  function initCommunityStats() {
+    const section = document.querySelector<HTMLElement>(".cs");
+    if (!section || section.classList.contains("visible")) return;
     section.classList.add("animate");
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -189,4 +190,6 @@ const stats = [
     );
     observer.observe(section);
   }
+
+  document.addEventListener("astro:page-load", initCommunityStats);
 </script>

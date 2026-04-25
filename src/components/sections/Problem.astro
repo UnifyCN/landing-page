@@ -94,8 +94,9 @@
 </style>
 
 <script>
-  const section = document.querySelector(".problem");
-  if (section) {
+  function initProblem() {
+    const section = document.querySelector<HTMLElement>(".problem");
+    if (!section || section.classList.contains("visible")) return;
     section.classList.add("animate");
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -108,4 +109,6 @@
     );
     observer.observe(section);
   }
+
+  document.addEventListener("astro:page-load", initProblem);
 </script>

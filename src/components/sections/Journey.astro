@@ -749,9 +749,12 @@
 </style>
 
 <script>
-  document.body.classList.add("js-ready");
-  const reveals = document.querySelectorAll(".journey-stage, .feature-block");
-  if (reveals.length) {
+  function initJourney() {
+    document.body.classList.add("js-ready");
+    const reveals = document.querySelectorAll<HTMLElement>(
+      ".journey-stage, .feature-block"
+    );
+    if (!reveals.length) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -763,6 +766,11 @@
       },
       { threshold: 0.12 },
     );
-    reveals.forEach((el) => observer.observe(el));
+    reveals.forEach((el) => {
+      if (el.classList.contains("visible")) return;
+      observer.observe(el);
+    });
   }
+
+  document.addEventListener("astro:page-load", initJourney);
 </script>
