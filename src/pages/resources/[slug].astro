@@ -1,12 +1,15 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { resources, getResourceBySlug, categoryLabels } from "../../lib/resources";
+import { resources, categoryLabels, type Resource } from "../../lib/resources";
 
-const { slug } = Astro.params;
-const resource = getResourceBySlug(slug ?? "");
+export async function getStaticPaths() {
+  return resources.map((r) => ({ params: { slug: r.slug }, props: { resource: r } }));
+}
 
-if (!resource) return Astro.redirect("/resources");
+const { resource } = Astro.props as { resource: Resource };
 ---
 
 <BaseLayout

@@ -1,14 +1,15 @@
 ---
+export const prerender = true;
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { partners, getPartnerBySlug } from "../../lib/partners";
+import { partners, type Partner } from "../../lib/partners";
 
-const { slug } = Astro.params;
-const partner = getPartnerBySlug(slug ?? "");
-
-if (!partner) {
-  return Astro.redirect("/partners");
+export async function getStaticPaths() {
+  return partners.map((p) => ({ params: { slug: p.slug }, props: { partner: p } }));
 }
+
+const { partner } = Astro.props as { partner: Partner };
 ---
 
 <BaseLayout
