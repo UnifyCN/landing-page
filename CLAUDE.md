@@ -298,7 +298,7 @@ Do NOT use `animation-fill-mode: both` with a delay on scroll-triggered elements
 The navbar pill is a **liquid-glass** element — translucent white pill with real backdrop-blur, gradient sheen, gloss highlight, and layered shadows. The user's eye should still go TO the content inside the pill (logo, links, CTA) — the pill itself is depth, not focus.
 
 - Background: `linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.5))` — translucent so blur reads through
-- **Backdrop blur: `blur(8px) saturate(140%)`** — DO NOT raise. Was previously `blur(22px) saturate(180%)` and that made the entire site lag on macOS/HiDPI because the GPU re-blurred the underlying viewport every scroll frame at 2× pixel density. 8px/140% is the practical ceiling — keeps the glass look at ~3× cheaper compositing cost.
+- **Backdrop blur: `blur(14px) saturate(160%)`** — DO NOT raise to 22/180. Was originally `blur(22px) saturate(180%)` and that made the entire site lag on macOS/HiDPI because the GPU re-blurred the underlying viewport every scroll frame at 2× pixel density. Cost scales roughly with blur radius squared. After the AVIF image conversion (commit `ad885e5`) reduced competing main-thread work, we bumped from 8/140 → 14/160 — closer to the original feel, still ~50% cheaper than 22/180. If lag returns on lower-end Macs, drop back to 8/140.
 - Border: `1px solid rgba(255,255,255,0.55)` — light edge, lifts the pill off the page
 - Inset highlights: `inset 0 1px 0 0 rgba(255,255,255,0.8)` (top), `inset 0 -1px 0 0 rgba(255,255,255,0.2)` (bottom) — simulates light refraction through the glass
 - Box shadow: layered `0 8px 24px -8px rgba(23,22,22,0.14), 0 2px 6px -2px rgba(23,22,22,0.08)` — soft elevation
