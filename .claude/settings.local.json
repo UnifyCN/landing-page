@@ -8,7 +8,11 @@
       "Bash(nvm use *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(file /Users/savargupta/Github/Unify-Landing-Page/public/assets/logo/*)"
+      "Bash(file /Users/savargupta/Github/Unify-Landing-Page/public/assets/logo/*)",
+      "WebSearch",
+      "Read(//Users/luis/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python3 scripts/search.py \"performance animation transform\" --domain ux -n 10)",
+      "Bash(python3 scripts/search.py \"fixed position layer paint\" --domain ux -n 10)"
     ]
   }
 }

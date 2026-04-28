@@ -1,41 +1,34 @@
 ---
-// Letter-by-letter animated headline.
-// First phrase: ink. Second phrase: muted, with `Unify` italicized.
+// Per-word reveal: each word slides up + fades in with a short stagger.
+// 13 word spans total (vs 78 letter spans previously) — far cheaper to
+// animate AND visually richer because the eye actually catches each word
+// arriving.
 const phrase1Words = "Take the guesswork out of your newcomer journey with".split(" ");
 const phrase2Words = ["the", "full", "Unify", "experience."];
 
 let i = 0;
-const phrase1 = phrase1Words.map((word) =>
-  [...word].map((ch) => ({ ch, i: i++ }))
-);
+const phrase1 = phrase1Words.map((word) => ({ word, i: i++ }));
 const phrase2 = phrase2Words.map((word) => ({
-  letters: [...word].map((ch) => ({ ch, i: i++ })),
+  word,
+  i: i++,
   italic: word === "Unify",
 }));
 ---
 
 <section class="ao">
   <div class="ao-inner">
-    <h2 class="ao-headline reveal-letters">
+    <h2 class="ao-headline">
       <span class="ao-headline-strong">
-        {phrase1.map((word, wi) => (
+        {phrase1.map((w, wi) => (
           <>
-            <span class="rl-word">
-              {word.map((l) => (
-                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
-              ))}
-            </span>
+            <span class="ao-word" style={`--i:${w.i}`}>{w.word}</span>
             {wi < phrase1.length - 1 && " "}
           </>
         ))}
       </span>{" "}<span class="ao-headline-muted">
-        {phrase2.map((wordObj, wi) => (
+        {phrase2.map((w, wi) => (
           <>
-            <span class={`rl-word ${wordObj.italic ? "ao-italic" : ""}`}>
-              {wordObj.letters.map((l) => (
-                <span class="rl-char" style={`--i:${l.i}`}>{l.ch}</span>
-              ))}
-            </span>
+            <span class={`ao-word${w.italic ? " ao-italic" : ""}`} style={`--i:${w.i}`}>{w.word}</span>
             {wi < phrase2.length - 1 && " "}
           </>
         ))}
@@ -78,27 +71,27 @@ const phrase2 = phrase2Words.map((word) => ({
     font-style: italic;
   }
 
-  /* Letter-by-letter animation */
-  .reveal-letters .rl-word {
+  /* Per-word slide-up + fade. 13 words, 90ms stagger, transform on px not
+     em (em forces font-size resolution per frame), GPU-only properties. */
+  .ao-word {
     display: inline-block;
     white-space: nowrap;
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.6s var(--ease-out);
+    transition-delay: calc(var(--i) * 90ms);
   }
 
-  .reveal-letters .rl-char {
-    display: inline-block;
-    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
-    transition-delay: calc(var(--i) * 18ms);
-  }
-
-  .ao.animate .reveal-letters .rl-char {
+  .ao.animate .ao-word {
     opacity: 0;
-    transform: translateY(0.55em);
+    transform: translateY(14px);
   }
-  .ao.animate.visible .reveal-letters .rl-char {
+  .ao.animate.visible .ao-word {
     opacity: 1;
     transform: translateY(0);
   }
 
+  /* Sub paragraph follows the headline in. */
   .ao-sub {
     font-family: var(--font-display);
     font-weight: 400;
@@ -106,6 +99,34 @@ const phrase2 = phrase2Words.map((word) => ({
     line-height: 1.65;
     color: var(--color-text);
     margin: 0;
+    transition:
+      opacity 0.6s var(--ease-out) 1.4s,
+      transform 0.6s var(--ease-out) 1.4s;
+  }
+
+  .ao.animate .ao-sub {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .ao.animate.visible .ao-sub {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* After reveal completes, drop transitions so browser releases per-word
+     compositor layers it was keeping primed. */
+  .ao.done .ao-word,
+  .ao.done .ao-sub {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ao .ao-word,
+    .ao .ao-sub {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* ── Tablet ── */
@@ -145,6 +166,10 @@ const phrase2 = phrase2Words.map((word) => ({
         if (entry.isIntersecting) {
           section.classList.add("visible");
           observer.disconnect();
+          // After the word stagger (~13 * 90ms + 0.6s transition + sub
+          // delay 1.4s + 0.6s) settles, drop transitions so the browser
+          // can release the per-word compositor layers.
+          setTimeout(() => section.classList.add("done"), 2500);
         }
       },
       { threshold: 0.25 }

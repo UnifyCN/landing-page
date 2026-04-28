@@ -133,18 +133,22 @@ const promises = [
 
   .reveal-letters .rl-char {
     display: inline-block;
-    transition: opacity 0.55s var(--ease-out), transform 0.55s var(--ease-out);
+    /* Opacity-only reveal — same fix as AboutOutro. */
+    transition: opacity 0.4s var(--ease-out);
     transition-delay: calc(var(--i) * 24ms);
   }
 
   /* Default = visible. JS-gated `animate` hides; `.visible` reveals. */
   .av.animate .reveal-letters .rl-char {
     opacity: 0;
-    transform: translateY(0.55em);
   }
   .av.animate.visible .reveal-letters .rl-char {
     opacity: 1;
-    transform: translateY(0);
+  }
+
+  /* Drop transitions after reveal completes. */
+  .av.done .reveal-letters .rl-char {
+    transition: none;
   }
 
   /* ── Promises list ── */
@@ -233,6 +237,7 @@ const promises = [
         if (entry.isIntersecting) {
           section.classList.add("visible");
           observer.disconnect();
+          setTimeout(() => section.classList.add("done"), 1500);
         }
       },
       { threshold: 0.25 }

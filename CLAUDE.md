@@ -345,6 +345,7 @@ Legal (open new tab):
 - Staggered `hero-fade-up` CSS animations with delays 0.1s–0.52s, `animation-fill-mode: forwards`
 - Phone: `hero-phone-in` (translate X/Y → 0), 0.8s delay 0.2s
 - App Store badge → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 (new tab, height 52px)
+- **No glow gradient behind the phone.** Removed entirely — even static, the radial gradient sat under the navbar's `backdrop-filter` sample zone, forcing the GPU to re-blur a complex 4-stop semi-transparent gradient on every scroll frame in the hero region. Cause of the "scrolling around the hero is laggy → smooth once past" report. Drop-shadow alone (`0 18px 28px rgba(23,22,22,0.2)`, radius reduced from 48 → 28) is the focal effect now. Do NOT re-add a glow under the navbar's blur zone.
 
 ### Problem
 
@@ -446,8 +447,11 @@ Current site keys in forms still use placeholder (`0x4AAAAAAA_PLACEHOLDER_KEY`) 
 - `bodyBg="#171616"`. Sections: CommunityHero → CommunityStats → CommunityGallery → CommunityEventCTA → CTABand.
 
 ### About (`src/pages/about.astro`)
-- `bodyBg="#171616"`. Sections: AboutHero → AboutFounders → AboutProblem → AboutValues → CTABand.
-- Image assets: `/assets/images/about/founders-portrait.jpg` (AboutHero), `/assets/images/about/founders-photo-2.jpg` (AboutFounders).
+- `bodyBg="#171616"`. Sections: AboutHero → AboutFounders → AboutProblem → AboutValues → AboutOutro → CTABand.
+- Image assets: `/assets/images/about/founders-portrait.avif` + `founders-portrait2.avif` (AboutHero carousel), `/assets/images/about/founders-photo-2.jpg` (AboutFounders).
+- **AboutHero top padding is intentionally tight** — `calc(67px + 1rem/1.5rem/2rem)` for mobile/tablet/desktop. Earlier it was `+4rem/+5rem/+6rem` and the photo+headline floated below ~100px of dead whitespace. Don't re-inflate.
+- **AboutOutro animation is per-word slide-up, not per-letter.** 13 word spans, 90ms stagger, `transform: translateY(14px)` on px (not em — em forces font-size resolution per frame). Section adds `.done` class 2500ms after intersection so the browser releases the per-word compositor layers. Per-letter (78 spans) caused mid-animation jank around "with the full…" — do NOT revert.
+- **AboutValues letter reveal is opacity-only.** Per-letter structure preserved for the staggered sweep, but no `transform` on the letters — opacity-only animation removes the ~30 simultaneous transform-layer cost. `.done` class also drops the transitions after settle.
 
 ---
 

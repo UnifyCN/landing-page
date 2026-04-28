@@ -261,40 +261,11 @@ const avatars = [
     animation: hero-phone-in 0.8s var(--ease-out) 0.2s forwards;
   }
 
-  .hero-visual::before {
-    content: "";
-    position: absolute;
-    inset: -20% -25%;
-    background: radial-gradient(
-      ellipse 55% 55% at 50% 50%,
-      rgba(110, 160, 215, 0.55) 0%,
-      rgba(125, 170, 215, 0.35) 35%,
-      rgba(140, 180, 220, 0.15) 60%,
-      rgba(147, 180, 220, 0) 80%
-    );
-    pointer-events: none;
-    z-index: 0;
-    transform-origin: center;
-    animation: hero-glow-pulse 6s var(--ease-in-out, ease-in-out) 1.2s infinite;
-    will-change: opacity, transform;
-  }
-
-  @keyframes hero-glow-pulse {
-    0%, 100% {
-      opacity: 0.82;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.06);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-visual::before {
-      animation: none;
-    }
-  }
+  /* Glow gradient removed entirely — even static, the radial gradient
+     extended above the phone container into the navbar's backdrop-filter
+     sample zone. Every scroll frame in the hero region the navbar had
+     to re-blur a complex 4-stop semi-transparent gradient. Phone with
+     drop-shadow alone is the focal point and runs cheap under blur. */
 
   .hero-phone {
     position: relative;
@@ -302,7 +273,9 @@ const avatars = [
     width: 100%;
     max-height: 360px;
     object-fit: contain;
-    filter: drop-shadow(0 28px 48px rgba(23, 22, 22, 0.16));
+    /* Smaller blur radius (48 -> 28) cuts drop-shadow compositing cost
+       roughly in half; alpha bumped slightly to keep the same visual weight. */
+    filter: drop-shadow(0 18px 28px rgba(23, 22, 22, 0.2));
   }
 
   /* ── Entrance animations ── */
