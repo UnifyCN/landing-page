@@ -26,7 +26,7 @@ function isActive(href: string) {
     <!-- Logo — plain div, not a link -->
     <div class="flex-shrink-0">
       <img
-        src="/assets/logo/logo-with-name.png"
+        src="/assets/logo/logo-with-name.avif"
         alt="Unify"
         class="h-10 w-auto"
       />
@@ -108,7 +108,7 @@ function isActive(href: string) {
   <div class="px-6 h-navbar flex items-center justify-between flex-shrink-0">
     <div class="flex-shrink-0">
       <img
-        src="/assets/logo/logo-with-name.png"
+        src="/assets/logo/logo-with-name.avif"
         alt="Unify"
         class="h-10 w-auto"
       />
@@ -142,7 +142,10 @@ function isActive(href: string) {
     aria-label="Mobile navigation"
   >
     <!-- Editorial left-aligned links with brand-red accent border -->
-    <ul role="list" class="mobile-link-list flex flex-col gap-2 list-none m-0 p-0">
+    <ul
+      role="list"
+      class="mobile-link-list flex flex-col gap-2 list-none m-0 p-0"
+    >
       {
         navLinks.map(({ label, href }, i) => (
           <li class="mobile-nav-item" style={`--i: ${i}`}>
@@ -275,12 +278,20 @@ function isActive(href: string) {
     position: absolute;
     left: 50%;
     transform-origin: center;
-    transition: transform 0.26s var(--ease-out), opacity 0.18s ease;
+    transition:
+      transform 0.26s var(--ease-out),
+      opacity 0.18s ease;
   }
 
-  .ham-line-1 { transform: translateX(-50%) translateY(-7px); }
-  .ham-line-2 { transform: translateX(-50%) translateY(0px); }
-  .ham-line-3 { transform: translateX(-50%) translateY(7px); }
+  .ham-line-1 {
+    transform: translateX(-50%) translateY(-7px);
+  }
+  .ham-line-2 {
+    transform: translateX(-50%) translateY(0px);
+  }
+  .ham-line-3 {
+    transform: translateX(-50%) translateY(7px);
+  }
 
   .hamburger.is-open .ham-line-1 {
     transform: translateX(-50%) translateY(0) rotate(45deg);
@@ -349,7 +360,9 @@ function isActive(href: string) {
   .mobile-nav-item {
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.28s ease, transform 0.28s var(--ease-out);
+    transition:
+      opacity 0.28s ease,
+      transform 0.28s var(--ease-out);
     transition-delay: calc(var(--i) * 50ms + 60ms);
   }
 
@@ -362,7 +375,9 @@ function isActive(href: string) {
 <script>
   function initNavbar() {
     const pill = document.getElementById("nav-pill");
-    const toggle = document.getElementById("nav-toggle") as HTMLButtonElement | null;
+    const toggle = document.getElementById(
+      "nav-toggle",
+    ) as HTMLButtonElement | null;
     const close = document.getElementById("nav-close");
     const menu = document.getElementById("mobile-nav");
 
@@ -405,7 +420,8 @@ function isActive(href: string) {
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
+      if (e.key === "Escape" && menu?.classList.contains("is-open"))
+        closeMenu();
     });
   }
 
@@ -423,17 +439,25 @@ function isActive(href: string) {
 
   function updateActiveLinks() {
     const path = window.location.pathname;
-    document.querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-nav-link").forEach((a) => {
-      const href = a.getAttribute("href") ?? "";
-      const isActive = href === "/" ? path === "/" : path.startsWith(href);
-      a.classList.toggle("nav-link-active", a.classList.contains("nav-link") && isActive);
-      a.classList.toggle("mobile-nav-link-active", a.classList.contains("mobile-nav-link") && isActive);
-      if (isActive) {
-        a.setAttribute("aria-current", "page");
-      } else {
-        a.removeAttribute("aria-current");
-      }
-    });
+    document
+      .querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-nav-link")
+      .forEach((a) => {
+        const href = a.getAttribute("href") ?? "";
+        const isActive = href === "/" ? path === "/" : path.startsWith(href);
+        a.classList.toggle(
+          "nav-link-active",
+          a.classList.contains("nav-link") && isActive,
+        );
+        a.classList.toggle(
+          "mobile-nav-link-active",
+          a.classList.contains("mobile-nav-link") && isActive,
+        );
+        if (isActive) {
+          a.setAttribute("aria-current", "page");
+        } else {
+          a.removeAttribute("aria-current");
+        }
+      });
   }
 
   // Re-init on every page load (initial + soft navigations)
