@@ -122,6 +122,7 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - The homepage has been deliberately redesigned beyond the Framer original — do NOT revert to Framer's layout or copy without explicit request.
 - Dark mode: out of scope. Never in scope.
 - Match Framer (unifysocial.ca) closely on desktop and mobile for pages that came from Framer; flag ambiguous mobile layouts, don't approximate silently.
+- **Responsive at every width — non-negotiable.** Every page, section, and component must look and work correctly across mobile (≤809px), tablet (810–1399px), desktop (≥1400px), AND every in-between width. No layout breaks, awkward wraps, overflow, cropped content, or unreadable type at *any* viewport in the 320px–1920px range. Test by resizing the browser continuously, not just at the three named breakpoints. Prefer fluid type (`clamp()`), fluid spacing, and intrinsic layouts (`auto-fit` / `minmax` / `flex-wrap`) over fixed pixel jumps. When you ship a UI change, the verification step must include a continuous resize check, not just three discrete screenshots.
 
 ---
 
