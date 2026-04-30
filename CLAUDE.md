@@ -315,10 +315,12 @@ The navbar pill is a **liquid-glass** element — translucent white pill with re
 
 ## Footer
 
-- White background. Bold heading with 3px `var(--color-brand)` left border: "Unify," / "Your journey to Canada, simplified."
-- Two-column body: left = brand description, right = Pages + Socials
-- Bottom bar: `© 2026 – Unify Social` (plain text, NOT a link)
-- No logo in footer
+White background, top + bottom hairline borders. Three-column grid at tablet+ (`2fr 1fr 1fr`).
+
+- **Brand column:** `/assets/logo/logo-with-name.avif` at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
+- **Navigate column:** Home | About | Blog | Contact (4 links — narrower than the 7-link navbar).
+- **Legal column:** Privacy Policy → `/privacy`, Terms of Service → `/terms`. **Internal Astro routes**, not Notion. Open in same tab.
+- **Bottom bar:** `© 2026 Unify Social` — plain text, no dash, NOT a link.
 
 Socials:
 - Instagram: https://www.instagram.com/unifysocial.ca/
@@ -326,69 +328,57 @@ Socials:
 - LinkedIn: https://www.linkedin.com/company/unify-social/posts/?feedView=all
 - Twitter/X: https://x.com/unifysocialca
 
-Legal (open new tab):
-- Privacy: https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c?source=copy_link
-- Terms: https://www.notion.so/Unify-s-End-User-License-Agreement-Terms-of-Service-3185af89dddb80a68410fa8d65d615c7?source=copy_link
-
 ---
 
 ## Section Notes (homepage) — load-bearing, do not revert
 
+Homepage section flow today: `Hero → Partners → Journey → FAQ`. No `Problem`, no `ProductOverview`, no `CTABand` on the homepage.
+
+`src/components/sections/Problem.astro` and `ProductOverview.astro` still exist on disk but are **intentionally retired** — not imported by any page. Safe to delete in a cleanup pass; do NOT pull them back into the homepage. The dead vertical-timeline CSS still living inside `Journey.astro` is in the same bucket.
+
 ### Hero
 
-- Two-column grid at tablet+: `1fr 480px`, gap `1rem`, padding `0 5rem` desktop
-- `align-items: flex-start` — text and phone both pin to top
-- Decorative `blob-3.svg` top-right, opacity 0.28
-- Phone: `/assets/screenshots/learn-hero.avif`, `max-height: 680px` desktop, `loading="eager"`
-- Overline: "Newcomer settlement app" (brand-red, uppercase, `tracking-label`)
-- H1: "The all-in-one" (light, muted) / "newcomer" (bold display, `clamp(3.5rem, 10.5vw, 9rem)`) / "settlement app" (bold, italic brand-red "app")
-- Staggered `hero-fade-up` CSS animations with delays 0.1s–0.52s, `animation-fill-mode: forwards`
-- Phone: `hero-phone-in` (translate X/Y → 0), 0.8s delay 0.2s
-- App Store badge → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 (new tab, height 52px)
+- White section bg. Two-column at tablet+ (`1fr 1fr`); desktop becomes `1fr 480px` with `gap: 1rem` and `padding: 0 5rem`.
+- **Rating pill** above the H1: white pill with hairline border, 5 amber stars (`#F5A623`), copy "Rated **4.9** by **2,700+** newcomers".
+- **H1:** single plain string "The all-in-one newcomer settlement app". Weight 700, `clamp(2.5rem, 7.5vw, 5.5rem)`, `line-height: 1.02`, `letter-spacing: var(--tracking-display)`, `text-wrap: balance`. No styled spans, no italic brand-red word. (The legacy three-line styled headline is gone — do not re-introduce it.)
+- **Sub:** "Unify makes settling in Canada simpler, clearer, and more connected." (`color-muted`, `max-width: 44ch`).
+- **CTA row:** App Store badge `/assets/app-store-badge-en.svg` (height 52px, opens new tab) + "No credit card required" note.
+- **Social proof row:** five overlapping circular avatars with initials (JP, MA, LO, RN, +) on solid color discs, followed by "Join 2,700+ newcomers settling in from 84 countries". 32px on mobile, 36px tablet+.
+- **Phone:** `/assets/screenshots/learn-hero.avif`, `loading="eager"`. `max-height` 360px mobile / 540px tablet / 680px desktop (with `max-width: 380px` desktop).
+- **Animations:** scripted CSS keyframes with staggered delays — rating 0.1s, h1 0.22s, sub 0.36s, CTA 0.46s, social 0.56s; phone 0.2s via `hero-phone-in`.
+- App Store badge → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 (new tab).
 - **No glow gradient behind the phone.** Removed entirely — even static, the radial gradient sat under the navbar's `backdrop-filter` sample zone, forcing the GPU to re-blur a complex 4-stop semi-transparent gradient on every scroll frame in the hero region. Cause of the "scrolling around the hero is laggy → smooth once past" report. Drop-shadow alone (`0 18px 28px rgba(23,22,22,0.2)`, radius reduced from 48 → 28) is the focal effect now. Do NOT re-add a glow under the navbar's blur zone.
-
-### Problem
-
-- Background: `#171616`. Large italic white text: "You just arrived. There's too much information, too many opinions, and no clear first step." / "That's the gap Unify fills." (brand-red, smaller)
-- Pure typography, no images
-- Uses CSS transitions (NOT keyframes) for scroll reveal — JS adds `.animate` immediately, then `.visible` when observed. Default (no JS): text visible.
 
 ### Partners
 
-- "Our Partners" label. CSS scroll animation only — no JS, no libs.
-- Mask-gradient fade edges. Logo pause-on-hover, grayscale-to-color.
+- White bg. Centered "Our Partners" label, then a CSS-only horizontal marquee.
+- 17 partner logos doubled in markup so the loop seams. `animation: marquee 40s linear infinite` translating `0 → -50%`.
+- Mask-gradient fade edges (transparent → black 10% → black 90% → transparent). Track pauses on `:hover`. Logos: 56/64/72px (mobile/tablet/desktop), `opacity: 0.85` default, lifts to 1 + `translateY(-2px)` on hover. `prefers-reduced-motion: reduce` stops the animation.
 
-### Journey
+### Journey — "Key Benefits"
 
-- Vertical timeline, 4 stages with stage labels in brand-red pills. Spine: `linear-gradient(transparent → brand-red → transparent)`.
-- Images: `loading="eager"` (lazy breaks above-fold screenshots)
-- Progressive enhancement animation (body `.js-ready` → hidden, observer → `.visible` → transition reveal)
-- Stages: Day 1 (`checklist.png`), Week 1 (`companion.png`), Month 1 (`learn.png`), Month 3 (`community.png`)
-
-### ProductOverview
-
-- Split editorial layout: left = feature list, right = video stage
-- NO white card around video — phone floats on white bg
-- `filter: drop-shadow()` on `.po-video` only — traces phone bezel
-- All panels share `grid-column: 1; grid-row: 1` — no height reflow on tab switch
-- Desktop stage: `transform: translateY(-1.5rem)`
-- Source `.mp4` files have baked-in light padding around the phone — do NOT crop/scale aggressively
-- Stage max-widths: mobile 365px, tablet 415px, desktop 480px
-- Features: Checklist | AI Companion | Learn | Community
+- White bg. Centered eyebrow pill "Core Features" + H2 "Key Benefits" (centered, `font-size: 2.25rem` mobile / 3.25rem desktop).
+- Three feature blocks (default text-left / visual-right; `feature-block--reverse` swaps for the middle one):
+  1. **Checklist** — warm cream card (`#f5eeda`) with cream/peach decorative blobs, dark dot in pill, "Your Canadian checklist, personalised to you." H3, three bulleted benefits with dark-circle check icons, "See a sample checklist →" link. Image: `/assets/screenshots/checklist.avif`.
+  2. **AI Companion** (reversed) — blue-grey card (`#e9ecf6`) at `aspect-ratio: 447 / 558`, `padding: 0`, no decorative blobs (image is self-contained composition). Blue accents (`#5a6fbf`). Image: `/assets/phone-ai.avif`, `object-fit: cover`.
+  3. **Community** — warm peach card (`#f5e6d2`) with peach decorative blobs, brand-red pill + dot + link. Image: `/assets/screenshots/community.avif`.
+- Reveal pattern: `body.js-ready .feature-block { opacity:0; translateY(32px) }` → `.visible` flips on at threshold 0.12. Observer wired through `astro:page-load`.
 
 ### FAQ
 
-- Native `<details>/<summary>` with JS-driven `max-height` animation (CSS alone can't transition native details)
-- Background: `var(--color-cream)` (white). SVG chevron rotates 180° on open.
-- Summary + answer: `padding: 1rem` left/right so text breathes away from hover border
-- Questions (exact copy):
-  1. What is Unify Social?
-  2. Who is Unify Social best for?
-  3. How do I connect with other immigrants on Unify Social?
-  4. What workshops does Unify Social offer, and how can I join one?
-  5. Is Unify Social free to use?
+- White bg. Centered "FAQ" eyebrow pill + "Frequently Asked Questions" headline.
+- Card: white, `border: 1px solid rgba(23,22,22,0.10)`, `border-radius: 18px`. Open state deepens border + adds soft shadow.
+- Toggle: dark square (`bg-text`, `border-radius: 10px`) with a `+` icon. Rotates **45° to an X** and switches to brand-red when open. (Not a chevron.)
+- Native `<details>/<summary>` with `e.preventDefault()` and JS-driven `max-height` between `0` and `scrollHeight`; sets `max-height: none` after the open transition so dynamic content reflows.
+- Answer rendered via `set:html`. Custom prose: 0.9375rem body, 1.7 line-height, brand-red `–` bullet markers.
+- Questions (exact copy — no "Social" suffix):
+  1. What is Unify?
+  2. Who is Unify best for?
+  3. How do I connect with other newcomers on Unify?
+  4. What workshops does Unify offer, and how can I join one?
+  5. Is Unify free to use?
 
-### CTABand
+### CTABand (used on About / Community / Contact / Partners — NOT on the homepage)
 
 - Background: `var(--color-ink)` (dark, NOT white)
 - Two-column flex at tablet+. Headline: "Stop guessing." / "Start settling." (white, italic brand-red "Start settling.")
@@ -447,11 +437,14 @@ Current site keys in forms still use placeholder (`0x4AAAAAAA_PLACEHOLDER_KEY`) 
 - `bodyBg="#171616"`. Sections: CommunityHero → CommunityStats → CommunityGallery → CommunityEventCTA → CTABand.
 
 ### About (`src/pages/about.astro`)
-- `bodyBg="#171616"`. Sections: AboutHero → AboutFounders → AboutProblem → AboutValues → AboutOutro → CTABand.
-- Image assets: `/assets/images/about/founders-portrait.avif` + `founders-portrait2.avif` (AboutHero carousel), `/assets/images/about/founders-photo-2.jpg` (AboutFounders).
+- `bodyBg="#FFFFFF"` (white — was previously ink/dark; flipped during the Framer-style rebuild).
+- Five sections: **AboutHero → AboutProblem → AboutValues → AboutOutro → CTABand.** No `AboutFounders` — the standalone founders section was retired and rolled into AboutHero.
+- **AboutHero** — split layout: 2-photo crossfade carousel left (`founders-portrait.avif` + `founders-portrait2.avif` with BACK / NEXT controls), text right with eyebrow "Our journey", H1 "Hi, we're Cedric and Savar 👋", and the founders body copy.
 - **AboutHero top padding is intentionally tight** — `calc(67px + 1rem/1.5rem/2rem)` for mobile/tablet/desktop. Earlier it was `+4rem/+5rem/+6rem` and the photo+headline floated below ~100px of dead whitespace. Don't re-inflate.
+- **AboutProblem** — three-card "Settling in Canada feels harder than it should" with letter-by-letter SSR-split headline reveal. Cards: Scattered information, Doing it alone, No clear roadmap (third card has `span: "full"`).
+- **AboutValues** — pill "Our Promises" + headline "You can trust *Unify.*" with letter-reveal sweep, then three promise cards. **Letter reveal is opacity-only.** Per-letter structure preserved for the staggered sweep, but no `transform` on the letters — opacity-only animation removes the ~30 simultaneous transform-layer cost. `.done` class also drops the transitions after settle.
+- **AboutOutro** — final headline "Take the guesswork out of your newcomer journey with the full *Unify* experience." with per-word reveal, plus sub "Be the first to experience Unify and shape the future of newcomer support in Canada".
 - **AboutOutro animation is per-word slide-up, not per-letter.** 13 word spans, 90ms stagger, `transform: translateY(14px)` on px (not em — em forces font-size resolution per frame). Section adds `.done` class 2500ms after intersection so the browser releases the per-word compositor layers. Per-letter (78 spans) caused mid-animation jank around "with the full…" — do NOT revert.
-- **AboutValues letter reveal is opacity-only.** Per-letter structure preserved for the staggered sweep, but no `transform` on the letters — opacity-only animation removes the ~30 simultaneous transform-layer cost. `.done` class also drops the transitions after settle.
 
 ---
 
