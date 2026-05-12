@@ -7,8 +7,16 @@ const navigate = [
 ];
 
 const legal = [
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
+  {
+    label: "Privacy Policy",
+    href: "https://www.notion.so/Unify-s-Privacy-Policy-2e15af89dddb80b0b37ee497e6d4e38c",
+    external: true,
+  },
+  {
+    label: "Terms of Service",
+    href: "https://www.notion.so/Unify-s-Terms-Conditions-3185af89dddb80a68410fa8d65d615c7",
+    external: true,
+  },
 ];
 
 const socials = [
@@ -136,9 +144,13 @@ const socials = [
         <h3 class="footer-col-title">Legal</h3>
         <ul role="list" class="list-none m-0 p-0 flex flex-col gap-3">
           {
-            legal.map(({ label, href }) => (
+            legal.map(({ label, href, external }) => (
               <li>
-                <a href={href} class="footer-link">
+                <a
+                  href={href}
+                  class="footer-link"
+                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
                   {label}
                 </a>
               </li>

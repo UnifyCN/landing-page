@@ -300,31 +300,38 @@ const faqs: { q: string; a: string }[] = [
 </style>
 
 <script>
-  document.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach(details => {
-    const summary = details.querySelector('summary')!;
-    const wrap = details.querySelector<HTMLElement>('.faq-answer-wrap')!;
+  function initFAQ() {
+    document.querySelectorAll<HTMLDetailsElement>('.faq-item').forEach(details => {
+      if (details.dataset.faqBound === 'true') return;
+      details.dataset.faqBound = 'true';
 
-    summary.addEventListener('click', e => {
-      e.preventDefault();
-      const isOpen = details.hasAttribute('open');
+      const summary = details.querySelector('summary')!;
+      const wrap = details.querySelector<HTMLElement>('.faq-answer-wrap')!;
 
-      if (isOpen) {
-        wrap.style.maxHeight = wrap.scrollHeight + 'px';
-        wrap.classList.remove('is-open');
-        requestAnimationFrame(() => {
-          wrap.style.maxHeight = '0px';
-        });
-        wrap.addEventListener('transitionend', () => {
-          details.removeAttribute('open');
-        }, { once: true });
-      } else {
-        details.setAttribute('open', '');
-        wrap.style.maxHeight = wrap.scrollHeight + 'px';
-        wrap.classList.add('is-open');
-        wrap.addEventListener('transitionend', () => {
-          wrap.style.maxHeight = 'none';
-        }, { once: true });
-      }
+      summary.addEventListener('click', e => {
+        e.preventDefault();
+        const isOpen = details.hasAttribute('open');
+
+        if (isOpen) {
+          wrap.style.maxHeight = wrap.scrollHeight + 'px';
+          wrap.classList.remove('is-open');
+          requestAnimationFrame(() => {
+            wrap.style.maxHeight = '0px';
+          });
+          wrap.addEventListener('transitionend', () => {
+            details.removeAttribute('open');
+          }, { once: true });
+        } else {
+          details.setAttribute('open', '');
+          wrap.style.maxHeight = wrap.scrollHeight + 'px';
+          wrap.classList.add('is-open');
+          wrap.addEventListener('transitionend', () => {
+            wrap.style.maxHeight = 'none';
+          }, { once: true });
+        }
+      });
     });
-  });
+  }
+
+  document.addEventListener('astro:page-load', initFAQ);
 </script>

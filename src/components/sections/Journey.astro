@@ -1,4 +1,6 @@
 ---
+const APP_STORE_URL =
+  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
 ---
 
 <section class="journey bg-white relative overflow-hidden pt-20 desktop:pt-32 pb-8 desktop:pb-12">
@@ -98,7 +100,12 @@
             <span>Step-by-step help with forms, applications &amp; appointments</span>
           </li>
         </ul>
-        <a href="#" class="feature-link">
+        <a
+          href={APP_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="feature-link"
+        >
           Try the Companion
           <span aria-hidden="true">→</span>
         </a>
