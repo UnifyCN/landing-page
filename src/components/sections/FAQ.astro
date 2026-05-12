@@ -3,8 +3,14 @@ const faqs: { q: string; a: string }[] = [
   {
     q: "What is Unify?",
     a: `<p>Unify is a Canadian platform and community designed to help newcomers and international students navigate life in Canada.</p>
-<p>It combines practical settlement resources, career guidance, and in-person events into one centralized hub. Unify helps newcomers understand systems that are often confusing, including banking, taxes, housing, healthcare, internships, and job searching in Canada. Instead of searching across dozens of websites, users can find curated, newcomer-specific information in one place.</p>
-<p>Beyond information, Unify also helps users find their community. Members can meet other people who are new to Canada, connect with peers facing similar challenges, and ask questions in a supportive environment. It is not just an information platform, but a space to build relationships and grow together.</p>`,
+<p>It brings practical settlement resources, career guidance, and in-person events into one place — helping you understand systems that are often confusing:</p>
+<ul>
+  <li>Banking and taxes</li>
+  <li>Housing and healthcare</li>
+  <li>Internships and job searching</li>
+  <li>Settling into Canadian culture</li>
+</ul>
+<p>Beyond information, Unify is a community. Meet other people who are new to Canada, connect with peers facing similar challenges, and ask questions in a supportive space — not just a resource platform, but somewhere to build relationships and grow together.</p>`,
   },
   {
     q: "Who is Unify best for?",
@@ -20,12 +26,14 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "How do I connect with other newcomers on Unify?",
-    a: `<p>Unify offers multiple ways for newcomers and international students to connect with others who are also new to Canada.</p>
-<p><strong>Community Events and Workshops:</strong><br>Users can attend in-person and virtual events designed for networking, learning, and peer connection. These include career workshops, newcomer panels, skill-building sessions, and social meetups where participants can build relationships in a structured environment.</p>
-<p><strong>Discussion Forum:</strong><br>Unify includes a community discussion space where users can ask questions, share experiences, and get advice from other immigrants and international students. Members can post questions about topics such as housing, banking, internships, or navigating Canadian culture, and receive responses from peers who have gone through similar experiences.</p>
-<p><strong>Interest-Based Groups:</strong><br>Users can join groups based on shared interests, career goals, industries, cultural backgrounds, or life stages. These smaller communities allow members to connect with people who have similar experiences and priorities.</p>
-<p><strong>Unify Circles:</strong><br>Unify Circles is a small-group matching feature that connects users with up to three other newcomers who have similar backgrounds and arrived in Canada around the same time. Each Circle is placed into a group chat, making it easier to build deeper connections, share resources, and support one another through the early stages of settling in.</p>
-<p>Together, these features make Unify more than a resource platform. It is an active community where newcomers can ask questions, build friendships, and grow alongside others navigating life in Canada.</p>`,
+    a: `<p>Unify offers multiple ways to connect with others who are also new to Canada:</p>
+<ul class="faq-feature-list">
+  <li><strong>Community Events and Workshops</strong><span>In-person and virtual events for networking, learning, and peer connection — career workshops, newcomer panels, skill-building sessions, and social meetups.</span></li>
+  <li><strong>Discussion Forum</strong><span>A community space to ask questions, share experiences, and get advice on housing, banking, internships, or navigating Canadian culture.</span></li>
+  <li><strong>Interest-Based Groups</strong><span>Smaller communities organized around shared interests, career goals, industries, cultural backgrounds, or life stages.</span></li>
+  <li><strong>Unify Circles</strong><span>Small-group matching that connects you with up to three other newcomers who share your background and arrived around the same time — placed together in a private group chat.</span></li>
+</ul>
+<p>Together, these make Unify more than a resource platform — it's an active community where newcomers build friendships and grow alongside others navigating life in Canada.</p>`,
   },
   {
     q: "What workshops does Unify offer, and how can I join one?",
@@ -79,7 +87,7 @@ const faqs: { q: string; a: string }[] = [
   </div>
 </section>
 
-<style>
+<style is:global>
   .faq-wrap {
     background-color: #ffffff;
     padding: 5rem 0 6rem;
@@ -229,24 +237,59 @@ const faqs: { q: string; a: string }[] = [
   .faq-answer ul {
     list-style: none;
     padding: 0;
-    margin: 0 0 0.875rem;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .faq-answer ul li {
     font-family: var(--font-display);
     font-size: 0.9375rem;
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--color-muted);
-    padding-left: 1.25rem;
+    padding-left: 1.5rem;
     position: relative;
   }
 
   .faq-answer ul li::before {
-    content: "–";
+    content: "";
     position: absolute;
-    left: 0;
-    color: var(--color-brand-red);
+    left: 0.25rem;
+    top: 0.65em;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background-color: var(--color-brand-red);
+  }
+
+  /* Feature-list variant: bold label + description block */
+  .faq-answer ul.faq-feature-list {
+    gap: 0.85rem;
+    margin: 0 0 1.25rem;
+  }
+
+  .faq-answer ul.faq-feature-list li {
+    padding-left: 1.5rem;
+    line-height: 1.55;
+  }
+
+  .faq-answer ul.faq-feature-list li strong {
+    display: block;
+    font-family: var(--font-display);
     font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    margin-bottom: 0.2rem;
+  }
+
+  .faq-answer ul.faq-feature-list li span {
+    display: block;
+    color: var(--color-muted);
+  }
+
+  .faq-answer ul.faq-feature-list li::before {
+    top: 0.55em;
   }
 
   .faq-answer strong {
