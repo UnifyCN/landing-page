@@ -23,10 +23,9 @@
     background-color: var(--color-ink);
     overflow: hidden;
     margin-top: -67px;
-    min-height: calc(100vh + 67px);
-    min-height: calc(100dvh + 67px);
+    min-height: calc(78dvh + 67px);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
   }
 
   .ch-photo {
@@ -102,13 +101,15 @@
   /* ── Phone ── */
   @media (max-width: 479px) {
     .ch-content {
-      padding: 0 1.25rem 3rem;
+      padding: 5rem 1.25rem 3rem;
     }
   }
 
   /* ── Tablet ── */
   @media (min-width: 810px) {
     .ch {
+      min-height: calc(100vh + 67px);
+      min-height: calc(100dvh + 67px);
       align-items: flex-end;
     }
 
