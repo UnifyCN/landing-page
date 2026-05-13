@@ -139,10 +139,6 @@
 ></script>
 
 <script>
-  const form = document.getElementById("contact-form") as HTMLFormElement | null;
-  const successEl = document.getElementById("cf-success");
-  const submitBtn = document.getElementById("cf-submit-btn") as HTMLButtonElement | null;
-
   function setError(id: string, msg: string) {
     const el = document.getElementById(id);
     if (el) el.textContent = msg;
@@ -154,67 +150,98 @@
     );
   }
 
-  function setLoading(loading: boolean) {
-    if (!submitBtn) return;
-    submitBtn.disabled = loading;
-    submitBtn.classList.toggle("is-loading", loading);
+  function renderTurnstile() {
+    const widget = document.getElementById("cf-turnstile-widget");
+    if (!widget) return;
+    if (widget.querySelector("iframe")) return; // already rendered
+    const ts = (window as any).turnstile;
+    if (!ts) {
+      // api.js not loaded yet — retry shortly
+      setTimeout(renderTurnstile, 120);
+      return;
+    }
+    ts.render(widget, {
+      sitekey: widget.getAttribute("data-sitekey"),
+      theme: "light",
+    });
   }
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    clearErrors();
-
-    const nameVal = (document.getElementById("cf-name") as HTMLInputElement)?.value ?? "";
-    const emailVal = (document.getElementById("cf-email") as HTMLInputElement)?.value ?? "";
-    const messageVal = (document.getElementById("cf-message") as HTMLTextAreaElement)?.value ?? "";
-
-    // Get Turnstile token from rendered widget
-    const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
-    const turnstileToken = turnstileInput?.value ?? "";
-
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: nameVal,
-          email: emailVal,
-          message: messageVal,
-          turnstileToken,
-        }),
-      });
-
-      const data = await res.json() as {
-        success: boolean;
-        error?: string;
-        fieldErrors?: Record<string, string[]>;
-      };
-
-      if (data.success) {
-        form.style.display = "none";
-        if (successEl) successEl.classList.add("is-visible");
-        return;
-      }
-
-      if (data.fieldErrors) {
-        const fe = data.fieldErrors;
-        if (fe.name?.[0]) setError("cf-name-error", fe.name[0]);
-        if (fe.email?.[0]) setError("cf-email-error", fe.email[0]);
-        if (fe.message?.[0]) setError("cf-message-error", fe.message[0]);
-        if (fe.turnstileToken?.[0]) setError("cf-turnstile-error", fe.turnstileToken[0]);
-      } else if (data.error) {
-        setError("cf-global-error", data.error);
-      }
-      (window as any).turnstile?.reset();
-    } catch {
-      setError("cf-global-error", "Something went wrong. Please try again.");
-      (window as any).turnstile?.reset();
-    } finally {
-      setLoading(false);
+  function initContactForm() {
+    const form = document.getElementById("contact-form") as HTMLFormElement | null;
+    if (!form || form.dataset.cfBound === "true") {
+      renderTurnstile();
+      return;
     }
-  });
+    form.dataset.cfBound = "true";
+
+    const successEl = document.getElementById("cf-success");
+    const submitBtn = document.getElementById("cf-submit-btn") as HTMLButtonElement | null;
+
+    function setLoading(loading: boolean) {
+      if (!submitBtn) return;
+      submitBtn.disabled = loading;
+      submitBtn.classList.toggle("is-loading", loading);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const nameVal = (document.getElementById("cf-name") as HTMLInputElement)?.value ?? "";
+      const emailVal = (document.getElementById("cf-email") as HTMLInputElement)?.value ?? "";
+      const messageVal = (document.getElementById("cf-message") as HTMLTextAreaElement)?.value ?? "";
+
+      const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
+      const turnstileToken = turnstileInput?.value ?? "";
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: nameVal,
+            email: emailVal,
+            message: messageVal,
+            turnstileToken,
+          }),
+        });
+
+        const data = await res.json() as {
+          success: boolean;
+          error?: string;
+          fieldErrors?: Record<string, string[]>;
+        };
+
+        if (data.success) {
+          form.style.display = "none";
+          if (successEl) successEl.classList.add("is-visible");
+          return;
+        }
+
+        if (data.fieldErrors) {
+          const fe = data.fieldErrors;
+          if (fe.name?.[0]) setError("cf-name-error", fe.name[0]);
+          if (fe.email?.[0]) setError("cf-email-error", fe.email[0]);
+          if (fe.message?.[0]) setError("cf-message-error", fe.message[0]);
+          if (fe.turnstileToken?.[0]) setError("cf-turnstile-error", fe.turnstileToken[0]);
+        } else if (data.error) {
+          setError("cf-global-error", data.error);
+        }
+        (window as any).turnstile?.reset();
+      } catch {
+        setError("cf-global-error", "Something went wrong. Please try again.");
+        (window as any).turnstile?.reset();
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    renderTurnstile();
+  }
+
+  document.addEventListener("astro:page-load", initContactForm);
 </script>
 
 <style>

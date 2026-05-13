@@ -126,10 +126,6 @@
 </section>
 
 <script>
-  const form = document.getElementById("bp-form") as HTMLFormElement | null;
-  const successEl = document.getElementById("bp-success");
-  const submitBtn = document.getElementById("bp-submit-btn") as HTMLButtonElement | null;
-
   function setError(id: string, msg: string) {
     const el = document.getElementById(id);
     if (el) el.textContent = msg;
@@ -141,70 +137,101 @@
       .forEach((id) => setError(id, ""));
   }
 
-  function setLoading(loading: boolean) {
-    if (!submitBtn) return;
-    submitBtn.disabled = loading;
-    submitBtn.classList.toggle("is-loading", loading);
+  function renderBpTurnstile() {
+    const widget = document.getElementById("bp-turnstile-widget");
+    if (!widget) return;
+    if (widget.querySelector("iframe")) return;
+    const ts = (window as any).turnstile;
+    if (!ts) {
+      setTimeout(renderBpTurnstile, 120);
+      return;
+    }
+    ts.render(widget, {
+      sitekey: widget.getAttribute("data-sitekey"),
+      theme: "light",
+    });
   }
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    clearErrors();
-
-    const get = (id: string) =>
-      (document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? "";
-
-    const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
-
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/partner-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          orgName: get("bp-org-name"),
-          contactName: get("bp-contact-name"),
-          email: get("bp-email"),
-          orgType: get("bp-org-type"),
-          city: get("bp-city"),
-          message: get("bp-message"),
-          turnstileToken: turnstileInput?.value ?? "",
-        }),
-      });
-
-      const data = await res.json() as {
-        success: boolean;
-        error?: string;
-        fieldErrors?: Record<string, string[]>;
-      };
-
-      if (data.success) {
-        if (form) form.style.display = "none";
-        successEl?.classList.add("is-visible");
-        return;
-      }
-
-      if (data.fieldErrors) {
-        const fe = data.fieldErrors;
-        if (fe.orgName?.[0]) setError("bp-orgName-error", fe.orgName[0]);
-        if (fe.contactName?.[0]) setError("bp-contactName-error", fe.contactName[0]);
-        if (fe.email?.[0]) setError("bp-email-error", fe.email[0]);
-        if (fe.orgType?.[0]) setError("bp-orgType-error", fe.orgType[0]);
-        if (fe.city?.[0]) setError("bp-city-error", fe.city[0]);
-        if (fe.message?.[0]) setError("bp-message-error", fe.message[0]);
-        if (fe.turnstileToken?.[0]) setError("bp-turnstile-error", fe.turnstileToken[0]);
-      } else if (data.error) {
-        setError("bp-global-error", data.error);
-      }
-      (window as any).turnstile?.reset();
-    } catch {
-      setError("bp-global-error", "Something went wrong. Please try again.");
-      (window as any).turnstile?.reset();
-    } finally {
-      setLoading(false);
+  function initBecomePartner() {
+    const form = document.getElementById("bp-form") as HTMLFormElement | null;
+    if (!form || form.dataset.bpBound === "true") {
+      renderBpTurnstile();
+      return;
     }
-  });
+    form.dataset.bpBound = "true";
+
+    const successEl = document.getElementById("bp-success");
+    const submitBtn = document.getElementById("bp-submit-btn") as HTMLButtonElement | null;
+
+    function setLoading(loading: boolean) {
+      if (!submitBtn) return;
+      submitBtn.disabled = loading;
+      submitBtn.classList.toggle("is-loading", loading);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const get = (id: string) =>
+        (document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null)?.value ?? "";
+
+      const turnstileInput = document.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
+
+      setLoading(true);
+
+      try {
+        const res = await fetch("/api/partner-inquiry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orgName: get("bp-org-name"),
+            contactName: get("bp-contact-name"),
+            email: get("bp-email"),
+            orgType: get("bp-org-type"),
+            city: get("bp-city"),
+            message: get("bp-message"),
+            turnstileToken: turnstileInput?.value ?? "",
+          }),
+        });
+
+        const data = await res.json() as {
+          success: boolean;
+          error?: string;
+          fieldErrors?: Record<string, string[]>;
+        };
+
+        if (data.success) {
+          form.style.display = "none";
+          successEl?.classList.add("is-visible");
+          return;
+        }
+
+        if (data.fieldErrors) {
+          const fe = data.fieldErrors;
+          if (fe.orgName?.[0]) setError("bp-orgName-error", fe.orgName[0]);
+          if (fe.contactName?.[0]) setError("bp-contactName-error", fe.contactName[0]);
+          if (fe.email?.[0]) setError("bp-email-error", fe.email[0]);
+          if (fe.orgType?.[0]) setError("bp-orgType-error", fe.orgType[0]);
+          if (fe.city?.[0]) setError("bp-city-error", fe.city[0]);
+          if (fe.message?.[0]) setError("bp-message-error", fe.message[0]);
+          if (fe.turnstileToken?.[0]) setError("bp-turnstile-error", fe.turnstileToken[0]);
+        } else if (data.error) {
+          setError("bp-global-error", data.error);
+        }
+        (window as any).turnstile?.reset();
+      } catch {
+        setError("bp-global-error", "Something went wrong. Please try again.");
+        (window as any).turnstile?.reset();
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    renderBpTurnstile();
+  }
+
+  document.addEventListener("astro:page-load", initBecomePartner);
 </script>
 
 <!-- Load Turnstile async -->
