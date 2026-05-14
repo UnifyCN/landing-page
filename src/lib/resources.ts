@@ -134,6 +134,7 @@ export const resources: Resource[] = [
       "Tips on Riding Public Transport in Metro Vancouver",
     ],
     thumbnail: "/assets/images/resources/public-transit.avif",
+    youtubeId: "l--wBYfbkgA",
     order: 1,
   },
 ];
