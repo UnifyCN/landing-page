@@ -32,6 +32,7 @@ export default defineType({
         { type: 'block' },
         { type: 'image', options: { hotspot: true } },
         { type: 'table' },
+        { type: 'richTable' },
       ],
       validation: (R) => R.required(),
     }),

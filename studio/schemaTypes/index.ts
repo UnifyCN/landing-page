@@ -1,2 +1,3 @@
 import post from './post'
-export const schemaTypes = [post]
+import richTable from './richTable'
+export const schemaTypes = [post, richTable]
