@@ -92,7 +92,7 @@ function cleanBlock(block) {
     return blockChanged
   }
 
-  if (block?._type === 'table' && Array.isArray(block.rows)) {
+  if ((block?._type === 'table' || block?._type === 'richTable') && Array.isArray(block.rows)) {
     let tableChanged = false
     for (const row of block.rows) {
       for (const cell of row?.cells ?? []) {
