@@ -57,7 +57,7 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <text class="headline" x="${PAD_X}" y="340" font-size="88">The Canada</text>
   <text class="headline" x="${PAD_X}" y="440" font-size="88">Newcomer Guide</text>
 
-  <text class="subtext" x="${PAD_X}" y="510" font-size="30">Settle in Canada with confidence. Free app.</text>
+  <text class="subtext" x="${PAD_X}" y="510" font-size="30">Settle in Canada with confidence.</text>
 
   <text class="url" x="${PAD_X}" y="590" font-size="22">unifysocial.ca</text>
 </svg>`;
