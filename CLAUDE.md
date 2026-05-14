@@ -53,8 +53,6 @@ src/
 │   ├── partners/[slug].astro    # Static detail pages from src/lib/partners.ts
 │   ├── resources.astro
 │   ├── resources/               # Resource detail pages
-│   ├── privacy.astro
-│   ├── terms.astro
 │   ├── api/
 │   │   ├── contact.ts           # POST /api/contact
 │   │   └── partner-inquiry.ts   # POST /api/partner-inquiry
@@ -133,8 +131,8 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Default to server-rendered HTML. Avoid unnecessary client JS.
 - Use islands ONLY when interactivity is needed (FAQ accordion, form handler, mobile menu, product overview tabs).
 - View Transitions are wired globally — preserve them. Navbar uses `transition:persist`; body bg swap is handled via `astro:before-swap` in BaseLayout.
-- **All static pages must `export const prerender = true`** so they bake to HTML at build time and are served from the Cloudflare CDN edge. The repo had every page hitting the worker on every request before this — TTFB on every navigation. Currently prerendered: `/`, `/about`, `/community`, `/contact`, `/partners` (+ all `/partners/[slug]` via `getStaticPaths`), `/resources` (+ all `/resources/[slug]`), `/privacy`, `/terms`. SSR retained for `/blog/*` (live Sanity fetch) and `/api/*`.
-- **Scroll-reveal observers must wrap in `astro:page-load`**, not run at module top-level. With ClientRouter, module scripts only execute once on initial load — on subsequent View Transition navigations the new DOM exists but the old observer is still attached to the detached previous DOM, leaving the section stuck invisible. This is exactly what bit CTABand. Pattern: wrap observer setup in a function, register it with `document.addEventListener("astro:page-load", initFn)`, and add a class-based guard at the top of the function to prevent duplicate registration when the script re-runs.
+- **All static pages must `export const prerender = true`** so they bake to HTML at build time and are served from the Cloudflare CDN edge. The repo had every page hitting the worker on every request before this — TTFB on every navigation. Currently prerendered: `/`, `/about`, `/community`, `/contact`, `/partners` (+ all `/partners/[slug]` via `getStaticPaths`), `/resources` (+ all `/resources/[slug]`). SSR retained for `/blog/*` (live Sanity fetch) and `/api/*`. There are no local `/privacy` or `/terms` routes — the Footer links those to external Notion pages, see the Footer section below.
+- **Anything that binds to the DOM at load time must wrap in `astro:page-load`**, not run at module top-level. With ClientRouter, module scripts only execute once on initial load — on subsequent View Transition navigations the new DOM exists but the old handler/observer is still attached to the detached previous DOM, leaving the feature dead. Pattern: wrap the setup in a function, register with `document.addEventListener("astro:page-load", initFn)`, and add a data-attribute guard on the root element (e.g. `el.dataset.fooBound === 'true'`) so it doesn't double-bind on the initial load (where both the inline script body and the page-load event fire). This trap has bit, in order: scroll-reveal observers (CTABand), the FAQ accordion click handler (`FAQ.astro`), and **Turnstile widget rendering on both forms** — Turnstile's `api.js` auto-renders `.cf-turnstile` divs only on initial DOM-ready, so `ContactForm.astro` and `BecomePartner.astro` explicitly call `window.turnstile.render()` from inside their `astro:page-load` init function whenever the widget div has no rendered `<iframe>` child yet.
 
 ### Tailwind v4
 
@@ -165,6 +163,7 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Do NOT introduce auth, a database, or new API routes unless explicitly requested.
 - `from` address must be `contact@noreply.unifysocial.ca` — the verified subdomain in Resend. `@unifysocial.ca` root is NOT verified and will 403.
 - Turnstile tokens are one-time use. After any non-success response, client JS must call `window.turnstile.reset()`. Both `ContactForm.astro` and `BecomePartner.astro` already do this.
+- Turnstile widget config (site key `0x4AAAAAADBIS8MIXH2FQDoH`) is shared by both forms. Allowed hostnames live in CF dashboard → Turnstile → "Unify Landing Page" widget: currently `unifysocial.ca` and `unify-landing-page.wild-recipe-8e20.workers.dev`. If www starts showing "Unable to connect to website", add `www.unifysocial.ca` there.
 
 ### SEO
 
@@ -306,7 +305,7 @@ The navbar pill is a **liquid-glass** element — translucent white pill with re
 - Top-gloss highlight via `::before` with `mix-blend-mode: overlay` and a 35%→0% white gradient — the "wet" look
 - On scroll (`.is-scrolled`): background opacity bumps to 0.85→0.65 and shadows deepen slightly. Never becomes opaque.
 - Logo height: `h-10` (40px), generous left padding inside the pill
-- Logo is a plain `<div>`, NOT a link. Clicking does nothing. Asset: `/assets/logo/logo-with-name.png`
+- Logo is a plain `<div>`, NOT a link. Clicking does nothing. Asset: `/assets/logo/new-unify-logo-256.png` (the new starburst, regenerated from the trimmed master — see the Favicon set section for the regeneration workflow). The old `logo-with-name.{png,avif}` files in the same folder are vestigial.
 - Logo and "Download Unify" CTA must NOT feel cramped — if anything feels tight, increase padding first
 - CTA: `bg #171616`, `hover #D84A29`, transition `0.2s`, label "Download Unify" + `→`, links to App Store in a new tab
 - Nav links (order): Home | About | Community | Partners | Blog | Resources | Contact
@@ -320,7 +319,7 @@ White background, top + bottom hairline borders. Three-column grid at tablet+ (`
 
 - **Brand column:** `/assets/logo/logo-with-name.avif` at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
 - **Navigate column:** Home | About | Blog | Contact (4 links — narrower than the 7-link navbar).
-- **Legal column:** Privacy Policy → `/privacy`, Terms of Service → `/terms`. **Internal Astro routes**, not Notion. Open in same tab.
+- **Legal column:** Privacy Policy and Terms of Service redirect to **Notion-hosted canonical pages** (URLs hardcoded in `src/components/common/Footer.astro` `legal[]`). They open in a new tab via `target="_blank" rel="noopener noreferrer"`. Don't re-add local `/privacy` or `/terms` routes — Notion is the single source of truth so legal copy doesn't drift across surfaces.
 - **Bottom bar:** `© 2026 Unify Social` — plain text, no dash, NOT a link.
 
 Socials:
@@ -410,16 +409,45 @@ TURNSTILE_SECRET_KEY=...
 CONTACT_TO_EMAIL=contact@unifysocial.ca
 ```
 
-For production: `wrangler secret put <NAME>` or Cloudflare dashboard.
+For production: `wrangler secret put <NAME>` or Cloudflare dashboard. As of 2026-05-13, `RESEND_API_KEY` and `TURNSTILE_SECRET_KEY` are set on the production worker; `CONTACT_TO_EMAIL` is unset and falls back to the `contact@unifysocial.ca` default in `src/pages/api/contact.ts:63`.
 
-Current site keys in forms still use placeholder (`0x4AAAAAAA_PLACEHOLDER_KEY`) in `ContactForm.astro` and `BecomePartner.astro` — replace at deploy time.
+---
 
-**Pre-launch checklist:**
-1. Replace Turnstile placeholder site key in `ContactForm.astro` and `BecomePartner.astro`.
-2. Add DMARC DNS record to `unifysocial.ca` — **Savar's job** (he manages the DNS):
-   - Type: `TXT` | Name: `_dmarc` | Value: `v=DMARC1; p=none; rua=mailto:contact@unifysocial.ca`
-   - Without this, Google silently drops emails from `noreply.unifysocial.ca`.
-3. Optional: verify `unifysocial.ca` root domain in Resend to send `from: @unifysocial.ca` instead of `@noreply.unifysocial.ca`.
+## Infrastructure (live state as of 2026-05-13)
+
+- **Domain**: `unifysocial.ca` + `www.unifysocial.ca`, both proxied to the worker.
+- **Registrar**: CanSpace (where the domain is paid for / WHOIS lives). Domain renews yearly — keep auto-renew on. Registrar Lock should stay ON except during nameserver changes.
+- **DNS host**: Cloudflare (zone `unifysocial.ca`, ID `31461b6bd38fc1ea002477339c8df953`). Assigned nameservers: `graham.ns.cloudflare.com`, `ulla.ns.cloudflare.com`. These must remain set at CanSpace; if anyone reverts to `dns1/dns2.canspace.ca` the site goes back to Framer-style nothingness.
+- **Hosting**: Cloudflare Worker `unify-landing-page` (account ID `22bb47be0cdff02d2c32a4a203e10f20`). Bound to apex + www via Custom Domains on the worker. Workers.dev URL `https://unify-landing-page.wild-recipe-8e20.workers.dev` still resolves to the same deploy — useful for testing isolated from DNS.
+- **Email DNS** (all in the Cloudflare zone, all DNS-only / grey cloud — proxying breaks email auth):
+  - `unifysocial.ca` MX → `SMTP.GOOGLE.COM` priority 1 — receives mail at `@unifysocial.ca` via Google Workspace. Critical, do not delete.
+  - `resend._domainkey.noreply` TXT — Resend DKIM.
+  - `send.noreply` MX → `feedback-smtp.us-east-1.amazonses.com` priority 10 — Resend bounce handler.
+  - `send.noreply` TXT — Resend SPF (`v=spf1 include:amazonses.com ~all`).
+  - `_dmarc` TXT — `v=DMARC1; p=none; rua=mailto:contact@unifysocial.ca`.
+  - Verified end-to-end 2026-05-13: SPF / DKIM / DMARC all PASS on Resend → Gmail.
+- **Google Search Console**: domain property verified via TXT (`google-site-verification=...` on the apex). Use this property to request indexing after any SEO or favicon change — Google's cache TTL for favicons/snippets is days-to-weeks otherwise.
+- **Sanity Studio**: separate hosted UI at `unify-landing.sanity.studio` (project `j4gu2dbr`, dataset `production`). Editors author blog posts there; the frontend fetches at request time on `/blog/*` SSR routes.
+
+If the site ever goes down: first check (1) CF zone status is "Active", (2) the two CF nameservers are still at CanSpace, (3) the worker has both Custom Domains bound (`unifysocial.ca` + `www.unifysocial.ca`), (4) `wrangler tail` is clean.
+
+---
+
+## Favicon set
+
+All favicons are regenerated from one master: `public/assets/logo/new-unify-logo.png` (1024×1024 starburst, transparent background, content-trimmed via `public/assets/logo/new-unify-logo-tight.png` — petals fill ~90% of the canvas so they show up larger inside Google's circle crop).
+
+Outputs in `public/`:
+- `favicon-32.png` — browser tab.
+- `favicon-96.png` — desktop hi-DPI.
+- `favicon-192.png` — Google search card (multiple of 48 per Google's docs).
+- `apple-touch-icon.png` — 180×180, iOS home-screen.
+- `favicon.ico` — multi-resolution (16/32/48/256) ICO built with `npx png-to-ico`.
+- `site.webmanifest` — references the PNG set + `theme_color: #D84A29`.
+
+`<link rel="icon">` tags + `<link rel="manifest">` + `<meta name="theme-color">` all declared in `src/layouts/BaseLayout.astro:21-28`. Do NOT add a `favicon.svg` back — Google's favicon cache prefers the ICO/PNG set and an extra SVG only adds noise.
+
+**To swap the logo**: replace `new-unify-logo.png`, re-trim with the Sharp script from the favicon commit (`712a5f8`), then regenerate every size with `sips -Z <n>` and the ICO with `png-to-ico`. After deploy, request indexing in Google Search Console — otherwise the search-result favicon stays stale for days.
 
 ---
 
