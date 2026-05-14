@@ -317,7 +317,7 @@ The navbar pill is a **liquid-glass** element — translucent white pill with re
 
 White background, top + bottom hairline borders. Three-column grid at tablet+ (`2fr 1fr 1fr`).
 
-- **Brand column:** `/assets/logo/logo-with-name.avif` at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
+- **Brand column:** `/assets/logo/new-unify-logo-256.png` (the new starburst, same asset the navbar uses) at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
 - **Navigate column:** Home | About | Blog | Contact (4 links — narrower than the 7-link navbar).
 - **Legal column:** Privacy Policy and Terms of Service redirect to **Notion-hosted canonical pages** (URLs hardcoded in `src/components/common/Footer.astro` `legal[]`). They open in a new tab via `target="_blank" rel="noopener noreferrer"`. Don't re-add local `/privacy` or `/terms` routes — Notion is the single source of truth so legal copy doesn't drift across surfaces.
 - **Bottom bar:** `© 2026 Unify Social` — plain text, no dash, NOT a link.
