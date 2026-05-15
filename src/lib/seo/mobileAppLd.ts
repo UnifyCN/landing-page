@@ -7,8 +7,8 @@ export function mobileAppLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'MobileApplication',
-    name: 'Unify — Canada Newcomer Guide',
-    applicationCategory: 'LifestyleApplication',
+    name: 'Unify - Canada Newcomer Guide',
+    applicationCategory: 'EducationApplication',
     operatingSystem: 'iOS',
     url: SITE,
     installUrl: APP_STORE_URL,
