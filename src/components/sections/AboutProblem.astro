@@ -106,7 +106,7 @@ const cardBaseDelay = lastLetterDelay;
           style={`transition-delay:${cardBaseDelay.toFixed(3)}s`}
         >
           <div class="ap-card-head">
-            <img src={card.icon} alt="" class="ap-card-icon" aria-hidden="true" />
+            <img src={card.icon} alt="" class="ap-card-icon" aria-hidden="true" loading="lazy" decoding="async" />
             <h3 class="ap-card-title">{card.title}</h3>
           </div>
           <p class="ap-card-body">{card.body}</p>

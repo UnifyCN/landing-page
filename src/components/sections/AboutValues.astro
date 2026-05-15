@@ -72,7 +72,7 @@ const promises = [
     <ul class="av-list">
       {promises.map((p) => (
         <li class="av-item">
-          <img src={p.icon} alt="" class="av-icon" aria-hidden="true" />
+          <img src={p.icon} alt="" class="av-icon" aria-hidden="true" loading="lazy" decoding="async" />
           <div class="av-text">
             <h3 class="av-item-title">{p.title}</h3>
             <p class="av-item-body">{p.body}</p>

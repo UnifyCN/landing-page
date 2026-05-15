@@ -1,18 +1,18 @@
 ---
 const photos = [
   {
-    src: "/assets/images/community/banner-photo.avif",
-    alt: "Newcomers at a Unify Gather event",
+    src: "/assets/images/community/newcomer-event-vancouver.avif",
+    alt: "Newcomers at a Unify Gather event in Vancouver",
     class: "cg-photo-main",
   },
   {
-    src: "/assets/images/community/heart-unify.avif",
-    alt: "Community members at Unify event",
+    src: "/assets/images/community/unify-gather-vancouver-meetup.avif",
+    alt: "Community members at a Unify Gather event in Vancouver",
     class: "cg-photo-a",
   },
   {
-    src: "/assets/images/community/presentation.avif",
-    alt: "Workshop presentation at Unify Gather",
+    src: "/assets/images/community/newcomer-workshop-vancouver.avif",
+    alt: "Workshop presentation at a Unify Gather event in Vancouver",
     class: "cg-photo-b",
   },
 ];
@@ -33,6 +33,7 @@ const photos = [
             alt={p.alt}
             class="cg-photo"
             loading="lazy"
+            decoding="async"
           />
         </div>
       ))}

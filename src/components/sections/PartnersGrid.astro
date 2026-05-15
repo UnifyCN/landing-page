@@ -35,7 +35,7 @@ import { partners, categories } from "../../lib/partners";
           aria-label={p.name}
         >
           <div class="pg-card-logo-wrap">
-            <img src={p.logo} alt={p.name} class="pg-card-logo" loading="lazy" />
+            <img src={p.logo} alt={p.name} class="pg-card-logo" loading="lazy" decoding="async" />
           </div>
           <div class="pg-card-body">
             <span class="pg-card-badge">{p.category}</span>

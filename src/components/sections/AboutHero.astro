@@ -22,6 +22,7 @@ const photos = [
             alt={photo.alt}
             class="ah-photo"
             loading={i === 0 ? "eager" : "lazy"}
+            decoding={i === 0 ? "sync" : "async"}
             data-index={i}
           />
         ))}
