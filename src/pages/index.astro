@@ -20,6 +20,7 @@ const faqLdStr = serializeLd(faqLd(faqs));
   <Fragment slot="head">
     <script type="application/ld+json" set:html={mobileAppLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
+    <link rel="preload" as="image" type="image/avif" href="/assets/screenshots/learn-hero.avif" />
   </Fragment>
 
   <main>

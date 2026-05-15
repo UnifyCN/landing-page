@@ -23,6 +23,7 @@ const photos = [
             class="ah-photo"
             loading={i === 0 ? "eager" : "lazy"}
             decoding={i === 0 ? "sync" : "async"}
+            fetchpriority={i === 0 ? "high" : undefined}
             data-index={i}
           />
         ))}

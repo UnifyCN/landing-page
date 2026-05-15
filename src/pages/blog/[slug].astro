@@ -80,7 +80,8 @@ const updatedDate = new Date(post.updatedAt ?? post.publishedAt).toLocaleDateStr
 const bodyHtml = toHTML(post.body, toHTMLOptions);
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-const thumbnailUrl = urlFor(post.thumbnail).width(1200).height(630).url();
+const thumbnailUrl = urlFor(post.thumbnail).width(1200).height(630).url();   // 1200x630 for JSON-LD/OG ratio
+const heroImageUrl = urlFor(post.thumbnail).width(1200).url();               // 1200 wide, height auto — what the page hero <img> actually loads (must match the preload below)
 
 const blogPostingLdStr = serializeLd(
   blogPostingLd({
@@ -109,6 +110,7 @@ const breadcrumbLdStr = serializeLd(
   <Fragment slot="head">
     <script type="application/ld+json" set:html={blogPostingLdStr} />
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <link rel="preload" as="image" href={heroImageUrl} />
   </Fragment>
 
   <main class="post-main">
@@ -126,10 +128,11 @@ const breadcrumbLdStr = serializeLd(
     <!-- ── Hero image ── -->
     <div class="post-hero-img-wrap">
       <img
-        src={urlFor(post.thumbnail).width(1200).url()}
+        src={heroImageUrl}
         alt={post.title}
         class="post-hero-img"
         loading="eager"
+        fetchpriority="high"
       />
     </div>
 
