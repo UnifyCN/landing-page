@@ -5,12 +5,22 @@ import Hero from '../components/sections/Hero.astro';
 import Partners from '../components/sections/Partners.astro';
 import Journey from '../components/sections/Journey.astro';
 import FAQ from '../components/sections/FAQ.astro';
+import { faqs } from '../components/sections/faqs-data';
+import { mobileAppLd, faqLd, serializeLd } from '../lib/seo';
+
+const mobileAppLdStr = serializeLd(mobileAppLd());
+const faqLdStr = serializeLd(faqLd(faqs));
 ---
 
 <BaseLayout
   title="Unify Social | Make Settling in Canada Simpler, Clearer, and Connected"
   bodyBg="#FFFFFF"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={mobileAppLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
   <main>
     <Hero />
     <Partners />

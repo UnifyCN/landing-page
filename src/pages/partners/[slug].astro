@@ -4,18 +4,41 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { partners, type Partner } from "../../lib/partners";
+import { breadcrumbLd, localBusinessLd, serializeLd } from "../../lib/seo";
 
 export async function getStaticPaths() {
   return partners.map((p) => ({ params: { slug: p.slug }, props: { partner: p } }));
 }
 
 const { partner } = Astro.props as { partner: Partner };
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Partners", item: "https://unifysocial.ca/partners" },
+    { name: partner.name, item: canonicalUrl },
+  ])
+);
+const localBusinessLdStr = serializeLd(
+  localBusinessLd({
+    name: partner.name,
+    url: partner.website,
+    city: partner.city,
+    canonicalUrl,
+  })
+);
 ---
 
 <BaseLayout
   title={`${partner.name} | Unify Social Partners`}
   description={partner.partnershipDescription}
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={localBusinessLdStr} />
+  </Fragment>
+
   <main class="pp-main">
 
     <!-- Back -->

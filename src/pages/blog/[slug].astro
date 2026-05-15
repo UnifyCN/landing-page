@@ -5,6 +5,7 @@ import CTABand from "../../components/sections/CTABand.astro";
 import { getAllPosts, getPostBySlug, getAllPostSlugs } from "../../lib/sanity/queries";
 import { urlFor } from "../../lib/sanity/client";
 import { toHTML } from "@portabletext/to-html";
+import { blogPostingLd, breadcrumbLd, serializeLd } from "../../lib/seo";
 import "../../styles/prose.css";
 
 const toHTMLOptions: any = {
@@ -77,6 +78,27 @@ const updatedDate = new Date(post.updatedAt ?? post.publishedAt).toLocaleDateStr
 });
 
 const bodyHtml = toHTML(post.body, toHTMLOptions);
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const thumbnailUrl = urlFor(post.thumbnail).width(1200).height(630).url();
+
+const blogPostingLdStr = serializeLd(
+  blogPostingLd({
+    title: post.title,
+    description: post.description,
+    thumbnailUrl,
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    canonicalUrl,
+  })
+);
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Blog", item: "https://unifysocial.ca/blog" },
+    { name: post.title, item: canonicalUrl },
+  ])
+);
 ---
 
 <BaseLayout
@@ -84,6 +106,11 @@ const bodyHtml = toHTML(post.body, toHTMLOptions);
   description={post.description}
   bodyBg="#ffffff"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={blogPostingLdStr} />
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+  </Fragment>
+
   <main class="post-main">
     <!-- ── Post header ── -->
     <header class="post-header">

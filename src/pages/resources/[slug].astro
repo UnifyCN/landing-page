@@ -4,18 +4,32 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { resources, categoryLabels, type Resource } from "../../lib/resources";
+import { breadcrumbLd, serializeLd } from "../../lib/seo";
 
 export async function getStaticPaths() {
   return resources.map((r) => ({ params: { slug: r.slug }, props: { resource: r } }));
 }
 
 const { resource } = Astro.props as { resource: Resource };
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Resources", item: "https://unifysocial.ca/resources" },
+    { name: resource.title, item: canonicalUrl },
+  ])
+);
 ---
 
 <BaseLayout
   title={`${resource.title} | Unify Resources`}
   description={resource.description}
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+  </Fragment>
+
   <main class="rd-main">
 
     <!-- Back -->

@@ -3,6 +3,9 @@ import '../styles/global.css';
 import Navbar from '../components/common/Navbar.astro';
 import Footer from '../components/common/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
+import { organizationLd, serializeLd } from '../lib/seo';
+
+const orgLd = serializeLd(organizationLd());
 
 interface Props {
   title: string;
@@ -79,6 +82,10 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-SemiBold.woff2" crossorigin />
 
     <ClientRouter />
+
+    <script type="application/ld+json" set:html={orgLd} />
+
+    <slot name="head" />
   </head>
   <body class="font-display text-text" style={`background-color: ${bodyBg};`} data-body-bg={bodyBg}>
     <style is:global>
