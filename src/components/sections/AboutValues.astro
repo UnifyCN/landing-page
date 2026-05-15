@@ -80,6 +80,16 @@ const promises = [
         </li>
       ))}
     </ul>
+
+    <!-- Community link — gives /about a contextual entry point to the
+         orphaned /community page (Day 3 SEO sprint, §4.8 punch list). -->
+    <p class="av-community">
+      Want to meet other newcomers in person?{" "}
+      <a href="/community" class="av-community-link">
+        Join 350+ newcomers at our Unify Gather events in Vancouver
+        <span class="av-community-arrow" aria-hidden="true">→</span>
+      </a>
+    </p>
   </div>
 </section>
 
@@ -192,6 +202,39 @@ const promises = [
     line-height: 1.65;
     color: var(--color-text);
     margin: 0;
+  }
+
+  /* ── Community link ── */
+  .av-community {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    text-align: center;
+    margin: 4rem auto 0;
+    max-width: 640px;
+  }
+
+  .av-community-link {
+    color: var(--color-brand-red);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .av-community-link:hover {
+    text-decoration: underline;
+  }
+
+  .av-community-arrow {
+    display: inline-block;
+    margin-left: 0.25rem;
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .av-community-link:hover .av-community-arrow {
+    transform: translateX(3px);
   }
 
   /* ── Tablet ── */

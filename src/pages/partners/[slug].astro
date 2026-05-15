@@ -3,14 +3,30 @@ export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { partners, type Partner } from "../../lib/partners";
+import { partners, type Partner, type PartnerCategory } from "../../lib/partners";
+import { getResourceBySlug, categoryLabels } from "../../lib/resources";
 import { breadcrumbLd, localBusinessLd, serializeLd } from "../../lib/seo";
+
+// Day 3 §4.8: each partner category surfaces 2 contextually relevant
+// /resources/[slug] pages so /resources detail pages pick up inbound
+// internal links from the 17 partner detail pages.
+const RESOURCES_BY_CATEGORY: Record<PartnerCategory, string[]> = {
+  Financial:  ["how-to-budget-your-money", "how-to-write-a-resume"],
+  Education:  ["how-to-write-a-resume", "how-to-prepare-for-a-job-interview"],
+  Community:  ["how-does-healthcare-work-in-bc", "how-does-public-transit-work-in-metro-vancouver"],
+  Libraries:  ["how-to-write-a-resume", "how-does-healthcare-work-in-bc"],
+  Nonprofit:  ["how-to-write-a-resume", "how-to-prepare-for-a-job-interview"],
+};
 
 export async function getStaticPaths() {
   return partners.map((p) => ({ params: { slug: p.slug }, props: { partner: p } }));
 }
 
 const { partner } = Astro.props as { partner: Partner };
+
+const relatedResources = (RESOURCES_BY_CATEGORY[partner.category] ?? [])
+  .map((slug) => getResourceBySlug(slug))
+  .filter((r): r is NonNullable<typeof r> => Boolean(r));
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 const breadcrumbLdStr = serializeLd(
@@ -80,6 +96,22 @@ const localBusinessLdStr = serializeLd(
       <h2 id="pp-about-heading" class="pp-section-title">About {partner.shortName}</h2>
       <p class="pp-org-text">{partner.orgDescription}</p>
     </section>
+
+    <!-- Related resources -->
+    {relatedResources.length > 0 && (
+      <section class="pp-section" aria-labelledby="pp-related-heading">
+        <h2 id="pp-related-heading" class="pp-section-title">Related resources for newcomers</h2>
+        <div class="pp-related-grid">
+          {relatedResources.map((r) => (
+            <a href={`/resources/${r.slug}`} class="pp-related-card">
+              <span class="pp-related-category">{categoryLabels[r.category]}</span>
+              <span class="pp-related-title">{r.title}</span>
+              <span class="pp-related-arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- Visit website CTA -->
     <div class="pp-visit">
@@ -272,6 +304,63 @@ const localBusinessLdStr = serializeLd(
     margin: 0;
   }
 
+  /* Related resources */
+  .pp-related-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .pp-related-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 1rem;
+    row-gap: 0.25rem;
+    padding: 1.125rem 1.25rem;
+    border: 1px solid rgba(23, 22, 22, 0.1);
+    border-radius: 12px;
+    text-decoration: none;
+    background: #fff;
+    transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+  }
+
+  .pp-related-category {
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+  }
+
+  .pp-related-title {
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-ink);
+    line-height: 1.4;
+  }
+
+  .pp-related-arrow {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    font-size: 1.125rem;
+    color: var(--color-muted);
+    transition: transform 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  }
+
+  .pp-related-card:hover {
+    border-color: rgba(23, 22, 22, 0.25);
+  }
+
+  .pp-related-card:hover .pp-related-arrow {
+    transform: translateX(4px);
+    color: var(--color-brand-red);
+  }
+
   /* Visit CTA */
   .pp-visit {
     padding: 2.5rem 0 4rem;
@@ -299,6 +388,11 @@ const localBusinessLdStr = serializeLd(
   @media (min-width: 810px) {
     .pp-main {
       padding: calc(67px + 1.75rem) 3rem 0;
+    }
+
+    .pp-related-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
   }
 
