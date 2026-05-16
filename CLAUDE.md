@@ -465,6 +465,15 @@ Outputs in `public/`:
 ### Community (`src/pages/community.astro`)
 - `bodyBg="#171616"`. Sections: CommunityHero → CommunityStats → CommunityGallery → CommunityEventCTA → CTABand.
 
+### Resources (`src/pages/resources.astro` + `src/pages/resources/[slug].astro`)
+- All resources are typed objects in `src/lib/resources.ts` (6 entries today). Each carries a `youtubeId` — the **11-character video ID only**, never a full URL.
+- `resources.astro` derives card thumbnails (`img.youtube.com/vi/{id}/maxresdefault.jpg`, only when no local `thumbnail` is set — all 6 currently have one). `[slug].astro` derives the embed iframe. Change an ID in `resources.ts` and both update.
+- **Embed iframe `src` (`[slug].astro`):** `https://www.youtube-nocookie.com/embed/{youtubeId}?rel=0&modestbranding=1&enablejsapi=1`. Three deliberate choices, do NOT drop any:
+  - `youtube-nocookie.com` — privacy-enhanced domain. Don't downgrade to plain `youtube.com`.
+  - `rel=0&modestbranding=1` — no suggested videos, minimal branding.
+  - `enablejsapi=1` — added 2026-05-16 at the content/product team's request (Vy) so the YouTube IFrame Player API *can* be driven by JS later. It only **enables** the API; nothing uses it yet (no IFrame API script loaded). Keep the param present; actual JS control is a future task.
+- Updating videos: when given `youtube.com/watch?v=…` or `youtu.be/…` URLs, the ID is the part after `v=` / the last path segment. IDs are case-sensitive with confusable glyphs (`l`/`I`/`1`, `O`/`0`) — transcribe carefully and verify each page renders the player, don't trust an OCR'd ID.
+
 ### About (`src/pages/about.astro`)
 - `bodyBg="#FFFFFF"` (white — was previously ink/dark; flipped during the Framer-style rebuild).
 - Five sections: **AboutHero → AboutProblem → AboutValues → AboutOutro → CTABand.** No `AboutFounders` — the standalone founders section was retired and rolled into AboutHero.

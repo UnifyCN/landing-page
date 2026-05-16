@@ -38,7 +38,7 @@ export const resources: Resource[] = [
       "Interests",
     ],
     thumbnail: "/assets/images/resources/resume.avif",
-    youtubeId: "hCOEbRQ6vUI",
+    youtubeId: "LEujpyShXaw",
     order: 1,
   },
   {
@@ -56,7 +56,7 @@ export const resources: Resource[] = [
       "Cover Letter Samples",
     ],
     thumbnail: "/assets/images/resources/cover-letter.avif",
-    youtubeId: "ncjKS6cqogo",
+    youtubeId: "hH2qd6rvtkE",
     order: 2,
   },
   {
@@ -74,7 +74,7 @@ export const resources: Resource[] = [
       "Sample Interview Answers",
     ],
     thumbnail: "/assets/images/resources/interview.avif",
-    youtubeId: "dFNAFOd67QY",
+    youtubeId: "wwx1qIdlu7w",
     order: 3,
   },
   {
@@ -93,7 +93,7 @@ export const resources: Resource[] = [
       "Savings, Interest, and Debt",
     ],
     thumbnail: "/assets/images/resources/budgeting-basics.avif",
-    youtubeId: "wP0KwjVE0BM",
+    youtubeId: "-Z2IQGQeugU",
     order: 1,
   },
   {
@@ -114,7 +114,7 @@ export const resources: Resource[] = [
       "Mental Health Support in BC",
     ],
     thumbnail: "/assets/images/resources/healthcare.avif",
-    youtubeId: "WpSvYMEqEW4",
+    youtubeId: "egdr2Ph3OIU",
     order: 1,
   },
   {
@@ -134,7 +134,7 @@ export const resources: Resource[] = [
       "Tips on Riding Public Transport in Metro Vancouver",
     ],
     thumbnail: "/assets/images/resources/public-transit.avif",
-    youtubeId: "l--wBYfbkgA",
+    youtubeId: "LrfFJyWphSs",
     order: 1,
   },
 ];
