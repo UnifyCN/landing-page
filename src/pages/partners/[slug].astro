@@ -13,9 +13,9 @@ import { breadcrumbLd, localBusinessLd, serializeLd } from "../../lib/seo";
 const RESOURCES_BY_CATEGORY: Record<PartnerCategory, string[]> = {
   Financial:  ["how-to-budget-your-money", "how-to-write-a-resume"],
   Education:  ["how-to-write-a-resume", "how-to-prepare-for-a-job-interview"],
-  Community:  ["how-does-healthcare-work-in-bc", "how-does-public-transit-work-in-metro-vancouver"],
   Libraries:  ["how-to-write-a-resume", "how-does-healthcare-work-in-bc"],
-  Nonprofit:  ["how-to-write-a-resume", "how-to-prepare-for-a-job-interview"],
+  "Not for Profit": ["how-to-write-a-resume", "how-to-prepare-for-a-job-interview"],
+  "Immigration Consultancies": ["how-does-healthcare-work-in-bc", "how-does-public-transit-work-in-metro-vancouver"],
 };
 
 export async function getStaticPaths() {

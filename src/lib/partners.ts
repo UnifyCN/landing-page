@@ -1,4 +1,9 @@
-export type PartnerCategory = "Education" | "Financial" | "Community" | "Libraries" | "Nonprofit";
+export type PartnerCategory =
+  | "Education"
+  | "Financial"
+  | "Libraries"
+  | "Not for Profit"
+  | "Immigration Consultancies";
 
 export interface Partner {
   slug: string;
@@ -46,7 +51,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/global_connect_immigration.png",
     website: "https://globalconnectmigration.com/",
     city: "Vancouver, BC",
-    category: "Nonprofit",
+    category: "Immigration Consultancies",
     partnershipDescription:
       "Global Connect Migration partnered with Unify to co-deliver PR Pathways workshops for newcomers and international students, supporting content creation, information refinement, and live facilitation, while providing ongoing guidance to shape Unify's product development.",
     orgDescription:
@@ -59,7 +64,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/ymca_bc.png",
     website: "https://www.gv.ymca.ca",
     city: "British Columbia",
-    category: "Community",
+    category: "Not for Profit",
     partnershipDescription:
       "Through a partnership with the YMCA, Unify co-hosts employment events and integrates YMCA programs and services into the app, while the YMCA amplifies Unify's reach across their community networks.",
     orgDescription:
@@ -111,7 +116,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/united_way_bc.png",
     website: "https://uwbc.ca",
     city: "Vancouver, BC",
-    category: "Nonprofit",
+    category: "Not for Profit",
     partnershipDescription:
       "Unify collaborated with United Way on beta testing and co-hosted financial literacy workshops to better serve newcomers navigating life in Canada.",
     orgDescription:
@@ -124,7 +129,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/burnaby_neighbourhood_house.avif",
     website: "https://burnabynh.ca",
     city: "Burnaby, BC",
-    category: "Community",
+    category: "Not for Profit",
     partnershipDescription:
       "In collaboration with Burnaby Neighbourhood House, Unify hosts events through their Newcomers Welcome Space and cross-promotes programming to connect newcomers to a wider network of support.",
     orgDescription:
@@ -176,7 +181,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/trout_lake_community_centre.png",
     website: "https://troutlakecc.com",
     city: "Vancouver, BC",
-    category: "Community",
+    category: "Not for Profit",
     partnershipDescription:
       "Unify partners with Trout Lake Community Centre to host events and workshops at their venue, bringing newcomer programming directly into the local community.",
     orgDescription:
@@ -189,7 +194,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/newcomer_jobs_canada.png",
     website: "https://www.newcomersjobscanada.ca/",
     city: "Canada",
-    category: "Nonprofit",
+    category: "Not for Profit",
     partnershipDescription:
       "Through a cross-promotional partnership, Unify and Newcomer Jobs Canada feature each other's services — ensuring newcomers have access to both the guidance and employment resources they need to build their lives in Canada.",
     orgDescription:
@@ -202,7 +207,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/promise_vancouver.png",
     website: "https://promisevancouver.ca",
     city: "Vancouver, BC",
-    category: "Community",
+    category: "Not for Profit",
     partnershipDescription:
       "In collaboration with United Way, Unify hosted a Budgeting Basics workshop for Promise Vancouver's Future Leaders program participants, delivering practical financial literacy to young newcomers building their futures in Canada.",
     orgDescription:
@@ -215,7 +220,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/big_brothers_big_sisters.avif",
     website: "https://www.bigbrothersvancouver.com",
     city: "Vancouver, BC",
-    category: "Community",
+    category: "Not for Profit",
     partnershipDescription:
       "Partnered with Big Brothers Big Sisters to collaborate on workshops covering key topics for youth.",
     orgDescription:
@@ -228,7 +233,7 @@ export const partners: Partner[] = [
     logo: "/assets/images/partners/enactus.png",
     website: "https://enactus.ca/",
     city: "Burnaby, BC",
-    category: "Nonprofit",
+    category: "Not for Profit",
     partnershipDescription:
       "Enactus SFU provides Unify with access to SFU resources and support from the broader Enactus Canada network.",
     orgDescription:
@@ -243,7 +248,7 @@ export function getPartnerBySlug(slug: string): Partner | undefined {
 export const categories: PartnerCategory[] = [
   "Education",
   "Financial",
-  "Community",
   "Libraries",
-  "Nonprofit",
+  "Not for Profit",
+  "Immigration Consultancies",
 ];
