@@ -33,6 +33,8 @@ You are an incredibly talented, experienced polyglot with decades of practice in
 | `npm run build`         | Production build                          |
 | `npm run preview`       | Preview prod build locally                |
 | `npm run generate-types`| Wrangler types for Cloudflare env         |
+| `npm run test:e2e`      | Playwright e2e smoke tests                |
+| `npm run test:e2e:ui`   | Playwright tests in interactive UI mode   |
 | `npx wrangler deploy`   | Deploy to Cloudflare Workers              |
 | `cd studio && npx sanity dev`    | Local Studio at http://localhost:3333    |
 | `cd studio && npx sanity deploy` | Deploy Studio to unify-landing.sanity.studio |
@@ -206,6 +208,14 @@ For multi-step work, state plan + verification per step:
 
 - Figure out the root cause instead of throwing random things at the wall.
 - When stuck, use the `investigate` or `systematic-debugging` skill.
+
+## Testing
+
+Lean Playwright e2e smoke layer in `tests/` (config: `playwright.config.ts`). Run with `npm run test:e2e` (`:ui` for the debugger). It runs against `npm run dev` and gates the Cloudflare deploy — a failing test blocks the `deploy.yml` job.
+
+It is **not** a full suite (this is a content-heavy, interaction-light site). It guards exactly two things: the **View-Transition re-binding bug class** (`tests/view-transitions.spec.ts` — islands wired via `astro:page-load` that have repeatedly broken on client-side nav) and the core interactive islands (smoke routes, FAQ accordion, mobile nav, both forms). No Turnstile/Resend network is hit — form tests assert render, binding-guard attributes, and Zod `fieldErrors` only.
+
+**Rule:** when you add a new interactive island, or rename a binding-guard attribute (`data-nav-bound`, `data-faq-bound`, `data-cf-bound`, `data-bp-bound`, `data-ah-carousel-init`), add or update its spec in the same change.
 
 ## Push Back
 
