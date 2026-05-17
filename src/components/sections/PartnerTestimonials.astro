@@ -80,6 +80,10 @@ const testimonials = [
 
 <script>
   function initTestimonials() {
+    const section = document.querySelector<HTMLElement>(".pt-section");
+    if (!section || section.dataset.ptBound === "true") return;
+    section.dataset.ptBound = "true";
+
     const track = document.getElementById("pt-track") as HTMLElement | null;
     const dots = document.querySelectorAll<HTMLButtonElement>(".pt-dot");
     const prevBtn = document.getElementById("pt-prev");
@@ -88,35 +92,27 @@ const testimonials = [
     let current = 0;
 
     function goTo(index: number) {
+      if (!total) return;
       current = (index + total) % total;
       if (track) track.style.transform = `translateX(-${current * 100}%)`;
       dots.forEach((d, i) => d.classList.toggle("is-active", i === current));
     }
 
-    // Clone to remove stale listeners
-    if (prevBtn) {
-      const np = prevBtn.cloneNode(true) as HTMLElement;
-      prevBtn.parentNode?.replaceChild(np, prevBtn);
-      np.addEventListener("click", () => goTo(current - 1));
-    }
-    if (nextBtn) {
-      const nn = nextBtn.cloneNode(true) as HTMLElement;
-      nextBtn.parentNode?.replaceChild(nn, nextBtn);
-      nn.addEventListener("click", () => goTo(current + 1));
-    }
+    prevBtn?.addEventListener("click", () => goTo(current - 1));
+    nextBtn?.addEventListener("click", () => goTo(current + 1));
     dots.forEach((d) => {
-      const nd = d.cloneNode(true) as HTMLButtonElement;
-      d.parentNode?.replaceChild(nd, d);
-      nd.addEventListener("click", () => {
-        const i = parseInt(nd.dataset.index ?? "0", 10);
-        goTo(i);
-      });
+      d.addEventListener("click", () =>
+        goTo(parseInt(d.dataset.index ?? "0", 10)),
+      );
     });
 
-    // Reset to first slide on re-init
     goTo(0);
   }
 
+  // Run immediately on initial load (this module is deferred, so the DOM is
+  // already parsed); the data-pt-bound guard makes the astro:page-load re-run
+  // idempotent and re-inits the fresh DOM when navigating back to /partners.
+  initTestimonials();
   document.addEventListener("astro:page-load", initTestimonials);
 </script>
 
@@ -259,21 +255,32 @@ const testimonials = [
 
   .pt-dots {
     display: flex;
-    gap: 0.5rem;
+    gap: 0;
   }
 
+  /* Transparent button = the tap target; ::before = the visible dot. */
   .pt-dot {
-    width: 6px;
-    height: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .pt-dot::before {
+    content: "";
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: rgba(23, 22, 22, 0.2);
-    border: none;
-    cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
-    padding: 0;
   }
 
-  .pt-dot.is-active {
+  .pt-dot.is-active::before {
     background: var(--color-brand-red);
     transform: scale(1.4);
   }
@@ -292,15 +299,9 @@ const testimonials = [
       font-size: 0.9375rem;
     }
 
-    .pt-dot {
-      width: 8px;
-      height: 8px;
-      min-width: 44px;
-      min-height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .pt-arrow {
+      width: 36px;
+      height: 36px;
     }
   }
 
