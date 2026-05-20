@@ -1,44 +1,5 @@
 ---
-const partners = [
-  { src: "/assets/images/partners/rbc_foundation.png", alt: "RBC Foundation, a Unify Social newcomer support partner" },
-  {
-    src: "/assets/images/partners/newcomer_jobs_canada.png",
-    alt: "Newcomer Jobs Canada, a Unify Social newcomer support partner",
-  },
-  {
-    src: "/assets/images/partners/global_connect_immigration.png",
-    alt: "Global Connect Immigration, a Unify Social newcomer support partner",
-  },
-  { src: "/assets/images/partners/sfu.png", alt: "SFU, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/ey.png", alt: "EY, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/enactus.png", alt: "Enactus, a Unify Social newcomer support partner" },
-  {
-    src: "/assets/images/partners/fraser_international_college.png",
-    alt: "Fraser International College, a Unify Social newcomer support partner",
-  },
-  {
-    src: "/assets/images/partners/burnaby_neighbourhood_house.avif",
-    alt: "Burnaby Neighbourhood House, a Unify Social newcomer support partner",
-  },
-  {
-    src: "/assets/images/partners/surrey_libraries.png",
-    alt: "Surrey Libraries, a Unify Social newcomer support partner",
-  },
-  {
-    src: "/assets/images/partners/trout_lake_community_centre.png",
-    alt: "Trout Lake Community Centre, a Unify Social newcomer support partner",
-  },
-  { src: "/assets/images/partners/united_way_bc.png", alt: "United Way BC, a Unify Social newcomer support partner" },
-  {
-    src: "/assets/images/partners/vancouver_public_library.png",
-    alt: "Vancouver Public Library, a Unify Social newcomer support partner",
-  },
-  { src: "/assets/images/partners/ymca_bc.png", alt: "YMCA BC, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/capilano_university.avif", alt: "Capilano University, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/burnaby_public_library.png", alt: "Burnaby Public Library, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/promise_vancouver.png", alt: "Promise Vancouver, a Unify Social newcomer support partner" },
-  { src: "/assets/images/partners/big_brothers_big_sisters.avif", alt: "Big Brothers Big Sisters, a Unify Social newcomer support partner" },
-];
+import { partners } from "../../lib/partners";
 ---
 
 <section class="partners bg-white py-14 desktop:py-20">
@@ -50,12 +11,22 @@ const partners = [
     <div class="partners-track">
       {
         partners.map((p) => (
-          <img src={p.src} alt={p.alt} class="partner-logo" loading="lazy" decoding="async" />
+          <a href={`/partners/${p.slug}`} class="partner-logo-link">
+            <img
+              src={p.logo}
+              alt={`${p.name} — a Unify Social partner`}
+              class="partner-logo"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
         ))
       }
       {
         partners.map((p) => (
-          <img src={p.src} alt="" class="partner-logo" loading="lazy" decoding="async" aria-hidden="true" />
+          <a href={`/partners/${p.slug}`} class="partner-logo-link" aria-hidden="true" tabindex="-1">
+            <img src={p.logo} alt="" class="partner-logo" loading="lazy" decoding="async" />
+          </a>
         ))
       }
     </div>
@@ -108,10 +79,20 @@ const partners = [
     }
   }
 
+  .partner-logo-link {
+    flex-shrink: 0;
+    display: flex;
+    border-radius: 6px;
+  }
+
+  .partner-logo-link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+  }
+
   .partner-logo {
     height: 56px;
     width: auto;
-    flex-shrink: 0;
     opacity: 0.85;
     transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
   }

@@ -14,5 +14,9 @@
       "Bash(python3 scripts/search.py \"performance animation transform\" --domain ux -n 10)",
       "Bash(python3 scripts/search.py \"fixed position layer paint\" --domain ux -n 10)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "playwright"
+  ],
+  "enableAllProjectMcpServers": true
 }
