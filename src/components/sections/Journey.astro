@@ -63,7 +63,7 @@ const APP_STORE_URL =
             preload="metadata"
             aria-label="Unify app – Checklist demo"
           >
-            <source src="/assets/demos/checklist.mp4" type="video/mp4" />
+            <source src="/assets/demos/checklist-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -123,7 +123,7 @@ const APP_STORE_URL =
             preload="metadata"
             aria-label="Unify app – AI Companion demo"
           >
-            <source src="/assets/demos/ai-companion.mp4" type="video/mp4" />
+            <source src="/assets/demos/ai-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -178,7 +178,7 @@ const APP_STORE_URL =
             preload="metadata"
             aria-label="Unify app – Community demo"
           >
-            <source src="/assets/demos/community.mp4" type="video/mp4" />
+            <source src="/assets/demos/social-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -233,7 +233,7 @@ const APP_STORE_URL =
             preload="metadata"
             aria-label="Unify app – Learn demo"
           >
-            <source src="/assets/demos/learn.mp4" type="video/mp4" />
+            <source src="/assets/demos/learn-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -437,7 +437,7 @@ const APP_STORE_URL =
     position: relative;
     width: 100%;
     max-width: 560px;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 3 / 4;
     background-color: #f5eeda;
     border-radius: 28px;
     overflow: hidden;
@@ -481,11 +481,30 @@ const APP_STORE_URL =
     }
   }
 
+  @media (min-width: 1280px) {
+    /* Size the text column to its content and the card column to the card,
+       then centre the pair — keeps text and card visually together instead
+       of stranding them at opposite edges of equal 1fr columns. */
+    .feature-block {
+      grid-template-columns: auto minmax(0, 560px); /* 560px = .feature-card max-width */
+      justify-content: center;
+    }
+    .feature-block--reverse {
+      grid-template-columns: minmax(0, 560px) auto;
+    }
+
+    /* Community has a short heading + long desc — without this cap the
+       heading floats ~256px from the card while the desc fills the column.
+       Capping the text block pulls the heading close to the card. */
+    .feature-block--community .feature-text {
+      max-width: 26rem;
+    }
+  }
+
   /* ---- AI Companion (blue) variant ---- */
 
   .feature-block--companion .feature-card {
     background-color: #e9ecf6;
-    aspect-ratio: 447 / 558;
   }
 
   .feature-block--companion .feature-dot {
@@ -511,6 +530,15 @@ const APP_STORE_URL =
     background-color: #f5e6d2;
   }
 
+  /* social-tab-demo has ~8.5% empty space below the phone in the source clip.
+     Scale the video up slightly with the top anchored so .feature-card's
+     overflow:hidden crops the bottom strip out. ~4% side crop from the same
+     scale stays well clear of the phone bezel. */
+  .feature-block--community .feature-card-img {
+    transform: scale(1.09);
+    transform-origin: top center;
+  }
+
   .feature-block--community .feature-dot {
     background-color: var(--color-brand);
   }
@@ -533,6 +561,7 @@ const APP_STORE_URL =
 
   .feature-block--learn .feature-card {
     background-color: #ecf0c2;
+    aspect-ratio: 4 / 5;
   }
 
   .feature-block--learn .feature-pill {
