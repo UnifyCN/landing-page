@@ -7,6 +7,8 @@ import { organizationLd, serializeLd } from '../lib/seo';
 
 const orgLd = serializeLd(organizationLd());
 
+const GA_ID = 'G-RDVF45T3GX';
+
 interface Props {
   title: string;
   description?: string;
@@ -37,6 +39,28 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+
+    {import.meta.env.PROD && (
+      <Fragment>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+        <script is:inline define:vars={{ GA_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){ dataLayer.push(arguments); }
+          gtag('js', new Date());
+          // Disable auto pageview — ClientRouter navigations are client-side,
+          // so we fire page_view manually on every astro:page-load instead.
+          gtag('config', GA_ID, { send_page_view: false });
+          document.addEventListener('astro:page-load', () => {
+            gtag('event', 'page_view', {
+              page_title: document.title,
+              page_location: location.href,
+              page_path: location.pathname + location.search,
+            });
+          });
+        </script>
+      </Fragment>
+    )}
+
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />

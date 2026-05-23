@@ -21,6 +21,7 @@ You are an incredibly talented, experienced polyglot with decades of practice in
 - **Sanity CMS** — fully wired. Project `j4gu2dbr`, dataset `production`. Studio scaffold lives in `studio/` (deployed at `unify-landing.sanity.studio`). Frontend client in `src/lib/sanity/`. Body content rendered via `@portabletext/to-html`.
 - **Playwright** — dev dependency for visual QA (MCP server configured in `.mcp.json`).
 - **PostHog** — analytics (MCP available, not yet instrumented in code).
+- **Google Analytics 4** — gtag.js (`G-RDVF45T3GX`) wired in `BaseLayout.astro` head, gated on `import.meta.env.PROD` (no localhost dev traffic). Auto pageview is disabled (`send_page_view: false`) and a manual `page_view` is fired on every `astro:page-load` — required because `<ClientRouter />` navigations are client-side and GA4's default tracking would only ever count the initial load.
 - **Node >= 22.12.0** (see `package.json`).
 
 ---
