@@ -7,19 +7,21 @@ import PlatformBand from '../components/sections/PlatformBand.astro';
 import Journey from '../components/sections/Journey.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import { faqs } from '../components/sections/faqs-data';
-import { mobileAppLd, faqLd, serializeLd } from '../lib/seo';
+import { mobileAppLd, webAppLd, faqLd, serializeLd } from '../lib/seo';
 
 const mobileAppLdStr = serializeLd(mobileAppLd());
+const webAppLdStr = serializeLd(webAppLd());
 const faqLdStr = serializeLd(faqLd(faqs));
 ---
 
 <BaseLayout
   title="Canada Newcomer Guide: Settle With Confidence | Unify Social"
-  description="The all-in-one Canada newcomer guide app. Personalized checklists, AI guidance, workshops, and a community of 250+ newcomers settling in Canada."
+  description="The all-in-one platform for settling in Canada — on web and iOS. Personalized checklists, AI guidance, lessons, and a community of 250+ newcomers."
   bodyBg="#FFFFFF"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={mobileAppLdStr} />
+    <script type="application/ld+json" set:html={webAppLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
     <link rel="preload" as="image" type="image/avif" href="/assets/screenshots/learn-hero.avif" />
   </Fragment>
