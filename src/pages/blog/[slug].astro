@@ -8,13 +8,21 @@ import { toHTML } from "@portabletext/to-html";
 import { blogPostingLd, breadcrumbLd, serializeLd } from "../../lib/seo";
 import "../../styles/prose.css";
 
-// Legacy slugs that were renamed. These URLs accumulated ranking equity (the
-// TEER 3 post is the site's #1 organic page) and must 301 to the new slug, NOT
-// bounce to /blog, or the equity is lost. Add an entry whenever a post slug changes.
+// Legacy slugs that were renamed. These URLs accumulated ranking equity in Google
+// (verified via Search Console) and must 301 to the new slug, NOT bounce to /blog,
+// or the equity and the indexed position are lost. Each key is the exact old slug
+// Google still has indexed (including parens/emoji); the value is the live slug.
+// Add an entry whenever a post slug changes.
 const TEER3_CANONICAL = "the-easiest-skilled-jobs-to-transition-into-teer-3-for-pr-purposes-in-canada";
 const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
   "the-easiest-skilled-jobs-to-transition-into-(teer-3)-for-pr-purposes-in-canada": TEER3_CANONICAL,
   "the-easiest-skilled-roles-to-transition-into-(teer-3)-for-pr-purposes-in-canada": TEER3_CANONICAL,
+  "how-entry-level-jobs-can-lead-to-permanent-residency-(pr)-in-canada-🇨🇦":
+    "how-entry-level-jobs-can-lead-to-permanent-residency-pr-in-canada",
+  "5-mistakes-international-students-make-when-applying-for-co-ops-at-sfu-(and-how-to-avoid-them-)":
+    "5-mistakes-international-students-make-when-applying-for-co-ops-at-sfu",
+  "how-to-use-lmias-and-pnps-to-transition-to-skilled-work-in-canada":
+    "how-to-get-pr-in-canada-lmia-and-pnp-for-international-workers",
 };
 
 const toHTMLOptions: any = {
