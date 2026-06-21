@@ -13,8 +13,8 @@ test.describe("WEB + MOBILE platform band", () => {
     await expect(band).toHaveAttribute("data-platform-bound", "true");
     await expect(band.locator(".platform-heading")).toContainText("One platform");
 
-    // Two equal CTAs: web app link → app.unifysocial.ca, + App Store badge.
-    await expect(band.locator("a.platform-btn")).toHaveAttribute(
+    // Two equal CTAs: brand-red web-app badge → app.unifysocial.ca, + App Store badge.
+    await expect(band.locator("a.webapp-badge")).toHaveAttribute(
       "href",
       "https://app.unifysocial.ca",
     );

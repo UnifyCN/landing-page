@@ -1,7 +1,8 @@
 ---
+import WebAppBadge from "../common/WebAppBadge.astro";
+
 const APP_STORE_URL =
   "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
-const WEB_APP_URL = "https://app.unifysocial.ca";
 
 const avatars = [
   { initials: "JP", color: "#D4A948" },
@@ -15,7 +16,7 @@ const avatars = [
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-rating" aria-label="Rated 5.0 out of 5 by 21 newcomers">
+      <div class="hero-rating" aria-label="Rated 5.0 out of 5 by 25+ newcomers">
         <span class="hero-stars" aria-hidden="true">
           {[...Array(5)].map(() => (
             <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -24,7 +25,7 @@ const avatars = [
           ))}
         </span>
         <span class="hero-rating-text">
-          Rated <strong>5.0</strong> by <strong>21</strong> newcomers
+          Rated <strong>5.0</strong> by <strong>25+</strong> newcomers
         </span>
       </div>
 
@@ -33,10 +34,12 @@ const avatars = [
       </h1>
 
       <p class="hero-desc">
-        Unify makes settling in Canada simpler, clearer, and more connected.
+        Unify makes settling in Canada simpler, clearer, and more connected. Now
+        available on iOS and web.
       </p>
 
       <div class="hero-cta-row">
+        <WebAppBadge />
         <a
           href={APP_STORE_URL}
           target="_blank"
@@ -49,10 +52,6 @@ const avatars = [
             alt="Download on the App Store"
             class="hero-badge"
           />
-        </a>
-        <a href={WEB_APP_URL} class="hero-web-link">
-          or open the web app
-          <span aria-hidden="true">&rarr;</span>
         </a>
         <p class="hero-note">No credit card required</p>
       </div>
@@ -177,9 +176,10 @@ const avatars = [
   /* ── CTA row ── */
   .hero-cta-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
     margin-top: 2rem;
     opacity: 0;
     animation: hero-fade-up 0.5s var(--ease-out) 0.46s forwards;
@@ -208,29 +208,12 @@ const avatars = [
   }
 
   .hero-note {
+    flex-basis: 100%;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     color: var(--color-muted);
     opacity: 0.7;
-    margin: 0;
-  }
-
-  .hero-web-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--color-text);
-    text-decoration: none;
-    transition:
-      color 0.2s var(--ease-out),
-      gap 0.25s var(--ease-out);
-  }
-  .hero-web-link:hover {
-    color: var(--color-brand);
-    gap: 0.6rem;
+    margin: 0.25rem 0 0;
   }
 
   /* ── Social proof row ── */
