@@ -1,0 +1,353 @@
+---
+const WEB_APP_URL = "https://app.unifysocial.ca";
+const APP_STORE_URL =
+  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+---
+
+<section class="platform">
+  <div class="platform-inner">
+    <div class="platform-card">
+      <div class="platform-text">
+        <span class="platform-eyebrow">Web + Mobile</span>
+        <h2 class="platform-heading">One platform.<br />Every device.</h2>
+        <p class="platform-desc">
+          Start on your laptop, continue on your phone. Your checklist, lessons,
+          and community circle stay in sync wherever you are &mdash; one free
+          account across web and mobile.
+        </p>
+        <div class="platform-cta-row">
+          <a href={WEB_APP_URL} class="platform-btn">
+            Launch web app
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="platform-badge-link"
+            aria-label="Download Unify on the App Store"
+          >
+            <img
+              src="/assets/app-store-badge-en.svg"
+              alt="Download on the App Store"
+              class="platform-badge"
+            />
+          </a>
+        </div>
+      </div>
+
+      <div class="platform-visual">
+        <div class="platform-browser" aria-hidden="true">
+          <div class="browser-bar">
+            <span class="browser-dot" style="background:#ff5f57"></span>
+            <span class="browser-dot" style="background:#febc2e"></span>
+            <span class="browser-dot" style="background:#28c840"></span>
+            <span class="browser-url">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm3 8H9V6a3 3 0 016 0v3z" />
+              </svg>
+              app.unifysocial.ca
+            </span>
+          </div>
+          <div class="browser-shot-wrap">
+            <img
+              src="/assets/screenshots/web/social-feed.avif"
+              alt="Unify web app — community Social feed at app.unifysocial.ca"
+              class="browser-shot"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+        <img
+          src="/assets/screenshots/learn-hero.avif"
+          alt="Unify mobile app — Learn screen"
+          class="platform-phone"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .platform {
+    background-color: #ffffff;
+    padding: 3rem 0;
+  }
+
+  .platform-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .platform-card {
+    position: relative;
+    background-color: #f3ecd9;
+    border-radius: 30px;
+    padding: clamp(1.75rem, 5vw, 3.5rem);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 20px 48px -24px rgba(23, 22, 22, 0.28);
+    overflow: visible;
+  }
+
+  /* Scroll-reveal — hidden state gated behind the JS-set data attribute so the
+     static / no-JS render shows the full card. */
+  .platform[data-platform-bound="true"] .platform-card {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.8s var(--ease-out),
+      transform 0.8s var(--ease-out);
+  }
+  .platform[data-platform-bound="true"].visible .platform-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .platform-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand);
+  }
+
+  .platform-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 4.6vw, 3rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    margin: 0.6rem 0 0;
+    text-wrap: balance;
+  }
+
+  .platform-desc {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+    margin: 1rem 0 0;
+    max-width: 40ch;
+  }
+
+  .platform-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .platform-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: var(--tracking-cta);
+    color: #ffffff;
+    background-color: var(--color-ink);
+    padding: 0.875rem 1.375rem;
+    border-radius: var(--radius-cta);
+    text-decoration: none;
+    transition:
+      background-color 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out);
+  }
+  .platform-btn span {
+    transition: transform 0.2s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .platform-btn:hover {
+      background-color: var(--color-brand);
+    }
+    .platform-btn:hover span {
+      transform: translateX(3px);
+    }
+  }
+  .platform-btn:active {
+    transform: scale(0.98);
+  }
+
+  .platform-badge-link {
+    display: inline-block;
+    transition:
+      transform 0.2s var(--ease-out),
+      filter 0.2s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .platform-badge-link:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: drop-shadow(0 6px 16px rgba(23, 22, 22, 0.15));
+    }
+  }
+  .platform-badge {
+    height: 52px;
+    width: auto;
+    display: block;
+  }
+
+  /* ── Device cluster ── */
+  .platform-visual {
+    position: relative;
+    width: 100%;
+  }
+
+  .platform-browser {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 28px 56px -22px rgba(23, 22, 22, 0.4);
+  }
+
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 38px;
+    padding: 0 0.85rem;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #e4e4e4;
+  }
+
+  .browser-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .browser-url {
+    flex: 1;
+    margin-left: 0.5rem;
+    max-width: 280px;
+    height: 23px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    background-color: #ffffff;
+    border: 1px solid #e4e4e4;
+    border-radius: 7px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+  .browser-url svg {
+    width: 10px;
+    height: 10px;
+    opacity: 0.5;
+  }
+
+  .browser-shot-wrap {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .browser-shot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  .platform-phone {
+    position: absolute;
+    right: 0;
+    bottom: -2rem;
+    width: 30%;
+    max-width: 150px;
+    height: auto;
+    z-index: 2;
+    filter: drop-shadow(0 18px 28px rgba(23, 22, 22, 0.28));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .platform[data-platform-bound="true"] .platform-card {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* ── Tablet+ ── */
+  @media (min-width: 810px) {
+    .platform {
+      padding: 4rem 0;
+    }
+    .platform-inner {
+      padding: 0 3rem;
+    }
+    .platform-card {
+      grid-template-columns: 1.05fr 1fr;
+      gap: 3rem;
+    }
+    .platform-phone {
+      bottom: -2.5rem;
+      width: 28%;
+      max-width: 170px;
+    }
+  }
+
+  /* ── Desktop ── */
+  @media (min-width: 1400px) {
+    .platform-inner {
+      padding: 0 5rem;
+    }
+    .platform-card {
+      gap: 4rem;
+      padding: 3.5rem 4rem;
+    }
+    .platform-phone {
+      max-width: 185px;
+      bottom: -3rem;
+    }
+  }
+</style>
+
+<script>
+  function initPlatformBand() {
+    const section = document.querySelector<HTMLElement>(".platform");
+    if (!section || section.dataset.platformBound === "true") return;
+    section.dataset.platformBound = "true";
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      section.classList.add("visible");
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            section.classList.add("visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(section);
+  }
+
+  document.addEventListener("astro:page-load", initPlatformBand);
+</script>

@@ -3,6 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/Hero.astro';
 import Partners from '../components/sections/Partners.astro';
+import PlatformBand from '../components/sections/PlatformBand.astro';
 import Journey from '../components/sections/Journey.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import { faqs } from '../components/sections/faqs-data';
@@ -26,6 +27,7 @@ const faqLdStr = serializeLd(faqLd(faqs));
   <main>
     <Hero />
     <Partners />
+    <PlatformBand />
     <Journey />
     <FAQ />
   </main>
