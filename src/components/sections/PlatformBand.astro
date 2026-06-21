@@ -37,8 +37,8 @@ const APP_STORE_URL =
       </div>
 
       <div class="platform-visual">
-        <div class="platform-browser" aria-hidden="true">
-          <div class="browser-bar">
+        <div class="platform-browser">
+          <div class="browser-bar" aria-hidden="true">
             <span class="browser-dot" style="background:#ff5f57"></span>
             <span class="browser-dot" style="background:#febc2e"></span>
             <span class="browser-dot" style="background:#28c840"></span>
@@ -186,7 +186,7 @@ const APP_STORE_URL =
     display: inline-block;
     transition:
       transform 0.2s var(--ease-out),
-      filter 0.2s ease;
+      filter 0.2s var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .platform-badge-link:hover {
@@ -325,7 +325,7 @@ const APP_STORE_URL =
 
 <script>
   function initPlatformBand() {
-    const section = document.querySelector<HTMLElement>(".platform");
+    const section = document.querySelector<HTMLElement>("section.platform");
     if (!section || section.dataset.platformBound === "true") return;
     section.dataset.platformBound = "true";
 
