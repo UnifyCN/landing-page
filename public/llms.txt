@@ -1,0 +1,24 @@
+# Unify Social
+
+> Unify Social is a free mobile app and guide that helps newcomers settle in Canada. It covers immigration pathways, skilled (TEER) jobs and permanent residency, taxes for newcomers, foreign credential recognition, and local community support. Built in Vancouver, with newcomers, for newcomers.
+
+Unify Social helps international students, skilled workers, and new permanent residents navigate practical life in Canada: filing a first tax return, reporting foreign income, finding skilled jobs that qualify for PR and Express Entry, getting internationally trained credentials recognized, and connecting with settlement partners. The app is free on the Apple App Store. The website publishes in-depth, regularly updated guides for newcomers and is operated from Vancouver, British Columbia, Canada.
+
+## Guides
+- [Canada Newcomer Blog](https://unifysocial.ca/blog): In-depth guides on immigration, jobs, taxes, credentials, and permanent residency for newcomers to Canada.
+- [Easiest TEER 3 skilled jobs to transition into for PR in Canada](<https://unifysocial.ca/blog/the-easiest-skilled-jobs-to-transition-into-(teer-3)-for-pr-purposes-in-canada>): Which TEER 3 occupations are most accessible and how they support permanent residency.
+- [Reporting foreign income as a Canadian newcomer](https://unifysocial.ca/blog/reporting-foreign-income-as-a-canadian-newcomer-what-must-you-declare): What worldwide and foreign income newcomers must declare to the CRA.
+- [The 90% rule: full non-refundable tax credits for newcomers](https://unifysocial.ca/blog/when-newcomers-can-claim-full-non-refundable-tax-credits-in-canada-the-90-rule-explained): When newcomers can claim the full Basic Personal Amount and other credits.
+- [How newcomers file their first tax return in Canada](https://unifysocial.ca/blog/how-do-newcomers-file-their-first-tax-return-in-canada-step-by-step-guide): A step-by-step first-tax-return guide for newcomers.
+- [Filing taxes after moving to Canada mid-year (split-year residency)](https://unifysocial.ca/blog/how-to-file-taxes-when-you-moved-to-canada-mid-year-split-year-residency): How split-year residency affects a newcomer's first filing.
+- [Credential recognition in Canada for internationally trained professionals](https://unifysocial.ca/blog/credential-recognition-in-canada-a-step-by-step-guide-for-internationally-trained-professionals): A step-by-step guide to getting foreign credentials recognized.
+
+## Key pages
+- [About Unify Social](https://unifysocial.ca/about): Who we are and why we built Unify for newcomers in Canada.
+- [Community](https://unifysocial.ca/community): Newcomer community, events, and stories.
+- [Partners](https://unifysocial.ca/partners): Settlement organizations and partners across Canada.
+- [Resources](https://unifysocial.ca/resources): Video and reference resources for newcomers.
+- [Contact](https://unifysocial.ca/contact): Get in touch with the Unify Social team.
+
+## App
+- [Download Unify on the Apple App Store](https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762): The free Unify newcomer app for Canada (iOS).
