@@ -40,7 +40,7 @@ export default defineType({
       name: 'order',
       title: 'Order',
       type: 'number',
-      description: 'Higher = appears first. Featured post = highest number.',
+      description: 'Legacy field. Posts now sort by Published At (newest is featured); kept for backwards compatibility. Set to 0.',
       validation: (R) => R.required(),
     }),
     defineField({
