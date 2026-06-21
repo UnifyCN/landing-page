@@ -1,0 +1,355 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { TEER_TIERS, NOC_FINDER_URL, type TeerTier } from "../../lib/teer";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+
+export async function getStaticPaths() {
+  return TEER_TIERS.map((t) => ({ params: { tier: t.slug }, props: { tier: t } }));
+}
+
+const { tier } = Astro.props as { tier: TeerTier };
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "TEER Categories", item: "https://unifysocial.ca/teer" },
+    { name: `TEER ${tier.tier}`, item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(tier.faqs));
+---
+
+<BaseLayout title={tier.seoTitle} description={tier.seoDescription} bodyBg="#ffffff">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="td">
+    <nav class="td-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/teer">TEER Categories</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">TEER {tier.tier}</span>
+    </nav>
+
+    <header class="td-hero">
+      <p class="td-eyebrow">TEER {tier.tier} &middot; {tier.skillLevel}</p>
+      <h1 class="td-h1">{tier.h1}</h1>
+      <p class="td-lead">{tier.lead}</p>
+    </header>
+
+    <!-- Eligibility verdict (answer-first) -->
+    <aside class={`td-verdict ${tier.expressEntryEligible ? "is-yes" : "is-no"}`}>
+      <span class="td-verdict-label">Express Entry</span>
+      <strong class="td-verdict-value">{tier.eeVerdict}</strong>
+    </aside>
+
+    <section class="td-block" aria-labelledby="req-h">
+      <h2 id="req-h" class="td-h2">What TEER {tier.tier} requires</h2>
+      <p class="td-body">{tier.requirements}</p>
+    </section>
+
+    <section class="td-block" aria-labelledby="pr-h">
+      <h2 id="pr-h" class="td-h2">TEER {tier.tier} and permanent residency</h2>
+      <p class="td-body">{tier.prPathways}</p>
+    </section>
+
+    <!-- Example occupations table -->
+    <section class="td-block" aria-labelledby="occ-h">
+      <h2 id="occ-h" class="td-h2">Example TEER {tier.tier} occupations</h2>
+      <div class="td-table-wrap" role="region" aria-labelledby="occ-h" tabindex="0">
+        <table class="td-table">
+          <thead>
+            <tr>
+              <th scope="col">NOC 2021 code</th>
+              <th scope="col">Occupation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tier.occupations.map((o) => (
+              <tr>
+                <td class="td-noc">{o.noc}</td>
+                <td>{o.title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="td-microcopy">
+        Examples only. Confirm your exact code with the
+        <a href={NOC_FINDER_URL} target="_blank" rel="noopener noreferrer"> official NOC tool</a>;
+        the second digit of a NOC code is its TEER.
+      </p>
+    </section>
+
+    <section class="td-block" aria-labelledby="guide-h">
+      <h2 id="guide-h" class="td-h2">What this means for newcomers</h2>
+      <p class="td-body">{tier.newcomerGuidance}</p>
+      {tier.relatedPost && (
+        <a class="td-related" href={`/blog/${tier.relatedPost.slug}`}>
+          <span class="td-related-kicker">Related guide</span>
+          <span class="td-related-title">{tier.relatedPost.label} &rarr;</span>
+        </a>
+      )}
+    </section>
+
+    <!-- FAQ -->
+    <section class="td-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="td-h2">TEER {tier.tier}: common questions</h2>
+      <div class="td-faq">
+        {tier.faqs.map((f) => (
+          <details class="td-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Sibling navigation -->
+    <nav class="td-siblings" aria-label="All TEER categories">
+      <span class="td-siblings-label">All TEER categories</span>
+      <ul role="list">
+        {TEER_TIERS.map((t) => (
+          <li>
+            <a
+              href={`/teer/${t.slug}`}
+              class={t.tier === tier.tier ? "is-current" : ""}
+              aria-current={t.tier === tier.tier ? "page" : undefined}
+            >
+              TEER {t.tier}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  .td {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1.25rem, 5vw, 2rem) clamp(3rem, 7vw, 5rem);
+    color: var(--color-text);
+  }
+
+  .td-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .td-crumbs a { color: var(--color-muted); text-decoration: none; }
+  .td-crumbs a:hover { color: var(--color-brand-red); }
+  .td-crumbs span[aria-current] { color: var(--color-text); }
+
+  .td-hero { margin-bottom: clamp(1.5rem, 4vw, 2.25rem); }
+  .td-eyebrow {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--color-brand-red);
+    margin: 0 0 1rem;
+  }
+  .td-h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: var(--tracking-display);
+    line-height: 1.05;
+    font-size: clamp(1.9rem, 5.2vw, 3rem);
+    margin: 0 0 1.25rem;
+  }
+  .td-lead {
+    font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  /* Verdict callout */
+  .td-verdict {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.1rem 1.35rem;
+    border-radius: var(--radius-cta);
+    margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid transparent;
+  }
+  .td-verdict.is-yes { background: rgba(216, 74, 41, 0.08); border-color: rgba(216, 74, 41, 0.25); }
+  .td-verdict.is-no { background: rgba(23, 22, 22, 0.05); border-color: rgba(23, 22, 22, 0.12); }
+  .td-verdict-label {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .td-verdict-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
+  }
+  .td-verdict.is-yes .td-verdict-value { color: var(--color-brand-red); }
+  .td-verdict.is-no .td-verdict-value { color: var(--color-text); }
+
+  .td-block { margin-top: clamp(2.25rem, 5vw, 3.25rem); }
+  .td-h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.1;
+    font-size: clamp(1.4rem, 3.2vw, 1.9rem);
+    margin: 0 0 1rem;
+  }
+  .td-body {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    line-height: 1.65;
+    color: var(--color-muted);
+    margin: 0;
+  }
+
+  /* Occupation table */
+  .td-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(23, 22, 22, 0.1);
+    border-radius: var(--radius-cta);
+    -webkit-overflow-scrolling: touch;
+  }
+  .td-table-wrap:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+  .td-table { width: 100%; border-collapse: collapse; min-width: 380px; font-size: 0.98rem; }
+  .td-table th, .td-table td {
+    text-align: left;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(23, 22, 22, 0.08);
+  }
+  .td-table thead th {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--color-muted);
+    font-weight: 600;
+    background: #faf7f1;
+    white-space: nowrap;
+  }
+  .td-table tbody tr:last-child td { border-bottom: none; }
+  .td-noc { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-text); white-space: nowrap; }
+  .td-microcopy {
+    margin: 0.85rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+  .td-microcopy a { color: var(--color-brand-red); }
+
+  /* Related post */
+  .td-related {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.35rem;
+    border: 1px solid rgba(23, 22, 22, 0.12);
+    border-radius: var(--radius-cta);
+    text-decoration: none;
+    transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+  .td-related:hover, .td-related:focus-visible {
+    border-color: var(--color-brand-red);
+    box-shadow: 0 12px 30px -16px rgba(23, 22, 22, 0.3);
+    outline: none;
+  }
+  .td-related-kicker {
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .td-related-title { font-family: var(--font-display); font-weight: 600; color: var(--color-brand-red); font-size: 1.05rem; }
+
+  /* FAQ */
+  .td-faq { border-top: 1px solid rgba(23, 22, 22, 0.1); }
+  .td-faq-item { border-bottom: 1px solid rgba(23, 22, 22, 0.1); }
+  .td-faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1.1rem 2.5rem 1.1rem 0;
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+    color: var(--color-text);
+  }
+  .td-faq-item summary::-webkit-details-marker { display: none; }
+  .td-faq-item summary::after {
+    content: "+";
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    color: var(--color-brand-red);
+  }
+  .td-faq-item[open] summary::after { content: "\2212"; }
+  .td-faq-item summary:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 3px; }
+  .td-faq-item p {
+    margin: 0;
+    padding: 0 0 1.2rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 64ch;
+  }
+
+  /* Siblings */
+  .td-siblings { margin-top: clamp(2.5rem, 6vw, 3.5rem); }
+  .td-siblings-label {
+    display: block;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    margin-bottom: 0.85rem;
+  }
+  .td-siblings ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .td-siblings a {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid rgba(23, 22, 22, 0.14);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  }
+  .td-siblings a:hover, .td-siblings a:focus-visible { border-color: var(--color-brand-red); color: var(--color-brand-red); outline: none; }
+  .td-siblings a.is-current { background: var(--color-ink); color: #fff; border-color: var(--color-ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .td-related { transition: border-color 0.2s ease; }
+  }
+</style>
