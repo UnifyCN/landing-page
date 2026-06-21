@@ -38,3 +38,5 @@ playwright/.cache/
 # misc
 *.swp
 *.swo
+# scratch: design brainstorming assets (not for commit)
+.design-staging/

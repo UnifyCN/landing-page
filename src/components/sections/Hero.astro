@@ -1,4 +1,6 @@
 ---
+import WebAppBadge from "../common/WebAppBadge.astro";
+
 const APP_STORE_URL =
   "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
 
@@ -14,7 +16,7 @@ const avatars = [
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-rating" aria-label="Rated 5.0 out of 5 by 22 newcomers">
+      <div class="hero-rating" aria-label="Rated 5.0 out of 5 by 25+ newcomers">
         <span class="hero-stars" aria-hidden="true">
           {[...Array(5)].map(() => (
             <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -23,19 +25,21 @@ const avatars = [
           ))}
         </span>
         <span class="hero-rating-text">
-          Rated <strong>5.0</strong> by <strong>22</strong> newcomers
+          Rated <strong>5.0</strong> by <strong>25+</strong> newcomers
         </span>
       </div>
 
       <h1 class="hero-h1">
-        The all-in-one newcomer settlement app
+        The all-in-one newcomer settlement platform
       </h1>
 
       <p class="hero-desc">
-        Unify makes settling in Canada simpler, clearer, and more connected.
+        Unify makes settling in Canada simpler, clearer, and more connected. Now
+        available on iOS and web.
       </p>
 
       <div class="hero-cta-row">
+        <WebAppBadge />
         <a
           href={APP_STORE_URL}
           target="_blank"
@@ -172,9 +176,10 @@ const avatars = [
   /* ── CTA row ── */
   .hero-cta-row {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
     margin-top: 2rem;
     opacity: 0;
     animation: hero-fade-up 0.5s var(--ease-out) 0.46s forwards;
@@ -203,11 +208,12 @@ const avatars = [
   }
 
   .hero-note {
+    flex-basis: 100%;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     color: var(--color-muted);
     opacity: 0.7;
-    margin: 0;
+    margin: 0.25rem 0 0;
   }
 
   /* ── Social proof row ── */

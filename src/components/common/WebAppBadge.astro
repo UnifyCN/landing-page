@@ -1,0 +1,73 @@
+---
+// The "Launch web app" CTA: a white, hairline-outlined button built to the
+// exact 52px height of Apple's App Store badge, so the two sit as a matched
+// primary (solid) + secondary (outline) pair. Used in the hero and PlatformBand.
+const WEB_APP_URL = "https://app.unifysocial.ca";
+---
+
+<a href={WEB_APP_URL} class="webapp-badge" aria-label="Launch the Unify web app">
+  <span class="webapp-badge-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="14" x="2" y="3" rx="2" />
+      <line x1="8" x2="16" y1="21" y2="21" />
+      <line x1="12" x2="12" y1="17" y2="21" />
+    </svg>
+  </span>
+  <span class="webapp-badge-label">Launch web app</span>
+  <span class="webapp-badge-arrow" aria-hidden="true">&rarr;</span>
+</a>
+
+<style>
+  .webapp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    height: 52px;
+    padding: 0 1.15rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.18);
+    border-radius: 9px;
+    color: var(--color-ink);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: var(--tracking-cta);
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(23, 22, 22, 0.04);
+    transition:
+      border-color 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out),
+      box-shadow 0.2s var(--ease-out);
+  }
+  .webapp-badge-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .webapp-badge-icon svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+  }
+  .webapp-badge-label {
+    line-height: 1;
+  }
+  .webapp-badge-arrow {
+    display: inline-flex;
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .webapp-badge:hover {
+      border-color: rgba(23, 22, 22, 0.34);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px -6px rgba(23, 22, 22, 0.2);
+    }
+    .webapp-badge:hover .webapp-badge-arrow {
+      transform: translateX(3px);
+    }
+  }
+  .webapp-badge:active {
+    transform: scale(0.98);
+  }
+</style>
