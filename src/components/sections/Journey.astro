@@ -1,9 +1,7 @@
 ---
-const APP_STORE_URL =
-  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
 ---
 
-<section class="journey bg-white relative overflow-hidden pt-20 desktop:pt-32 pb-8 desktop:pb-12">
+<section class="journey bg-white relative overflow-hidden pt-10 desktop:pt-16 pb-8 desktop:pb-12">
   <div class="journey-blob" aria-hidden="true">
     <img src="/assets/blobs/blob-10.svg" alt="" />
   </div>
@@ -45,10 +43,6 @@ const APP_STORE_URL =
             <span>Progress you can actually see &mdash; no lost tabs, no dead ends</span>
           </li>
         </ul>
-        <a href="#" class="feature-link">
-          See a sample checklist
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
       <div class="feature-visual">
         <div class="feature-card">
@@ -56,14 +50,14 @@ const APP_STORE_URL =
           <span class="card-blob card-blob-bl" aria-hidden="true"></span>
           <video
             class="feature-card-img"
-            poster="/assets/screenshots/checklist.avif"
+            poster="/assets/demos/posters/checklist-tab-demo.avif"
             muted
             loop
             playsinline
             preload="metadata"
             aria-label="Unify app – Checklist demo"
           >
-            <source src="/assets/demos/checklist.mp4" type="video/mp4" />
+            <source src="/assets/demos/checklist-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -100,15 +94,6 @@ const APP_STORE_URL =
             <span>Step-by-step help with forms, applications &amp; appointments</span>
           </li>
         </ul>
-        <a
-          href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="feature-link"
-        >
-          Try the Companion
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
       <div class="feature-visual">
         <div class="feature-card">
@@ -116,14 +101,14 @@ const APP_STORE_URL =
           <span class="card-blob card-blob-bl" aria-hidden="true"></span>
           <video
             class="feature-card-img"
-            poster="/assets/phone-ai.avif"
+            poster="/assets/demos/posters/ai-tab-demo.avif"
             muted
             loop
             playsinline
             preload="metadata"
             aria-label="Unify app – AI Companion demo"
           >
-            <source src="/assets/demos/ai-companion.mp4" type="video/mp4" />
+            <source src="/assets/demos/ai-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -160,10 +145,6 @@ const APP_STORE_URL =
             <span>Real experiences from people 6 months ahead of you</span>
           </li>
         </ul>
-        <a href="#" class="feature-link">
-          Find your community
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
       <div class="feature-visual">
         <div class="feature-card">
@@ -171,14 +152,14 @@ const APP_STORE_URL =
           <span class="card-blob card-blob-bl" aria-hidden="true"></span>
           <video
             class="feature-card-img"
-            poster="/assets/screenshots/community.avif"
+            poster="/assets/demos/posters/social-tab-demo.avif"
             muted
             loop
             playsinline
             preload="metadata"
             aria-label="Unify app – Community demo"
           >
-            <source src="/assets/demos/community.mp4" type="video/mp4" />
+            <source src="/assets/demos/social-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -215,10 +196,6 @@ const APP_STORE_URL =
             <span>Quizzes that check for real understanding, not memorising</span>
           </li>
         </ul>
-        <a href="#" class="feature-link">
-          Browse the library
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
       <div class="feature-visual">
         <div class="feature-card">
@@ -226,14 +203,14 @@ const APP_STORE_URL =
           <span class="card-blob card-blob-bl" aria-hidden="true"></span>
           <video
             class="feature-card-img"
-            poster="/assets/phone-learn.avif"
+            poster="/assets/demos/posters/learn-tab-demo.avif"
             muted
             loop
             playsinline
             preload="metadata"
             aria-label="Unify app – Learn demo"
           >
-            <source src="/assets/demos/learn.mp4" type="video/mp4" />
+            <source src="/assets/demos/learn-tab-demo.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -409,24 +386,6 @@ const APP_STORE_URL =
     height: 14px;
   }
 
-  .feature-link {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    color: var(--color-text);
-    text-decoration: none;
-    margin-top: 0.75rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: color 0.2s var(--ease-out), gap 0.25s var(--ease-out);
-  }
-
-  .feature-link:hover {
-    color: var(--color-brand);
-    gap: 0.7rem;
-  }
-
   .feature-visual {
     position: relative;
     display: flex;
@@ -437,7 +396,7 @@ const APP_STORE_URL =
     position: relative;
     width: 100%;
     max-width: 560px;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 3 / 4;
     background-color: #f5eeda;
     border-radius: 28px;
     overflow: hidden;
@@ -481,11 +440,30 @@ const APP_STORE_URL =
     }
   }
 
+  @media (min-width: 1280px) {
+    /* Size the text column to its content and the card column to the card,
+       then centre the pair — keeps text and card visually together instead
+       of stranding them at opposite edges of equal 1fr columns. */
+    .feature-block {
+      grid-template-columns: auto minmax(0, 560px); /* 560px = .feature-card max-width */
+      justify-content: center;
+    }
+    .feature-block--reverse {
+      grid-template-columns: minmax(0, 560px) auto;
+    }
+
+    /* Community has a short heading + long desc — without this cap the
+       heading floats ~256px from the card while the desc fills the column.
+       Capping the text block pulls the heading close to the card. */
+    .feature-block--community .feature-text {
+      max-width: 26rem;
+    }
+  }
+
   /* ---- AI Companion (blue) variant ---- */
 
   .feature-block--companion .feature-card {
     background-color: #e9ecf6;
-    aspect-ratio: 447 / 558;
   }
 
   .feature-block--companion .feature-dot {
@@ -497,18 +475,19 @@ const APP_STORE_URL =
     border-color: rgba(90, 111, 191, 0.18);
   }
 
-  .feature-block--companion .feature-link {
-    color: #5a6fbf;
-  }
-
-  .feature-block--companion .feature-link:hover {
-    color: #3f53a8;
-  }
-
   /* ---- Community (warm cream + peach) variant ---- */
 
   .feature-block--community .feature-card {
     background-color: #f5e6d2;
+  }
+
+  /* social-tab-demo has ~8.5% empty space below the phone in the source clip.
+     Scale the video up slightly with the top anchored so .feature-card's
+     overflow:hidden crops the bottom strip out. ~4% side crop from the same
+     scale stays well clear of the phone bezel. */
+  .feature-block--community .feature-card-img {
+    transform: scale(1.09);
+    transform-origin: top center;
   }
 
   .feature-block--community .feature-dot {
@@ -521,23 +500,16 @@ const APP_STORE_URL =
     color: var(--color-brand);
   }
 
-  .feature-block--community .feature-link {
-    color: var(--color-brand);
-  }
-
-  .feature-block--community .feature-link:hover {
-    color: #b03a1f;
-  }
-
   /* ---- Learn (yellow-green) variant ---- */
 
   .feature-block--learn .feature-card {
     background-color: #ecf0c2;
+    aspect-ratio: 4 / 5;
   }
 
   .feature-block--learn .feature-pill {
-    background-color: #ffffff;
-    border-color: rgba(23, 22, 22, 0.10);
+    background-color: #f4f7d8;
+    border-color: rgba(23, 22, 22, 0.08);
   }
 
   @media (min-width: 1400px) {
