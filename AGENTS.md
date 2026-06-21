@@ -53,8 +53,6 @@ src/
 │   ├── partners/[slug].astro    # Static detail pages from src/lib/partners.ts
 │   ├── resources.astro
 │   ├── resources/               # Resource detail pages
-│   ├── privacy.astro
-│   ├── terms.astro
 │   ├── api/
 │   │   ├── contact.ts           # POST /api/contact
 │   │   └── partner-inquiry.ts   # POST /api/partner-inquiry
@@ -133,7 +131,7 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Default to server-rendered HTML. Avoid unnecessary client JS.
 - Use islands ONLY when interactivity is needed (FAQ accordion, form handler, mobile menu, product overview tabs).
 - View Transitions are wired globally — preserve them. Navbar uses `transition:persist`; body bg swap is handled via `astro:before-swap` in BaseLayout.
-- **All static pages must `export const prerender = true`** so they bake to HTML at build time and are served from the Cloudflare CDN edge. The repo had every page hitting the worker on every request before this — TTFB on every navigation. Currently prerendered: `/`, `/about`, `/community`, `/contact`, `/partners` (+ all `/partners/[slug]` via `getStaticPaths`), `/resources` (+ all `/resources/[slug]`), `/privacy`, `/terms`. SSR retained for `/blog/*` (live Sanity fetch) and `/api/*`.
+- **All static pages must `export const prerender = true`** so they bake to HTML at build time and are served from the Cloudflare CDN edge. The repo had every page hitting the worker on every request before this — TTFB on every navigation. Currently prerendered: `/`, `/about`, `/community`, `/contact`, `/partners` (+ all `/partners/[slug]` via `getStaticPaths`), `/resources` (+ all `/resources/[slug]`). SSR retained for `/blog/*` (live Sanity fetch) and `/api/*`. There are no local `/privacy` or `/terms` routes — the Footer links those to external Notion pages (see the Footer section).
 - **Scroll-reveal observers must wrap in `astro:page-load`**, not run at module top-level. With ClientRouter, module scripts only execute once on initial load — on subsequent View Transition navigations the new DOM exists but the old observer is still attached to the detached previous DOM, leaving the section stuck invisible. This is exactly what bit CTABand. Pattern: wrap observer setup in a function, register it with `document.addEventListener("astro:page-load", initFn)`, and add a class-based guard at the top of the function to prevent duplicate registration when the script re-runs.
 
 ### Tailwind v4
@@ -306,7 +304,7 @@ The navbar pill is a **liquid-glass** element — translucent white pill with re
 - Top-gloss highlight via `::before` with `mix-blend-mode: overlay` and a 35%→0% white gradient — the "wet" look
 - On scroll (`.is-scrolled`): background opacity bumps to 0.85→0.65 and shadows deepen slightly. Never becomes opaque.
 - Logo height: `h-10` (40px), generous left padding inside the pill
-- Logo is a plain `<div>`, NOT a link. Clicking does nothing. Asset: `/assets/logo/logo-with-name.png`
+- Logo is a plain `<div>`, NOT a link. Clicking does nothing. Asset: `/assets/logo/new-unify-logo-256.png` (the new starburst). The old `logo-with-name.{png,avif}` files are vestigial.
 - Logo and "Download Unify" CTA must NOT feel cramped — if anything feels tight, increase padding first
 - CTA: `bg #171616`, `hover #D84A29`, transition `0.2s`, label "Download Unify" + `→`, links to App Store in a new tab
 - Nav links (order): Home | About | Community | Partners | Blog | Resources | Contact
@@ -318,9 +316,9 @@ The navbar pill is a **liquid-glass** element — translucent white pill with re
 
 White background, top + bottom hairline borders. Three-column grid at tablet+ (`2fr 1fr 1fr`).
 
-- **Brand column:** `/assets/logo/logo-with-name.avif` at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
-- **Navigate column:** Home | About | Blog | Contact (4 links — narrower than the 7-link navbar).
-- **Legal column:** Privacy Policy → `/privacy`, Terms of Service → `/terms`. **Internal Astro routes**, not Notion. Open in same tab.
+- **Brand column:** `/assets/logo/new-unify-logo-256.png` (the new starburst, same asset the navbar uses) at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
+- **Navigate column:** Home | About | Community | Blog | Contact (5 links — still narrower than the 7-link navbar; Community gives the otherwise-orphaned `/community` page an inbound link from every page).
+- **Legal column:** Privacy Policy and Terms of Service → **external Notion-hosted pages** (URLs hardcoded in `Footer.astro` `legal[]`), opened in a new tab via `target="_blank" rel="noopener noreferrer"`. There are no local `/privacy` or `/terms` routes — Notion is the single source of truth.
 - **Bottom bar:** `© 2026 Unify Social` — plain text, no dash, NOT a link.
 
 Socials:
@@ -333,7 +331,7 @@ Socials:
 
 ## Section Notes (homepage) — load-bearing, do not revert
 
-Homepage section flow today: `Hero → Partners → Journey → FAQ`. No `Problem`, no `ProductOverview`, no `CTABand` on the homepage.
+Homepage section flow today: `Hero → Partners → PlatformBand → Journey → FAQ`. No `Problem`, no `ProductOverview`, no `CTABand` on the homepage.
 
 `src/components/sections/Problem.astro` and `ProductOverview.astro` still exist on disk but are **intentionally retired** — not imported by any page. Safe to delete in a cleanup pass; do NOT pull them back into the homepage. The dead vertical-timeline CSS still living inside `Journey.astro` is in the same bucket.
 
@@ -355,6 +353,13 @@ Homepage section flow today: `Hero → Partners → Journey → FAQ`. No `Proble
 - White bg. Centered "Our Partners" label, then a CSS-only horizontal marquee.
 - 17 partner logos doubled in markup so the loop seams. `animation: marquee 40s linear infinite` translating `0 → -50%`.
 - Mask-gradient fade edges (transparent → black 10% → black 90% → transparent). Track pauses on `:hover`. Logos: 56/64/72px (mobile/tablet/desktop), `opacity: 0.85` default, lifts to 1 + `translateY(-2px)` on hover. `prefers-reduced-motion: reduce` stops the animation.
+
+### Platform band — "One platform. Every device."
+
+- White section bg with a single warm-cream rounded card (`#f3ecd9`). Sits **between Partners and Journey** (directly above "Core Features"). Repositions Unify as web **+** mobile now that the web app at `app.unifysocial.ca` is live.
+- Eyebrow "WEB + MOBILE" (brand-red), H2 "One platform. Every device.", body copy, then **two equal CTAs**: a dark "Launch web app →" button (`var(--font-ui)`, → `https://app.unifysocial.ca`, same tab, hovers brand-red) + the App Store badge at matched height.
+- **Device cluster:** a CSS browser window (traffic-light dots + an `app.unifysocial.ca` URL pill) showing the web Social feed (`/assets/screenshots/web/social-feed.avif`), with the framed Learn phone (`/assets/screenshots/learn-hero.avif`, reused from the hero) overlapping the bottom-right. Drop-shadows only — no backdrop-filter (the navbar owns the page's blur budget).
+- Scroll-reveal wired through `astro:page-load`, guarded by `data-platform-bound`; covered by `tests/platform-band.spec.ts`. Component: `src/components/sections/PlatformBand.astro`.
 
 ### Journey — "Key Benefits"
 
@@ -412,10 +417,10 @@ CONTACT_TO_EMAIL=contact@unifysocial.ca
 
 For production: `wrangler secret put <NAME>` or Cloudflare dashboard.
 
-Current site keys in forms still use placeholder (`0x4AAAAAAA_PLACEHOLDER_KEY`) in `ContactForm.astro` and `BecomePartner.astro` — replace at deploy time.
+Both forms share the real Turnstile site key `0x4AAAAAADBIS8MIXH2FQDoH` (in `ContactForm.astro` and `BecomePartner.astro`). Allowed hostnames are managed in the CF dashboard → Turnstile → "Unify Landing Page" widget (currently `unifysocial.ca` and the `*.workers.dev` test URL). `RESEND_API_KEY` + `TURNSTILE_SECRET_KEY` are set on the production worker.
 
 **Pre-launch checklist:**
-1. Replace Turnstile placeholder site key in `ContactForm.astro` and `BecomePartner.astro`.
+1. ~~Replace Turnstile placeholder site key~~ — **done**: both forms use the real shared key `0x4AAAAAADBIS8MIXH2FQDoH`.
 2. Add DMARC DNS record to `unifysocial.ca` — **Savar's job** (he manages the DNS):
    - Type: `TXT` | Name: `_dmarc` | Value: `v=DMARC1; p=none; rua=mailto:contact@unifysocial.ca`
    - Without this, Google silently drops emails from `noreply.unifysocial.ca`.
