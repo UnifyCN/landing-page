@@ -11,6 +11,8 @@ const routes = [
   "/partners",
   "/resources",
   "/blog",
+  "/teer",
+  "/teer/teer-3",
 ];
 
 for (const route of routes) {

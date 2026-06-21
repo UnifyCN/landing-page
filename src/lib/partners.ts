@@ -20,7 +20,7 @@ export interface Partner {
 export const partners: Partner[] = [
   {
     slug: "rbc",
-    name: "RBC — Royal Bank of Canada",
+    name: "RBC - Royal Bank of Canada",
     shortName: "RBC",
     logo: "/assets/images/partners/rbc_foundation.png",
     website: "https://www.rbc.com",
@@ -196,7 +196,7 @@ export const partners: Partner[] = [
     city: "Canada",
     category: "Not for Profit",
     partnershipDescription:
-      "Through a cross-promotional partnership, Unify and Newcomer Jobs Canada feature each other's services — ensuring newcomers have access to both the guidance and employment resources they need to build their lives in Canada.",
+      "Through a cross-promotional partnership, Unify and Newcomer Jobs Canada feature each other's services - ensuring newcomers have access to both the guidance and employment resources they need to build their lives in Canada.",
     orgDescription:
       "Newcomer Jobs Canada is a dedicated job board connecting newcomers to Canada with employment opportunities across the country, making the job search process more accessible for those starting their Canadian journey.",
   },

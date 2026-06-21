@@ -8,7 +8,7 @@ export const getAllPosts = (): Promise<SanityPostStub[]> =>
 
 export const getPostBySlug = (slug: string): Promise<SanityPost | null> =>
   sanityClient.fetch(
-    `*[_type == "post" && slug.current == $slug][0] { ${stub}, updatedAt, craReference, body }`,
+    `*[_type == "post" && slug.current == $slug][0] { ${stub}, updatedAt, craReference, seoTitle, seoDescription, keyTakeaway, faqs[]{question, answer}, body }`,
     { slug }
   )
 
