@@ -157,7 +157,7 @@ async function commit() {
   });
   const idBySlug = new Map(
     (
-      await client.fetch(`*[_type=="post" && defined(slug.current)]{_id, "slug": slug.current}`)
+      await client.fetch(`*[_type=="post" && !(_id in path("drafts.**")) && defined(slug.current)]{_id, "slug": slug.current}`)
     ).map((p) => [p.slug, p._id])
   );
   let ok = 0;

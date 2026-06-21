@@ -5,10 +5,15 @@ import { test, expect } from "@playwright/test";
 // 302-bounces to /blog and that equity is lost (this actually happened to the TEER 3
 // post, the site's #1 organic page). If you rename a slug, add it to the map.
 
-test("legacy TEER parens URL redirects to the canonical post", async ({ page }) => {
-  await page.goto(
+test("legacy TEER parens URL 301-redirects to the canonical post", async ({ page }) => {
+  const response = await page.goto(
     "/blog/the-easiest-skilled-jobs-to-transition-into-(teer-3)-for-pr-purposes-in-canada"
   );
+  // The redirect must be 301 (permanent) so Google transfers ranking equity; a 302 would not.
+  const redirectedFrom = response?.request().redirectedFrom();
+  expect(redirectedFrom, "expected the legacy URL to redirect").not.toBeNull();
+  const redirectStatus = (await redirectedFrom!.response())?.status();
+  expect(redirectStatus).toBe(301);
   await expect(page).toHaveURL(
     /\/blog\/the-easiest-skilled-jobs-to-transition-into-teer-3-for-pr-purposes-in-canada$/
   );

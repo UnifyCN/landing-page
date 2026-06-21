@@ -120,8 +120,8 @@ const faqLdStr = post.faqs?.length
 ---
 
 <BaseLayout
-  title={post.seoTitle ?? `${post.title} | Unify Social`}
-  description={post.seoDescription ?? post.description}
+  title={post.seoTitle || `${post.title} | Unify Social`}
+  description={post.seoDescription || post.description}
   ogImage={thumbnailUrl}
   bodyBg="#ffffff"
 >
