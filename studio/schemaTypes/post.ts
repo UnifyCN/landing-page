@@ -25,6 +25,14 @@ export default defineType({
         'Optional. Meta description for search results: answer-first, with a reason to click. Aim 140-160 chars. Falls back to Description.',
       validation: (R) => R.max(165).warning('Aim for 140-160 characters.'),
     }),
+    defineField({
+      name: 'keyTakeaway',
+      title: 'Key Takeaway',
+      type: 'text',
+      rows: 3,
+      description:
+        'Optional answer-first summary (aim 40-60 words) shown as a callout at the top of the post. Ideal for featured snippets and AI answers.',
+    }),
     defineField({ name: 'publishedAt', title: 'Published At', type: 'datetime', validation: (R) => R.required() }),
     defineField({ name: 'updatedAt', title: 'Updated At', type: 'datetime' }),
     defineField({ name: 'thumbnail', title: 'Thumbnail', type: 'image', options: { hotspot: true }, validation: (R) => R.required() }),
@@ -52,6 +60,24 @@ export default defineType({
         { type: 'richTable' },
       ],
       validation: (R) => R.required(),
+    }),
+    defineField({
+      name: 'faqs',
+      title: 'FAQ',
+      type: 'array',
+      description:
+        'Optional Q&A. Rendered as a visible FAQ section and emitted as FAQPage structured data for AI and search extraction.',
+      of: [
+        {
+          type: 'object',
+          name: 'faq',
+          fields: [
+            { name: 'question', title: 'Question', type: 'string', validation: (R: any) => R.required() },
+            { name: 'answer', title: 'Answer', type: 'text', rows: 3, validation: (R: any) => R.required() },
+          ],
+          preview: { select: { title: 'question' } },
+        },
+      ],
     }),
   ],
   preview: {

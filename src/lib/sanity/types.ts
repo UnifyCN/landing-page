@@ -12,10 +12,17 @@ export interface SanityPostStub {
   thumbnail: SanityImageRef
 }
 
+export interface SanityFaq {
+  question: string
+  answer: string
+}
+
 export interface SanityPost extends SanityPostStub {
   updatedAt?: string
   craReference?: string
   seoTitle?: string
   seoDescription?: string
+  keyTakeaway?: string
+  faqs?: SanityFaq[]
   body: any[]
 }

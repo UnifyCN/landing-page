@@ -5,7 +5,7 @@ import CTABand from "../../components/sections/CTABand.astro";
 import { getAllPosts, getPostBySlug } from "../../lib/sanity/queries";
 import { urlFor } from "../../lib/sanity/client";
 import { toHTML } from "@portabletext/to-html";
-import { blogPostingLd, breadcrumbLd, serializeLd } from "../../lib/seo";
+import { blogPostingLd, breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 import "../../styles/prose.css";
 
 // Legacy slugs that were renamed. These URLs accumulated ranking equity in Google
@@ -114,6 +114,9 @@ const breadcrumbLdStr = serializeLd(
     { name: post.title, item: canonicalUrl },
   ])
 );
+const faqLdStr = post.faqs?.length
+  ? serializeLd(faqLd(post.faqs.map((f) => ({ q: f.question, a: f.answer }))))
+  : null;
 ---
 
 <BaseLayout
@@ -125,6 +128,7 @@ const breadcrumbLdStr = serializeLd(
   <Fragment slot="head">
     <script type="application/ld+json" set:html={blogPostingLdStr} />
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    {faqLdStr && <script type="application/ld+json" set:html={faqLdStr} />}
     <link rel="preload" as="image" href={heroImageUrl} />
   </Fragment>
 
@@ -162,8 +166,27 @@ const breadcrumbLdStr = serializeLd(
       )}
     </div>
 
+    {post.keyTakeaway && (
+      <aside class="post-takeaway">
+        <span class="post-takeaway-label">Key takeaway</span>
+        <p>{post.keyTakeaway}</p>
+      </aside>
+    )}
+
     <!-- ── Prose body ── -->
     <article class="prose" set:html={bodyHtml} />
+
+    {post.faqs && post.faqs.length > 0 && (
+      <section class="post-faq" aria-labelledby="post-faq-h">
+        <h2 id="post-faq-h">Frequently asked questions</h2>
+        {post.faqs.map((f) => (
+          <details class="post-faq-item">
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </section>
+    )}
   </main>
 
   <!-- ── Prev / Next ── -->
@@ -176,6 +199,76 @@ const breadcrumbLdStr = serializeLd(
 </BaseLayout>
 
 <style>
+  /* Key takeaway callout (answer-first block for snippets + AI) */
+  .post-takeaway {
+    margin: 0 0 2rem;
+    padding: 1.25rem 1.5rem;
+    border-left: 3px solid var(--color-brand-red);
+    background: #faf7f1;
+    border-radius: 0 var(--radius-cta) var(--radius-cta) 0;
+  }
+  .post-takeaway-label {
+    display: block;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-brand-red);
+    margin-bottom: 0.4rem;
+  }
+  .post-takeaway p {
+    margin: 0;
+    font-size: clamp(1.05rem, 2vw, 1.2rem);
+    line-height: 1.55;
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  /* FAQ (visible + FAQPage schema) */
+  .post-faq {
+    margin: 3rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(23, 22, 22, 0.1);
+  }
+  .post-faq h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin: 0 0 1.25rem;
+  }
+  .post-faq-item { border-bottom: 1px solid rgba(23, 22, 22, 0.1); }
+  .post-faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1.1rem 2.5rem 1.1rem 0;
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+    color: var(--color-text);
+  }
+  .post-faq-item summary::-webkit-details-marker { display: none; }
+  .post-faq-item summary::after {
+    content: "+";
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    color: var(--color-brand-red);
+  }
+  .post-faq-item[open] summary::after { content: "\2212"; }
+  .post-faq-item summary:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 3px; }
+  .post-faq-item p {
+    margin: 0;
+    padding: 0 0 1.2rem;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+  }
+
   .post-main {
     max-width: 800px;
     margin: 0 auto;
