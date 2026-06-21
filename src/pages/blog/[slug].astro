@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostNav from "../../components/blog/PostNav.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { getAllPosts, getPostBySlug, getAllPostSlugs } from "../../lib/sanity/queries";
+import { getAllPosts, getPostBySlug } from "../../lib/sanity/queries";
 import { urlFor } from "../../lib/sanity/client";
 import { toHTML } from "@portabletext/to-html";
 import { blogPostingLd, breadcrumbLd, serializeLd } from "../../lib/seo";
@@ -69,11 +69,6 @@ const toHTMLOptions: any = {
   },
 };
 
-export async function getStaticPaths() {
-  const slugs = await getAllPostSlugs();
-  return slugs.map((slug) => ({ params: { slug } }));
-}
-
 const { slug } = Astro.params;
 const [post, allPosts] = await Promise.all([
   getPostBySlug(slug!),
@@ -124,6 +119,7 @@ const breadcrumbLdStr = serializeLd(
 <BaseLayout
   title={post.seoTitle ?? `${post.title} | Unify Social`}
   description={post.seoDescription ?? post.description}
+  ogImage={thumbnailUrl}
   bodyBg="#ffffff"
 >
   <Fragment slot="head">
