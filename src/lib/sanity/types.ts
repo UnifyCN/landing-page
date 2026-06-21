@@ -15,5 +15,7 @@ export interface SanityPostStub {
 export interface SanityPost extends SanityPostStub {
   updatedAt?: string
   craReference?: string
+  seoTitle?: string
+  seoDescription?: string
   body: any[]
 }

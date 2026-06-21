@@ -114,8 +114,8 @@ const breadcrumbLdStr = serializeLd(
 ---
 
 <BaseLayout
-  title={`${post.title} | Unify Social`}
-  description={post.description}
+  title={post.seoTitle ?? `${post.title} | Unify Social`}
+  description={post.seoDescription ?? post.description}
   bodyBg="#ffffff"
 >
   <Fragment slot="head">
