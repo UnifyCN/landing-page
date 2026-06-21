@@ -8,6 +8,15 @@ import { toHTML } from "@portabletext/to-html";
 import { blogPostingLd, breadcrumbLd, serializeLd } from "../../lib/seo";
 import "../../styles/prose.css";
 
+// Legacy slugs that were renamed. These URLs accumulated ranking equity (the
+// TEER 3 post is the site's #1 organic page) and must 301 to the new slug, NOT
+// bounce to /blog, or the equity is lost. Add an entry whenever a post slug changes.
+const TEER3_CANONICAL = "the-easiest-skilled-jobs-to-transition-into-teer-3-for-pr-purposes-in-canada";
+const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
+  "the-easiest-skilled-jobs-to-transition-into-(teer-3)-for-pr-purposes-in-canada": TEER3_CANONICAL,
+  "the-easiest-skilled-roles-to-transition-into-(teer-3)-for-pr-purposes-in-canada": TEER3_CANONICAL,
+};
+
 const toHTMLOptions: any = {
   components: {
     types: {
@@ -64,6 +73,8 @@ const [post, allPosts] = await Promise.all([
 ]);
 
 if (!post) {
+  const legacyTarget = LEGACY_SLUG_REDIRECTS[slug!];
+  if (legacyTarget) return Astro.redirect(`/blog/${legacyTarget}`, 301);
   return Astro.redirect("/blog");
 }
 
