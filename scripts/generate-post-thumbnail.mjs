@@ -9,11 +9,13 @@
 import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
 
-// ---- per-post content ----
-const EYEBROW = 'Newcomer Money Guide';
-const HEADLINE_LINES = ['Build Credit in Canada', 'as a Newcomer'];
-const OUT = '.design-staging/credit-post-thumb.png';
-// --------------------------
+// ---- per-post content (env-overridable for automation; falls back to defaults) ----
+// THUMB_HEADLINE must be 1-2 lines, newline-separated. A 3rd line collides with the logo.
+const EYEBROW = process.env.THUMB_EYEBROW || 'Newcomer Tax Guide';
+const HEADLINE_LINES = (process.env.THUMB_HEADLINE || 'How Foreign Income\nIs Taxed in Canada')
+  .split('\n').map((l) => l.trim()).filter(Boolean).slice(0, 2);
+const OUT = process.env.THUMB_OUT || '.design-staging/foreign-income-tax-thumb.png';
+// ----------------------------------------------------------------------------------
 
 const WIDTH = 1600;
 const HEIGHT = 900;
