@@ -8,7 +8,7 @@
 import { createClient } from '@sanity/client';
 import { writeFileSync } from 'node:fs';
 
-const client = createClient({ projectId: 'j4gu2dbr', dataset: 'production', apiVersion: '2024-01-01', useCdn: true });
+const client = createClient({ projectId: 'j4gu2dbr', dataset: 'production', apiVersion: '2024-01-01', useCdn: false });
 
 const query = `*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
   "slug": slug.current, title

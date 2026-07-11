@@ -33,7 +33,7 @@ const COMMIT = args.includes('--commit');
 const PUBLISH = args.includes('--publish');
 const FORCE = args.includes('--force');
 if (!jsonPath) {
-  console.error('Usage: node scripts/create-post.mjs <post.json> [--commit] [--publish]');
+  console.error('Usage: node scripts/create-post.mjs <post.json> [--commit] [--publish] [--force]');
   process.exit(1);
 }
 const post = JSON.parse(readFileSync(jsonPath, 'utf8'));

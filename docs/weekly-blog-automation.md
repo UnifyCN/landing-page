@@ -11,7 +11,7 @@ Credentials arrive as environment variables (already set on the routine):
 
 ## Steps
 
-0. **Install deps:** `npm ci`
+0. **Install deps:** `npm ci --include=dev` (--include=dev because the scripts depend on devDependencies that npm ci would otherwise omit under NODE_ENV=production)
 
 1. **Fetch GSC demand:** `node scripts/gsc-fetch.mjs`
    - Verify `/tmp/gsc-latest.json` exists and its `queries` array is non-empty.
@@ -56,8 +56,11 @@ Credentials arrive as environment variables (already set on the routine):
    - If the dry run shows a `missing required` warning, fix the JSON before publishing.
    - If publish exits non-zero (e.g. slug guard fires), go to "On failure".
 
-8. **Verify live:** `curl -s https://unifysocial.ca/blog/<slug>` and confirm the `<title>`
-   is the `seoTitle` and the page contains the key-takeaway callout and `FAQPage` JSON-LD.
+8. **Advisory live check (does NOT gate success; publishing already succeeded if step 7 exited 0).**
+   Wait about 90 seconds (Sanity's CDN lags), then `curl -s https://unifysocial.ca/blog/<slug>` and
+   confirm the `<title>` is the `seoTitle` and the page contains the key-takeaway callout and
+   `FAQPage` JSON-LD. If it has not propagated yet, note "live check pending" in the email. Do NOT
+   treat a miss here as a failure and do NOT go to "On failure" - the post is already published.
 
 9. **Notify success:** write `/tmp/notify.json`:
    ```json

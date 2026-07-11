@@ -1,6 +1,7 @@
 // Generates an on-brand 1600x900 blog thumbnail (white bg, brand-red accent,
 // Aileron type, starburst logo). Reusable: edit EYEBROW / HEADLINE_LINES / OUT,
-// or wire these to args for the future "GSC -> post" skill.
+// or override via env THUMB_EYEBROW / THUMB_HEADLINE / THUMB_OUT (falls back
+// to the in-file defaults) - used by the weekly "GSC -> post" automation.
 //
 //   node scripts/generate-post-thumbnail.mjs
 //
