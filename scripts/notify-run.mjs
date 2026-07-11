@@ -18,7 +18,7 @@ let p;
 try { p = JSON.parse(readFileSync(payloadPath, 'utf8')); }
 catch { console.error(`ERROR: cannot read payload at ${payloadPath}`); process.exit(1); }
 
-const esc = (s) => String(s ?? '').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+const esc = (s) => String(s ?? '').replace(/[<>&"']/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
 const studioUrl = p.slug ? `https://unify-landing.sanity.studio/intent/edit/id=${encodeURIComponent(p.slug)};type=post` : '';
 const fc = Array.isArray(p.factCheck) && p.factCheck.length
   ? `<ul>${p.factCheck.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : '<p>(none recorded)</p>';
