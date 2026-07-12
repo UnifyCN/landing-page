@@ -5,6 +5,7 @@
 //   node scripts/create-post.mjs <post.json>                       # dry run, writes nothing
 //   SANITY_WRITE_TOKEN=sk... node scripts/create-post.mjs <post.json> --commit            # creates a DRAFT
 //   SANITY_WRITE_TOKEN=sk... node scripts/create-post.mjs <post.json> --commit --publish  # publishes
+//   ... add --force to overwrite an existing published post at the same slug (guarded by default)
 //
 // JSON shape:
 // {
@@ -30,8 +31,9 @@ const args = process.argv.slice(2);
 const jsonPath = args.find((a) => !a.startsWith('--'));
 const COMMIT = args.includes('--commit');
 const PUBLISH = args.includes('--publish');
+const FORCE = args.includes('--force');
 if (!jsonPath) {
-  console.error('Usage: node scripts/create-post.mjs <post.json> [--commit] [--publish]');
+  console.error('Usage: node scripts/create-post.mjs <post.json> [--commit] [--publish] [--force]');
   process.exit(1);
 }
 const post = JSON.parse(readFileSync(jsonPath, 'utf8'));
@@ -88,6 +90,17 @@ async function commit() {
   if (!token) { console.error('ERROR: set SANITY_WRITE_TOKEN to commit.'); process.exit(1); }
   if (!post.thumbnail) { console.error('ERROR: thumbnail is required.'); process.exit(1); }
   const client = createClient({ projectId: 'j4gu2dbr', dataset: 'production', apiVersion: '2024-01-01', token, useCdn: false });
+
+  if (PUBLISH && !FORCE) {
+    const existing = await client.fetch(
+      `*[_type == "post" && slug.current == $slug && !(_id in path("drafts.**"))][0]{_id}`,
+      { slug: post.slug },
+    );
+    if (existing?._id) {
+      console.error(`ERROR: a published post already exists at slug "${post.slug}" (${existing._id}). Refusing to overwrite. Pass --force to override.`);
+      process.exit(1);
+    }
+  }
 
   console.log('Uploading thumbnail...');
   const asset = await client.assets.upload('image', readFileSync(post.thumbnail), { filename: `${post.slug}.png` });
