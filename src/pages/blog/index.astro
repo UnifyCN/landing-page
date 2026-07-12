@@ -303,7 +303,7 @@ const featuredDate = featured
     }
 
     .bl-featured {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       align-items: center;
     }
 
@@ -334,10 +334,6 @@ const featuredDate = featured
 
     .bl-featured-wrap {
       padding: 0 5rem;
-    }
-
-    .bl-featured-img-wrap {
-      height: 440px;
     }
 
     .blog-grid {
