@@ -6,8 +6,8 @@ fails, jump to "On failure" and stop. The design rationale is in
 `docs/superpowers/specs/2026-07-11-weekly-seo-blog-automation-design.md`.
 
 Credentials arrive as environment variables (already set on the routine):
-`SANITY_WRITE_TOKEN`, `GCP_SA_KEY_B64`, `GSC_SITE_URL`, `RESEND_API_KEY`,
-`NOTIFY_TO_EMAIL`. All commands run from the repo root.
+`SANITY_WRITE_TOKEN`, `GCP_SA_KEY_B64`, `GSC_SITE_URL`, `PEXELS_API_KEY`,
+`RESEND_API_KEY`, `NOTIFY_TO_EMAIL`. All commands run from the repo root.
 
 ## Steps
 
@@ -40,13 +40,26 @@ Credentials arrive as environment variables (already set on the routine):
    `"<claim> - <source>"` strings for the email. If a claim cannot be verified, soften or
    cut it in the JSON, but still proceed to publish.
 
-6. **Generate the thumbnail** (headline max 2 lines):
-   ```bash
-   THUMB_EYEBROW="<short category, e.g. Banking Guide>" \
-   THUMB_HEADLINE=$'<Line one>\n<Line two>' \
-   THUMB_OUT="/tmp/<slug>-thumb.png" \
-   node scripts/generate-post-thumbnail.mjs
-   ```
+6. **Pick a photo and generate the thumbnail** (headline max 2 lines):
+   a. Fetch photo candidates from Pexels with a concise topic query (relevant nouns; bias
+      toward people and Canadian / settlement contexts):
+      ```bash
+      node scripts/fetch-pexels.mjs "<topic query, e.g. person budgeting finance>" 8 /tmp/pexels
+      ```
+   b. **LOOK at the candidates** in `/tmp/pexels/cand-*.jpg` (read the image files) and read
+      `/tmp/pexels/candidates.json`. Pick the ONE most relevant to the topic and most on-brand
+      (warm, human, professional). REJECT anything irrelevant, cheesy, low quality, or that shows
+      another country's documents/currency (e.g. US tax forms on a Canada post). If none are
+      acceptable, re-run `fetch-pexels.mjs` with a better query.
+   c. Composite the chosen photo (the overlay keeps text readable over any image):
+      ```bash
+      THUMB_BG="/tmp/pexels/cand-<N>.jpg" \
+      THUMB_EYEBROW="<short category, e.g. Newcomer Money Guide>" \
+      THUMB_HEADLINE=$'<Line one>\n<Line two>' \
+      THUMB_OUT="/tmp/<slug>-thumb.png" \
+      node scripts/generate-post-thumbnail.mjs
+      ```
+   If Pexels fails entirely, omit `THUMB_BG` to fall back to the white text card, then continue.
 
 7. **Dry-run the post, then publish:**
    ```bash

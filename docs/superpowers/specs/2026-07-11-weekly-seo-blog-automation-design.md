@@ -156,3 +156,19 @@ Ordered, non-interactive steps the routine executes (detailed in "Sunday pipelin
 5. `notify-run.mjs` → dry send → **verify:** email arrives with correct links.
 6. End-to-end dry run of the runbook (publish to a throwaway slug, then unpublish) → **verify:** live URL renders title + key-takeaway + FAQ JSON-LD; email received.
 7. Create the routine, trigger a manual run → **verify:** full unattended pass in the cloud env.
+
+## Addendum (2026-07-11): photo thumbnails
+
+The thumbnail step evolved from the text-only white card to a **photo + brand overlay**: a
+topic-relevant Pexels photo, cover-cropped, under a bottom gradient scrim, with the logo / red
+rule / eyebrow / white headline stacked bottom-left (the white card remains the fallback when no
+photo is supplied).
+
+- `scripts/fetch-pexels.mjs` (new) - queries Pexels by topic, downloads landscape candidates to
+  `/tmp/pexels`, writes a `candidates.json` manifest. The routine agent then **looks at** the
+  candidates and picks the most relevant / on-brand one (rejecting cheesy or wrong-country images).
+- `scripts/generate-post-thumbnail.mjs` gains a photo mode via `THUMB_BG` (the picked photo).
+- `scripts/update-thumbnail.mjs` (new) - swaps only the thumbnail on an existing published post
+  (upload asset + patch), used to backfill better thumbnails.
+- New env var `PEXELS_API_KEY`; new allowed domains `api.pexels.com` + `images.pexels.com`.
+- Runbook step 6 now: fetch candidates → agent picks → composite with `THUMB_BG`.
