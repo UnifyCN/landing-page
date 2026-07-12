@@ -11,7 +11,7 @@ Credentials arrive as environment variables (already set on the routine):
 
 ## Steps
 
-0. **Install deps:** `npm ci --include=dev` (--include=dev because the scripts depend on devDependencies that npm ci would otherwise omit under NODE_ENV=production)
+0. **Install deps (from the repo root):** `npm install --include=dev` (--include=dev so the devDependencies the scripts need are installed even under NODE_ENV=production; `npm install` rather than `npm ci` avoids lockfile-strictness surprises)
 
 1. **Fetch GSC demand:** `node scripts/gsc-fetch.mjs`
    - Verify `/tmp/gsc-latest.json` exists and its `queries` array is non-empty.

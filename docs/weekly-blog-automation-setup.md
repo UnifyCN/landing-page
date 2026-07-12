@@ -50,6 +50,10 @@ topic-relevant photo to use as each post's thumbnail background.
 6. **Allowed domains** (network settings) → add `api.sanity.io`, `api.resend.com`,
    `api.pexels.com`, and `images.pexels.com` (`*.googleapis.com` is allowed by
    default). If asset upload later 403s, also add `j4gu2dbr.api.sanity.io`.
+7. **Setup script:** leave it **empty**. Dependencies are installed by the runbook
+   (step 0) from inside the cloned repo. Do NOT put `npm ci`/`npm install` in the
+   setup script - it runs outside the repo checkout (no `package-lock.json` there),
+   so `npm ci` fails with "can only install with an existing package-lock.json".
 
 ## 5. Acceptance test
 
