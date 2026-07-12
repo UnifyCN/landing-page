@@ -28,8 +28,12 @@ const aileronSemi = readFileSync('public/fonts/Aileron-SemiBold.woff2').toString
 
 const logoBuf = await sharp(LOGO_SRC).resize({ height: 66, fit: 'inside' }).png().toBuffer();
 
+// Escape XML-significant chars so automation-supplied text (e.g. "Rent & Utilities")
+// cannot break the SVG markup. Text nodes only need <, >, and &.
+const xmlEsc = (s) => String(s).replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+
 const headlineSvg = HEADLINE_LINES.map(
-  (line, i) => `<text class="headline" x="${PAD}" y="${470 + i * 140}" font-size="118">${line}</text>`
+  (line, i) => `<text class="headline" x="${PAD}" y="${470 + i * 140}" font-size="118">${xmlEsc(line)}</text>`
 ).join('\n  ');
 
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
@@ -46,7 +50,7 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
 
   <rect x="0" y="0" width="${WIDTH}" height="${HEIGHT}" fill="#ffffff" />
   <rect x="${PAD}" y="300" width="84" height="6" fill="#D84A29" />
-  <text class="eyebrow" x="${PAD}" y="278" font-size="30">${EYEBROW}</text>
+  <text class="eyebrow" x="${PAD}" y="278" font-size="30">${xmlEsc(EYEBROW)}</text>
   ${headlineSvg}
   <text class="url" x="${PAD + 86}" y="812" font-size="30">unifysocial.ca</text>
 </svg>`;

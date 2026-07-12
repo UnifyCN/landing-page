@@ -35,7 +35,7 @@ const client = new JWT({
 
 async function query(dimensions) {
   const url = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
-  const res = await client.request({ url, method: 'POST', data: { startDate, endDate, dimensions, rowLimit: 250 } });
+  const res = await client.request({ url, method: 'POST', data: { startDate, endDate, dimensions, rowLimit: 250 }, signal: AbortSignal.timeout(20000) });
   return (res.data && res.data.rows) || [];
 }
 
