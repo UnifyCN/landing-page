@@ -418,3 +418,12 @@ Content-heavy, interaction-light. Preserve low JS, fast load, strong SEO. Don't 
 ## SEO Infrastructure
 
 SEO machinery (sitemap, robots, canonical/og/twitter meta, JSON-LD schemas, edge redirects, OG card) shipped in SEO Sprint v2 (May 2026). Full architecture, schema map, footguns, and the Day 15 / Day 30 check-in triggers live in [`docs/seo-retro.md`](docs/seo-retro.md) — read it before touching anything SEO-related.
+
+### Weekly blog automation (July 2026)
+
+A durable **cloud routine** (Claude Code on the web, Sunday `31 8 * * 0` PT) pulls Google Search Console demand via the Search Analytics API, writes a post, picks a Pexels photo for the thumbnail, and **hard auto-publishes** to Sanity, then emails a summary. It is unattended (no `AskUserQuestion`). Full design + runbook + one-time setup live in [`docs/weekly-blog-automation.md`](docs/weekly-blog-automation.md), [`docs/weekly-blog-automation-setup.md`](docs/weekly-blog-automation-setup.md), and `docs/superpowers/{specs,plans}/2026-07-11-*` — read those before touching the automation. The human-facing skill is `.claude/skills/creating-seo-blog-posts`.
+
+- **Scripts:** `scripts/{gsc-fetch,list-post-slugs,fetch-pexels,notify-run,update-thumbnail}.mjs`. `create-post.mjs` has a slug-overwrite guard (refuses to `--publish` over an existing published slug unless `--force`).
+- **`generate-post-thumbnail.mjs` has two modes:** `THUMB_BG=<photo>` → photo + brand overlay (bottom scrim + logo/red-rule/eyebrow/white headline); no `THUMB_BG` → the original white text card (fallback). Env-driven: `THUMB_EYEBROW`, `THUMB_HEADLINE` (max 2 lines), `THUMB_OUT`.
+- **Blog display images are `aspect-ratio: 16 / 9`** (post hero in `blog/[slug].astro`, featured slot in `blog/index.astro`). Do NOT reintroduce fixed pixel heights on `.post-hero-img` / `.bl-featured-img-wrap` — a fixed height with `aspect-ratio` set computes the *width* (e.g. `440px × 16/9 = 782px`) and overflows/crops the branded thumbnails. Grid columns holding these images use `minmax(0, 1fr)`.
+- **Routine env** needs `SANITY_WRITE_TOKEN`, `GCP_SA_KEY_B64`, `GSC_SITE_URL=sc-domain:unifysocial.ca`, `PEXELS_API_KEY`, `RESEND_API_KEY`, `NOTIFY_TO_EMAIL`, plus allowed domains `api.sanity.io` / `api.resend.com` / `api.pexels.com` / `images.pexels.com`. The routine's **setup script must be empty** — it runs outside the cloned repo, so deps install in the runbook (`npm install --include=dev`), not the setup script.
