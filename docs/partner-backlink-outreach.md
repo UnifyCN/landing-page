@@ -1,6 +1,6 @@
 # Partner backlink outreach
 
-Off-page SEO for unifysocial.ca. The 17 organisations in `src/lib/partners.ts` each have a
+Off-page SEO for unifysocial.ca. Every organisation in `src/lib/partners.ts` has a
 detail page on the site (`/partners/[slug]`). A link back from their site is the single
 biggest lever for the head terms ("newcomers in Canada", "newcomer app") that content alone
 cannot win against government domains.
@@ -45,6 +45,7 @@ Savar
 | RBC | | | | | |
 | EY | | | | | |
 | Global Connect Immigration | | | | | |
+| Canada Shaws Consulting | | | | | |
 | YMCA BC | | | | | |
 | Simon Fraser University | | | | | |
 | Fraser International College | | | | | |
