@@ -13,6 +13,8 @@ import {
   RESUME_SOURCES,
   RESUME_LAST_VERIFIED,
   JOB_BANK_RESUME_BUILDER,
+  UNIFY_RESUME_BUILDER,
+  UNIFY_COVER_LETTER,
 } from "../lib/canadian-resume";
 import { breadcrumbLd, faqLd, serializeLd } from "../lib/seo";
 import "../styles/cluster.css";
@@ -55,6 +57,41 @@ const faqLdStr = serializeLd(faqLd(RESUME_FAQS));
         your degree, and add one line of context for employers Canadians do not know.
       </p>
     </header>
+
+    <aside class="cl-tools" aria-labelledby="tools-h">
+      <p id="tools-h" class="cl-tools-label">Free in the Unify web app</p>
+      <div class="cl-tools-grid">
+        <a class="cl-tool" href={UNIFY_RESUME_BUILDER}>
+          <span class="cl-tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+              <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+              <path d="M10 9H8" />
+              <path d="M16 13H8" />
+              <path d="M16 17H8" />
+            </svg>
+          </span>
+          <span class="cl-tool-text">
+            <span class="cl-tool-title">Build your resume</span>
+            <span class="cl-tool-desc">Answer simple questions. Download it as a PDF or Word file.</span>
+          </span>
+          <span class="cl-tool-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        <a class="cl-tool" href={UNIFY_COVER_LETTER}>
+          <span class="cl-tool-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+          </span>
+          <span class="cl-tool-text">
+            <span class="cl-tool-title">Write a cover letter</span>
+            <span class="cl-tool-desc">Paste a job posting. Get a letter written for that job.</span>
+          </span>
+          <span class="cl-tool-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </aside>
 
     <aside class="cl-verdict" aria-label="At a glance">
       <div class="cl-verdict-item">

@@ -51,6 +51,79 @@
 }
 .cl-lead strong { color: var(--color-text); }
 
+/* Tool links under the hero (e.g. /canadian-resume -> web app builders) */
+.cl-tools { margin: 0 0 clamp(1.5rem, 4vw, 2.25rem); }
+.cl-tools-label {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin: 0 0 0.65rem;
+}
+.cl-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 0.75rem;
+}
+.cl-tool {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 0.95rem 1.1rem;
+  background: #ffffff;
+  border: 1px solid rgba(23, 22, 22, 0.14);
+  border-radius: var(--radius-cta);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    border-color 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out),
+    transform 0.2s var(--ease-out);
+}
+.cl-tool-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  background: rgba(216, 74, 41, 0.09);
+  color: var(--color-brand-red);
+}
+.cl-tool-icon svg { width: 1.25rem; height: 1.25rem; display: block; }
+.cl-tool-text { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; flex: 1; }
+.cl-tool-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.2;
+}
+.cl-tool-desc { font-size: 0.9rem; line-height: 1.45; color: var(--color-muted); text-wrap: pretty; }
+.cl-tool-arrow {
+  flex-shrink: 0;
+  color: var(--color-brand-red);
+  font-size: 1.1rem;
+  transition: transform 0.2s var(--ease-out);
+}
+.cl-tool:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .cl-tool:hover {
+    border-color: var(--color-brand-red);
+    box-shadow: 0 12px 28px -16px rgba(23, 22, 22, 0.3);
+    transform: translateY(-2px);
+  }
+  .cl-tool:hover .cl-tool-arrow { transform: translateX(3px); }
+}
+.cl-tool:active { transform: scale(0.99); }
+@media (prefers-reduced-motion: reduce) {
+  .cl-tool, .cl-tool-arrow { transition: border-color 0.2s ease; }
+  .cl-tool:hover, .cl-tool:active, .cl-tool:hover .cl-tool-arrow { transform: none; }
+}
+
 /* Answer-first verdict callout */
 .cl-verdict {
   display: grid;
