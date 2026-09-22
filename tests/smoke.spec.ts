@@ -21,6 +21,7 @@ const routes = [
   "/credentials/registered-nurse",
   "/credentials/engineer",
   "/canadian-resume",
+  "/banking",
 ];
 
 for (const route of routes) {

@@ -8,6 +8,7 @@ Unify Social helps permanent residents, skilled workers, and international stude
 - [TEER categories and jobs list](https://unifysocial.ca/teer): What each TEER category (0 to 5) means, the full NOC 2021 jobs list per category, and which TEER categories qualify for Express Entry and permanent residency.
 - [Foreign credential recognition by profession](https://unifysocial.ca/credentials): How internationally trained professionals get licensed in Canada, with the regulator in every province and territory for nurses, doctors, engineers, teachers, accountants, trades, and more.
 - [Canadian resume format for newcomers](https://unifysocial.ca/canadian-resume): How to write a Canadian-style resume: what to include, what to leave out, and how to describe foreign education and experience.
+- [How to open a bank account in Canada as a newcomer](https://unifysocial.ca/banking): The documents you need, your legal right to a basic account, and the newcomer offers of the major banks compared in one format.
 - [Health card waiting period by province](https://unifysocial.ca/health-card): Public health coverage for newcomers in every province and territory: waiting periods, who qualifies, and how to apply.
 - [Foreign driver's licence exchange by province](https://unifysocial.ca/drivers-licence): Which foreign licences each province exchanges without a road test, and the steps to follow.
 

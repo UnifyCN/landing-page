@@ -44,7 +44,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 
 | Topic | Owner | Status | Evidence | Priority |
 |---|---|---|---|---|
-| Open a bank account as a newcomer | `/blog/how-do-international-students-open-a-bank-account-in-canada` (students only) | thin | 167 queries, 3,429 impr, pos 47 | **P1** (planned `/banking` hub) |
+| Open a bank account as a newcomer | `/banking` (students: `/blog/how-do-international-students-open-a-bank-account-in-canada`) | hub | 167 queries, 3,429 impr, pos 47 | new 2026-09 |
 | Build credit with no history | `/blog/how-to-build-credit-in-canada-as-a-newcomer`, `/blog/how-do-international-students-build-credit-in-canada` | post | 338 impr, pos 27 | - |
 | TFSA vs RRSP | `/blog/tfsa-vs-rrsp-for-newcomers-to-canada-which-to-open-first` | post | - | - |
 | Budgeting | `/resources/how-to-budget-your-money` (video) | thin | 5 impr | P3 |

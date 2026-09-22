@@ -114,20 +114,20 @@ const faqLdStr = serializeLd(faqLd(RESUME_FAQS));
         This is the change most newcomer resumes need. Job Bank asks for numbers: how many people,
         how much money, how much time. Each bullet should say what changed because you were there.
       </p>
-      <ul class="cl-rewrites" role="list">
+      <ul class="cl-kv-list" role="list">
         {RESUME_REWRITES.map((r) => (
-          <li class="cl-rewrite">
-            <div class="cl-rewrite-row">
-              <span class="cl-rewrite-label">Before</span>
-              <span class="cl-rewrite-before">{r.before}</span>
+          <li class="cl-kv-card">
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Before</span>
+              <span class="cl-kv-strike">{r.before}</span>
             </div>
-            <div class="cl-rewrite-row">
-              <span class="cl-rewrite-label">After</span>
-              <span class="cl-rewrite-after">{r.after}</span>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">After</span>
+              <span class="cl-kv-strong">{r.after}</span>
             </div>
-            <div class="cl-rewrite-row">
-              <span class="cl-rewrite-label">Why</span>
-              <span class="cl-rewrite-why">{r.why}</span>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Why</span>
+              <span class="cl-kv-muted">{r.why}</span>
             </div>
           </li>
         ))}

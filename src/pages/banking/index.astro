@@ -1,0 +1,258 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import {
+  BANKING_LEAD,
+  BANK_OFFERS,
+  BANKING_RULES,
+  BANKING_BY_STATUS,
+  BANKING_DOCUMENTS,
+  ONLINE_BANKS,
+  BANKING_FAQS,
+  BANKING_LAST_VERIFIED,
+} from "../../lib/newcomer-banking";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+const dash = (v: string | null) => v ?? "Not stated";
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Banking for Newcomers", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(BANKING_FAQS));
+const notStated = (v: string | null) => v ?? "Not stated on its newcomer page";
+// One link per website in the "checked against" line.
+const allSources = [...Object.values(BANKING_RULES).map((r) => r.source), ...BANK_OFFERS.map((b) => b.url)];
+const sources = [...new Map(allSources.map((u) => [host(u), u])).values()];
+---
+
+<BaseLayout
+  title="How to Open a Bank Account in Canada as a Newcomer (2026)"
+  description="What you need to open a bank account in Canada as a newcomer, your right to an account, and newcomer offers from RBC, TD, Scotiabank, BMO, CIBC, and more."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Banking for Newcomers</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Banking &amp; money</p>
+      <h1 class="cl-h1">How to Open a Bank Account in Canada as a Newcomer</h1>
+      <p class="cl-lead" set:html={BANKING_LEAD} />
+    </header>
+
+    <aside class="cl-verdict" aria-label="At a glance">
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">What to bring</span>
+        <strong class="cl-verdict-value">Passport + immigration document</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">SIN needed?</span>
+        <strong class="cl-verdict-value">{BANKING_RULES.sinRule.short}</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Newcomer offers</span>
+        <strong class="cl-verdict-value">{BANK_OFFERS.length} banks compared</strong>
+      </div>
+    </aside>
+
+    <section class="cl-block" aria-labelledby="right-h">
+      <h2 id="right-h" class="cl-h2">Your right to a bank account</h2>
+      <p class="cl-body">{BANKING_RULES.rightToAccount.text}</p>
+      <p class="cl-body">{BANKING_RULES.sinRule.text}</p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="docs-h">
+      <h2 id="docs-h" class="cl-h2">Documents to bring</h2>
+      <p class="cl-body">{BANKING_RULES.idRequirements.text}</p>
+      <ul class="cl-list">
+        {BANKING_DOCUMENTS.map((d) => <li>{d}</li>)}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="compare-h">
+      <h2 id="compare-h" class="cl-h2">Newcomer bank accounts compared</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="compare-h" tabindex="0">
+        <table class="cl-table cl-table--hub">
+          <thead>
+            <tr>
+              <th scope="col">Bank</th>
+              <th scope="col">Monthly fee</th>
+              <th scope="col">Credit card, no history</th>
+              <th scope="col" class="cl-col-extra">Who qualifies</th>
+              <th scope="col" class="cl-col-extra">Before you arrive</th>
+            </tr>
+          </thead>
+          <tbody>
+            {BANK_OFFERS.map((b) => (
+              <tr>
+                <th scope="row"><a href={`#bank-${b.slug}`}>{b.bank}</a></th>
+                <td>{dash(b.feeWaiver)}</td>
+                <td>{dash(b.creditCard)}</td>
+                <td class="cl-col-extra">{b.arrivalWindow ?? dash(b.whoQualifies)}</td>
+                <td class="cl-col-extra">{dash(b.openBeforeArrival)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        Facts come from each bank's own newcomer page, checked in {BANKING_LAST_VERIFIED}. Offers
+        change often, so confirm on the bank's page before you apply. Cash welcome bonuses are left
+        out because they change every few weeks; each bank's page shows its current one. RBC is a
+        <a href="/partners/rbc">Unify partner</a>; every bank here is shown in the same format.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="offers-h">
+      <h2 id="offers-h" class="cl-h2">Each bank's newcomer offer</h2>
+      <ul class="cl-kv-list" role="list">
+        {BANK_OFFERS.map((b) => (
+          <li class="cl-kv-card cl-kv-card--wide" id={`bank-${b.slug}`}>
+            <div class="cl-kv-head">
+              <span class="cl-kv-title">{b.bank}</span>
+              <span class="cl-kv-sub">{b.program}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Who qualifies</span>
+              <span class="cl-kv-value">{notStated(b.whoQualifies)}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Monthly fee</span>
+              <span class="cl-kv-value">{b.feeWaiverDetail ?? notStated(b.feeWaiver)}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Credit card</span>
+              <span class="cl-kv-value">{notStated(b.creditCard)}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Before arrival</span>
+              <span class="cl-kv-value">{notStated(b.openBeforeArrival)}</span>
+            </div>
+            {b.students && (
+              <div class="cl-kv-row">
+                <span class="cl-kv-label">Students</span>
+                <span class="cl-kv-value">{b.students}</span>
+              </div>
+            )}
+            {b.otherPerks.length > 0 && (
+              <div class="cl-kv-row">
+                <span class="cl-kv-label">Also</span>
+                <span class="cl-kv-value">{b.otherPerks.join("; ")}</span>
+              </div>
+            )}
+            <a class="cl-kv-link" href={b.url} target="_blank" rel="noopener noreferrer">
+              See the offer on {host(b.url)} &rarr;
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="status-h">
+      <h2 id="status-h" class="cl-h2">Opening an account by immigration status</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="status-h" tabindex="0">
+        <table class="cl-table cl-table--fit">
+          <thead>
+            <tr>
+              <th scope="col">Your status</th>
+              <th scope="col">What to know</th>
+            </tr>
+          </thead>
+          <tbody>
+            {BANKING_BY_STATUS.map((s) => (
+              <tr>
+                <th scope="row">{s.status}</th>
+                <td>{s.text}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        International students: see the full guide to
+        <a href="/blog/how-do-international-students-open-a-bank-account-in-canada">opening a bank account as an international student</a>.
+      </p>
+    </section>
+
+    {ONLINE_BANKS.length > 0 && (
+      <section class="cl-block" aria-labelledby="online-h">
+        <h2 id="online-h" class="cl-h2">No-fee online banks</h2>
+        <p class="cl-body">
+          Online banks have no branches and usually no monthly fee, but they seldom have newcomer
+          packages, and some ask for a SIN or a Canadian address history. Many newcomers open a
+          big-bank newcomer account first, then add an online account later.
+        </p>
+        <ul class="cl-list">
+          {ONLINE_BANKS.map((o) => (
+            <li>
+              <a href={o.url} target="_blank" rel="noopener noreferrer">{o.name}</a>: {o.acceptsNewcomers}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="cl-block" aria-labelledby="fees-h">
+      <h2 id="fees-h" class="cl-h2">Fees, cheque holds, and deposit insurance</h2>
+      <p class="cl-body"><strong>Low-cost accounts.</strong> {BANKING_RULES.lowCostAccounts.text}</p>
+      <p class="cl-body"><strong>Cheque holds.</strong> {BANKING_RULES.chequeHold.text}</p>
+      <p class="cl-body"><strong>Deposit insurance.</strong> {BANKING_RULES.depositInsurance.text}</p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="credit-h">
+      <h2 id="credit-h" class="cl-h2">Start your Canadian credit history in the first month</h2>
+      <p class="cl-body">{BANKING_RULES.creditHistory.text}</p>
+      <p class="cl-body">
+        Read how to <a href="/blog/how-to-build-credit-in-canada-as-a-newcomer">build credit in Canada as a newcomer</a>,
+        and, once your account is open, whether to open a
+        <a href="/blog/tfsa-vs-rrsp-for-newcomers-to-canada-which-to-open-first">TFSA or an RRSP first</a>.
+      </p>
+      <p class="cl-body cl-app">
+        A bank account is one of the first steps in the
+        <a href="/">Unify newcomer settlement app</a>, next to your
+        <a href="/blog/how-to-get-a-sin-number-in-canada-newcomer-guide">SIN</a>,
+        <a href="/health-card">health card</a>, and phone plan, in one free checklist.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Banking for newcomers: common questions</h2>
+      <div class="cl-faq">
+        {BANKING_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="cl-verified">
+      Checked against
+      {sources.map((u, i) => (
+        <>
+          <a href={u} target="_blank" rel="noopener noreferrer">{host(u)}</a>{i < sources.length - 1 ? ", " : ""}
+        </>
+      ))}
+      in {BANKING_LAST_VERIFIED}. Offers change often; confirm with the bank before you apply.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
