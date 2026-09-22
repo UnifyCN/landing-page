@@ -58,6 +58,19 @@ export const partners: Partner[] = [
       "Global Connect Migration is a registered Canadian immigration consulting firm helping newcomers navigate permanent residency pathways, visa processes, and settlement planning with expert, personalized guidance.",
   },
   {
+    slug: "canada-shaws-consulting",
+    name: "Canada Shaws Consulting Inc.",
+    shortName: "Canada Shaws",
+    logo: "/assets/images/partners/canada_shaws_consulting.png",
+    website: "https://www.immshaws.com/unify/",
+    city: "Richmond, BC",
+    category: "Immigration Consultancies",
+    partnershipDescription:
+      "Canada Shaws partners with Unify to give newcomers a direct line to licensed immigration advice: through the Unify app's Trusted Services directory, newcomers can book a free introductory meeting to explore study, work, and permanent residency pathways.",
+    orgDescription:
+      "Established in 2015 and based in Richmond, BC, Canada Shaws Consulting Inc. is a member of Shaws Global Brand Group. Its immigration consultants are licensed by the College of Immigration and Citizenship Consultants (CICC), and the firm supports clients with study and work permits, permanent residency, visas and extensions, and business and investment pathways, with service in English, Filipino (Tagalog), Persian (Farsi), Mandarin, and Cantonese.",
+  },
+  {
     slug: "ymca-bc",
     name: "YMCA BC",
     shortName: "YMCA BC",

@@ -68,7 +68,7 @@ src/
 │   └── ui/                      # shadcn-style primitives (empty for now)
 ├── content.config.ts            # Empty — content collections deprecated, blog moved to Sanity
 ├── lib/
-│   ├── partners.ts              # Typed Partner[] (17 partners)
+│   ├── partners.ts              # Typed Partner[] (18 partners)
 │   ├── resources.ts             # Typed resources list
 │   ├── sanity/                  # createClient + urlFor + GROQ queries + typed results
 │   └── utils.ts
@@ -351,7 +351,7 @@ Homepage section flow today: `Hero → Partners → PlatformBand → Journey →
 ### Partners
 
 - White bg. Centered "Our Partners" label, then a CSS-only horizontal marquee.
-- 17 partner logos doubled in markup so the loop seams. `animation: marquee 40s linear infinite` translating `0 → -50%`.
+- 18 partner logos doubled in markup so the loop seams. `animation: marquee 40s linear infinite` translating `0 → -50%`.
 - Mask-gradient fade edges (transparent → black 10% → black 90% → transparent). Track pauses on `:hover`. Logos: 56/64/72px (mobile/tablet/desktop), `opacity: 0.85` default, lifts to 1 + `translateY(-2px)` on hover. `prefers-reduced-motion: reduce` stops the animation.
 
 ### Platform band — "One platform. Every device."
@@ -436,7 +436,7 @@ Both forms share the real Turnstile site key `0x4AAAAAADBIS8MIXH2FQDoH` (in `Con
 
 ### Partners (`src/pages/partners.astro`)
 - `bodyBg="#171616"`. Sections: PartnersHero → PartnerTestimonials → PartnersGrid → BecomePartner → CTABand.
-- Static detail pages at `/partners/[slug].astro` generated from `src/lib/partners.ts` (typed `Partner` interface, 17 partners).
+- Static detail pages at `/partners/[slug].astro` generated from `src/lib/partners.ts` (typed `Partner` interface, 18 partners).
 - BecomePartner form posts to `/api/partner-inquiry`.
 
 ### Community (`src/pages/community.astro`)

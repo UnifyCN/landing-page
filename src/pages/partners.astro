@@ -6,11 +6,12 @@ import PartnerTestimonials from "../components/sections/PartnerTestimonials.astr
 import PartnersGrid from "../components/sections/PartnersGrid.astro";
 import BecomePartner from "../components/sections/BecomePartner.astro";
 import CTABand from "../components/sections/CTABand.astro";
+import { partners } from "../lib/partners";
 ---
 
 <BaseLayout
   title="Newcomer Support Organizations in BC | Unify Partners"
-  description="17 trusted organizations supporting newcomers across BC - banks, universities, libraries, and community centres working alongside Unify Social."
+  description={`${partners.length} trusted organizations supporting newcomers across BC - banks, universities, libraries, and community centres working alongside Unify Social.`}
   bodyBg="#171616"
 >
   <main>
