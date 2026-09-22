@@ -28,7 +28,7 @@ Credentials arrive as environment variables (already set on the routine):
      quick web search to confirm real demand and a winnable SERP (NOT canada.ca/CRA/IRCC head-term
      dominated). Use `/tmp/gsc-latest.json` to break ties and to phrase the title like real queries.
    - **Spoke quota.** A spoke deepens a hub: `/teer` (skilled jobs + PR), `/health-card`,
-     `/drivers-licence`, `/credentials` (regulated professions), `/canadian-resume`. If any of the
+     `/drivers-licence`, `/credentials` (regulated professions), `/canadian-resume`, `/banking`. If any of the
      three newest posts in `/tmp/existing-posts.json` is a spoke, this week MUST be a gap topic.
      A spoke is allowed only when that check passes AND GSC shows a cluster near page 1
      (position ~8-20) with impressions but no dedicated page.

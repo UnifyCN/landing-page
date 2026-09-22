@@ -187,7 +187,8 @@
 @media (max-width: 600px) {
   .cl-table--hub { min-width: 0; }
   .cl-table--hub .cl-col-extra { display: none; }
-  .cl-table--hub tbody th { white-space: normal; }
+  .cl-table--hub tbody th, .cl-table--hub thead th { white-space: normal; }
+  .cl-table--hub th, .cl-table--hub td { padding: 0.7rem 0.75rem; }
 }
 .cl-cell-note {
   display: block;
@@ -216,22 +217,34 @@
 }
 .cl-microcopy a { color: var(--color-brand-red); }
 
-/* Before/after rewrite cards */
-.cl-rewrites { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.9rem; }
-.cl-rewrite {
+/* Label/value cards: resume before/after rewrites, bank offers */
+.cl-kv-list { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.9rem; }
+.cl-kv-card {
+  --kv-label: 4.25rem;
   border: 1px solid rgba(23, 22, 22, 0.12);
   border-radius: var(--radius-cta);
   padding: 1rem 1.25rem;
 }
-.cl-rewrite-row {
+.cl-kv-card--wide { --kv-label: 8rem; }
+.cl-kv-head { margin-bottom: 0.85rem; }
+.cl-kv-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text);
+}
+.cl-kv-sub { display: block; margin-top: 0.15rem; font-size: 0.92rem; color: var(--color-muted); }
+.cl-kv-row {
   display: grid;
-  grid-template-columns: 4.25rem minmax(0, 1fr);
+  grid-template-columns: var(--kv-label) minmax(0, 1fr);
   gap: 0.75rem;
   font-size: clamp(0.95rem, 2vw, 1.05rem);
   line-height: 1.55;
 }
-.cl-rewrite-row + .cl-rewrite-row { margin-top: 0.55rem; }
-.cl-rewrite-label {
+.cl-kv-row + .cl-kv-row { margin-top: 0.55rem; }
+.cl-kv-label {
   font-family: var(--font-ui);
   text-transform: uppercase;
   letter-spacing: var(--tracking-label);
@@ -240,13 +253,25 @@
   color: var(--color-muted);
   padding-top: 0.2rem;
 }
-.cl-rewrite-before {
+.cl-kv-value { color: var(--color-text); }
+.cl-kv-strike {
   color: var(--color-muted);
   text-decoration: line-through;
   text-decoration-color: rgba(216, 74, 41, 0.45);
 }
-.cl-rewrite-after { color: var(--color-text); font-weight: 600; }
-.cl-rewrite-why { color: var(--color-muted); }
+.cl-kv-strong { color: var(--color-text); font-weight: 600; }
+.cl-kv-muted { color: var(--color-muted); }
+.cl-kv-link {
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-brand-red);
+}
+@media (max-width: 420px) {
+  .cl-kv-card--wide .cl-kv-row { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+}
 
 /* Cards grid (hub) */
 .cl-cards {
