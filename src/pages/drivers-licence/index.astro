@@ -1,0 +1,136 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { LICENCE_RULES, LICENCE_HUB_FAQS } from "../../lib/licence-exchange";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Driver's Licence by Province", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(LICENCE_HUB_FAQS));
+
+// Countries that can exchange in every jurisdiction we list (intersection).
+const countryCount = new Map<string, number>();
+for (const r of LICENCE_RULES) for (const c of r.reciprocalCountries) countryCount.set(c.name, (countryCount.get(c.name) ?? 0) + 1);
+const everywhere = [...countryCount.entries()].filter(([, n]) => n === LICENCE_RULES.length).map(([name]) => name);
+---
+
+<BaseLayout
+  title="Exchange a Foreign Driver's Licence in Canada, by Province"
+  description="Which countries can swap a driver's licence without a road test in each province, how long newcomers may drive on a foreign licence, and what the rest must do."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Driver's Licence by Province</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Driving in Canada</p>
+      <h1 class="cl-h1">Exchanging a Foreign Driver's Licence in Canada, Province by Province</h1>
+      <p class="cl-lead">
+        Driver licensing is provincial. Each province keeps its own list of countries whose
+        licences it swaps directly, its own grace period, and its own tests for everyone else.
+        <strong>{everywhere.length ? `${everywhere.join(", ")} exchange in every province` : "No single country exchanges everywhere"}</strong>.
+        Choose your province for the exact list and deadline.
+      </p>
+    </header>
+
+    <section class="cl-block" aria-labelledby="compare-h">
+      <h2 id="compare-h" class="cl-h2">Grace period and exchange countries by province</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="compare-h" tabindex="0">
+        <table class="cl-table">
+          <thead>
+            <tr>
+              <th scope="col">Province / territory</th>
+              <th scope="col">Authority</th>
+              <th scope="col">Drive on foreign licence for</th>
+              <th scope="col">Direct exchange countries</th>
+              <th scope="col">Otherwise</th>
+            </tr>
+          </thead>
+          <tbody>
+            {LICENCE_RULES.map((r) => (
+              <tr>
+                <th scope="row"><a href={`/drivers-licence/${r.slug}`}>{r.name}</a></th>
+                <td>{r.authority}</td>
+                <td><span class="cl-pill is-yes">{r.gracePeriod}</span></td>
+                <td>{r.reciprocalCountries.length}</td>
+                <td>{r.nonReciprocalSummary}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        The grace period starts when you become a resident of the province, not when you enter
+        Canada. Visitors on a tourist visa follow different rules.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="cards-h">
+      <h2 id="cards-h" class="cl-h2">Your province's guide</h2>
+      <ul class="cl-cards" role="list">
+        {LICENCE_RULES.map((r) => (
+          <li>
+            <a class="cl-card" href={`/drivers-licence/${r.slug}`}>
+              <span class="cl-card-title">{r.name}</span>
+              <span class="cl-pill is-yes">{r.gracePeriod} grace period</span>
+              <span class="cl-card-desc">{r.authority}. {r.reciprocalCountries.length} countries exchange directly.</span>
+              <span class="cl-card-go" aria-hidden="true">{r.shortName} rules &rarr;</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="steps-h">
+      <h2 id="steps-h" class="cl-h2">The process in every province, in short</h2>
+      <ol class="cl-steps">
+        <li><strong>Check the list.</strong> If your country has an agreement, book an appointment and bring your licence, ID, and proof of residency.</li>
+        <li><strong>Get a translation if needed.</strong> A licence that is not in English or French needs a certified translation almost everywhere.</li>
+        <li><strong>Prove your experience.</strong> A driving record or letter from your home licensing authority can skip part of the graduated licensing program.</li>
+        <li><strong>Take the tests.</strong> Vision and knowledge tests first, then one or more road tests, depending on your experience.</li>
+        <li><strong>Watch the deadline.</strong> Driving on a foreign licence after the grace period is driving without a valid licence.</li>
+      </ol>
+    </section>
+
+    <section class="cl-block" aria-labelledby="app-h">
+      <h2 id="app-h" class="cl-h2">Keep the deadline next to your other first-month tasks</h2>
+      <p class="cl-body">
+        The <a href="/">Unify newcomer settlement app</a> puts the licence deadline beside your
+        SIN, health card, and bank account steps, with answers from newcomers who did it last month.
+        It is free on iOS and the web.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Foreign licence exchange: common questions</h2>
+      <div class="cl-faq">
+        {LICENCE_HUB_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <CTABand />
+</BaseLayout>
