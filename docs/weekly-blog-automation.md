@@ -17,22 +17,27 @@ Credentials arrive as environment variables (already set on the routine):
    - Verify `/tmp/gsc-latest.json` exists and its `queries` array is non-empty.
    - If it fails or is empty: go to "On failure" with that error. Do NOT publish blind.
 
-2. **List existing posts:** `node scripts/list-post-slugs.mjs` (writes `/tmp/existing-posts.json`).
+2. **List existing posts:** `node scripts/list-post-slugs.mjs` (writes `/tmp/existing-posts.json`,
+   newest first, with `category` and `publishedAt`).
 
-3. **Pick ONE topic.** Read `/tmp/gsc-latest.json` and apply the opportunity logic
-   from `.claude/skills/creating-seo-blog-posts/SKILL.md`:
-   - **Expand:** clusters ranking near page 1 (position ~8-20) with impressions but no dedicated post.
-   - **Feed a hub first.** The site has three programmatic hubs that already rank for non-brand
-     queries: `/teer` (skilled jobs + PR), `/health-card` (provincial health coverage), and
-     `/drivers-licence` (foreign licence exchange). A topic that deepens one of these (a specific
-     occupation's PR path, one province's coverage edge case, one country's licence swap) beats
-     an unrelated topic of equal demand, because the post inherits the hub's authority and the
-     hub gains a spoke. Link the post to the hub page and to `/` (anchor: "newcomer settlement app").
-   - **Gap:** a strong adjacent theme we have NOT covered. A real gap will not appear in GSC,
-     so do a quick web search to confirm real demand and a winnable SERP
-     (NOT canada.ca/CRA/IRCC head-term dominated).
-   - Dedup against `/tmp/existing-posts.json` and the `/teer` cluster. Cross-link, do not cannibalize.
+3. **Pick ONE topic from the coverage map.** Read `docs/newcomer-coverage-map.md` and apply its
+   "Rules for the weekly automation". The goal is breadth: a Unify page for every practical
+   newcomer question, not more depth on topics that already rank. In order:
+   - **Gap first.** Take the highest-priority `gap` or `thin` row (P1, then P2) that
+     `/tmp/existing-posts.json` does not already cover. A real gap will not appear in GSC, so do a
+     quick web search to confirm real demand and a winnable SERP (NOT canada.ca/CRA/IRCC head-term
+     dominated). Use `/tmp/gsc-latest.json` to break ties and to phrase the title like real queries.
+   - **Spoke quota.** A spoke deepens a hub: `/teer` (skilled jobs + PR), `/health-card`,
+     `/drivers-licence`, `/credentials` (regulated professions), `/canadian-resume`. If any of the
+     three newest posts in `/tmp/existing-posts.json` is a spoke, this week MUST be a gap topic.
+     A spoke is allowed only when that check passes AND GSC shows a cluster near page 1
+     (position ~8-20) with impressions but no dedicated page.
+   - **No intent overlap.** Never write a post whose main question a hub page or an existing post
+     already answers (for example, no new "TEER 3 jobs list" post: `/teer/teer-3` owns it).
+     Cross-link to the owner instead.
+   - Link the post to the owner of the nearest topic and to `/` (anchor: "newcomer settlement app").
    - Choose a keyword-first, hyphenated `slug`. It MUST NOT match any slug in `/tmp/existing-posts.json`.
+   - Put the map row you filled (or "spoke: <hub>") in the notify email's `topicReason`.
 
 4. **Write the post JSON** to `/tmp/<slug>.json` in the shape documented in the skill,
    hitting the field targets: `title`, `seoTitle` (<=60 chars), `description` (140-160),

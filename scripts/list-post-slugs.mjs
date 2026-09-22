@@ -1,4 +1,5 @@
-// Read-only list of published blog post slugs + titles, for dedup during the
+// Read-only list of published blog posts (slug, title, category, publishedAt), newest
+// first, for dedup and the spoke-quota rule in docs/newcomer-coverage-map.md during the
 // weekly blog automation. No token required (published docs are public via CDN).
 //
 //   node scripts/list-post-slugs.mjs        # prints JSON, writes /tmp/existing-posts.json
@@ -11,8 +12,8 @@ import { writeFileSync } from 'node:fs';
 const client = createClient({ projectId: 'j4gu2dbr', dataset: 'production', apiVersion: '2024-01-01', useCdn: false });
 
 const query = `*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
-  "slug": slug.current, title
-} | order(title asc)`;
+  "slug": slug.current, title, category, publishedAt
+} | order(publishedAt desc)`;
 
 try {
   const posts = await client.fetch(query);
