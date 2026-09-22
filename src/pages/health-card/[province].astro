@@ -1,0 +1,170 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { HEALTH_PLANS, type HealthPlan } from "../../lib/health-coverage";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+export async function getStaticPaths() {
+  return HEALTH_PLANS.map((p) => ({ params: { province: p.slug }, props: { plan: p } }));
+}
+
+const { plan } = Astro.props as { plan: HealthPlan };
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const seoTitle = `${plan.shortName} Health Card for Newcomers: ${plan.planShort} Wait & Steps`;
+const seoDescription = plan.hasWait
+  ? `${plan.planShort} waiting period for newcomers to ${plan.name}: ${plan.waitingPeriod.toLowerCase()}. Who qualifies, how to stay covered in the gap, documents, and how to apply.`
+  : `${plan.planShort} has no waiting period for eligible newcomers to ${plan.name}. Who qualifies (PR, work permit, students), documents, and how to apply.`;
+const h1 = `${plan.name} Health Card for Newcomers: ${plan.planShort} Waiting Period & How to Apply`;
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Health Card by Province", item: "https://unifysocial.ca/health-card" },
+    { name: plan.name, item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(plan.faqs));
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} bodyBg="#ffffff">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/health-card">Health Card by Province</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{plan.name}</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">{plan.planName}</p>
+      <h1 class="cl-h1">{h1}</h1>
+      <p class="cl-lead" set:html={plan.lead} />
+    </header>
+
+    <aside class={`cl-verdict ${plan.hasWait ? "" : "is-good"}`} aria-label="At a glance">
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Waiting period</span>
+        <strong class="cl-verdict-value">{plan.waitingPeriod}</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Coverage starts</span>
+        <strong class="cl-verdict-value">{plan.coverageStarts}</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Run by</span>
+        <strong class="cl-verdict-value">{plan.administeredBy}</strong>
+      </div>
+    </aside>
+
+    <section class="cl-block" aria-labelledby="who-h">
+      <h2 id="who-h" class="cl-h2">Who can get a {plan.shortName} health card</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="who-h" tabindex="0">
+        <table class="cl-table">
+          <thead>
+            <tr>
+              <th scope="col">Your status</th>
+              <th scope="col">{plan.planShort} eligibility</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Permanent resident</th><td>{plan.permanentResidents}</td></tr>
+            <tr><th scope="row">Work permit holder</th><td>{plan.workPermitHolders}</td></tr>
+            <tr><th scope="row">International student</th><td>{plan.internationalStudents}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {plan.exemptions.length > 0 && (
+      <section class="cl-block" aria-labelledby="ex-h">
+        <h2 id="ex-h" class="cl-h2">Who skips the waiting period</h2>
+        <ul class="cl-list">
+          {plan.exemptions.map((e) => <li>{e}</li>)}
+        </ul>
+      </section>
+    )}
+
+    <section class="cl-block" aria-labelledby="how-h">
+      <h2 id="how-h" class="cl-h2">How to apply for {plan.planShort} as a newcomer</h2>
+      <ol class="cl-steps">
+        {plan.howToApply.map((s) => <li set:html={s} />)}
+      </ol>
+    </section>
+
+    <section class="cl-block" aria-labelledby="docs-h">
+      <h2 id="docs-h" class="cl-h2">Documents you need</h2>
+      <ul class="cl-list">
+        {plan.documents.map((d) => <li>{d}</li>)}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="gap-h">
+      <h2 id="gap-h" class="cl-h2">{plan.hasWait ? "How to stay covered during the wait" : "Before your card arrives"}</h2>
+      <p class="cl-body" set:html={plan.interimAdvice} />
+      {plan.changes && <p class="cl-body"><strong>Recent change:</strong> {plan.changes}</p>}
+    </section>
+
+    <section class="cl-block" aria-labelledby="guide-h">
+      <h2 id="guide-h" class="cl-h2">What this means for newcomers</h2>
+      <p class="cl-body" set:html={plan.newcomerGuidance} />
+      <p class="cl-body cl-app">
+        Your health card is one of the first tasks in the
+        <a href="/">Unify newcomer settlement app</a>. It keeps the application steps, the
+        documents, and your waiting-period end date in one checklist, free.
+      </p>
+      {plan.relatedPost && (
+        <a class="cl-related" href={`/blog/${plan.relatedPost.slug}`}>
+          <span class="cl-related-kicker">Related guide</span>
+          <span class="cl-related-title">{plan.relatedPost.label} &rarr;</span>
+        </a>
+      )}
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">{plan.planShort} for newcomers: common questions</h2>
+      <div class="cl-faq">
+        {plan.faqs.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <nav class="cl-siblings" aria-label="Health card by province">
+      <span class="cl-siblings-label">Health card by province</span>
+      <ul role="list">
+        {HEALTH_PLANS.map((p) => (
+          <li>
+            <a
+              href={`/health-card/${p.slug}`}
+              class={p.code === plan.code ? "is-current" : ""}
+              aria-current={p.code === plan.code ? "page" : undefined}
+            >
+              {p.shortName}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="cl-verified">
+      Checked against
+      <a href={plan.officialUrl} target="_blank" rel="noopener noreferrer"> {plan.officialLabel}</a>
+      in {plan.lastVerified}. Rules change; confirm with the plan before you rely on a date.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
