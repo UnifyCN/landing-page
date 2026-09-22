@@ -82,6 +82,11 @@ const breadcrumbLdStr = serializeLd(
     <section class="rd-section" aria-labelledby="rd-desc-heading">
       <h2 class="rd-section-title" id="rd-desc-heading">About this resource</h2>
       <p class="rd-p">{resource.description}</p>
+      {resource.relatedGuide && (
+        <p class="rd-p rd-guide">
+          Prefer to read? <a href={resource.relatedGuide.href}>{resource.relatedGuide.label} &rarr;</a>
+        </p>
+      )}
     </section>
 
     <!-- What you'll learn -->
@@ -272,6 +277,8 @@ const breadcrumbLdStr = serializeLd(
     color: var(--color-text);
     margin: 0;
   }
+  .rd-guide { margin-top: 0.85rem; }
+  .rd-guide a { color: var(--color-brand-red); font-weight: 600; }
 
   /* What you'll learn */
   .rd-list {

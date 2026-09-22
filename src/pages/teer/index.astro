@@ -123,6 +123,11 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
       <a class="teer-textlink" href={NOC_FINDER_URL} target="_blank" rel="noopener noreferrer">
         Find your NOC code on Canada.ca &rarr;
       </a>
+      <p class="teer-body teer-regulated">
+        Some TEER 0 to 3 jobs are regulated: nurses, engineers, teachers, electricians, and more
+        need a Canadian licence first. See
+        <a href="/credentials">how to get licensed in Canada, by profession</a>.
+      </p>
       <p class="teer-body teer-app">
         Once you know your TEER, the
         <a href="/">Unify newcomer settlement app</a> turns the PR steps that apply to you
@@ -332,6 +337,8 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
   }
 
   .teer-app { margin-top: 1.25rem; }
+  .teer-regulated { margin-top: 1.25rem; }
+  .teer-regulated a { color: var(--color-brand-red); }
   .teer-app a { color: var(--color-brand-red); font-weight: 600; }
   .teer-textlink {
     display: inline-block;

@@ -17,7 +17,7 @@ Blog content lives in Sanity (project `j4gu2dbr`, dataset `production`), rendere
    - **Fix opportunities:** pages with high impressions + low CTR (a title/snippet rewrite, not a new post).
    - **Expand opportunities:** clusters where we rank near page 1 but lack a dedicated post.
    - **Gap opportunities (new posts):** strong themes adjacent to ours that we have NOT covered. A genuine gap will NOT appear in GSC (no content = no impressions), so validate its demand with a web search and confirm the SERP is winnable (NOT government-dominated head terms - canada.ca/CRA/IRCC own those).
-2. **Propose + pick a topic.** Offer 2-3 data-backed ideas (AskUserQuestion) with demand evidence and winnability for each. Check the existing blog + the `/teer`, `/health-card`, and `/drivers-licence` clusters first and cross-link rather than cannibalize. Prefer a topic that deepens one of those hubs (a spoke) over an unrelated topic of equal demand; every post links to its hub and to `/` with the anchor "newcomer settlement app".
+2. **Propose + pick a topic.** Start from `docs/newcomer-coverage-map.md`: the goal is breadth (a Unify page for every practical newcomer question), so `gap` and `thin` rows come first, P1 before P2. Offer 2-3 data-backed ideas (AskUserQuestion) with demand evidence and winnability for each. Check the existing blog + the `/teer`, `/health-card`, `/drivers-licence`, `/credentials`, and `/canadian-resume` hubs first and cross-link rather than cannibalize. A spoke (a post that deepens a hub) is fine only when none of the three newest posts is a spoke, and never on an intent the hub already answers; every post links to the owner of the nearest topic and to `/` with the anchor "newcomer settlement app".
 3. **Write the post.** Match the existing blog voice: warm, human, editorial, practical. No em dashes (use hyphens). Ground claims in primary sources (canada.ca/CRA/IRCC, reputable surveys) and cite them. Hit the field targets below.
 4. **Generate a thumbnail.** Edit `EYEBROW` / `HEADLINE_LINES` / `OUT` in `scripts/generate-post-thumbnail.mjs` and run it; review the PNG. (Or use a supplied photo.)
 5. **Author the post JSON and create it.** Write a `<slug>.json` (shape below) and run `scripts/create-post.mjs` (dry-run, then `--commit`). It defaults to a DRAFT; pass `--publish` ONLY when the user has approved.
@@ -100,7 +100,8 @@ SANITY_WRITE_TOKEN="$(tr -d '[:space:]' < /tmp/stok)" node scripts/create-post.m
 - Title over 60 chars or not keyword-first (the reason the tax cluster underperformed).
 - Em dashes anywhere (project rule - use hyphens).
 - Inventing tax/immigration facts - verify against canada.ca and cite.
-- Cannibalizing an existing post - check the blog + `/teer` cluster and cross-link instead.
+- Cannibalizing an existing post or hub - check the blog and every hub in `docs/newcomer-coverage-map.md` and cross-link instead.
+- Writing another spoke for a hub that already ranks (TEER, health card, licence) when the coverage map still has P1 gaps.
 - Renaming a slug after publish without a redirect (bleeds equity).
 - Reusing a `publishedAt` timestamp (ambiguous featured slot).
 - Omitting `description` from the JSON - it is the required field (`seoDescription` is only an optional override).

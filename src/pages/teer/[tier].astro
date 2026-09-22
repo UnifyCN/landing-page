@@ -5,6 +5,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { TEER_TIERS, NOC_FINDER_URL, type TeerTier } from "../../lib/teer";
 import { unitGroupsForTeer } from "../../lib/noc-2021";
+import { credentialForNoc } from "../../lib/credentials";
 import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 
 export async function getStaticPaths() {
@@ -83,12 +84,18 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
             </tr>
           </thead>
           <tbody>
-            {tier.occupations.map((o) => (
-              <tr>
-                <td class="td-noc">{o.noc}</td>
-                <td>{o.title}</td>
-              </tr>
-            ))}
+            {tier.occupations.map((o) => {
+              const lic = credentialForNoc(o.noc);
+              return (
+                <tr>
+                  <td class="td-noc">{o.noc}</td>
+                  <td>
+                    {o.title}
+                    {lic && <a class="td-lic" href={`/credentials/${lic.slug}`}>Trained abroad? How to get licensed</a>}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -115,12 +122,18 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
             </tr>
           </thead>
           <tbody>
-            {allOccupations.map((o) => (
-              <tr>
-                <td class="td-noc">{o.noc}</td>
-                <td>{o.title}</td>
-              </tr>
-            ))}
+            {allOccupations.map((o) => {
+              const lic = credentialForNoc(o.noc);
+              return (
+                <tr>
+                  <td class="td-noc">{o.noc}</td>
+                  <td>
+                    {o.title}
+                    {lic && <a class="td-lic" href={`/credentials/${lic.slug}`}>Trained abroad? How to get licensed</a>}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -301,6 +314,14 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
   .td-table tbody tr:last-child td { border-bottom: none; }
   .td-noc { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-text); white-space: nowrap; }
   .td-table-wrap--tall { max-height: 32rem; overflow-y: auto; }
+  .td-lic {
+    display: block;
+    margin-top: 0.2rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-brand-red);
+  }
   .td-table-wrap--tall thead th { position: sticky; top: 0; z-index: 1; }
   .td-app { margin-top: 1rem; }
   .td-app a { color: var(--color-brand-red); font-weight: 600; }

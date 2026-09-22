@@ -1,0 +1,209 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/sections/CTABand.astro";
+import {
+  RESUME_INCLUDE,
+  RESUME_LEAVE_OUT,
+  RESUME_SECTIONS,
+  RESUME_REWRITES,
+  RESUME_NEWCOMER_TIPS,
+  RESUME_FAQS,
+  RESUME_SOURCES,
+  RESUME_LAST_VERIFIED,
+  JOB_BANK_RESUME_BUILDER,
+} from "../lib/canadian-resume";
+import { breadcrumbLd, faqLd, serializeLd } from "../lib/seo";
+import "../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Canadian Resume Format", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(RESUME_FAQS));
+---
+
+<BaseLayout
+  title="Canadian Resume Format for Newcomers: What to Include (2026)"
+  description="How to write a Canadian resume as a newcomer: 1 to 2 pages, no photo or age, results instead of duties, and how to show foreign degrees, jobs, and licences."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Canadian Resume Format</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Jobs &amp; careers</p>
+      <h1 class="cl-h1">Canadian Resume Format: How to Write a Resume for Jobs in Canada as a Newcomer</h1>
+      <p class="cl-lead">
+        A Canadian resume is <strong>one to two pages, most recent job first, with no photo, age,
+        or marital status</strong>. It opens with a short summary and shows results, not duties.
+        As a newcomer, also state that you can work in Canada, give the Canadian equivalent of
+        your degree, and add one line of context for employers Canadians do not know.
+      </p>
+    </header>
+
+    <aside class="cl-verdict" aria-label="At a glance">
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Length</span>
+        <strong class="cl-verdict-value">1 to 2 pages</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Photo, age, SIN</span>
+        <strong class="cl-verdict-value">Leave them out</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Order</span>
+        <strong class="cl-verdict-value">Most recent job first</strong>
+      </div>
+    </aside>
+
+    <section class="cl-block" aria-labelledby="inc-h">
+      <h2 id="inc-h" class="cl-h2">What to include on a Canadian resume, and what to leave out</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="inc-h" tabindex="0">
+        <table class="cl-table cl-table--fit">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            {RESUME_INCLUDE.map((r) => (
+              <tr>
+                <th scope="row"><span class="cl-row-label">{r.item}</span><span class="cl-pill is-yes">Include</span></th>
+                <td>{r.note}</td>
+              </tr>
+            ))}
+            {RESUME_LEAVE_OUT.map((r) => (
+              <tr>
+                <th scope="row"><span class="cl-row-label">{r.item}</span><span class="cl-pill is-no">Leave out</span></th>
+                <td>{r.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cl-block" aria-labelledby="sec-h">
+      <h2 id="sec-h" class="cl-h2">The sections of a Canadian resume, in order</h2>
+      <ol class="cl-steps">
+        {RESUME_SECTIONS.map((s) => (
+          <li><strong>{s.title}.</strong> <span set:html={s.body} /></li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="cl-block" aria-labelledby="rw-h">
+      <h2 id="rw-h" class="cl-h2">Show results, not duties: before and after</h2>
+      <p class="cl-body">
+        This is the change most newcomer resumes need. Job Bank asks for numbers: how many people,
+        how much money, how much time. Each bullet should say what changed because you were there.
+      </p>
+      <ul class="cl-rewrites" role="list">
+        {RESUME_REWRITES.map((r) => (
+          <li class="cl-rewrite">
+            <div class="cl-rewrite-row">
+              <span class="cl-rewrite-label">Before</span>
+              <span class="cl-rewrite-before">{r.before}</span>
+            </div>
+            <div class="cl-rewrite-row">
+              <span class="cl-rewrite-label">After</span>
+              <span class="cl-rewrite-after">{r.after}</span>
+            </div>
+            <div class="cl-rewrite-row">
+              <span class="cl-rewrite-label">Why</span>
+              <span class="cl-rewrite-why">{r.why}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="new-h">
+      <h2 id="new-h" class="cl-h2">How to show foreign experience and education</h2>
+      <ul class="cl-list">
+        {RESUME_NEWCOMER_TIPS.map((t) => (
+          <li><strong>{t.title}.</strong> <span set:html={t.body} /></li>
+        ))}
+      </ul>
+      <p class="cl-body">
+        In a regulated job (nursing, engineering, teaching, the trades), employers check your
+        licence before your resume. See
+        <a href="/credentials">how to get licensed in Canada, by profession and province</a>.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="ats-h">
+      <h2 id="ats-h" class="cl-h2">Resume screening software and AI</h2>
+      <p class="cl-body">
+        Many employers screen resumes with software before a person reads them. In Ontario, since
+        January 1, 2026, a public job posting must say if the employer uses artificial intelligence
+        to screen applicants. To get through a screen: use a plain one-column layout, standard
+        headings ("Work experience", "Education"), no text inside images or tables, and the same
+        words the posting uses for skills and job titles. Send the file type the posting asks for.
+      </p>
+      <p class="cl-body">
+        The government's free
+        <a href={JOB_BANK_RESUME_BUILDER} target="_blank" rel="noopener noreferrer">Job Bank resume builder</a>
+        gives you a plain, standard layout to start from.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="guide-h">
+      <h2 id="guide-h" class="cl-h2">Your resume is one step of the job search</h2>
+      <p class="cl-body">
+        Many jobs in Canada are filled through people you know, so a strong resume works best with
+        a network and some local experience. Volunteer work counts, and settlement agencies run
+        free resume reviews.
+      </p>
+      <p class="cl-body cl-app">
+        The <a href="/">Unify newcomer settlement app</a> puts your job search next to your other
+        first steps (SIN, bank account, health card) in one free checklist, with answers from
+        newcomers who did it before you.
+      </p>
+      <a class="cl-related" href="/resources/how-to-write-a-resume">
+        <span class="cl-related-kicker">Watch the video</span>
+        <span class="cl-related-title">How to write a resume for Canadian jobs, with a career coach &rarr;</span>
+      </a>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Canadian resumes: common questions</h2>
+      <div class="cl-faq">
+        {RESUME_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="cl-verified">
+      Checked against
+      {RESUME_SOURCES.map((s, i) => (
+        <>
+          <a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a>{i < RESUME_SOURCES.length - 1 ? "; " : ""}
+        </>
+      ))}
+      in {RESUME_LAST_VERIFIED}.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
