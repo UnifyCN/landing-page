@@ -17,6 +17,10 @@ const routes = [
   "/health-card/ontario",
   "/drivers-licence",
   "/drivers-licence/british-columbia",
+  "/credentials",
+  "/credentials/registered-nurse",
+  "/credentials/engineer",
+  "/canadian-resume",
 ];
 
 for (const route of routes) {
