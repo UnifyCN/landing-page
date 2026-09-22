@@ -161,3 +161,9 @@ export const RESUME_SOURCES: { label: string; url: string }[] = [
 ];
 
 export const JOB_BANK_RESUME_BUILDER = "https://www.jobbank.gc.ca/findajob/resume-builder";
+
+// Unify web app tools, linked from the top of the guide. Both need a sign-in; the
+// app's auth redirect keeps the query string, so the UTMs reach PostHog either way.
+const APP_UTM = "utm_source=unifysocial.ca&utm_medium=referral&utm_campaign=canadian-resume";
+export const UNIFY_RESUME_BUILDER = `https://app.unifysocial.ca/resume?${APP_UTM}`;
+export const UNIFY_COVER_LETTER = `https://app.unifysocial.ca/cover-letter?${APP_UTM}`;
