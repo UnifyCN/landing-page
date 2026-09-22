@@ -1,5 +1,5 @@
 /* Shared styles for programmatic "guide cluster" pages
-   (/health-card, /drivers-licence hubs + province pages).
+   (/health-card, /drivers-licence, /credentials hubs + detail pages, /canadian-resume).
    Imported per page from the page frontmatter. Mirrors the /teer look. */
 
 .cl {
@@ -97,7 +97,7 @@
   color: var(--color-muted);
   margin: 0;
 }
-.cl-body + .cl-body { margin-top: 0.85rem; }
+.cl-body + .cl-body, .cl-list + .cl-body { margin-top: 0.85rem; }
 .cl-body a, .cl-list a { color: var(--color-brand-red); }
 .cl-list {
   margin: 0.5rem 0 0;
@@ -135,6 +135,7 @@
   place-items: center;
 }
 .cl-steps strong { color: var(--color-text); }
+.cl-steps a { color: var(--color-brand-red); }
 
 /* Tables */
 .cl-table-wrap {
@@ -165,6 +166,36 @@
 .cl-table tbody th { font-weight: 600; white-space: nowrap; }
 .cl-table tbody th a { color: var(--color-text); text-decoration: none; }
 .cl-table tbody th a:hover { color: var(--color-brand-red); }
+.cl-table a { color: var(--color-brand-red); }
+/* Tables that must fit a phone with no sideways scroll: 2-3 columns with long row labels. */
+.cl-table--fit { min-width: 0; }
+.cl-table--fit tbody th { white-space: normal; width: 38%; }
+.cl-row-label { display: block; }
+.cl-row-label + .cl-pill { margin-top: 0.4rem; }
+.cl-row-sub {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.cl-table tbody th a.cl-row-sub { color: var(--color-brand-red); }
+@media (max-width: 480px) {
+  .cl-table--fit th, .cl-table--fit td { padding: 0.7rem 0.75rem; }
+}
+/* Hub tables whose extra columns repeat in the cards below: drop them on phones so the table fits. */
+@media (max-width: 600px) {
+  .cl-table--hub { min-width: 0; }
+  .cl-table--hub .cl-col-extra { display: none; }
+  .cl-table--hub tbody th { white-space: normal; }
+}
+.cl-cell-note {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
 .cl-pill {
   display: inline-block;
   font-family: var(--font-ui);
@@ -184,6 +215,38 @@
   color: var(--color-muted);
 }
 .cl-microcopy a { color: var(--color-brand-red); }
+
+/* Before/after rewrite cards */
+.cl-rewrites { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.9rem; }
+.cl-rewrite {
+  border: 1px solid rgba(23, 22, 22, 0.12);
+  border-radius: var(--radius-cta);
+  padding: 1rem 1.25rem;
+}
+.cl-rewrite-row {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr);
+  gap: 0.75rem;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
+  line-height: 1.55;
+}
+.cl-rewrite-row + .cl-rewrite-row { margin-top: 0.55rem; }
+.cl-rewrite-label {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  padding-top: 0.2rem;
+}
+.cl-rewrite-before {
+  color: var(--color-muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(216, 74, 41, 0.45);
+}
+.cl-rewrite-after { color: var(--color-text); font-weight: 600; }
+.cl-rewrite-why { color: var(--color-muted); }
 
 /* Cards grid (hub) */
 .cl-cards {

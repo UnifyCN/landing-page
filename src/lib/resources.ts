@@ -16,6 +16,8 @@ export interface Resource {
   whatYoullLearn: string[];
   thumbnail?: string;
   youtubeId?: string;
+  /** Written guide on the same topic; the video page links to it so the two do not compete. */
+  relatedGuide?: { href: string; label: string };
   order: number;
 }
 
@@ -39,6 +41,7 @@ export const resources: Resource[] = [
     ],
     thumbnail: "/assets/images/resources/resume.avif",
     youtubeId: "LEujpyShXaw",
+    relatedGuide: { href: "/canadian-resume", label: "Canadian resume format for newcomers: the full written guide" },
     order: 1,
   },
   {
