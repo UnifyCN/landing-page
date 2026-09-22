@@ -11,7 +11,8 @@ the weekly blog automation picks from. See "Rules for the weekly automation" at 
 
 Evidence column: Search Console, last 3 months to 2026-09-19 (impressions, average position).
 Baseline on that date: 251 of 1,128 clicks (22%) went to pages other than TEER and brand pages.
-That share is the breadth metric. Re-check it monthly.
+That share is the breadth metric. Re-check it monthly. The AI-assistant side is measured in
+[`ai-visibility-baseline.md`](ai-visibility-baseline.md) (20 fixed questions, three engines).
 
 ## Status legend
 
