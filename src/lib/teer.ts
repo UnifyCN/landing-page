@@ -25,11 +25,8 @@ export interface TeerFaq {
 export interface TeerTier {
   tier: 0 | 1 | 2 | 3 | 4 | 5;
   slug: string;
-  /** SERP <title>, kept under 60 chars. */
-  seoTitle: string;
-  /** Meta description, 140-160 chars. */
-  seoDescription: string;
-  h1: string;
+  /** Short label of the tier's typical roles, used in the <title>/H1 built by the page. */
+  roleLabel: string;
   /** Answer-first 40-60 word lead block (AEO-extractable). */
   lead: string;
   skillLevel: "High-skilled" | "Lower-skilled";
@@ -50,10 +47,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 0,
     slug: "teer-0",
-    seoTitle: "TEER 0 Jobs in Canada: Management & PR Eligibility",
-    seoDescription:
-      "TEER 0 covers management jobs in Canada and is high-skilled and Express Entry eligible. See example TEER 0 occupations, NOC codes, and PR pathways.",
-    h1: "TEER 0 Jobs in Canada: Management Occupations & PR Eligibility",
+    roleLabel: "Management",
     lead: "TEER 0 covers management occupations in Canada, such as restaurant, financial, and engineering managers. These roles direct organizations, departments, or teams. TEER 0 is high-skilled, so experience in a TEER 0 job can qualify you for Canadian permanent residency through Express Entry.",
     skillLevel: "High-skilled",
     expressEntryEligible: true,
@@ -86,10 +80,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 1,
     slug: "teer-1",
-    seoTitle: "TEER 1 Jobs in Canada: Degree Roles & PR Eligibility",
-    seoDescription:
-      "TEER 1 occupations usually need a university degree and are Express Entry eligible. See example TEER 1 jobs, NOC codes, and Canadian PR pathways.",
-    h1: "TEER 1 Jobs in Canada: University-Degree Roles & PR Eligibility",
+    roleLabel: "Degree Roles",
     lead: "TEER 1 occupations usually require a university degree, such as software engineers, registered nurses, accountants, and lawyers. TEER 1 is high-skilled and Express Entry eligible, making it one of the strongest categories for Canadian permanent residency.",
     skillLevel: "High-skilled",
     expressEntryEligible: true,
@@ -126,10 +117,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 2,
     slug: "teer-2",
-    seoTitle: "TEER 2 Jobs in Canada: Diploma, Trades & PR",
-    seoDescription:
-      "TEER 2 covers college, apprenticeship, and supervisory jobs in Canada and is Express Entry eligible. See example TEER 2 occupations, NOC codes, and PR pathways.",
-    h1: "TEER 2 Jobs in Canada: College, Trades & Supervisory Roles",
+    roleLabel: "Trades & Diploma Roles",
     lead: "TEER 2 occupations usually require a college diploma, an apprenticeship of two or more years, or carry supervisory responsibility. Examples include electricians, licensed practical nurses, and police officers. TEER 2 is high-skilled and Express Entry eligible.",
     skillLevel: "High-skilled",
     expressEntryEligible: true,
@@ -162,10 +150,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 3,
     slug: "teer-3",
-    seoTitle: "TEER 3 Jobs in Canada: Examples, NOC & PR Eligibility",
-    seoDescription:
-      "TEER 3 jobs need a short college program or 6+ months of training and are Express Entry eligible. See example TEER 3 occupations, NOC codes, and PR pathways.",
-    h1: "TEER 3 Jobs in Canada: Examples, NOC Codes & PR Eligibility",
+    roleLabel: "Skilled Roles",
     lead: "TEER 3 occupations usually require a short college program, an apprenticeship under two years, or more than six months of on-the-job training. Examples include cooks, transport truck drivers, and dental assistants. TEER 3 is high-skilled and Express Entry eligible.",
     skillLevel: "High-skilled",
     expressEntryEligible: true,
@@ -202,10 +187,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 4,
     slug: "teer-4",
-    seoTitle: "TEER 4 Jobs in Canada: PR Pathways & Examples",
-    seoDescription:
-      "TEER 4 jobs need a high school diploma or weeks of training and are not Express Entry eligible. See example TEER 4 occupations, NOC codes, and other PR pathways.",
-    h1: "TEER 4 Jobs in Canada: Examples & PR Pathways",
+    roleLabel: "Entry-Level Roles",
     lead: "TEER 4 occupations usually require a high school diploma or a few weeks of on-the-job training, such as retail salespersons, home support workers, and data entry clerks. TEER 4 is lower-skilled and is not eligible for Express Entry, but some provincial and sector programs offer PR pathways.",
     skillLevel: "Lower-skilled",
     expressEntryEligible: false,
@@ -242,10 +224,7 @@ export const TEER_TIERS: TeerTier[] = [
   {
     tier: 5,
     slug: "teer-5",
-    seoTitle: "TEER 5 Jobs in Canada: PR Pathways & Examples",
-    seoDescription:
-      "TEER 5 jobs need no formal education and are not Express Entry eligible. See example TEER 5 occupations, NOC codes, and the PR pathways that may still apply.",
-    h1: "TEER 5 Jobs in Canada: Examples & PR Pathways",
+    roleLabel: "Entry-Level Roles",
     lead: "TEER 5 occupations need only short work demonstration and no formal education, such as cashiers, food and beverage servers, and labourers. TEER 5 is the lowest-skilled category and is not eligible for Express Entry, though some provincial and sector programs may still lead to PR.",
     skillLevel: "Lower-skilled",
     expressEntryEligible: false,

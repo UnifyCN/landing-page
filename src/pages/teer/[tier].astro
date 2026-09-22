@@ -4,6 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { TEER_TIERS, NOC_FINDER_URL, type TeerTier } from "../../lib/teer";
+import { unitGroupsForTeer } from "../../lib/noc-2021";
 import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 
 export async function getStaticPaths() {
@@ -12,6 +13,16 @@ export async function getStaticPaths() {
 
 const { tier } = Astro.props as { tier: TeerTier };
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+// Full official list for this tier (NOC 2021 V1.0). The search demand for these
+// pages is list-shaped ("teer 3 jobs list in canada"), so the title, H1 and
+// description all promise the complete list and state its size.
+const allOccupations = unitGroupsForTeer(tier.tier);
+const count = allOccupations.length;
+const exampleTitles = tier.occupations.slice(0, 2).map((o) => o.title.toLowerCase()).join(", ");
+const seoTitle = `TEER ${tier.tier} Jobs List in Canada: ${count} NOC Codes & PR Eligibility`;
+const seoDescription = `All ${count} TEER ${tier.tier} jobs in Canada with NOC 2021 codes, and whether TEER ${tier.tier} qualifies for Express Entry and PR. Includes ${exampleTitles}, and more.`;
+const h1 = `TEER ${tier.tier} Jobs List in Canada: All ${count} NOC Codes & PR Eligibility`;
 
 const breadcrumbLdStr = serializeLd(
   breadcrumbLd([
@@ -23,7 +34,7 @@ const breadcrumbLdStr = serializeLd(
 const faqLdStr = serializeLd(faqLd(tier.faqs));
 ---
 
-<BaseLayout title={tier.seoTitle} description={tier.seoDescription} bodyBg="#ffffff">
+<BaseLayout title={seoTitle} description={seoDescription} bodyBg="#ffffff">
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
@@ -40,7 +51,7 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
 
     <header class="td-hero">
       <p class="td-eyebrow">TEER {tier.tier} &middot; {tier.skillLevel}</p>
-      <h1 class="td-h1">{tier.h1}</h1>
+      <h1 class="td-h1">{h1}</h1>
       <p class="td-lead">{tier.lead}</p>
     </header>
 
@@ -88,9 +99,46 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
       </p>
     </section>
 
+    <!-- Complete official list for this tier -->
+    <section class="td-block" aria-labelledby="all-h" id="full-list">
+      <h2 id="all-h" class="td-h2">Full list of TEER {tier.tier} jobs in Canada ({count} NOC codes)</h2>
+      <p class="td-body">
+        Every NOC 2021 unit group in TEER {tier.tier}, in code order. Job titles inside a unit
+        group can vary; the code is what an immigration application uses.
+      </p>
+      <div class="td-table-wrap td-table-wrap--tall" role="region" aria-labelledby="all-h" tabindex="0">
+        <table class="td-table">
+          <thead>
+            <tr>
+              <th scope="col">NOC 2021 code</th>
+              <th scope="col">Unit group (occupation)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allOccupations.map((o) => (
+              <tr>
+                <td class="td-noc">{o.noc}</td>
+                <td>{o.title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="td-microcopy">
+        Source: Statistics Canada, NOC 2021 Version 1.0 classification structure ({count} unit
+        groups in TEER {tier.tier}). Confirm your exact code with the
+        <a href={NOC_FINDER_URL} target="_blank" rel="noopener noreferrer"> official NOC tool</a>.
+      </p>
+    </section>
+
     <section class="td-block" aria-labelledby="guide-h">
       <h2 id="guide-h" class="td-h2">What this means for newcomers</h2>
       <p class="td-body">{tier.newcomerGuidance}</p>
+      <p class="td-body td-app">
+        Tracking your NOC code, work permit dates, and PR steps is easier with a
+        <a href="/">free newcomer settlement app for Canada</a>. Unify keeps your checklist,
+        documents, and questions in one place.
+      </p>
       {tier.relatedPost && (
         <a class="td-related" href={`/blog/${tier.relatedPost.slug}`}>
           <span class="td-related-kicker">Related guide</span>
@@ -252,6 +300,10 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
   }
   .td-table tbody tr:last-child td { border-bottom: none; }
   .td-noc { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-text); white-space: nowrap; }
+  .td-table-wrap--tall { max-height: 32rem; overflow-y: auto; }
+  .td-table-wrap--tall thead th { position: sticky; top: 0; z-index: 1; }
+  .td-app { margin-top: 1rem; }
+  .td-app a { color: var(--color-brand-red); font-weight: 600; }
   .td-microcopy {
     margin: 0.85rem 0 0;
     font-size: 0.85rem;

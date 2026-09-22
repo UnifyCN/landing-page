@@ -1,0 +1,143 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { HEALTH_PLANS, HEALTH_HUB_FAQS } from "../../lib/health-coverage";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const noWait = HEALTH_PLANS.filter((p) => !p.hasWait);
+const withWait = HEALTH_PLANS.filter((p) => p.hasWait);
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Health Card by Province", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(HEALTH_HUB_FAQS));
+---
+
+<BaseLayout
+  title="Health Card Waiting Period by Province for Newcomers (2026)"
+  description="Which provinces make newcomers wait up to 3 months for public health coverage and which cover you from day one. Every province and territory, with how to apply."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Health Card by Province</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Healthcare for newcomers</p>
+      <h1 class="cl-h1">Health Card Waiting Periods for Newcomers, Province by Province</h1>
+      <p class="cl-lead">
+        Public health insurance in Canada is run by each province and territory, so the wait
+        before a newcomer is covered depends on where you land.
+        <strong>{noWait.length} of 13 jurisdictions cover eligible newcomers with no waiting period</strong>;
+        the other {withWait.length} make most new arrivals wait up to about three months. Pick your
+        province below for the exact rule, who is exempt, and how to apply.
+      </p>
+    </header>
+
+    <section class="cl-block" aria-labelledby="compare-h">
+      <h2 id="compare-h" class="cl-h2">Waiting period by province and territory</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="compare-h" tabindex="0">
+        <table class="cl-table">
+          <thead>
+            <tr>
+              <th scope="col">Province / territory</th>
+              <th scope="col">Plan</th>
+              <th scope="col">Waiting period</th>
+              <th scope="col">Work permit holders</th>
+              <th scope="col">International students</th>
+            </tr>
+          </thead>
+          <tbody>
+            {HEALTH_PLANS.map((p) => (
+              <tr>
+                <th scope="row"><a href={`/health-card/${p.slug}`}>{p.name}</a></th>
+                <td>{p.planShort}</td>
+                <td>
+                  <span class={`cl-pill ${p.hasWait ? "is-no" : "is-yes"}`}>{p.waitingPeriod}</span>
+                </td>
+                <td>{p.workPermitSummary}</td>
+                <td>{p.studentSummary}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        "Waiting period" is the gap between the day you establish residency and the day public
+        coverage starts. Private newcomer insurance or an employer plan can cover the gap.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="none-h">
+      <h2 id="none-h" class="cl-h2">Provinces with no waiting period for newcomers</h2>
+      <p class="cl-body">
+        {noWait.map((p) => p.name).join(", ")}. In these places eligible permanent residents and
+        most work permit holders are covered from the day they apply or establish residency, as
+        long as they apply promptly. Apply in your first week.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="wait-h">
+      <h2 id="wait-h" class="cl-h2">Provinces with a waiting period</h2>
+      <p class="cl-body">
+        {withWait.map((p) => `${p.name} (${p.waitingPeriod.toLowerCase()})`).join(", ")}. Apply
+        as soon as you arrive anyway: the clock runs from your arrival date, not your application
+        date, and the card is ready when the wait ends.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="cards-h">
+      <h2 id="cards-h" class="cl-h2">Your province's guide</h2>
+      <ul class="cl-cards" role="list">
+        {HEALTH_PLANS.map((p) => (
+          <li>
+            <a class="cl-card" href={`/health-card/${p.slug}`}>
+              <span class="cl-card-title">{p.name}</span>
+              <span class={`cl-pill ${p.hasWait ? "is-no" : "is-yes"}`}>{p.waitingPeriod}</span>
+              <span class="cl-card-desc">{p.planName}. {p.coverageStarts}.</span>
+              <span class="cl-card-go" aria-hidden="true">{p.planShort} for newcomers &rarr;</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="app-h">
+      <h2 id="app-h" class="cl-h2">Do not lose track of the date</h2>
+      <p class="cl-body">
+        The most common newcomer mistake is applying late and stretching the gap. The
+        <a href="/">Unify newcomer settlement app</a> puts your health card, SIN, bank account, and
+        driver's licence in one checklist with the dates that matter, and it is free.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Health coverage for newcomers: common questions</h2>
+      <div class="cl-faq">
+        {HEALTH_HUB_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <CTABand />
+</BaseLayout>

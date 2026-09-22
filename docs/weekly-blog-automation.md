@@ -22,6 +22,12 @@ Credentials arrive as environment variables (already set on the routine):
 3. **Pick ONE topic.** Read `/tmp/gsc-latest.json` and apply the opportunity logic
    from `.claude/skills/creating-seo-blog-posts/SKILL.md`:
    - **Expand:** clusters ranking near page 1 (position ~8-20) with impressions but no dedicated post.
+   - **Feed a hub first.** The site has three programmatic hubs that already rank for non-brand
+     queries: `/teer` (skilled jobs + PR), `/health-card` (provincial health coverage), and
+     `/drivers-licence` (foreign licence exchange). A topic that deepens one of these (a specific
+     occupation's PR path, one province's coverage edge case, one country's licence swap) beats
+     an unrelated topic of equal demand, because the post inherits the hub's authority and the
+     hub gains a spoke. Link the post to the hub page and to `/` (anchor: "newcomer settlement app").
    - **Gap:** a strong adjacent theme we have NOT covered. A real gap will not appear in GSC,
      so do a quick web search to confirm real demand and a winnable SERP
      (NOT canada.ca/CRA/IRCC head-term dominated).

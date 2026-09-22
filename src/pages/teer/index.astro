@@ -18,8 +18,8 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
 ---
 
 <BaseLayout
-  title="What Is TEER? Canada's NOC Categories & PR Eligibility"
-  description="TEER is how Canada's NOC ranks jobs into six categories. TEER 0-3 are high-skilled and Express Entry eligible; TEER 4-5 are not. See the full breakdown."
+  title="TEER Categories & Jobs List: Which TEER Is Eligible for PR"
+  description="What TEER means in Canada's NOC, which TEER is eligible for Express Entry and PR, and the full jobs list for every category from TEER 0 to TEER 5."
   bodyBg="#ffffff"
 >
   <Fragment slot="head">
@@ -106,7 +106,7 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
                 {t.expressEntryEligible ? "Express Entry eligible" : "Not Express Entry eligible"}
               </span>
               <span class="teer-card-desc">{t.lead.split(".")[0]}.</span>
-              <span class="teer-card-go" aria-hidden="true">View TEER {t.tier} jobs &rarr;</span>
+              <span class="teer-card-go" aria-hidden="true">Full TEER {t.tier} jobs list &rarr;</span>
             </a>
           </li>
         ))}
@@ -123,6 +123,11 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
       <a class="teer-textlink" href={NOC_FINDER_URL} target="_blank" rel="noopener noreferrer">
         Find your NOC code on Canada.ca &rarr;
       </a>
+      <p class="teer-body teer-app">
+        Once you know your TEER, the
+        <a href="/">Unify newcomer settlement app</a> turns the PR steps that apply to you
+        into a checklist, with reminders and answers from other newcomers in Canada.
+      </p>
     </section>
 
     <!-- FAQ -->
@@ -326,6 +331,8 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
     color: var(--color-brand-red);
   }
 
+  .teer-app { margin-top: 1.25rem; }
+  .teer-app a { color: var(--color-brand-red); font-weight: 600; }
   .teer-textlink {
     display: inline-block;
     margin-top: 1.1rem;

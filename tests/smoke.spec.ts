@@ -13,6 +13,10 @@ const routes = [
   "/blog",
   "/teer",
   "/teer/teer-3",
+  "/health-card",
+  "/health-card/ontario",
+  "/drivers-licence",
+  "/drivers-licence/british-columbia",
 ];
 
 for (const route of routes) {

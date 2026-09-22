@@ -1,0 +1,169 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { LICENCE_RULES, type LicenceRule } from "../../lib/licence-exchange";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+export async function getStaticPaths() {
+  return LICENCE_RULES.map((r) => ({ params: { province: r.slug }, props: { rule: r } }));
+}
+
+const { rule } = Astro.props as { rule: LicenceRule };
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+const seoTitle = `${rule.shortName} Driver's Licence Exchange for Newcomers: 2026 Rules`;
+const seoDescription = `Exchange a foreign driver's licence in ${rule.name}: grace period ${rule.gracePeriod.toLowerCase()}, the ${rule.reciprocalCountries.length} jurisdictions ${rule.authority} swaps without a road test, and the tests for everyone else.`;
+const h1 = `Exchanging a Foreign Driver's Licence in ${rule.name}: Countries, Tests & Deadlines`;
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Driver's Licence by Province", item: "https://unifysocial.ca/drivers-licence" },
+    { name: rule.name, item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(rule.faqs));
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} bodyBg="#ffffff">
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/drivers-licence">Driver's Licence by Province</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{rule.name}</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">{rule.authority}</p>
+      <h1 class="cl-h1">{h1}</h1>
+      <p class="cl-lead" set:html={rule.lead} />
+    </header>
+
+    <aside class="cl-verdict" aria-label="At a glance">
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Drive on your foreign licence for</span>
+        <strong class="cl-verdict-value">{rule.gracePeriod}</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Direct exchange countries</span>
+        <strong class="cl-verdict-value">{rule.reciprocalCountries.length}</strong>
+      </div>
+      <div class="cl-verdict-item">
+        <span class="cl-verdict-label">Licensing authority</span>
+        <strong class="cl-verdict-value">{rule.authority}</strong>
+      </div>
+    </aside>
+
+    <section class="cl-block" aria-labelledby="rec-h">
+      <h2 id="rec-h" class="cl-h2">Countries with a licence exchange agreement in {rule.shortName}</h2>
+      <p class="cl-body">
+        If your licence is from one of these places, {rule.authority} swaps it for a full
+        {rule.shortName} licence without a road test (a vision test and a fee still apply).
+      </p>
+      <div class="cl-table-wrap" role="region" aria-labelledby="rec-h" tabindex="0">
+        <table class="cl-table">
+          <thead>
+            <tr>
+              <th scope="col">Country / jurisdiction</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rule.reciprocalCountries.map((c) => (
+              <tr>
+                <th scope="row">{c.name}</th>
+                <td>{c.note ?? "Full exchange"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        All Canadian provinces and territories exchange with each other. Lists change; the
+        <a href={rule.officialUrl} target="_blank" rel="noopener noreferrer"> {rule.authority} page</a>
+        is the final word.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="non-h">
+      <h2 id="non-h" class="cl-h2">If your country is not on the list</h2>
+      <ol class="cl-steps">
+        {rule.nonReciprocalSteps.map((s) => <li set:html={s} />)}
+      </ol>
+      {rule.experienceCredit && (
+        <p class="cl-body"><strong>Experience credit:</strong> {rule.experienceCredit}</p>
+      )}
+    </section>
+
+    <section class="cl-block" aria-labelledby="docs-h">
+      <h2 id="docs-h" class="cl-h2">Documents to bring</h2>
+      <ul class="cl-list">
+        {rule.documents.map((d) => <li>{d}</li>)}
+      </ul>
+      {rule.fees && <p class="cl-body"><strong>Fees:</strong> {rule.fees}</p>}
+    </section>
+
+    <section class="cl-block" aria-labelledby="guide-h">
+      <h2 id="guide-h" class="cl-h2">What this means for newcomers</h2>
+      <p class="cl-body" set:html={rule.newcomerGuidance} />
+      {rule.changes && <p class="cl-body"><strong>Recent change:</strong> {rule.changes}</p>}
+      <p class="cl-body cl-app">
+        Book the knowledge test early and track the {rule.gracePeriod} deadline in the
+        <a href="/">Unify newcomer settlement app</a>, next to your health card and SIN steps. It is free.
+      </p>
+      {rule.relatedPost && (
+        <a class="cl-related" href={`/blog/${rule.relatedPost.slug}`}>
+          <span class="cl-related-kicker">Related guide</span>
+          <span class="cl-related-title">{rule.relatedPost.label} &rarr;</span>
+        </a>
+      )}
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">{rule.shortName} licence exchange: common questions</h2>
+      <div class="cl-faq">
+        {rule.faqs.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <nav class="cl-siblings" aria-label="Driver's licence by province">
+      <span class="cl-siblings-label">Driver's licence by province</span>
+      <ul role="list">
+        {LICENCE_RULES.map((r) => (
+          <li>
+            <a
+              href={`/drivers-licence/${r.slug}`}
+              class={r.code === rule.code ? "is-current" : ""}
+              aria-current={r.code === rule.code ? "page" : undefined}
+            >
+              {r.shortName}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="cl-verified">
+      Checked against
+      <a href={rule.officialUrl} target="_blank" rel="noopener noreferrer"> {rule.officialLabel}</a>
+      in {rule.lastVerified}. Agreements are added and removed; confirm before you book a test.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
