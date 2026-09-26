@@ -120,11 +120,11 @@ body::after {
   --color-events-line: #ebe8e4;
   --color-events-line-strong: #ddd7d0;
   --color-events-warm: #f6f3ef;
-  --color-events-faint: #8a8784;
+  --color-events-faint: #6b6763;
   --color-events-badge-ink: #4a4744;
   --color-events-red-wash: #fbece7;
   --color-events-red-ink: #b53a1e;
-  --color-events-red-soft: #ff8a6b;
+  --color-events-red-soft: #ffb39e;
   --radius-card: 16px;
 
 }

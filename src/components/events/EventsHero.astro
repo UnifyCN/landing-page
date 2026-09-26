@@ -110,14 +110,29 @@ const stats = [
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(90deg, rgba(23, 22, 22, 0.84) 0%, rgba(23, 22, 22, 0.62) 45%, rgba(23, 22, 22, 0.28) 100%),
+      linear-gradient(90deg, rgba(23, 22, 22, 0.88) 0%, rgba(23, 22, 22, 0.66) 50%, rgba(23, 22, 22, 0.3) 100%),
       linear-gradient(180deg, rgba(23, 22, 22, 0.35) 0%, rgba(23, 22, 22, 0) 30%, rgba(23, 22, 22, 0.88) 88%, var(--color-ink) 100%);
   }
 
   .evh--has-featured::before {
     background:
-      linear-gradient(90deg, rgba(23, 22, 22, 0.84) 0%, rgba(23, 22, 22, 0.6) 45%, rgba(23, 22, 22, 0.26) 100%) top / 100% clamp(40rem, 74vh, 52rem) no-repeat,
+      linear-gradient(90deg, rgba(23, 22, 22, 0.88) 0%, rgba(23, 22, 22, 0.66) 50%, rgba(23, 22, 22, 0.28) 100%) top / 100% clamp(40rem, 74vh, 52rem) no-repeat,
       linear-gradient(180deg, rgba(23, 22, 22, 0.35) 0, rgba(23, 22, 22, 0.15) 16rem, rgba(23, 22, 22, 0.94) clamp(34rem, 62vh, 44rem), var(--color-ink) clamp(38rem, 70vh, 50rem));
+  }
+
+  /* Phones: the copy spans the full width, so a side scrim can't carry it —
+     darken evenly instead (eyebrow and H1 stay above 4.5:1 over the crowd). */
+  @media (max-width: 700px) {
+    .evh::before,
+    .evh--has-featured::before {
+      background: linear-gradient(
+        180deg,
+        rgba(23, 22, 22, 0.84) 0%,
+        rgba(23, 22, 22, 0.7) 45%,
+        rgba(23, 22, 22, 0.92) 70%,
+        var(--color-ink) 82%
+      );
+    }
   }
 
   .evh-inner,

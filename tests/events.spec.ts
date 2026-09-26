@@ -54,6 +54,32 @@ test.describe("events page", () => {
     }
   });
 
+  test("calendar arrow keys move between event days", async ({ page }) => {
+    await page.goto("/events");
+    const agenda = page.locator("#events-agenda");
+    await expect(agenda).toHaveAttribute("data-ev-bound", "true");
+
+    const days = agenda.locator("[data-day-btn]");
+    test.skip((await days.count()) < 2, "needs two event days");
+    const first = await days.nth(0).getAttribute("data-day-btn");
+    const second = await days.nth(1).getAttribute("data-day-btn");
+    await agenda.locator(`[data-day-btn="${first}"]`).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(agenda.locator(`[data-day-btn="${second}"]`)).toBeFocused();
+    await expect(agenda.locator(`[data-day-btn="${second}"]`)).toHaveAttribute("tabindex", "0");
+  });
+
+  test("on phones the calendar starts folded and opens from its summary", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/events");
+    const calendar = page.locator("#events-agenda [data-calendar]");
+    await expect(page.locator("#events-agenda")).toHaveAttribute("data-ev-bound", "true");
+    await expect(calendar).not.toHaveAttribute("open", "");
+    await calendar.locator("summary").click();
+    await expect(calendar).toHaveAttribute("open", "");
+    await expect(calendar.locator("[data-month]:not([hidden]) [data-day-btn]").first()).toBeVisible();
+  });
+
   test("an event card opens its detail page with a register link", async ({ page }) => {
     await page.goto("/events");
     const card = page.locator("#events-agenda a.ec").first();

@@ -112,36 +112,6 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
         )
       }
       <div class="ed-wrap ed-grid">
-        <article class="ed-main">
-
-          <div class="ed-cover">
-            {
-              event.cover ? (
-                <img src={event.cover} alt="" loading="eager" decoding="async" referrerpolicy="no-referrer" />
-              ) : (
-                <div class="ed-cover-empty" aria-hidden="true">
-                  <img src="/assets/logo/new-unify-logo-256.png" alt="" />
-                </div>
-              )
-            }
-          </div>
-
-          <h2 class="ed-h2">About this event</h2>
-          {
-            paragraphs.length ? (
-              <div class="ed-desc">{paragraphs.map((p) => <p>{p}</p>)}</div>
-            ) : (
-              <p class="ed-desc-empty">
-                The host hasn't posted a description here. See the full details on the event page.
-              </p>
-            )
-          }
-          <p class="ed-source-note">
-            Details come from {partner ? partner.name : "the host"}'s own event listing. Times are
-            Pacific time. Check the host's page before you go, in case anything changed.
-          </p>
-        </article>
-
         <aside class="ed-aside">
           <div class="ed-card">
             <div class="ed-date" aria-hidden="true">
@@ -215,6 +185,36 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
             <span aria-hidden="true">←</span> All events
           </a>
         </aside>
+
+        <article class="ed-main">
+
+          <div class="ed-cover">
+            {
+              event.cover ? (
+                <img src={event.cover} alt="" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+              ) : (
+                <div class="ed-cover-empty" aria-hidden="true">
+                  <img src="/assets/logo/new-unify-logo-256.png" alt="" />
+                </div>
+              )
+            }
+          </div>
+
+          <h2 class="ed-h2">About this event</h2>
+          {
+            paragraphs.length ? (
+              <div class="ed-desc">{paragraphs.map((p) => <p>{p}</p>)}</div>
+            ) : (
+              <p class="ed-desc-empty">
+                The host hasn't posted a description here. See the full details on the event page.
+              </p>
+            )
+          }
+          <p class="ed-source-note">
+            Details come from {partner ? partner.name : "the host"}'s own event listing. Times are
+            Pacific time. Check the host's page before you go, in case anything changed.
+          </p>
+        </article>
       </div>
 
       {
@@ -226,7 +226,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
             </div>
             <div class="ed-more-list">
               {more.map((e) => (
-                <EventCard event={e} variant="row" />
+                <EventCard event={e} variant="row" showDate />
               ))}
             </div>
           </section>
@@ -319,6 +319,8 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
     padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem);
   }
 
+  /* DOM order is facts card first (the phone reading order); on wide
+     screens it moves to the right-hand column. */
   .ed-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 21rem;
@@ -412,7 +414,14 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
     border-top: 1px solid var(--color-events-line);
   }
 
+  .ed-main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
   .ed-aside {
+    grid-column: 2;
+    grid-row: 1;
     position: sticky;
     top: 6rem;
     display: grid;
@@ -610,9 +619,14 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
       grid-template-columns: minmax(0, 1fr);
     }
 
+    .ed-main,
+    .ed-aside {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
     .ed-aside {
       position: static;
-      order: -1;
     }
   }
 

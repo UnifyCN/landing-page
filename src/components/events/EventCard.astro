@@ -10,9 +10,15 @@ interface Props {
   variant: "feature" | "row";
   /** Only the first few above-the-fold covers load eagerly. */
   eager?: boolean;
+  /**
+   * Rows inside the agenda get their date from the day column; rows anywhere
+   * else (detail page "More from") must carry it, or recurring events look
+   * like duplicates.
+   */
+  showDate?: boolean;
 }
 
-const { event, variant, eager = false } = Astro.props;
+const { event, variant, eager = false, showDate = variant === "feature" } = Astro.props;
 const isFeature = variant === "feature";
 ---
 
@@ -72,7 +78,7 @@ const isFeature = variant === "feature";
       }
       <p>
         {
-          isFeature ? (
+          showDate ? (
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <rect x="2" y="3" width="12" height="11" rx="2" />
               <path d="M5 1.5v3M11 1.5v3M2 7h12" stroke-linecap="round" />
@@ -85,7 +91,7 @@ const isFeature = variant === "feature";
           )
         }
         <span>
-          {isFeature ? <>{event.dateLabel} · </> : <span class="sr-only">{event.dateLabel}, </span>}
+          {showDate ? <>{event.dateLabel} · </> : <span class="sr-only">{event.dateLabel}, </span>}
           {event.timeLabel}
         </span>
       </p>

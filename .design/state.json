@@ -4,7 +4,7 @@
   "job_kind": "new",
   "surface": "marketing",
   "constraint_mode": "brand-constrained",
-  "phase": "build",
+  "phase": "review",
   "gates": {
     "contract": "approved",
     "direction": "approved",
@@ -16,11 +16,14 @@
     "decisions": ".design/decisions.md",
     "selected_experiment": ".design/experiments/r1/b-agenda.html",
     "latest_evidence": [
-      ".design/evidence/r1/b-agenda-1440.png",
-      ".design/evidence/r1/b-agenda-390.png"
+      ".design/evidence/build2/events-1440.png",
+      ".design/evidence/build2/events-390.png"
     ],
-    "latest_review": null
+    "latest_review": ".design/reviews/events-2026-09-25-r1.md"
   },
-  "open_decisions": [],
+  "open_decisions": [
+    {"id": "D-004", "question": "Phones: keep the calendar folded to 'Pick a date' above the list?", "owner": "user", "status": "open"},
+    {"id": "STATS", "question": "Confirm or replace the hero stats (35+, 450+, 18, Free)", "owner": "user", "status": "open"}
+  ],
   "blockers": []
 }

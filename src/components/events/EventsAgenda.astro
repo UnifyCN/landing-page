@@ -79,6 +79,11 @@ const dayCounts = events.reduce<Record<string, number>>((acc, e) => {
   acc[e.dayKey] = (acc[e.dayKey] ?? 0) + 1;
   return acc;
 }, {});
+// One Tab stop per month (roving tabindex): the selected day, else the first
+// day with events. Arrow keys move between event days inside the grid.
+const rovingDay: Record<string, string> = {};
+for (const key of [...eventDays].sort()) rovingDay[key.slice(0, 7)] ??= key;
+if (day) rovingDay[day.slice(0, 7)] = day;
 const dayLabel = (key: string) =>
   new Date(`${key}T12:00:00Z`).toLocaleDateString("en-CA", {
     weekday: "long",
@@ -98,6 +103,83 @@ const dayLabel = (key: string) =>
     </p>
 
     <div class="ag-layout">
+      <aside class="ag-aside" aria-label="Event calendar and partners">
+        <details class="ag-widget ag-cal" data-calendar data-active-month={activeMonth} open>
+          <summary class="ag-cal-summary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="2" y="3" width="12" height="11" rx="2" />
+              <path d="M5 1.5v3M11 1.5v3M2 7h12" stroke-linecap="round" />
+            </svg>
+            <span data-cal-summary>{day ? dayLabel(day) : "Pick a date"}</span>
+            <svg class="ag-cal-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M3 4.5 6 7.5l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </summary>
+          {
+            months.map((mo, i) => (
+              <div class="ag-month" data-month={mo.key} hidden={mo.key !== activeMonth}>
+                <div class="ag-cal-head">
+                  <button type="button" class="ag-cal-nav" data-month-nav="-1" aria-label="Previous month" disabled={i === 0}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.5 3 4.5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </button>
+                  <h3 class="ag-cal-title">{mo.label}</h3>
+                  <button type="button" class="ag-cal-nav" data-month-nav="1" aria-label="Next month" disabled={i === months.length - 1}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m5.5 3 4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </button>
+                </div>
+                <div class="ag-cal-grid" role="group" aria-label={`${mo.label}: days with events`}>
+                  {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
+                    <span class="ag-dow" aria-hidden="true">{d}</span>
+                  ))}
+                  {Array.from({ length: mo.lead }, () => <span aria-hidden="true" />)}
+                  {Array.from({ length: mo.days }, (_, d) => {
+                    const key = `${mo.key}-${String(d + 1).padStart(2, "0")}`;
+                    const n = dayCounts[key];
+                    const cls = `ag-day${key === todayKey ? " is-today" : ""}${key < todayKey ? " is-past" : ""}`;
+                    return n ? (
+                      <button type="button" class={`${cls} has-events`} data-day-btn={key} tabindex={key === rovingDay[mo.key] ? 0 : -1} aria-pressed={String(day === key)} aria-label={`${dayLabel(key)}, ${n} event${n === 1 ? "" : "s"}`}>
+                        {d + 1}
+                      </button>
+                    ) : (
+                      <span class={cls} aria-hidden="true">{d + 1}</span>
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          }
+          <p class="ag-cal-hint">Dots mark days with events. Pick a day to see only those.</p>
+        </details>
+
+        <div class="ag-widget ag-partners">
+          <h3 class="ag-widget-title">Our event partners</h3>
+          <ul role="list">
+            {
+              sidebarPartners.map((p) => {
+                const n = partnerCounts[p.slug] ?? 0;
+                return (
+                  <li>
+                    <a href={`/partners/${p.slug}`} class="ag-partner">
+                      <span class="ag-partner-logo">
+                        <img src={p.logo} alt="" loading="lazy" decoding="async" />
+                      </span>
+                      <span class="ag-partner-text">
+                        <b>{p.name}</b>
+                        <small>{n ? `${n} upcoming event${n === 1 ? "" : "s"}` : "More events soon"}</small>
+                      </span>
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+          <a href="/partners" class="ag-partners-all">
+            View all partners
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </aside>
+
       <div class="ag-main">
         <div class="ag-filters" role="group" aria-label="Filter events">
           <div class="ag-filter">
@@ -190,73 +272,6 @@ const dayLabel = (key: string) =>
           Show more events
         </button>
       </div>
-
-      <aside class="ag-aside" aria-label="Event calendar and partners">
-        <div class="ag-widget ag-cal" data-calendar data-active-month={activeMonth}>
-          {
-            months.map((mo, i) => (
-              <div class="ag-month" data-month={mo.key} hidden={mo.key !== activeMonth}>
-                <div class="ag-cal-head">
-                  <button type="button" class="ag-cal-nav" data-month-nav="-1" aria-label="Previous month" disabled={i === 0}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M8.5 3 4.5 7l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                  </button>
-                  <h3 class="ag-cal-title">{mo.label}</h3>
-                  <button type="button" class="ag-cal-nav" data-month-nav="1" aria-label="Next month" disabled={i === months.length - 1}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m5.5 3 4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                  </button>
-                </div>
-                <div class="ag-cal-grid" role="group" aria-label={`${mo.label}: days with events`}>
-                  {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
-                    <span class="ag-dow" aria-hidden="true">{d}</span>
-                  ))}
-                  {Array.from({ length: mo.lead }, () => <span aria-hidden="true" />)}
-                  {Array.from({ length: mo.days }, (_, d) => {
-                    const key = `${mo.key}-${String(d + 1).padStart(2, "0")}`;
-                    const n = dayCounts[key];
-                    const cls = `ag-day${key === todayKey ? " is-today" : ""}${key < todayKey ? " is-past" : ""}`;
-                    return n ? (
-                      <button type="button" class={`${cls} has-events`} data-day-btn={key} aria-pressed={String(day === key)} aria-label={`${dayLabel(key)}, ${n} event${n === 1 ? "" : "s"}`}>
-                        {d + 1}
-                      </button>
-                    ) : (
-                      <span class={cls} aria-hidden="true">{d + 1}</span>
-                    );
-                  })}
-                </div>
-              </div>
-            ))
-          }
-          <p class="ag-cal-hint">Dots mark days with events. Pick a day to see only those.</p>
-        </div>
-
-        <div class="ag-widget ag-partners">
-          <h3 class="ag-widget-title">Our event partners</h3>
-          <ul role="list">
-            {
-              sidebarPartners.map((p) => {
-                const n = partnerCounts[p.slug] ?? 0;
-                return (
-                  <li>
-                    <a href={`/partners/${p.slug}`} class="ag-partner">
-                      <span class="ag-partner-logo">
-                        <img src={p.logo} alt="" loading="lazy" decoding="async" />
-                      </span>
-                      <span class="ag-partner-text">
-                        <b>{p.name}</b>
-                        <small>{n ? `${n} upcoming event${n === 1 ? "" : "s"}` : "More events soon"}</small>
-                      </span>
-                    </a>
-                  </li>
-                );
-              })
-            }
-          </ul>
-          <a href="/partners" class="ag-partners-all">
-            View all partners
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </aside>
     </div>
   </div>
 </section>
@@ -309,7 +324,11 @@ const dayLabel = (key: string) =>
     margin-top: 2rem;
   }
 
+  /* DOM order is sidebar first (the stacked reading order); on wide screens
+     the sidebar moves to the right-hand column. */
   .ag-main {
+    grid-column: 1;
+    grid-row: 1;
     min-width: 0;
   }
 
@@ -440,6 +459,19 @@ const dayLabel = (key: string) =>
     letter-spacing: -0.03em;
   }
 
+  /* Soft fade above the stuck heading so cards scrolling past don't show
+     hard-edged text in the gap under the floating navbar. */
+  .ag-group-h::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 1.75rem;
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+    pointer-events: none;
+  }
+
   .ag-group-count {
     font-family: var(--font-ui);
     font-size: 0.82rem;
@@ -525,6 +557,8 @@ const dayLabel = (key: string) =>
 
   /* Sidebar */
   .ag-aside {
+    grid-column: 2;
+    grid-row: 1;
     position: sticky;
     top: 6rem;
     display: grid;
@@ -547,6 +581,11 @@ const dayLabel = (key: string) =>
     letter-spacing: -0.02em;
   }
 
+  /* The summary only exists for phones, where the calendar starts collapsed. */
+  .ag-cal-summary {
+    display: none;
+  }
+
   .ag-month[hidden] {
     display: none;
   }
@@ -561,8 +600,8 @@ const dayLabel = (key: string) =>
   .ag-cal-nav {
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
     color: var(--color-muted);
     background: #ffffff;
     border: 1px solid var(--color-events-line);
@@ -736,9 +775,14 @@ const dayLabel = (key: string) =>
       grid-template-columns: minmax(0, 1fr);
     }
 
+    .ag-main,
+    .ag-aside {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
     .ag-aside {
       position: static;
-      order: -1;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
       align-items: start;
     }
@@ -747,6 +791,76 @@ const dayLabel = (key: string) =>
   @media (max-width: 700px) {
     .ag-partners {
       display: none;
+    }
+
+    .ag-cal {
+      padding: 0;
+    }
+
+    .ag-cal[open] {
+      padding: 0 1.1rem 1.1rem;
+    }
+
+    .ag-cal-summary {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 3rem;
+      padding: 0 1.1rem;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .ag-cal-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .ag-cal[open] .ag-cal-summary {
+      margin: 0 -1.1rem 0.5rem;
+      border-bottom: 1px solid var(--color-events-line);
+    }
+
+    .ag-cal-summary svg:first-child {
+      color: var(--color-brand-red);
+    }
+
+    .ag-cal-chevron {
+      margin-left: auto;
+      color: var(--color-events-faint);
+      transition: transform 0.2s var(--ease-out);
+    }
+
+    .ag-cal[open] .ag-cal-chevron {
+      transform: rotate(180deg);
+    }
+
+    .ag-cal-summary:focus-visible {
+      outline: 2px solid var(--color-brand-red);
+      outline-offset: -2px;
+      border-radius: var(--radius-card);
+    }
+
+    /* One swipeable row per filter instead of five wrapped rows. */
+    .ag-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-inline: calc(-1 * clamp(1rem, 4vw, 2.5rem));
+      padding: 0.1rem clamp(1rem, 4vw, 2.5rem) 0.35rem;
+      scrollbar-width: none;
+      scroll-padding-inline: clamp(1rem, 4vw, 2.5rem);
+    }
+
+    .ag-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ag-chip {
+      flex: none;
+      min-height: 2.75rem;
     }
 
     .ag-item {
@@ -787,7 +901,11 @@ const dayLabel = (key: string) =>
     const toolbarClear = clearBtns[0];
     const emptyEl = root.querySelector<HTMLElement>("[data-empty]")!;
     const moreBtn = root.querySelector<HTMLButtonElement>("[data-more]")!;
-    const calendar = root.querySelector<HTMLElement>("[data-calendar]")!;
+    const calendar = root.querySelector<HTMLDetailsElement>("[data-calendar]")!;
+    const calSummary = root.querySelector<HTMLElement>("[data-cal-summary]");
+    const dayBtns = [...root.querySelectorAll<HTMLButtonElement>("[data-day-btn]")];
+    const phone = matchMedia("(max-width: 700px)");
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
     const params = new URLSearchParams(location.search);
     const known = (attr: string, v: string | null) =>
@@ -851,9 +969,9 @@ const dayLabel = (key: string) =>
         );
         b.classList.toggle("is-dim", !reachable);
       });
-      root.querySelectorAll<HTMLButtonElement>("[data-day-btn]").forEach((b) => {
-        b.setAttribute("aria-pressed", String(b.dataset.dayBtn === state.day));
-      });
+      for (const b of dayBtns) b.setAttribute("aria-pressed", String(b.dataset.dayBtn === state.day));
+      if (state.day) setRoving(state.day);
+      if (calSummary) calSummary.textContent = state.day ? dayLabel(state.day) : "Pick a date";
 
       // Shareable URL; canonical stays /events (BaseLayout uses the pathname).
       const url = new URL(location.href);
@@ -862,6 +980,14 @@ const dayLabel = (key: string) =>
         else url.searchParams.delete(k);
       }
       history.replaceState(history.state, "", url);
+    }
+
+    // One Tab stop per month: the roving day gets tabindex 0.
+    function setRoving(key: string) {
+      const month = key.slice(0, 7);
+      for (const b of dayBtns) {
+        if (b.dataset.dayBtn!.startsWith(month)) b.tabIndex = b.dataset.dayBtn === key ? 0 : -1;
+      }
     }
 
     function showMonth(key: string) {
@@ -892,7 +1018,9 @@ const dayLabel = (key: string) =>
         apply();
         // On stacked layouts the list sits below the calendar — bring it into view.
         if (state.day && matchMedia("(max-width: 1099px)").matches) {
-          root.querySelector(".ag-toolbar")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          root
+            .querySelector(".ag-toolbar")
+            ?.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "start" });
         }
         return;
       }
@@ -904,10 +1032,12 @@ const dayLabel = (key: string) =>
         const next = months[i + Number(nav.dataset.monthNav)];
         if (next) {
           showMonth(next);
-          calendar
-            .querySelector<HTMLButtonElement>(`[data-month="${next}"] [data-month-nav="${nav.dataset.monthNav}"]:not(:disabled)`)
-            ?.focus() ??
-            calendar.querySelector<HTMLButtonElement>(`[data-month="${next}"] [data-month-nav]:not(:disabled)`)?.focus();
+          // Keep focus on the same-direction button; at the last/first month it is
+          // disabled, so fall back to the other one.
+          const same = calendar.querySelector<HTMLButtonElement>(
+            `[data-month="${next}"] [data-month-nav="${nav.dataset.monthNav}"]:not(:disabled)`,
+          );
+          (same ?? calendar.querySelector<HTMLButtonElement>(`[data-month="${next}"] [data-month-nav]:not(:disabled)`))?.focus();
         }
         return;
       }
@@ -920,32 +1050,76 @@ const dayLabel = (key: string) =>
       }
 
       if (target.closest("[data-more]")) {
-        const firstHidden = items.findIndex((el) => el.hidden && !el.closest("[hidden][data-group]"));
+        const before = new Set(items.filter((el) => !el.hidden));
         limit += pageSize;
         apply();
         // Move focus to the first newly revealed event for keyboard users.
         items
-          .slice(Math.max(firstHidden, 0))
-          .find((el) => !el.hidden)
+          .find((el) => !el.hidden && !before.has(el))
           ?.querySelector<HTMLAnchorElement>("a")
           ?.focus({ preventScroll: true });
       }
     });
 
-    // Arrow keys move between days that have events in the visible month.
+    // Arrow keys move between days that have events: Left/Right = previous/next
+    // event day, Up/Down = the nearest event day a week back/forward, Home/End =
+    // first/last event day of the month. Crossing a month edge flips the month.
+    const addDays = (key: string, n: number) => {
+      const d = new Date(`${key}T12:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + n);
+      return d.toISOString().slice(0, 10);
+    };
     calendar.addEventListener("keydown", (ev) => {
-      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(ev.key)) return;
       const current = (ev.target as HTMLElement).closest<HTMLButtonElement>("[data-day-btn]");
       if (!current) return;
-      const days = [...calendar.querySelectorAll<HTMLButtonElement>(`[data-month="${calendar.dataset.activeMonth}"] [data-day-btn]`)];
-      const i = days.indexOf(current);
-      const step = ev.key === "ArrowLeft" || ev.key === "ArrowUp" ? -1 : 1;
-      const next = days[i + step];
-      if (next) {
-        ev.preventDefault();
-        next.focus();
+      const key = current.dataset.dayBtn!;
+      const keys = dayBtns.map((b) => b.dataset.dayBtn!);
+      const i = keys.indexOf(key);
+      const month = key.slice(0, 7);
+      let target: string | undefined;
+      switch (ev.key) {
+        case "ArrowLeft":
+          target = keys[i - 1];
+          break;
+        case "ArrowRight":
+          target = keys[i + 1];
+          break;
+        case "ArrowUp": {
+          const goal = addDays(key, -7);
+          target = [...keys].reverse().find((k) => k <= goal) ?? keys[0];
+          break;
+        }
+        case "ArrowDown": {
+          const goal = addDays(key, 7);
+          target = keys.find((k) => k >= goal) ?? keys.at(-1);
+          break;
+        }
+        case "Home":
+          target = keys.find((k) => k.startsWith(month));
+          break;
+        case "End":
+          target = [...keys].reverse().find((k) => k.startsWith(month));
+          break;
+        default:
+          return;
       }
+      ev.preventDefault();
+      if (!target || target === key) return;
+      if (!target.startsWith(month)) showMonth(target.slice(0, 7));
+      setRoving(target);
+      dayBtns[keys.indexOf(target)].focus();
     });
+
+    // Phones start with the calendar folded to one line ("Pick a date") so the
+    // first events sit near the top; wider screens always show it.
+    const syncDisclosure = () => {
+      calendar.open = !phone.matches || Boolean(state.day);
+    };
+    phone.addEventListener("change", syncDisclosure);
+    document.addEventListener("astro:before-swap", () => phone.removeEventListener("change", syncDisclosure), {
+      once: true,
+    });
+    syncDisclosure();
 
     if (state.day) showMonth(state.day.slice(0, 7));
     apply();

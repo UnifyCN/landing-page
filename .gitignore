@@ -43,3 +43,4 @@ playwright/.cache/
 
 # Design workspace: evidence screenshots are large and regenerable
 .design/evidence/
+.design/reviews/shots/

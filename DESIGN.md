@@ -57,11 +57,11 @@
 
 **Imagery and iconography:** Event cover photos (source, Pexels or Unsplash) at 16:9 with a neutral placeholder when missing. Inline 1.5-stroke line icons matching the navbar SVGs.
 
-**Motion:** Existing reveal pattern (`.animate` / `.visible`), card hover lift of 2–3px, chip press. All off under `prefers-reduced-motion`.
+**Motion:** Card hover lift of 3px, chip press, dropdown fade. No scroll reveals on this page (content is the list; nothing should hide it). All off under `prefers-reduced-motion`, including the smooth scroll after a calendar pick.
 
 ## Behavior and states
 
-- Filters and calendar combine (AND). Active filters are reflected in the URL query (`?genre=&partner=&date=`) so links are shareable; canonical stays `/events`.
+- Filters and calendar combine (AND). Active filters are reflected in the URL query (`?genre=&partner=&day=`) so links are shareable; canonical stays `/events`. Chips that would lead to zero results are dimmed.
 - Empty filtered result: plain message + "Clear filters".
 - No featured events: the featured section is hidden, not shown empty.
 - Past event on `/events/[id]`: stays reachable, "This event has ended" state, `noindex`, links to upcoming events.
@@ -69,10 +69,10 @@
 
 ## Responsive and accessibility
 
-- Sidebar stacks below the list under the desktop-content breakpoint; calendar stays usable by touch (44px targets).
-- Calendar is a real grid with labelled buttons; keyboard arrows move days.
+- Below 1100px the sidebar stacks **above** the list (DOM order = visual order). At ≤700px the calendar folds to a one-line "Pick a date" disclosure and the partner list is hidden, so events start within the first screen; chips become one swipeable row per filter. Touch targets ≥44px for calendar nav and phone chips; navbar caret ≥24px.
+- Calendar: labelled day buttons for event days only, one Tab stop per month (roving tabindex); Left/Right = previous/next event day, Up/Down = nearest event day a week away, Home/End = first/last in month, crossing months flips the grid.
 - Every card is one link with a single accessible name; badges are text.
-- Contrast AA on photo hero via overlay.
+- Contrast AA: small grey text uses `--color-events-faint` (#6b6763, 5.6:1 on white); hero text ≥4.5:1 per glyph at 320–1920 (phone scrim is a flat top-down gradient).
 
 ## Tokens and components
 
