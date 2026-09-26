@@ -3,6 +3,8 @@ interface Props {
   title: string;
   publishedAt: Date;
   thumbnail: string;
+  /** Width-descriptor srcset for the thumbnail (see responsiveImage). */
+  thumbnailSrcset?: string;
   slug: string;
   /** Stored category value (drives the /blog filter via `data-category`). */
   category: string;
@@ -13,7 +15,7 @@ interface Props {
   hidden?: boolean;
 }
 
-const { title, publishedAt, thumbnail, slug, category, categoryLabel, index = 0, hidden = false } = Astro.props;
+const { title, publishedAt, thumbnail, thumbnailSrcset, slug, category, categoryLabel, index = 0, hidden = false } = Astro.props;
 
 const formattedDate = publishedAt.toLocaleDateString('en-CA', {
   year: 'numeric',
@@ -26,6 +28,8 @@ const formattedDate = publishedAt.toLocaleDateString('en-CA', {
   <div class="pc-img-wrap">
     <img
       src={thumbnail}
+      srcset={thumbnailSrcset}
+      sizes="(max-width: 700px) 92vw, (max-width: 1100px) 46vw, 380px"
       alt={title}
       class="pc-img"
       loading="lazy"

@@ -43,6 +43,11 @@ export default defineConfig({
   site: SITE,
   trailingSlash: 'never',
   output: 'server',
+  // Inline each page's CSS into its HTML: the 2–3 small stylesheets per page
+  // were render-blocking round trips (~0.35–0.5s on mobile, Lighthouse 2026-09-26).
+  build: {
+    inlineStylesheets: 'always',
+  },
   vite: {
     plugins: [tailwindcss()]
   },

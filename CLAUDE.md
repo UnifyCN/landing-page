@@ -181,6 +181,12 @@ This is non-negotiable. No UI work happens without both skills active. Stack the
 - Use Web standards (`fetch`, `crypto.subtle`) — avoid Node-only APIs.
 - Secrets via Wrangler (`wrangler secret put`) or `.dev.vars` locally. Access via `env` from `cloudflare:workers` (see `src/pages/api/contact.ts`).
 - Watch bundle size. Prerender static routes with `export const prerender = true` where SSR isn't needed.
+- **Performance setup (Sept 2026 pass, see PR "perf: mobile loading"):**
+  - Page CSS is inlined into the HTML (`build.inlineStylesheets: 'always'` in `astro.config.mjs`) — no render-blocking stylesheet requests.
+  - `public/_headers` sets browser caching: `/_astro/*` and `/fonts/*` immutable for a year, `/assets/*` and favicons a week. Without it everything shipped `max-age=0`.
+  - `src/middleware.ts` edge-caches SSR pages (`/events*`, `/blog*`) in the Workers Cache API for the page's `s-maxage` (5 min). Cloudflare does not cache Worker responses on its own. Responses carry `X-Edge-Cache: HIT|MISS`. The Sanity Studio preview iframe (`Sec-Fetch-Dest: iframe`) bypasses it. A new SSR route only gets cached if it sets an `s-maxage` header and matches `CACHEABLE`.
+  - Sanity images on the page go through `responsiveImage()` in `src/lib/sanity/client.ts` (`auto=format` + `srcset`); keep plain `urlFor` only for OG/JSON-LD.
+  - Homepage demo videos are `preload="none"`; `Journey.astro` warms each one a screen before it scrolls in.
 
 ---
 
@@ -259,7 +265,7 @@ Say no if you see:
 ### Fonts
 
 - **Aileron** — self-hosted woff2 in `public/fonts/`. Light (300), Regular (400), SemiBold (600), Bold (700). Body + display.
-- **Figtree** — Google Fonts. CTA buttons and UI elements only.
+- **Figtree** — self-hosted variable woff2 (`public/fonts/Figtree-latin{,-ext}.woff2`, weights 400–600, OFL). CTA buttons and UI elements only. Do NOT go back to the Google Fonts stylesheet: it blocked first paint by ~0.8s on mobile.
 
 ### Breakpoints
 
@@ -397,7 +403,7 @@ If the site goes down, check: (1) CF zone status is "Active", (2) the two CF nam
 
 All favicons regenerate from one master: `public/assets/logo/new-unify-logo.png` (1024×1024 starburst, transparent, content-trimmed to `public/assets/logo/new-unify-logo-tight.png`).
 
-Outputs in `public/`: `favicon-32.png`, `favicon-96.png`, `favicon-192.png`, `apple-touch-icon.png` (180×180), `favicon.ico` (multi-resolution, built with `npx png-to-ico`), `site.webmanifest`. Link tags are declared in `src/layouts/BaseLayout.astro`. Do NOT add a `favicon.svg` back.
+Outputs in `public/`: `favicon-32.png`, `favicon-96.png`, `favicon-192.png`, `apple-touch-icon.png` (180×180), `favicon.ico` (16/32/48 only, ~15 KB — rebuild with `node scripts/build-favicon-ico.mjs`; the old one embedded large frames and weighed 285 KB), `site.webmanifest`. Link tags are declared in `src/layouts/BaseLayout.astro`. Do NOT add a `favicon.svg` back.
 
 **To swap the logo**: replace `new-unify-logo.png`, re-trim with the Sharp script from commit `712a5f8`, regenerate each size with `sips -Z <n>` and the ICO with `png-to-ico`, then request indexing in Google Search Console.
 
