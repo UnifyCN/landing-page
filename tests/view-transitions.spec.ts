@@ -101,4 +101,19 @@ test.describe("island re-binding after View Transition navigation", () => {
     await expect(page.locator('.rv-card:not([hidden]):not([data-category="finance"])')).toHaveCount(0);
     await expect(page.locator('.rv-card[data-category="finance"]:not([hidden])').first()).toBeVisible();
   });
+
+  test("events agenda re-binds after Home → Events", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("a.nav-link", { hasText: "Events" }).click();
+    await expect(page).toHaveURL(/\/events$/);
+
+    const agenda = page.locator("#events-agenda");
+    await expect(agenda).toHaveAttribute("data-ev-bound", "true");
+
+    const chip = agenda.locator('[data-filter="partner"]:not([data-value=""])').first();
+    const partner = await chip.getAttribute("data-value");
+    await chip.click();
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+    await expect(agenda.locator(`[data-item]:not([hidden]):not([data-partner="${partner}"])`)).toHaveCount(0);
+  });
 });

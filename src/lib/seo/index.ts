@@ -6,3 +6,4 @@ export { faqLd, type FaqItem } from './faqLd';
 export { blogPostingLd } from './blogPostingLd';
 export { breadcrumbLd, type BreadcrumbItem } from './breadcrumbLd';
 export { localBusinessLd } from './localBusinessLd';
+export { eventLd } from './eventLd';

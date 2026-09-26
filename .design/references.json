@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source": "/Users/savargupta/Downloads/Community events _ Unify Social.html",
+      "author": "user",
+      "annotation": "Structural reference from Savar/Siya: hero + stats, featured x3, partnered list with filters, sticky sidebar with calendar and partners. Reference only; Savar wants a different background and better cards.",
+      "take": ["section order", "sticky right sidebar with calendar + partner list", "featured marker on featured cards", "host line on cards"],
+      "avoid": ["cream background", "4-colour category system", "dropdown select + Find button filter bar", "Poppins/Inter", "icon-only thumbnails instead of photos", "numbered pagination"],
+      "applies_to": ["hierarchy", "layout", "content"],
+      "priority": "primary"
+    },
+    {
+      "source": "Google Doc 1MGA3qkYk1sByLHVhhlPKUR9dM5ii3gGZ5GuNb73Iq9M (Event page tab)",
+      "author": "user",
+      "annotation": "Canonical copy and section list; header = Gather photo or solid colour; partners pane links to partner pages.",
+      "take": ["H1, description, stats labels, section intros"],
+      "avoid": [],
+      "applies_to": ["content"],
+      "priority": "primary"
+    },
+    {
+      "source": "Unify-Web-App components/community/EventCard.tsx",
+      "author": "existing-product",
+      "annotation": "Savar: take how the cards are built.",
+      "take": ["16:9 cover", "date badge on image", "type + genre badges", "host/date/location icon rows", "hide host when location names it"],
+      "avoid": ["orange primary", "text-sm density"],
+      "applies_to": ["layout", "content"],
+      "priority": "primary"
+    },
+    {
+      "source": "src/components/sections/PartnersHero.astro, src/pages/resources.astro",
+      "author": "existing-product",
+      "annotation": "House hero and chip-filter patterns the page must sit beside.",
+      "take": ["eyebrow + oversized display H1 + red accent", "stats row with dividers", "red active pill chips"],
+      "avoid": [],
+      "applies_to": ["type", "color", "interaction"],
+      "priority": "supporting"
+    }
+  ]
+}

@@ -1,0 +1,416 @@
+---
+// One event card, two layouts from the same anatomy (the web app's
+// components/community/EventCard.tsx, restyled in landing brand):
+//   feature — vertical, 4:3 cover, date badge, red top edge + "Featured" pill
+//   row     — horizontal agenda row; the date lives in the agenda's day column
+import type { EventView } from "../../lib/events/types";
+
+interface Props {
+  event: EventView;
+  variant: "feature" | "row";
+  /** Only the first few above-the-fold covers load eagerly. */
+  eager?: boolean;
+}
+
+const { event, variant, eager = false } = Astro.props;
+const isFeature = variant === "feature";
+---
+
+<a href={event.href} class={`ec ec--${variant}`} data-astro-prefetch>
+  <div class="ec-media">
+    {
+      event.cover ? (
+        <img
+          src={event.cover}
+          alt=""
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          referrerpolicy="no-referrer"
+          class="ec-img"
+        />
+      ) : (
+        <div class="ec-placeholder" aria-hidden="true">
+          <img src="/assets/logo/new-unify-logo-256.png" alt="" class="ec-placeholder-mark" />
+        </div>
+      )
+    }
+    {
+      isFeature && (
+        <>
+          <span class="ec-date" aria-hidden="true">
+            <b>{event.day}</b>
+            <span>{event.month}</span>
+          </span>
+          <span class="ec-feat">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+              <path d="M6 .8l1.6 3.3 3.6.5-2.6 2.5.6 3.6L6 9l-3.2 1.7.6-3.6L.8 4.6l3.6-.5z" />
+            </svg>
+            Featured
+          </span>
+        </>
+      )
+    }
+  </div>
+
+  <div class="ec-body">
+    <h3 class="ec-title">{event.title}</h3>
+    <div class="ec-badges">
+      <span class="ec-badge ec-badge--type">{event.typeLabel}</span>
+      {event.genre && <span class="ec-badge">{event.genre}</span>}
+    </div>
+    <div class="ec-meta">
+      {
+        event.host && (
+          <p class="ec-host">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M2.5 14V4.5l5.5-2.5 5.5 2.5V14M6 14v-3.5h4V14M1.5 14h13" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sr-only">Hosted by </span>
+            <span class="ec-clip">{event.host}</span>
+          </p>
+        )
+      }
+      <p>
+        {
+          isFeature ? (
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <rect x="2" y="3" width="12" height="11" rx="2" />
+              <path d="M5 1.5v3M11 1.5v3M2 7h12" stroke-linecap="round" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="6" />
+              <path d="M8 4.8V8l2.2 1.4" stroke-linecap="round" />
+            </svg>
+          )
+        }
+        <span>
+          {isFeature ? <>{event.dateLabel} · </> : <span class="sr-only">{event.dateLabel}, </span>}
+          {event.timeLabel}
+        </span>
+      </p>
+      <p>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M8 14.5s4.5-4.1 4.5-7.5a4.5 4.5 0 1 0-9 0c0 3.4 4.5 7.5 4.5 7.5Z" />
+          <circle cx="8" cy="7" r="1.6" />
+        </svg>
+        <span class="ec-clip">{event.location}</span>
+      </p>
+    </div>
+  </div>
+</a>
+
+<style>
+  .ec {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #ffffff;
+    color: var(--color-text);
+    border: 1px solid var(--color-events-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+      transform 0.28s var(--ease-out),
+      box-shadow 0.28s var(--ease-out),
+      border-color 0.28s var(--ease-out);
+  }
+
+  .ec:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-events-line-strong);
+    box-shadow: 0 18px 36px -20px rgba(23, 22, 22, 0.28);
+  }
+
+  .ec:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+  }
+
+  .ec:active {
+    transform: translateY(-1px) scale(0.995);
+  }
+
+  .ec-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--color-events-warm);
+    overflow: hidden;
+  }
+
+  .ec-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .ec:hover .ec-img {
+    transform: scale(1.035);
+  }
+
+  .ec-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 78% 22%, var(--color-events-red-wash) 0 28%, transparent 29%),
+      var(--color-events-warm);
+  }
+
+  .ec-placeholder-mark {
+    width: 2.75rem;
+    height: auto;
+    opacity: 0.55;
+  }
+
+  .ec-date {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    min-width: 3rem;
+    padding: 0.35rem 0.6rem;
+    text-align: center;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px -4px rgba(23, 22, 22, 0.25);
+  }
+
+  .ec-date b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-brand-red);
+  }
+
+  .ec-date span {
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .ec-feat {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.65rem;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-brand-red);
+    border-radius: 999px;
+  }
+
+  .ec-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1rem 1.1rem 1.15rem;
+    min-width: 0;
+  }
+
+  .ec-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ec-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .ec-badge {
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-events-badge-ink);
+    background: var(--color-events-warm);
+    border-radius: 6px;
+  }
+
+  .ec-badge--type {
+    color: var(--color-events-red-ink);
+    background: var(--color-events-red-wash);
+  }
+
+  .ec-meta {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .ec-meta p {
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: 0.86rem;
+    line-height: 1.35;
+    color: var(--color-muted);
+  }
+
+  .ec-meta svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+    color: var(--color-events-faint);
+  }
+
+  .ec-meta .ec-host {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .ec-clip {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Featured: tall, on the ink band */
+  .ec--feature {
+    border: 0;
+    box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.6);
+  }
+
+  .ec--feature::before {
+    content: "";
+    order: -1;
+    height: 3px;
+    background: var(--color-brand-red);
+  }
+
+  .ec--feature .ec-media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .ec--feature:hover {
+    box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Row: agenda item */
+  .ec--row {
+    flex-direction: row;
+  }
+
+  .ec--row .ec-media {
+    flex: none;
+    width: clamp(9rem, 22vw, 14.5rem);
+    aspect-ratio: 16 / 10;
+  }
+
+  .ec--row .ec-body {
+    gap: 0.55rem;
+    padding: 0.95rem 1.15rem;
+  }
+
+  .ec--row .ec-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.1rem;
+  }
+
+  .ec--row .ec-meta p {
+    max-width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .ec--row .ec-media {
+      width: 6.5rem;
+      aspect-ratio: 1;
+      margin: 0.75rem 0 0.75rem 0.75rem;
+      border-radius: 10px;
+      align-self: flex-start;
+    }
+
+    .ec--row .ec-body {
+      padding: 0.75rem 0.85rem;
+      gap: 0.45rem;
+    }
+
+    .ec--row .ec-title {
+      font-size: 0.98rem;
+    }
+
+    .ec--row .ec-badges {
+      display: none;
+    }
+
+    .ec--row .ec-meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .ec--row .ec-meta p {
+      font-size: 0.8rem;
+    }
+  }
+
+  /* Smallest phones: a thumbnail, and meta lines wrap instead of truncating. */
+  @media (max-width: 480px) {
+    .ec--row .ec-media {
+      width: 4.25rem;
+      margin: 0.7rem 0 0 0.7rem;
+    }
+
+    .ec--row .ec-body {
+      padding: 0.7rem 0.75rem 0.8rem;
+    }
+
+    .ec--row .ec-title {
+      -webkit-line-clamp: 3;
+    }
+
+    .ec--row .ec-clip {
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ec,
+    .ec-img {
+      transition: none;
+    }
+
+    .ec:hover,
+    .ec:active {
+      transform: none;
+    }
+
+    .ec:hover .ec-img {
+      transform: none;
+    }
+  }
+</style>

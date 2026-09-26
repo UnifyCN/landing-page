@@ -40,3 +40,6 @@ playwright/.cache/
 *.swo
 # scratch: design brainstorming assets (not for commit)
 .design-staging/
+
+# Design workspace: evidence screenshots are large and regenerable
+.design/evidence/

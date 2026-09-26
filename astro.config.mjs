@@ -48,7 +48,9 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      customPages: blogEntries.map((e) => e.url),
+      // /events is SSR too (live Supabase). Its /events/<id>-<slug> detail pages
+      // churn weekly, so they are left to discovery through the hub's links.
+      customPages: [`${SITE}/events`, ...blogEntries.map((e) => e.url)],
       serialize(item) {
         const lastmod = blogLastmod.get(item.url);
         if (lastmod) item.lastmod = lastmod;

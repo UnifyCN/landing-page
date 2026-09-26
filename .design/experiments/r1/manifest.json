@@ -1,0 +1,38 @@
+{
+  "round": 1,
+  "decision": "D1: How should /events lay out the team's featured picks and the partner event list?",
+  "primary_axis": "page structure (featured placement + list organisation)",
+  "invariants": [
+    "same live Supabase events (51 partner events) and the same 3 sample featured picks",
+    "same copy from the Web Design Proposal doc",
+    "same card anatomy (web-app EventCard) in landing brand tokens",
+    "same chip filters, calendar and partner sidebar",
+    "same hero photo"
+  ],
+  "options": [
+    {
+      "id": "A",
+      "artifact": "a-spotlight.html",
+      "bet": "Image-led: one large lead featured card + two supporting; partner events as a 2-col card grid",
+      "benefit": "Richest imagery, closest to the reference, familiar",
+      "cost": "Long page at ~50 cards; dates are hard to scan",
+      "risk": "Reads as a generic events grid"
+    },
+    {
+      "id": "B",
+      "artifact": "b-agenda.html",
+      "bet": "Time-first: featured on the hero's ink band; partner events as an agenda grouped This week / Next week / month, synced with the calendar",
+      "benefit": "Matches how people choose events; scales to 50+ on mobile; calendar and list are one system",
+      "cost": "Smaller list imagery",
+      "risk": "Can read dense if spacing slips"
+    },
+    {
+      "id": "C",
+      "artifact": "c-frontpage.html",
+      "bet": "The picks are the hero: headline left, featured stack right; stats strip below; 3-col grid",
+      "benefit": "Featured is the first thing seen at every width",
+      "cost": "Photo loses its role; sidebar squeezes the grid",
+      "risk": "Busy hero; featured may look like an ad"
+    }
+  ]
+}

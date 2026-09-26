@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B · Agenda — Unify Events</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* B: time-first. Featured lives on the hero's ink band; partner events are an
+     agenda grouped by week/month, and the calendar is the same date system. */
+  .hero::before { background:
+    linear-gradient(90deg, rgba(23,22,22,.82) 0%, rgba(23,22,22,.6) 45%, rgba(23,22,22,.25) 100%) top / 100% 62% no-repeat,
+    linear-gradient(180deg, rgba(23,22,22,.3) 0%, rgba(23,22,22,.2) 30%, rgba(23,22,22,.94) 58%, #171616 64%); }
+  .hero > img { height: 68%; }
+  .more { display: block; margin: 2rem auto 0; font: 600 .95rem var(--ui); padding: .8rem 1.4rem; border-radius: 12px; border: 1px solid var(--ink); background: #fff; cursor: pointer; }
+  .hero .top { padding-top: 10rem; padding-bottom: 3rem; display: grid; gap: 1.25rem; }
+  .hero .h1 { max-width: 13ch; }
+  .hero .stats { margin-top: 1rem; }
+  .feat { padding-bottom: clamp(3rem, 6vw, 4.5rem); }
+  .feat-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,.14); }
+  .feat-head .sec-h { color: #fff; }
+  .feat-head .sec-p { color: rgba(255,255,255,.65); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1.75rem; }
+  .card--feat { border: 0; box-shadow: 0 24px 48px -24px rgba(0,0,0,.6); }
+  .card--feat .media { aspect-ratio: 4/3; }
+  .card--feat::before { content: ""; height: 3px; background: var(--red); order: -1; }
+  @media (max-width: 960px) { .feat-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(280px, 78%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .5rem; }
+    .feat-grid > * { scroll-snap-align: start; } }
+
+  .list { padding: clamp(3rem, 6vw, 4.5rem) 0 6rem; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 3rem; align-items: start; margin-top: 2rem; }
+  .aside { position: sticky; top: 104px; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin: 1.75rem 0 .5rem; }
+  .group { margin-top: 2.25rem; }
+  .group-h { position: sticky; top: 92px; z-index: 2; background: rgba(255,255,255,.94); padding: .6rem 0; display: flex; align-items: baseline; gap: .75rem; border-bottom: 1px solid var(--line); margin-bottom: .75rem; }
+  .group-h b { font-size: 1.2rem; letter-spacing: -.03em; }
+  .group-h span { font-family: var(--ui); font-size: .82rem; color: var(--faint); }
+  .item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 1rem; padding: .5rem 0; }
+  .when { text-align: center; padding-top: .9rem; }
+  .when b { display: block; font-size: 1.9rem; font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+  .when span { font-family: var(--ui); font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--red); }
+  .when.cont b, .when.cont span { visibility: hidden; }
+  .card--row { flex-direction: row; }
+  .card--row .media { width: 232px; flex: none; aspect-ratio: 16/10; }
+  .card--row .body { padding: .95rem 1.15rem; gap: .55rem; }
+  .card--row .meta { flex-direction: row; flex-wrap: wrap; gap: .3rem 1.1rem; }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .aside { position: static; order: -1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } .aside .widget + .widget { margin-top: 0; } }
+  @media (max-width: 700px) {
+    .aside { grid-template-columns: 1fr; } .aside #partners { display: none; }
+    .item { grid-template-columns: 44px minmax(0, 1fr); gap: .6rem; }
+    .when b { font-size: 1.45rem; }
+    .card--row .media { width: 104px; aspect-ratio: 1; margin: .75rem 0 .75rem .75rem; border-radius: 10px; }
+    .card--row .body { padding: .75rem .85rem; }
+    .card--row .badges { display: none; }
+    .card--row .title { font-size: .98rem; }
+    .group-h { top: 84px; }
+  }
+</style></head>
+<body>
+<script src="events.js"></script><script src="shared.js"></script>
+<div id="nav"></div>
+<header class="hero">
+  <img src="assets/hero.avif" alt="">
+  <div class="wrap top" id="hero"></div>
+  <section class="wrap feat">
+    <div class="feat-head"><div><p class="eyebrow" style="color:#ff8a6b">★ Featured events</p>
+      <h2 class="sec-h" style="margin-top:.5rem">Picked by the Unify team</h2><p class="sec-p">Open to everyone.</p></div></div>
+    <div class="feat-grid" id="feat"></div>
+  </section>
+</header>
+<main class="list"><div class="wrap">
+  <p class="eyebrow">Partnered events</p>
+  <h2 class="sec-h" style="margin-top:.5rem">What's coming up</h2>
+  <p class="sec-p">Hosted with our community partners. Filter by category or partner to find what you're looking for.</p>
+  <div class="layout">
+    <div>
+      <div id="chips" style="display:grid;gap:1rem"></div>
+      <div class="toolbar"><span class="count" id="count"></span><button class="clear" id="clear" hidden>Clear filters</button></div>
+      <div id="agenda"></div>
+      <button class="more" id="more">Show more events</button>
+    </div>
+    <aside class="aside"><div class="widget" id="cal"></div><div class="widget" id="partners"></div></aside>
+  </div>
+</div></main>
+<script>
+  document.getElementById("nav").innerHTML = navHTML();
+  document.getElementById("hero").innerHTML = heroInner() + statsHTML();
+  document.getElementById("feat").innerHTML = D.featured.map((e) => card(e, { featured: true })).join("");
+  renderChips(document.getElementById("chips"));
+  renderCalendar(document.getElementById("cal"));
+  renderPartners(document.getElementById("partners"));
+
+  const DAY = 864e5;
+  const todayKey = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Vancouver", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  const today = new Date(todayKey + "T00:00:00");
+  const endOfWeek = new Date(today.getTime() + (((7 - today.getDay()) % 7) + 1) * DAY); // exclusive: the Monday after this Sunday
+  function groupOf(e) {
+    const d = new Date(e.dayKey + "T00:00:00");
+    if (d < endOfWeek) return ["This week", ""];
+    if (d < new Date(endOfWeek.getTime() + 7 * DAY)) return ["Next week", ""];
+    return [d.toLocaleDateString("en-CA", { month: "long" }), String(d.getFullYear())];
+  }
+  let limit = 15;
+  function drawList() {
+    const all = filtered();
+    const list = all.slice(0, limit);
+    document.getElementById("more").hidden = all.length <= limit;
+    document.getElementById("count").textContent = `${all.length} upcoming event${all.length === 1 ? "" : "s"}`;
+    document.getElementById("clear").hidden = !(state.genre || state.partner || state.day);
+    if (!list.length) { document.getElementById("agenda").innerHTML = `<div class="empty">No events match these filters.</div>`; return; }
+    const groups = new Map();
+    list.forEach((e) => { const [g, sub] = groupOf(e); if (!groups.has(g)) groups.set(g, { sub, items: [] }); groups.get(g).items.push(e); });
+    document.getElementById("agenda").innerHTML = [...groups].map(([g, { items }]) => {
+      let prev = null;
+      return `<section class="group"><div class="group-h"><b>${g}</b><span>${items.length} event${items.length === 1 ? "" : "s"}</span></div>` +
+        items.map((e) => { const cont = e.dayKey === prev; prev = e.dayKey;
+          return `<div class="item"><div class="when ${cont ? "cont" : ""}"><b>${e.day}</b><span>${e.weekday}</span></div>${rowCard(e)}</div>`; }).join("") + `</section>`;
+    }).join("");
+  }
+  document.getElementById("clear").onclick = clearAll;
+  document.getElementById("more").onclick = () => { limit += 15; drawList(); };
+  onChange(() => { limit = 15; drawList(); }); drawList();
+</script>
+</body></html>

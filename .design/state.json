@@ -1,0 +1,26 @@
+{
+  "schema_version": 2,
+  "route": "focused",
+  "job_kind": "new",
+  "surface": "marketing",
+  "constraint_mode": "brand-constrained",
+  "phase": "build",
+  "gates": {
+    "contract": "approved",
+    "direction": "approved",
+    "ship": "pending"
+  },
+  "artifacts": {
+    "design_contract": "DESIGN.md",
+    "references": ".design/references.json",
+    "decisions": ".design/decisions.md",
+    "selected_experiment": ".design/experiments/r1/b-agenda.html",
+    "latest_evidence": [
+      ".design/evidence/r1/b-agenda-1440.png",
+      ".design/evidence/r1/b-agenda-390.png"
+    ],
+    "latest_review": null
+  },
+  "open_decisions": [],
+  "blockers": []
+}
