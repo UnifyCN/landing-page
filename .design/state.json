@@ -21,9 +21,6 @@
     ],
     "latest_review": ".design/reviews/events-2026-09-25-r1.md"
   },
-  "open_decisions": [
-    {"id": "D-004", "question": "Phones: keep the calendar folded to 'Pick a date' above the list?", "owner": "user", "status": "open"},
-    {"id": "STATS", "question": "Confirm or replace the hero stats (35+, 450+, 18, Free)", "owner": "user", "status": "open"}
-  ],
+  "open_decisions": [],
   "blockers": []
 }

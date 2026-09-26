@@ -35,6 +35,7 @@
     "@sanity/client": "^7.21.0",
     "google-auth-library": "^10.9.0",
     "gray-matter": "^4.0.3",
+    "png-to-ico": "^3.0.2",
     "sharp": "^0.34.5"
   }
 }

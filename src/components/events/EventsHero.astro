@@ -11,7 +11,11 @@ interface Props {
 
 const { featured } = Astro.props;
 
-// PLACEHOLDER numbers (Web Design Proposal doc); Savar confirms them after build.
+const HERO = "/assets/images/community/newcomer-community-vancouver";
+const srcset = (ext: "avif" | "jpg") =>
+  [800, 1280, 1920, 2560].map((w) => `${HERO}-${w}.${ext} ${w}w`).join(", ");
+
+// Confirmed by Savar 2026-09-25 (Web Design Proposal doc numbers + partner count).
 const stats = [
   { value: "35+", label: "Events hosted" },
   { value: "450+", label: "Newcomers joined" },
@@ -21,10 +25,16 @@ const stats = [
 ---
 
 <header class={`evh${featured.length ? " evh--has-featured" : ""}`}>
+  <!-- Widths from scripts/build-events-hero-images.mjs (the 4096px master is
+       only kept as the source; it was slow to decode on phones). -->
   <picture class="evh-photo">
-    <source srcset="/assets/images/community/newcomer-community-vancouver.avif" type="image/avif" />
+    <source srcset={srcset("avif")} sizes="100vw" type="image/avif" />
     <img
-      src="/assets/images/community/newcomer-community-vancouver.jpg"
+      src={`${HERO}-1280.jpg`}
+      srcset={srcset("jpg")}
+      sizes="100vw"
+      width="1920"
+      height="1280"
       alt="Newcomers at a Unify Gather community event in Vancouver"
       loading="eager"
       fetchpriority="high"

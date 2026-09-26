@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostNav from "../../components/blog/PostNav.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { getAllPosts, getPostBySlug } from "../../lib/sanity/queries";
-import { urlFor } from "../../lib/sanity/client";
+import { responsiveImage, urlFor } from "../../lib/sanity/client";
 import { toHTML } from "@portabletext/to-html";
 import { blogPostingLd, breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 import { blogCategoryLabel, toBlogCategory } from "../../lib/blog-categories.js";
@@ -93,11 +93,18 @@ const updatedDate = new Date(post.updatedAt ?? post.publishedAt).toLocaleDateStr
 });
 
 const bodyHtml = toHTML(post.body, toHTMLOptions);
+
+// Edge-cached for 5 minutes by src/middleware.ts; a newly published post shows
+// within that window (the Studio preview iframe bypasses the cache).
+Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=3600");
 const category = toBlogCategory(post.category);
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 const thumbnailUrl = urlFor(post.thumbnail).width(1200).height(630).url();   // 1200x630 for JSON-LD/OG ratio
-const heroImageUrl = urlFor(post.thumbnail).width(1200).url();               // 1200 wide, height auto — what the page hero <img> actually loads (must match the preload below)
+// What the page hero <img> loads: AVIF/WebP at a width that fits the screen.
+// The preload below uses the same srcset + sizes, so it fetches the same file.
+const heroImage = responsiveImage(post.thumbnail, [480, 800, 1200, 1600]);
+const heroSizes = "(max-width: 1200px) 100vw, 1200px";
 
 const blogPostingLdStr = serializeLd(
   blogPostingLd({
@@ -131,7 +138,8 @@ const faqLdStr = post.faqs?.length
     <script type="application/ld+json" set:html={blogPostingLdStr} />
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
     {faqLdStr && <script type="application/ld+json" set:html={faqLdStr} />}
-    <link rel="preload" as="image" href={heroImageUrl} />
+    <link rel="preconnect" href="https://cdn.sanity.io" />
+    <link rel="preload" as="image" href={heroImage.src} imagesrcset={heroImage.srcset} imagesizes={heroSizes} fetchpriority="high" />
   </Fragment>
 
   <main class="post-main">
@@ -149,7 +157,9 @@ const faqLdStr = post.faqs?.length
     <!-- ── Hero image ── -->
     <div class="post-hero-img-wrap">
       <img
-        src={heroImageUrl}
+        src={heroImage.src}
+        srcset={heroImage.srcset}
+        sizes={heroSizes}
         alt={post.title}
         class="post-hero-img"
         loading="eager"

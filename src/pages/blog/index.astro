@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/blog/PostCard.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { getAllPosts } from "../../lib/sanity/queries";
-import { urlFor } from "../../lib/sanity/client";
+import { responsiveImage } from "../../lib/sanity/client";
 import {
   BLOG_CATEGORIES,
   blogCategoryLabel,
@@ -12,6 +12,10 @@ import {
 } from "../../lib/blog-categories.js";
 
 const posts = await getAllPosts();
+
+// Edge-cached for 5 minutes by src/middleware.ts; a newly published post shows
+// within that window (the Studio preview iframe bypasses the cache).
+Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=3600");
 const featured = posts[0] ?? null;
 const rest = posts.slice(1);
 
@@ -38,6 +42,9 @@ const featuredDate = featured
   description="In-depth guides for newcomers settling in Canada - how to file taxes, get PR, immigrate in 2026, build a Canadian resume, and land your first job."
   bodyBg="#171616"
 >
+  <!-- Thumbnails come from the Sanity CDN; open that connection early so the
+       featured image (the mobile LCP) isn't waiting on DNS + TLS. -->
+  <link slot="head" rel="preconnect" href="https://cdn.sanity.io" />
   <main>
     <!-- ── Hero ── -->
     <section class="bl-hero">
@@ -84,10 +91,12 @@ const featuredDate = featured
               <a href={`/blog/${featured.slug.current}`} class="bl-featured">
                 <div class="bl-featured-img-wrap">
                   <img
-                    src={urlFor(featured.thumbnail).width(900).url()}
+                    {...responsiveImage(featured.thumbnail, [480, 720, 960, 1280])}
+                    sizes="(max-width: 900px) 92vw, 55vw"
                     alt={featured.title}
                     class="bl-featured-img"
                     loading="eager"
+                    fetchpriority="high"
                   />
                 </div>
                 <div class="bl-featured-body">
@@ -115,11 +124,13 @@ const featuredDate = featured
             <div class="blog-grid" id="blog-grid">
               {rest.map((post, i) => {
                 const category = toBlogCategory(post.category);
+                const thumb = responsiveImage(post.thumbnail, [360, 540, 720]);
                 return (
                   <PostCard
                     title={post.title}
                     publishedAt={new Date(post.publishedAt)}
-                    thumbnail={urlFor(post.thumbnail).width(600).url()}
+                    thumbnail={thumb.src}
+                    thumbnailSrcset={thumb.srcset}
                     slug={post.slug.current}
                     category={category}
                     categoryLabel={blogCategoryLabel(category)}

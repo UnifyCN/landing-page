@@ -32,7 +32,7 @@
 
 - Header uses photo 1 (`public/assets/images/community/newcomer-community-vancouver`) as the background.
 - Copy from the Web Design Proposal doc: H1 "Free Events for Newcomers in Canada"; the description; section intros.
-- Stats: 35+ events hosted, 450+ newcomers joined, 18 community partners, Free. Numbers are placeholders pending Savar's review.
+- Stats: 35+ events hosted, 450+ newcomers joined, 18 community partners, Free (confirmed by Savar).
 - Featured = `is_featured`, shown first with a distinct featured treatment. Partner events = `partner_slug is not null`.
 - Filters: genre + partner. Sidebar: month calendar (dots on event days; a day click filters) + partner list linking to `/partners/[slug]`.
 - Card click opens `/events/[id]`; the detail page CTA opens the source registration link in a new tab.
@@ -95,4 +95,4 @@
 
 ## Open decisions
 
-- None blocking the build. Stats numbers await Savar's review after implementation.
+- None.

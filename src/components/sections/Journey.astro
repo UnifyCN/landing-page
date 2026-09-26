@@ -54,7 +54,7 @@
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-label="Unify app – Checklist demo"
           >
             <source src="/assets/demos/checklist-tab-demo.mp4" type="video/mp4" />
@@ -105,7 +105,7 @@
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-label="Unify app – AI Companion demo"
           >
             <source src="/assets/demos/ai-tab-demo.mp4" type="video/mp4" />
@@ -156,7 +156,7 @@
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-label="Unify app – Community demo"
           >
             <source src="/assets/demos/social-tab-demo.mp4" type="video/mp4" />
@@ -207,7 +207,7 @@
             muted
             loop
             playsinline
-            preload="metadata"
+            preload="none"
             aria-label="Unify app – Learn demo"
           >
             <source src="/assets/demos/learn-tab-demo.mp4" type="video/mp4" />
@@ -769,6 +769,22 @@
       ".feature-block video.feature-card-img",
     );
     if (!videos.length || reduceMotion) return;
+
+    // Videos ship with preload="none" (~600 KB the first screen never shows).
+    // Start buffering about a screen before each one scrolls in, so playback
+    // begins on time; the frame-0 poster covers the gap either way.
+    const warmObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const video = entry.target as HTMLVideoElement;
+          video.preload = "auto";
+          warmObserver.unobserve(video);
+        });
+      },
+      { rootMargin: "0px 0px 100% 0px" },
+    );
+    videos.forEach((v) => warmObserver.observe(v));
 
     const playObserver = new IntersectionObserver(
       (entries) => {

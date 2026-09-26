@@ -93,17 +93,13 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     {description && <meta name="twitter:description" content={description} />}
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <!-- Figtree (UI/buttons) via Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap"
-    />
-
-    <!-- Preload critical Aileron weights -->
+    <!-- Preload the fonts every first screen uses: Aileron body/nav/headings and
+         Figtree for the CTA. All self-hosted (@font-face in global.css), so no
+         third-party stylesheet blocks first paint. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Regular.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-SemiBold.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Bold.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/Figtree-latin.woff2" crossorigin />
 
     <ClientRouter />
 
