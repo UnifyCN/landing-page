@@ -25,7 +25,7 @@ Unify Social helps permanent residents, skilled workers, and international stude
 
 ## Key pages
 - [About Unify Social](https://unifysocial.ca/about): Who we are and why we built Unify for newcomers in Canada.
-- [Community](https://unifysocial.ca/community): Newcomer community, events, and stories.
+- [Events](https://unifysocial.ca/events): Free workshops, info sessions, and meetups for newcomers, hosted by Unify and our community partners.
 - [Partners](https://unifysocial.ca/partners): Settlement organizations and partners in British Columbia.
 - [Resources](https://unifysocial.ca/resources): Video guides for newcomers on resumes, cover letters, interviews, budgeting, and more.
 - [Contact](https://unifysocial.ca/contact): Get in touch with the Unify Social team.

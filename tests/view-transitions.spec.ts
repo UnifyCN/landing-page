@@ -1,4 +1,11 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+
+// Partners, Contact and Blog live in the About / Resources dropdowns. Open the
+// menu with its caret (the keyboard + touch path) so the test does not depend
+// on hover timing.
+async function openNavMenu(page: Page, parent: string) {
+  await page.getByRole("button", { name: `More in ${parent}` }).click();
+}
 
 // The core of this suite. Each test navigates by clicking a desktop navbar
 // link so Astro's ClientRouter performs a View Transition swap (not a full
@@ -36,7 +43,8 @@ test.describe("island re-binding after View Transition navigation", () => {
 
   test("contact form re-binds after Home → Contact", async ({ page }) => {
     await page.goto("/");
-    await page.locator("a.nav-link", { hasText: "Contact" }).click();
+    await openNavMenu(page, "About");
+    await page.locator("a.nav-menu-link", { hasText: "Contact" }).click();
     await expect(page).toHaveURL(/\/contact$/);
     await expect(page.locator("#contact-form")).toHaveAttribute(
       "data-cf-bound",
@@ -46,7 +54,8 @@ test.describe("island re-binding after View Transition navigation", () => {
 
   test("partner form re-binds after Home → Partners", async ({ page }) => {
     await page.goto("/");
-    await page.locator("a.nav-link", { hasText: "Partners" }).click();
+    await openNavMenu(page, "About");
+    await page.locator("a.nav-menu-link", { hasText: "Partners" }).click();
     await expect(page).toHaveURL(/\/partners$/);
     await expect(page.locator("#bp-form")).toHaveAttribute(
       "data-bp-bound",
@@ -56,7 +65,8 @@ test.describe("island re-binding after View Transition navigation", () => {
 
   test("blog category filter re-binds after Home → Blog", async ({ page }) => {
     await page.goto("/");
-    await page.locator("a.nav-link", { hasText: "Blog" }).click();
+    await openNavMenu(page, "Resources");
+    await page.locator("a.nav-menu-link", { hasText: "Blog" }).click();
     await expect(page).toHaveURL(/\/blog$/);
 
     const filters = page.locator("#bl-filters");

@@ -1,19 +1,40 @@
 ---
-const navLinks = [
+type NavChild = { label: string; href: string; note: string };
+type NavLink = { label: string; href: string; children?: NavChild[] };
+
+// Max five top-level tabs (Find Services joins later). Secondary pages live in
+// a parent's dropdown; the parent itself still links to its own page.
+const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Community", href: "/community" },
-  { label: "Partners", href: "/partners" },
-  { label: "Blog", href: "/blog" },
-  { label: "Resources", href: "/resources" },
-  { label: "Contact", href: "/contact" },
+  {
+    label: "About",
+    href: "/about",
+    children: [
+      { label: "Partners", href: "/partners", note: "Who we build Unify with" },
+      { label: "Contact", href: "/contact", note: "Questions, press, and feedback" },
+    ],
+  },
+  { label: "Events", href: "/events" },
+  {
+    label: "Resources",
+    href: "/resources",
+    children: [
+      { label: "Blog", href: "/blog", note: "Guides for settling in Canada" },
+    ],
+  },
 ];
 
 const pathname = Astro.url.pathname;
 
-function isActive(href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname.startsWith(href);
+// A parent is active on its own page and on any of its children's pages.
+function matchPaths(link: NavLink) {
+  return [link.href, ...(link.children?.map((c) => c.href) ?? [])].join(" ");
+}
+
+function isActive(paths: string) {
+  return paths
+    .split(" ")
+    .some((href) => (href === "/" ? pathname === "/" : pathname.startsWith(href)));
 }
 ---
 
@@ -35,22 +56,77 @@ function isActive(href: string) {
 
     <!-- Desktop nav links -->
     <nav
-      class="hidden desktop:flex items-center gap-6"
+      class="hidden nav-full:flex items-center gap-6"
       aria-label="Main navigation"
     >
-      <ul role="list" class="flex items-center gap-6 list-none m-0 p-0">
+      <ul role="list" class="flex items-center gap-7 list-none m-0 p-0">
         {
-          navLinks.map(({ label, href }) => (
-            <li>
-              <a
-                href={href}
-                aria-current={isActive(href) ? "page" : undefined}
-                class={`nav-link font-display text-nav leading-nav tracking-nav font-semibold text-ink no-underline${isActive(href) ? " nav-link-active" : ""}`}
-              >
-                {label}
-              </a>
-            </li>
-          ))
+          navLinks.map((link) => {
+            const paths = matchPaths(link);
+            const active = isActive(paths);
+            const linkClass = `nav-link font-display text-nav leading-nav tracking-nav font-semibold text-ink no-underline${active ? " nav-link-active" : ""}`;
+            if (!link.children) {
+              return (
+                <li>
+                  <a
+                    href={link.href}
+                    data-match={paths}
+                    aria-current={pathname === link.href ? "page" : undefined}
+                    class={linkClass}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            }
+            const menuId = `nav-menu-${link.label.toLowerCase()}`;
+            return (
+              <li class="nav-item has-menu">
+                <a
+                  href={link.href}
+                  data-match={paths}
+                  aria-current={pathname === link.href ? "page" : undefined}
+                  class={linkClass}
+                >
+                  {link.label}
+                </a>
+                <button
+                  type="button"
+                  class="nav-caret"
+                  aria-expanded="false"
+                  aria-controls={menuId}
+                  aria-label={`More in ${link.label}`}
+                >
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path
+                      d="M2 3.75 5 6.75l3-3"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div class="nav-menu" id={menuId}>
+                  <ul role="list" class="nav-menu-list list-none m-0 p-0">
+                    {link.children.map((child) => (
+                      <li>
+                        <a
+                          href={child.href}
+                          data-match={child.href}
+                          aria-current={pathname.startsWith(child.href) ? "page" : undefined}
+                          class="nav-menu-link no-underline"
+                        >
+                          <span class="nav-menu-label font-display">{child.label}</span>
+                          <span class="nav-menu-note font-display">{child.note}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            );
+          })
         }
       </ul>
     </nav>
@@ -61,7 +137,7 @@ function isActive(href: string) {
         href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
         target="_blank"
         rel="noopener noreferrer"
-        class="cta-btn hidden desktop:flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
+        class="cta-btn hidden nav-full:flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
       >
         Download Unify
         <svg
@@ -83,7 +159,7 @@ function isActive(href: string) {
       <button
         id="nav-toggle"
         type="button"
-        class="hamburger desktop:hidden flex flex-col justify-center items-center w-8 h-8 bg-transparent border-0 cursor-pointer p-0 relative"
+        class="hamburger nav-full:hidden flex flex-col justify-center items-center w-8 h-8 bg-transparent border-0 cursor-pointer p-0 relative"
         aria-expanded="false"
         aria-controls="mobile-nav"
         aria-label="Open navigation menu"
@@ -149,22 +225,39 @@ function isActive(href: string) {
       class="mobile-link-list flex flex-col gap-2 list-none m-0 p-0"
     >
       {
-        navLinks.map(({ label, href }, i) => (
+        navLinks.map((link, i) => (
           <li class="mobile-nav-item" style={`--i: ${i}`}>
             <a
-              href={href}
-              aria-current={isActive(href) ? "page" : undefined}
-              class={`mobile-nav-link font-display font-bold text-ink no-underline${isActive(href) ? " mobile-nav-link-active" : ""}`}
+              href={link.href}
+              data-match={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              class={`mobile-nav-link font-display font-bold text-ink no-underline${isActive(link.href) ? " mobile-nav-link-active" : ""}`}
             >
-              {label}
+              {link.label}
             </a>
+            {link.children && (
+              <ul role="list" class="mobile-sub-list list-none m-0 p-0">
+                {link.children.map((child) => (
+                  <li>
+                    <a
+                      href={child.href}
+                      data-match={child.href}
+                      aria-current={isActive(child.href) ? "page" : undefined}
+                      class={`mobile-sub-link font-display font-semibold no-underline${isActive(child.href) ? " mobile-nav-link-active" : ""}`}
+                    >
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))
       }
     </ul>
 
     <!-- CTA anchored to bottom -->
-    <div class="mobile-nav-item mt-auto" style="--i: 5">
+    <div class="mobile-nav-item mt-auto" style={`--i: ${navLinks.length}`}>
       <a
         href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
         target="_blank"
@@ -266,6 +359,155 @@ function isActive(href: string) {
     transform: translateX(-50%) scaleX(1);
   }
 
+  /* Dropdown parent: link + caret button. The menu opens on hover (pointer
+     users) or on .is-open, which the caret toggles (keyboard + touch). */
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .nav-caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: -0.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .nav-caret svg {
+    transition: transform 0.24s var(--ease-out);
+  }
+
+  .nav-caret:hover,
+  .nav-caret:focus-visible {
+    color: var(--color-ink);
+    background-color: rgba(23, 22, 22, 0.06);
+  }
+
+  .nav-caret:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 1px;
+  }
+
+  /* padding-top bridges the gap to the pill edge so hover never drops
+     while the pointer travels from the link into the panel. */
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: -1rem;
+    padding-top: 1.35rem;
+    min-width: 15.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.18s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0.22s;
+  }
+
+  /* Opaque on purpose: a second backdrop-filter nested inside the pill's
+     would not blur the page, and it doubles the scroll-time GPU cost. */
+  .nav-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem;
+    background: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.08);
+    border-radius: var(--radius-cta);
+    box-shadow:
+      0 18px 40px -16px rgba(23, 22, 22, 0.24),
+      0 4px 12px -4px rgba(23, 22, 22, 0.08);
+  }
+
+  @media (hover: hover) {
+    .has-menu:hover .nav-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      transition:
+        opacity 0.18s var(--ease-out),
+        transform 0.22s var(--ease-out),
+        visibility 0s linear 0s;
+    }
+
+    .has-menu:hover .nav-caret svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  .has-menu.is-open .nav-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity 0.18s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0s;
+  }
+
+  .has-menu.is-open .nav-caret svg {
+    transform: rotate(180deg);
+  }
+
+  .nav-menu-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+  }
+
+  .nav-menu-link:hover,
+  .nav-menu-link:focus-visible {
+    background-color: rgba(216, 74, 41, 0.07);
+  }
+
+  .nav-menu-link:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: -2px;
+  }
+
+  .nav-menu-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    transition: color 0.15s ease;
+  }
+
+  .nav-menu-link:hover .nav-menu-label,
+  .nav-menu-link[aria-current="page"] .nav-menu-label {
+    color: var(--color-brand-red);
+  }
+
+  .nav-menu-note {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--color-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-menu,
+    .nav-caret svg {
+      transition: none;
+    }
+  }
+
   .cta-btn {
     border-radius: var(--radius-cta);
   }
@@ -350,6 +592,38 @@ function isActive(href: string) {
     color: var(--color-brand-red);
   }
 
+  /* Children sit indented under their parent, one step down in size */
+  .mobile-sub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin: 0.125rem 0 0.5rem 0.25rem;
+  }
+
+  .mobile-sub-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.3rem 0;
+    font-size: clamp(1.125rem, 3.4vw, 1.375rem);
+    letter-spacing: -0.02em;
+    color: var(--color-muted);
+    transition: color 0.15s ease;
+  }
+
+  .mobile-sub-link::before {
+    content: "";
+    width: 0.875rem;
+    height: 1.5px;
+    background: currentColor;
+    opacity: 0.45;
+  }
+
+  .mobile-sub-link:hover,
+  .mobile-sub-link.mobile-nav-link-active {
+    color: var(--color-brand-red);
+  }
+
   .mobile-cta-note {
     font-family: var(--font-display);
     font-size: 0.8125rem;
@@ -381,27 +655,59 @@ function isActive(href: string) {
     pill.classList.toggle("is-scrolled", window.scrollY > 10);
   }
 
+  // The navbar persists across View Transitions, so the server-rendered active
+  // state goes stale on client-side navigation. data-match lists every path a
+  // link counts as active on (a dropdown parent includes its children's paths);
+  // aria-current stays on the link whose own page this is.
   function updateActiveLinks() {
     const path = window.location.pathname;
+    const onPath = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
     document
-      .querySelectorAll<HTMLAnchorElement>(".nav-link, .mobile-nav-link")
+      .querySelectorAll<HTMLAnchorElement>("#nav-pill a[data-match], #mobile-nav a[data-match]")
       .forEach((a) => {
+        const isActive = (a.dataset.match ?? "").split(" ").some(onPath);
         const href = a.getAttribute("href") ?? "";
-        const isActive = href === "/" ? path === "/" : path.startsWith(href);
-        a.classList.toggle(
-          "nav-link-active",
-          a.classList.contains("nav-link") && isActive,
-        );
+        const isCurrent = a.classList.contains("nav-link") ? path === href : isActive;
+        a.classList.toggle("nav-link-active", a.classList.contains("nav-link") && isActive);
         a.classList.toggle(
           "mobile-nav-link-active",
-          a.classList.contains("mobile-nav-link") && isActive,
+          (a.classList.contains("mobile-nav-link") || a.classList.contains("mobile-sub-link")) &&
+            isActive,
         );
-        if (isActive) {
+        if (isCurrent) {
           a.setAttribute("aria-current", "page");
         } else {
           a.removeAttribute("aria-current");
         }
       });
+  }
+
+  function closeDropdowns(except?: Element) {
+    document.querySelectorAll<HTMLElement>("#nav-pill .has-menu.is-open").forEach((item) => {
+      if (item === except) return;
+      item.classList.remove("is-open");
+      item.querySelector(".nav-caret")?.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function bindDropdowns() {
+    document.querySelectorAll<HTMLElement>("#nav-pill .has-menu").forEach((item) => {
+      const caret = item.querySelector<HTMLButtonElement>(".nav-caret");
+      caret?.addEventListener("click", () => {
+        const open = !item.classList.contains("is-open");
+        closeDropdowns(item);
+        item.classList.toggle("is-open", open);
+        caret.setAttribute("aria-expanded", String(open));
+      });
+      // Close once keyboard focus leaves the parent and its menu.
+      item.addEventListener("focusout", (e) => {
+        if (!item.contains(e.relatedTarget as Node | null)) closeDropdowns();
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!(e.target as Element | null)?.closest("#nav-pill .has-menu")) closeDropdowns();
+    });
   }
 
   function openMenu() {
@@ -437,9 +743,17 @@ function isActive(href: string) {
 
     window.addEventListener("scroll", updateScrollState, { passive: true });
 
+    bindDropdowns();
+
     document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
       const menu = document.getElementById("mobile-nav");
-      if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
+      if (menu?.classList.contains("is-open")) closeMenu();
+      const openItem = document.querySelector<HTMLElement>("#nav-pill .has-menu.is-open");
+      if (openItem) {
+        closeDropdowns();
+        openItem.querySelector<HTMLButtonElement>(".nav-caret")?.focus();
+      }
     });
   }
 
@@ -452,6 +766,7 @@ function isActive(href: string) {
   // Reset body overflow and close menu before every navigation.
   document.addEventListener("astro:before-preparation", () => {
     document.body.style.overflow = "";
+    closeDropdowns();
     const menu = document.getElementById("mobile-nav");
     const toggle = document.getElementById("nav-toggle");
     if (menu) menu.classList.remove("is-open");

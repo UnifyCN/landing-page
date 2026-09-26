@@ -54,6 +54,8 @@ body::after {
   /* Breakpoints — tablet: 810–1399px, desktop: 1400px+ */
   --breakpoint-tablet: 810px;
   --breakpoint-desktop: 1400px;
+  /* Navbar only: 4 links + CTA fit inline from here, so laptops skip the hamburger */
+  --breakpoint-nav-full: 1024px;
 
   /* Brand colors */
   --color-brand: #D84A29;
