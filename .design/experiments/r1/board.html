@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Round 1 - variants</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#f6f6f4; --panel:#fff; --ink:#16161a; --muted:#6b6b76;
+    --line:#e2e2dd; --accent:#16161a; --chip:#ecece7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0d0d0f; --panel:#161619; --ink:#f2f2ef; --muted:#8e8e99;
+           --line:#26262b; --accent:#f2f2ef; --chip:#22222a; }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:14px/1.45 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+    padding:14px 20px; background:var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .brief{flex:1 1 320px; min-width:0}
+  .brief b{display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .brief span{display:block; margin-top:2px; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pills{display:flex; gap:4px; background:var(--chip); padding:3px; border-radius:8px}
+  .pills button{
+    appearance:none; border:0; background:transparent; color:var(--muted);
+    font:inherit; font-size:12px; font-weight:550; padding:5px 11px;
+    border-radius:6px; cursor:pointer; white-space:nowrap;
+  }
+  .pills button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+  .hint{font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums}
+  kbd{
+    font:inherit; font-size:10px; background:var(--chip); border:1px solid var(--line);
+    border-radius:4px; padding:1px 4px; color:var(--muted);
+  }
+
+  main{padding:20px; display:grid; gap:20px; align-items:start}
+  main[data-solo="false"]{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  main[data-solo="true"] {grid-template-columns:1fr}
+  main[data-solo="true"] .card:not(.is-solo){display:none}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .card-head{display:flex; align-items:baseline; gap:10px; padding:12px 14px 0}
+  .badge{
+    flex:none; width:22px; height:22px; border-radius:6px;
+    background:var(--accent); color:var(--panel);
+    display:grid; place-items:center; font-size:12px; font-weight:700;
+  }
+  .archetype{font-weight:600; font-size:13px}
+  .spacer{flex:1}
+  .card-head button,.card-head a{
+    appearance:none; border:1px solid var(--line); background:transparent; color:var(--muted);
+    font:inherit; font-size:11px; padding:3px 8px; border-radius:6px; cursor:pointer;
+    text-decoration:none;
+  }
+  .card-head button:hover,.card-head a:hover{color:var(--ink); border-color:var(--muted)}
+  .bet{padding:5px 14px 12px; font-size:12px; color:var(--muted)}
+  .stage{
+    position:relative; overflow:hidden; border-top:1px solid var(--line);
+    background:var(--bg); width:100%;
+  }
+  .stage iframe{position:absolute; top:0; border:0; transform-origin:0 0; background:#fff}
+  @media (prefers-color-scheme: dark){ .stage iframe{background:#0a0a0c} }
+</style>
+</head>
+<body>
+<header>
+  <div class="brief"><b>Round 1 - 3 variants</b><span></span></div>
+  <div class="pills" id="vp">
+    <button data-vp="desktop" aria-pressed="true">Desktop 1440</button>
+    <button data-vp="tablet"  aria-pressed="false">Tablet 834</button>
+    <button data-vp="mobile"  aria-pressed="false">Mobile 390</button>
+  </div>
+  <div class="hint"><kbd>1</kbd>-<kbd>3</kbd> solo &nbsp; <kbd>0</kbd> grid &nbsp; <kbd>d</kbd><kbd>t</kbd><kbd>m</kbd> viewport</div>
+</header>
+<main id="grid" data-solo="false">
+  <section class="card">
+    <div class="card-head">
+      <span class="badge">A</span>
+      <span class="archetype">page structure (featured placement + list organisation)</span>
+      <span class="spacer"></span>
+      <button data-act="solo">Solo</button>
+      <a href="a-spotlight.html" target="_blank" rel="noopener">Open &#8599;</a>
+    </div>
+    <p class="bet">Image-led: one large lead featured card + two supporting; partner events as a 2-col card grid · Benefit: Richest imagery, closest to the reference, familiar · Cost: Long page at ~50 cards; dates are hard to scan · Risk: Reads as a generic events grid</p>
+    <div class="stage"><iframe src="a-spotlight.html" loading="lazy" title="A - page structure (featured placement + list organisation)"></iframe></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <span class="badge">B</span>
+      <span class="archetype">page structure (featured placement + list organisation)</span>
+      <span class="spacer"></span>
+      <button data-act="solo">Solo</button>
+      <a href="b-agenda.html" target="_blank" rel="noopener">Open &#8599;</a>
+    </div>
+    <p class="bet">Time-first: featured on the hero&#x27;s ink band; partner events as an agenda grouped This week / Next week / month, synced with the calendar · Benefit: Matches how people choose events; scales to 50+ on mobile; calendar and list are one system · Cost: Smaller list imagery · Risk: Can read dense if spacing slips</p>
+    <div class="stage"><iframe src="b-agenda.html" loading="lazy" title="B - page structure (featured placement + list organisation)"></iframe></div>
+  </section>
+  <section class="card">
+    <div class="card-head">
+      <span class="badge">C</span>
+      <span class="archetype">page structure (featured placement + list organisation)</span>
+      <span class="spacer"></span>
+      <button data-act="solo">Solo</button>
+      <a href="c-frontpage.html" target="_blank" rel="noopener">Open &#8599;</a>
+    </div>
+    <p class="bet">The picks are the hero: headline left, featured stack right; stats strip below; 3-col grid · Benefit: Featured is the first thing seen at every width · Cost: Photo loses its role; sidebar squeezes the grid · Risk: Busy hero; featured may look like an ad</p>
+    <div class="stage"><iframe src="c-frontpage.html" loading="lazy" title="C - page structure (featured placement + list organisation)"></iframe></div>
+  </section></main>
+<script>
+const VP = {"desktop": [1440, 900], "tablet": [834, 1112], "mobile": [390, 844]};
+let current = "desktop";
+const grid = document.getElementById("grid");
+const cards = [...document.querySelectorAll(".card")];
+
+function layout(){
+  const [w,h] = VP[current];
+  for (const card of cards){
+    const stage = card.querySelector(".stage");
+    const frame = stage.querySelector("iframe");
+    const avail = stage.clientWidth;
+    // Never upscale past native. When the stage is wider than the viewport being
+    // previewed, centre the frame so the gutter reads as deliberate rather than
+    // as a broken right edge.
+    const scale = Math.min(1, avail / w);
+    frame.style.width  = w + "px";
+    frame.style.height = h + "px";
+    frame.style.transform = "scale(" + scale + ")";
+    frame.style.left = Math.max(0, Math.round((avail - w * scale) / 2)) + "px";
+    stage.style.height = Math.round(h * scale) + "px";
+  }
+}
+
+function setViewport(vp){
+  current = vp;
+  for (const b of document.querySelectorAll("#vp button"))
+    b.setAttribute("aria-pressed", String(b.dataset.vp === vp));
+  layout();
+}
+
+function solo(i){
+  cards.forEach((c,n) => c.classList.toggle("is-solo", n === i));
+  grid.dataset.solo = i === null ? "false" : "true";
+  requestAnimationFrame(layout);
+}
+
+document.getElementById("vp").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (b) setViewport(b.dataset.vp);
+});
+grid.addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const i = cards.indexOf(b.closest(".card"));
+  if (b.dataset.act === "solo") solo(grid.dataset.solo === "true" ? null : i);
+});
+addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "0" || e.key === "Escape") return solo(null);
+  if (/^[1-9]$/.test(e.key)){ const i = +e.key - 1; if (i < cards.length) solo(i); return; }
+  const map = {d:"desktop", t:"tablet", m:"mobile"};
+  if (map[e.key]) setViewport(map[e.key]);
+});
+new ResizeObserver(layout).observe(grid);
+addEventListener("load", layout);
+layout();
+</script>
+</body>
+</html>

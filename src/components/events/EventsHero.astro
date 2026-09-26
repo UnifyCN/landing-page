@@ -1,0 +1,305 @@
+---
+// /events header: Gather photo fading into an ink band that carries the team's
+// featured picks (is_featured). With no featured events the band is omitted
+// and the hero simply closes under the stats.
+import EventCard from "./EventCard.astro";
+import type { EventView } from "../../lib/events/types";
+
+interface Props {
+  featured: EventView[];
+}
+
+const { featured } = Astro.props;
+
+// PLACEHOLDER numbers (Web Design Proposal doc); Savar confirms them after build.
+const stats = [
+  { value: "35+", label: "Events hosted" },
+  { value: "450+", label: "Newcomers joined" },
+  { value: "18", label: "Community partners" },
+  { value: "Free", label: "Always, no fee" },
+];
+---
+
+<header class={`evh${featured.length ? " evh--has-featured" : ""}`}>
+  <picture class="evh-photo">
+    <source srcset="/assets/images/community/newcomer-community-vancouver.avif" type="image/avif" />
+    <img
+      src="/assets/images/community/newcomer-community-vancouver.jpg"
+      alt="Newcomers at a Unify Gather community event in Vancouver"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+
+  <div class="evh-inner">
+    <div class="evh-copy">
+      <p class="evh-eyebrow">Unify events</p>
+      <h1 class="evh-title">Free Events for Newcomers in Canada<span class="evh-dot">.</span></h1>
+      <p class="evh-lede">
+        Workshops, info sessions, and English lessons for people settling in Canada. Learn,
+        connect, and find your community. No experience or fees required.
+      </p>
+    </div>
+
+    <dl class="evh-stats">
+      {
+        stats.map((s) => (
+          <div class="evh-stat">
+            <dt>{s.label}</dt>
+            <dd>{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+
+  {
+    featured.length > 0 && (
+      <section class="evh-featured" aria-labelledby="featured-heading">
+        <div class="evh-featured-head">
+          <p class="evh-eyebrow">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+              <path d="M6 .8l1.6 3.3 3.6.5-2.6 2.5.6 3.6L6 9l-3.2 1.7.6-3.6L.8 4.6l3.6-.5z" />
+            </svg>
+            Featured events
+          </p>
+          <h2 id="featured-heading" class="evh-featured-title">Picked by the Unify team</h2>
+          <p class="evh-featured-sub">Open to everyone.</p>
+        </div>
+        <div class={`evh-featured-grid${featured.length > 3 ? " evh-featured-grid--scroll" : ""}`}>
+          {featured.map((e, i) => <EventCard event={e} variant="feature" eager={i < 3} />)}
+        </div>
+      </section>
+    )
+  }
+</header>
+
+<style>
+  .evh {
+    position: relative;
+    isolation: isolate;
+    margin-top: calc(-1 * var(--spacing-navbar));
+    background: var(--color-ink);
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  .evh-photo {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 100%;
+    z-index: -2;
+  }
+
+  .evh--has-featured .evh-photo {
+    height: clamp(40rem, 74vh, 52rem);
+  }
+
+  .evh-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  /* Left scrim for the headline, then a fade into solid ink under the photo. */
+  .evh::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgba(23, 22, 22, 0.88) 0%, rgba(23, 22, 22, 0.66) 50%, rgba(23, 22, 22, 0.3) 100%),
+      linear-gradient(180deg, rgba(23, 22, 22, 0.35) 0%, rgba(23, 22, 22, 0) 30%, rgba(23, 22, 22, 0.88) 88%, var(--color-ink) 100%);
+  }
+
+  .evh--has-featured::before {
+    background:
+      linear-gradient(90deg, rgba(23, 22, 22, 0.88) 0%, rgba(23, 22, 22, 0.66) 50%, rgba(23, 22, 22, 0.28) 100%) top / 100% clamp(40rem, 74vh, 52rem) no-repeat,
+      linear-gradient(180deg, rgba(23, 22, 22, 0.35) 0, rgba(23, 22, 22, 0.15) 16rem, rgba(23, 22, 22, 0.94) clamp(34rem, 62vh, 44rem), var(--color-ink) clamp(38rem, 70vh, 50rem));
+  }
+
+  /* Phones: the copy spans the full width, so a side scrim can't carry it —
+     darken evenly instead (eyebrow and H1 stay above 4.5:1 over the crowd). */
+  @media (max-width: 700px) {
+    .evh::before,
+    .evh--has-featured::before {
+      background: linear-gradient(
+        180deg,
+        rgba(23, 22, 22, 0.84) 0%,
+        rgba(23, 22, 22, 0.7) 45%,
+        rgba(23, 22, 22, 0.92) 70%,
+        var(--color-ink) 82%
+      );
+    }
+  }
+
+  .evh-inner,
+  .evh-featured {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .evh-inner {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.5rem);
+    padding-top: calc(var(--spacing-navbar) + clamp(4.5rem, 10vw, 7.5rem));
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .evh-copy {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 44rem;
+  }
+
+  .evh-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-events-red-soft);
+  }
+
+  .evh-title {
+    margin: 0;
+    max-width: 13ch;
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 6.2vw, 5.4rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .evh-dot {
+    color: var(--color-brand-red);
+  }
+
+  .evh-lede {
+    margin: 0;
+    max-width: 36rem;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.84);
+  }
+
+  .evh-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
+    margin: 0;
+  }
+
+  .evh-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.2rem;
+  }
+
+  .evh-stat + .evh-stat {
+    padding-left: 2rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .evh-stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .evh-stat dt {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.64);
+  }
+
+  .evh-featured {
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .evh-featured-head {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .evh-featured-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .evh-featured-sub {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    color: rgba(255, 255, 255, 0.66);
+  }
+
+  .evh-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  /* More than three picks, or any narrow screen: a snap-scrolling row. */
+  .evh-featured-grid--scroll {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(17rem, calc((100% - 2.5rem) / 3));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.5rem;
+  }
+
+  .evh-featured-grid--scroll > :global(*) {
+    scroll-snap-align: start;
+  }
+
+  @media (max-width: 900px) {
+    .evh-featured-grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(16rem, 80%);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: calc(-1 * clamp(1rem, 4vw, 2.5rem));
+      padding: 0 clamp(1rem, 4vw, 2.5rem) 0.5rem;
+      scroll-padding-inline: clamp(1rem, 4vw, 2.5rem);
+    }
+
+    .evh-featured-grid > :global(*) {
+      scroll-snap-align: start;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .evh-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .evh-stat + .evh-stat {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

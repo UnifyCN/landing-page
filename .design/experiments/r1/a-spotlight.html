@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A · Spotlight — Unify Events</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* A: image-led. Lead featured card + two supporting; partner events as a 2-col card grid. */
+  .hero { min-height: min(78vh, 760px); display: flex; align-items: flex-end; }
+  .hero .wrap { width: 100%; padding-top: 9rem; padding-bottom: clamp(2.5rem, 5vw, 4rem); display: grid; gap: 1.25rem; }
+  .hero .h1 { max-width: 13ch; }
+  .hero .stats { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.18); }
+
+  .feat { padding: clamp(3rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3rem); }
+  .feat-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 1.25rem; margin-top: 2rem; }
+  .feat-side { display: grid; gap: 1.25rem; }
+  .card--lead .media { aspect-ratio: 16/10; }
+  .card--lead .title { font-size: clamp(1.3rem, 2vw, 1.65rem); letter-spacing: -.03em; }
+  .card--lead .body { padding: 1.35rem 1.5rem 1.5rem; }
+  .feat-side .card { flex-direction: row; }
+  .feat-side .media { width: 44%; aspect-ratio: auto; min-height: 100%; flex: none; }
+  .feat-side .datebadge { top: .6rem; left: .6rem; }
+  .feat-side .feat-tag { top: auto; bottom: .6rem; left: .6rem; right: auto; }
+  .card--feat { border-color: #f0d6cd; box-shadow: 0 0 0 1px rgba(216,74,41,.06); }
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .feat-side .card { flex-direction: column; } .feat-side .media { width: 100%; aspect-ratio: 16/9; } .feat-side .feat-tag { top: .75rem; right: .75rem; left: auto; bottom: auto; } }
+
+  .list { padding: clamp(2.5rem, 5vw, 4rem) 0 6rem; border-top: 1px solid var(--line); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 2.5rem; align-items: start; margin-top: 2rem; }
+  .aside { position: sticky; top: 104px; }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin: 1.75rem 0 1.25rem; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 1.25rem; }
+  .more { display: block; margin: 2rem auto 0; font: 600 .95rem var(--ui); padding: .8rem 1.4rem; border-radius: 12px; border: 1px solid var(--ink); background: #fff; cursor: pointer; }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } .aside { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } .aside .widget + .widget { margin-top: 0; } }
+  @media (max-width: 700px) { .aside { grid-template-columns: 1fr; } }
+</style></head>
+<body>
+<script src="events.js"></script><script src="shared.js"></script>
+<div id="nav"></div>
+<header class="hero"><img src="assets/hero.avif" alt=""><div class="wrap" id="hero"></div></header>
+<main>
+  <section class="feat wrap">
+    <p class="eyebrow">Featured events</p>
+    <h2 class="sec-h" style="margin-top:.5rem">Picked by the Unify team</h2>
+    <p class="sec-p">Open to everyone.</p>
+    <div class="feat-grid" id="feat"></div>
+  </section>
+  <section class="list"><div class="wrap">
+    <p class="eyebrow">Partnered events</p>
+    <h2 class="sec-h" style="margin-top:.5rem">Events with our community partners</h2>
+    <p class="sec-p">Hosted with our community partners. Filter by category or partner to find what you're looking for.</p>
+    <div class="layout">
+      <div>
+        <div id="chips" style="display:grid;gap:1rem"></div>
+        <div class="toolbar"><span class="count" id="count"></span><button class="clear" id="clear" hidden>Clear filters</button></div>
+        <div class="grid2" id="grid"></div>
+        <button class="more" id="more">Show more events</button>
+      </div>
+      <aside class="aside"><div class="widget" id="cal"></div><div class="widget" id="partners"></div></aside>
+    </div>
+  </div></section>
+</main>
+<script>
+  document.getElementById("nav").innerHTML = navHTML();
+  document.getElementById("hero").innerHTML = heroInner() + statsHTML();
+  const [lead, ...rest] = D.featured;
+  document.getElementById("feat").innerHTML =
+    card(lead, { featured: true }).replace('class="card card--feat"', 'class="card card--feat card--lead"') +
+    `<div class="feat-side">${rest.map((e) => card(e, { featured: true })).join("")}</div>`;
+  renderChips(document.getElementById("chips"));
+  renderCalendar(document.getElementById("cal"));
+  renderPartners(document.getElementById("partners"));
+  let limit = 12;
+  function drawList() {
+    const list = filtered();
+    document.getElementById("count").textContent = `${list.length} upcoming event${list.length === 1 ? "" : "s"}`;
+    document.getElementById("clear").hidden = !(state.genre || state.partner || state.day);
+    document.getElementById("grid").innerHTML = list.length ? list.slice(0, limit).map((e) => card(e)).join("") : `<div class="empty">No events match these filters.</div>`;
+    document.getElementById("more").hidden = list.length <= limit;
+  }
+  document.getElementById("more").onclick = () => { limit += 12; drawList(); };
+  document.getElementById("clear").onclick = clearAll;
+  onChange(() => { limit = 12; drawList(); });
+  drawList();
+</script>
+</body></html>

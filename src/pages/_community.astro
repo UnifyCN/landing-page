@@ -1,4 +1,8 @@
 ---
+// ARCHIVED 2026-09-25: /events replaced this page in the nav. The leading
+// underscore keeps Astro from routing it, and public/_redirects 301s
+// /community to /events. To restore: rename back to community.astro and
+// delete that redirect line.
 export const prerender = true;
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CommunityHero from "../components/sections/CommunityHero.astro";

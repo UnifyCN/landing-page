@@ -54,6 +54,8 @@ body::after {
   /* Breakpoints — tablet: 810–1399px, desktop: 1400px+ */
   --breakpoint-tablet: 810px;
   --breakpoint-desktop: 1400px;
+  /* Navbar only: 4 links + CTA fit inline from here, so laptops skip the hamburger */
+  --breakpoint-nav-full: 1024px;
 
   /* Brand colors */
   --color-brand: #D84A29;
@@ -113,5 +115,16 @@ body::after {
   --color-cream: #ffffff;
   --color-brand-red: #D84A29;
   --color-muted: #575757;
+
+  /* Events (/events): warm neutrals for cards, tags and the calendar */
+  --color-events-line: #ebe8e4;
+  --color-events-line-strong: #ddd7d0;
+  --color-events-warm: #f6f3ef;
+  --color-events-faint: #6b6763;
+  --color-events-badge-ink: #4a4744;
+  --color-events-red-wash: #fbece7;
+  --color-events-red-ink: #b53a1e;
+  --color-events-red-soft: #ffb39e;
+  --radius-card: 16px;
 
 }

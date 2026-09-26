@@ -1,0 +1,101 @@
+---
+// SSR (not prerendered): events come live from the shared Supabase table, which
+// the weekly crawler and the team (is_featured) change without a site deploy.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EventsHero from "../../components/events/EventsHero.astro";
+import EventsAgenda from "../../components/events/EventsAgenda.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { getUpcomingEvents, type UpcomingEvents } from "../../lib/events/queries";
+import { breadcrumbLd, serializeLd } from "../../lib/seo";
+
+export const prerender = false;
+
+let data: UpcomingEvents = { featured: [], partnerEvents: [] };
+let failed = false;
+try {
+  data = await getUpcomingEvents();
+} catch (err) {
+  // Keep the page up (hero, partners, CTA) if Supabase is unreachable.
+  console.error("events: upcoming fetch failed", err);
+  failed = true;
+}
+
+const q = Astro.url.searchParams;
+const initial = { genre: q.get("genre"), partner: q.get("partner"), day: q.get("day") };
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca/" },
+    { name: "Events", item: "https://unifysocial.ca/events" },
+  ]),
+);
+
+// Short edge/browser cache: the list changes weekly, featured picks any time.
+Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=3600");
+---
+
+<BaseLayout
+  title="Free Events for Newcomers in Vancouver & BC | Unify"
+  description="Free workshops, info sessions, English conversation circles, and meetups for newcomers in Metro Vancouver, hosted by Unify and partners like SFU, Vancouver Public Library, and Burnaby Neighbourhood House."
+  bodyBg="#171616"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+  </Fragment>
+
+  <main>
+    <EventsHero featured={data.featured} />
+    {
+      data.partnerEvents.length > 0 ? (
+        <EventsAgenda events={data.partnerEvents} initial={initial} />
+      ) : (
+        <section class="ev-none">
+          <div class="ev-none-inner">
+            <h2>{failed ? "Events are taking a moment to load" : "New events are on the way"}</h2>
+            <p>
+              {failed
+                ? "We couldn't load the event list just now. Refresh the page in a minute."
+                : "Our partners post new workshops and meetups every week. Check back soon, or browse events in the Unify app."}
+            </p>
+            <a href="/partners">Meet our partners →</a>
+          </div>
+        </section>
+      )
+    }
+    <CTABand />
+  </main>
+</BaseLayout>
+
+<style>
+  .ev-none {
+    background: #ffffff;
+    padding: clamp(4rem, 8vw, 6rem) 0;
+  }
+
+  .ev-none-inner {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+    text-align: center;
+    font-family: var(--font-display);
+  }
+
+  .ev-none h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .ev-none p {
+    margin: 0.75rem 0 1.25rem;
+    color: var(--color-muted);
+    line-height: 1.55;
+  }
+
+  .ev-none a {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--color-brand-red);
+    text-decoration: none;
+  }
+</style>

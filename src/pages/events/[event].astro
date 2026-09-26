@@ -1,0 +1,639 @@
+---
+// /events/<id>-<slug>. SSR: rows come and go weekly. The id is the key; a
+// wrong or missing slug 301s to the canonical URL, an unknown id goes back to
+// /events. Past events stay reachable (links get shared) but are noindex.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EventCard from "../../components/events/EventCard.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import { getEventById, getMoreFromPartner } from "../../lib/events/queries";
+import { partnerLabel, toParagraphs } from "../../lib/events/format";
+import { getPartnerBySlug } from "../../lib/partners";
+import { breadcrumbLd, eventLd, serializeLd } from "../../lib/seo";
+import type { EventView } from "../../lib/events/types";
+
+export const prerender = false;
+
+const match = /^(\d+)(?:-(.*))?$/.exec(Astro.params.event ?? "");
+if (!match) return Astro.redirect("/events");
+
+let event: EventView | null = null;
+try {
+  event = await getEventById(Number(match[1]));
+} catch (err) {
+  console.error("events: detail fetch failed", err);
+}
+if (!event) return Astro.redirect("/events");
+if (match[2] !== event.slug) return Astro.redirect(event.href, 301);
+
+const partner = event.partnerSlug ? getPartnerBySlug(event.partnerSlug) : undefined;
+let more: EventView[] = [];
+if (partner && !event.isPast) {
+  try {
+    more = await getMoreFromPartner(partner.slug, event.id);
+  } catch {
+    more = [];
+  }
+}
+
+const paragraphs = toParagraphs(event.description);
+const linkHost = event.link ? new URL(event.link).hostname.replace(/^www\./, "") : null;
+const mapQuery =
+  event.type !== "online" ? [event.location, event.address, "BC"].filter(Boolean).join(", ") : null;
+const mapHref = mapQuery
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+  : null;
+
+const canonicalUrl = `https://unifysocial.ca${event.href}`;
+const titleSuffix = partner ? ` | ${partnerLabel(partner)}` : "";
+const pageTitle = `${event.title} – ${event.dateLabel}${titleSuffix} | Unify Events`;
+const description = (paragraphs[0] ?? `${event.title} on ${event.dateLabel}, ${event.timeLabel} at ${event.location}.`)
+  .slice(0, 155)
+  .trim();
+
+const eventLdStr = serializeLd(
+  eventLd({
+    event,
+    canonicalUrl,
+    organizerName: partner?.name ?? event.host,
+    organizerUrl: partner?.website ?? null,
+  }),
+);
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca/" },
+    { name: "Events", item: "https://unifysocial.ca/events" },
+    { name: event.title, item: canonicalUrl },
+  ]),
+);
+
+Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=3600");
+---
+
+<BaseLayout title={pageTitle} description={description} bodyBg="#171616" noindex={event.isPast}>
+  <Fragment slot="head">
+    {!event.isPast && <script type="application/ld+json" set:html={eventLdStr} />}
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+  </Fragment>
+
+  <main>
+    <header class="ed-hero">
+      <div class="ed-wrap">
+        <nav class="ed-crumbs" aria-label="Breadcrumb">
+          <a href="/events">Events</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{event.genre ?? "Event"}</span>
+        </nav>
+        <div class="ed-hero-tags">
+          {event.featured && <span class="ed-tag ed-tag--feat">★ Featured</span>}
+          <span class="ed-tag">{event.typeLabel}</span>
+          {event.genre && <span class="ed-tag">{event.genre}</span>}
+        </div>
+        <h1 class="ed-title">{event.title}</h1>
+        <p class="ed-when">
+          <time datetime={event.startIso}>{event.weekdayLong}, {event.dateLabel.split(", ")[1]}</time>
+          <span aria-hidden="true">·</span>
+          {event.timeLabel}
+        </p>
+      </div>
+    </header>
+
+    <div class="ed-body">
+      {
+        event.isPast && (
+          <div class="ed-wrap">
+            <div class="ed-ended" role="status">
+              <b>This event has ended.</b>
+              <span>
+                <a href="/events">See upcoming events</a>
+                {partner && <> or more from <a href={`/partners/${partner.slug}`}>{partner.name}</a></>}.
+              </span>
+            </div>
+          </div>
+        )
+      }
+      <div class="ed-wrap ed-grid">
+        <aside class="ed-aside">
+          <div class="ed-card">
+            <div class="ed-date" aria-hidden="true">
+              <b>{event.day}</b>
+              <span>{event.month}</span>
+            </div>
+            <dl class="ed-facts">
+              <div>
+                <dt>When</dt>
+                <dd>
+                  {event.weekdayLong}, {event.dateLabel.split(", ")[1]}
+                  <br />
+                  {event.timeLabel}
+                </dd>
+              </div>
+              <div>
+                <dt>Where</dt>
+                <dd>
+                  {event.location}
+                  {event.address && event.address !== event.location && <><br />{event.address}</>}
+                  {
+                    mapHref && (
+                      <a class="ed-map" href={mapHref} target="_blank" rel="noopener noreferrer">
+                        Open in Google Maps ↗
+                      </a>
+                    )
+                  }
+                </dd>
+              </div>
+              {
+                event.host && (
+                  <div>
+                    <dt>Hosted by</dt>
+                    <dd>
+                      {partner ? (
+                        <a href={`/partners/${partner.slug}`} class="ed-host">
+                          {event.host}
+                        </a>
+                      ) : (
+                        event.host
+                      )}
+                    </dd>
+                  </div>
+                )
+              }
+            </dl>
+
+            {
+              event.link && !event.isPast && (
+                <div class="ed-cta">
+                  <a class="ed-btn" href={event.link} target="_blank" rel="noopener noreferrer" data-event-register>
+                    Register for this event
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M4.5 11.5 11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                  <p class="ed-cta-note">Continues on {linkHost}. Opens in a new tab.</p>
+                </div>
+              )
+            }
+            {
+              event.link && event.isPast && (
+                <a class="ed-btn ed-btn--quiet" href={event.link} target="_blank" rel="noopener noreferrer">
+                  View the original listing ↗
+                </a>
+              )
+            }
+          </div>
+
+          <a href="/events" class="ed-back">
+            <span aria-hidden="true">←</span> All events
+          </a>
+        </aside>
+
+        <article class="ed-main">
+
+          <div class="ed-cover">
+            {
+              event.cover ? (
+                <img src={event.cover} alt="" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+              ) : (
+                <div class="ed-cover-empty" aria-hidden="true">
+                  <img src="/assets/logo/new-unify-logo-256.png" alt="" />
+                </div>
+              )
+            }
+          </div>
+
+          <h2 class="ed-h2">About this event</h2>
+          {
+            paragraphs.length ? (
+              <div class="ed-desc">{paragraphs.map((p) => <p>{p}</p>)}</div>
+            ) : (
+              <p class="ed-desc-empty">
+                The host hasn't posted a description here. See the full details on the event page.
+              </p>
+            )
+          }
+          <p class="ed-source-note">
+            Details come from {partner ? partner.name : "the host"}'s own event listing. Times are
+            Pacific time. Check the host's page before you go, in case anything changed.
+          </p>
+        </article>
+      </div>
+
+      {
+        more.length > 0 && partner && (
+          <section class="ed-wrap ed-more" aria-labelledby="more-heading">
+            <div class="ed-more-head">
+              <h2 id="more-heading" class="ed-h2">More from {partner.name}</h2>
+              <a href={`/events?partner=${partner.slug}`}>See all →</a>
+            </div>
+            <div class="ed-more-list">
+              {more.map((e) => (
+                <EventCard event={e} variant="row" showDate />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </div>
+
+    <CTABand />
+  </main>
+</BaseLayout>
+
+<style>
+  .ed-wrap {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .ed-hero {
+    margin-top: calc(-1 * var(--spacing-navbar));
+    padding: calc(var(--spacing-navbar) + clamp(3.5rem, 8vw, 5.5rem)) 0 clamp(2.5rem, 5vw, 3.5rem);
+    color: #ffffff;
+    background: var(--color-ink);
+  }
+
+  .ed-crumbs {
+    display: flex;
+    gap: 0.5rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .ed-crumbs a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+  }
+
+  .ed-crumbs a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  .ed-hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+  }
+
+  .ed-tag {
+    padding: 0.25rem 0.65rem;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+  }
+
+  .ed-tag--feat {
+    color: #ffffff;
+    background: var(--color-brand-red);
+    border-color: var(--color-brand-red);
+  }
+
+  .ed-title {
+    margin: 1rem 0 0;
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.6vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  .ed-when {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.1rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .ed-body {
+    background: #ffffff;
+    padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(4rem, 8vw, 6rem);
+  }
+
+  /* DOM order is facts card first (the phone reading order); on wide
+     screens it moves to the right-hand column. */
+  .ed-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .ed-ended {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.6rem;
+    margin-bottom: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    font-family: var(--font-display);
+    color: var(--color-events-red-ink);
+    background: var(--color-events-red-wash);
+    border-radius: 12px;
+  }
+
+  .ed-ended a {
+    color: inherit;
+    font-weight: 600;
+  }
+
+  .ed-cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-events-warm);
+    border-radius: var(--radius-card);
+  }
+
+  .ed-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ed-cover-empty {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ed-cover-empty img {
+    width: 4rem;
+    height: auto;
+    opacity: 0.5;
+  }
+
+  .ed-h2 {
+    margin: 2.25rem 0 0.9rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .ed-desc {
+    display: grid;
+    gap: 1rem;
+    max-width: 40rem;
+    font-family: var(--font-display);
+    font-size: 1.06rem;
+    line-height: 1.7;
+    color: var(--color-text);
+  }
+
+  .ed-desc p,
+  .ed-desc-empty {
+    margin: 0;
+  }
+
+  .ed-desc p {
+    overflow-wrap: anywhere;
+  }
+
+  .ed-desc-empty {
+    font-family: var(--font-display);
+    color: var(--color-muted);
+  }
+
+  .ed-source-note {
+    max-width: 40rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--color-events-faint);
+    border-top: 1px solid var(--color-events-line);
+  }
+
+  .ed-main {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .ed-aside {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 6rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .ed-card {
+    padding: 1.35rem;
+    background: #ffffff;
+    border: 1px solid var(--color-events-line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 18px 40px -28px rgba(23, 22, 22, 0.35);
+  }
+
+  .ed-date {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3.75rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--color-events-red-wash);
+    border-radius: 12px;
+  }
+
+  .ed-date b {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--color-brand-red);
+  }
+
+  .ed-date span {
+    font-family: var(--font-ui);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-events-red-ink);
+  }
+
+  .ed-facts {
+    display: grid;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .ed-facts dt {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-events-faint);
+  }
+
+  .ed-facts dd {
+    margin: 0.3rem 0 0;
+    font-family: var(--font-display);
+    font-size: 0.98rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .ed-map,
+  .ed-host {
+    color: var(--color-brand-red);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .ed-map {
+    display: inline-block;
+    margin-top: 0.35rem;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+  }
+
+  .ed-map:hover,
+  .ed-host:hover {
+    text-decoration: underline;
+  }
+
+  .ed-cta {
+    margin-top: 1.5rem;
+  }
+
+  .ed-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.85rem 1.25rem;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    text-decoration: none;
+    background: var(--color-brand-red);
+    border-radius: var(--radius-cta);
+    transition:
+      background-color 0.2s ease,
+      transform 0.15s var(--ease-out);
+  }
+
+  .ed-btn:hover {
+    background: var(--color-ink);
+  }
+
+  .ed-btn:active {
+    transform: scale(0.98);
+  }
+
+  .ed-btn:focus-visible,
+  .ed-back:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+  }
+
+  .ed-btn svg {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .ed-btn:hover svg {
+    transform: translate(2px, -2px);
+  }
+
+  .ed-btn--quiet {
+    margin-top: 1.5rem;
+    color: var(--color-ink);
+    background: var(--color-events-warm);
+  }
+
+  .ed-btn--quiet:hover {
+    color: #ffffff;
+  }
+
+  .ed-cta-note {
+    margin: 0.6rem 0 0;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--color-events-faint);
+  }
+
+  .ed-back {
+    justify-self: start;
+    display: inline-flex;
+    gap: 0.4rem;
+    padding: 0.4rem 0.2rem;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .ed-back:hover {
+    color: var(--color-brand-red);
+  }
+
+  .ed-more {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .ed-more-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--color-events-line);
+  }
+
+  .ed-more-head a {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-brand-red);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .ed-more-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  /* Stacked: the facts + register card come first on phones. */
+  @media (max-width: 900px) {
+    .ed-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ed-main,
+    .ed-aside {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .ed-aside {
+      position: static;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ed-btn,
+    .ed-btn svg {
+      transition: none;
+    }
+  }
+</style>
