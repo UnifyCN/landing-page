@@ -13,6 +13,9 @@ import { defineMiddleware } from "astro:middleware";
 
 const CACHEABLE = [/^\/events(\/|$)/, /^\/blog(\/|$)/];
 
+// The page's own Cache-Control, kept on the stored copy (see the HIT branch).
+const ORIGINAL_CACHE_CONTROL = "X-Origin-Cache-Control";
+
 type EdgeCache = { match(req: Request): Promise<Response | undefined>; put(req: Request, res: Response): Promise<void> };
 
 export const onRequest = defineMiddleware(async ({ request, url }, next) => {
@@ -30,6 +33,12 @@ export const onRequest = defineMiddleware(async ({ request, url }, next) => {
   const hit = await edge.match(key);
   if (hit) {
     const res = new Response(hit.body, hit);
+    // A stored copy comes back with Cloudflare's zone Browser Cache TTL
+    // (`max-age=14400`), not the page's `max-age=0`, so browsers kept /events for
+    // 4 hours and an un-featured event stayed visible. Restore the page's header.
+    const original = res.headers.get(ORIGINAL_CACHE_CONTROL);
+    if (original) res.headers.set("Cache-Control", original);
+    res.headers.delete(ORIGINAL_CACHE_CONTROL);
     res.headers.set("X-Edge-Cache", "HIT");
     return res;
   }
@@ -37,7 +46,9 @@ export const onRequest = defineMiddleware(async ({ request, url }, next) => {
   const res = await next();
   const cacheControl = res.headers.get("Cache-Control") ?? "";
   if (res.status === 200 && /s-maxage=\d+/.test(cacheControl) && !res.headers.has("Set-Cookie")) {
-    await edge.put(key, res.clone());
+    const stored = res.clone();
+    stored.headers.set(ORIGINAL_CACHE_CONTROL, cacheControl);
+    await edge.put(key, stored);
   }
   res.headers.set("X-Edge-Cache", "MISS");
   return res;
