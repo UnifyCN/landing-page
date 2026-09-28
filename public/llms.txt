@@ -6,6 +6,7 @@ Unify Social helps permanent residents, skilled workers, and international stude
 
 ## Guide hubs
 - [New to Canada checklist: your first 30 days](https://unifysocial.ca/new-to-canada): What to do at the airport and in your first month in Canada, in order: SIN, bank account, health card, PR card address, phone, driver's licence, benefits, and free settlement services, for permanent residents, workers, and students.
+- [Government benefits for newcomers to Canada](https://unifysocial.ca/newcomer-benefits): The Canada Groceries and Essentials Benefit (formerly the GST/HST credit), the Canada Child Benefit, provincial payments, free services, how to apply before your first tax return, and a fact check of the "Welcome Canada bonus" rumour.
 - [Who is considered a newcomer in Canada](https://unifysocial.ca/who-is-a-newcomer): There is no single legal definition; how the CRA, IRCC, banks, the federal no-cost account rule, Statistics Canada, and mortgage insurers each define a newcomer, and for how long.
 - [TEER categories and jobs list](https://unifysocial.ca/teer): What each TEER category (0 to 5) means, the full NOC 2021 jobs list per category, and which TEER categories qualify for Express Entry and permanent residency.
 - [Foreign credential recognition by profession](https://unifysocial.ca/credentials): How internationally trained professionals get licensed in Canada, with the regulator in every province and territory for nurses, doctors, engineers, teachers, accountants, trades, and more.

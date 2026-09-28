@@ -51,7 +51,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | Build credit with no history | `/blog/how-to-build-credit-in-canada-as-a-newcomer`, `/blog/how-do-international-students-build-credit-in-canada` | post | 338 impr, pos 27 | - |
 | TFSA vs RRSP | `/blog/tfsa-vs-rrsp-for-newcomers-to-canada-which-to-open-first` | post | - | - |
 | Budgeting | `/resources/how-to-budget-your-money` (video) | thin | 5 impr | P3 |
-| Government benefits (Canada Child Benefit, GST/HST credit, forms RC66 and RC151) | - | gap | KR: "benefits" is the #1 autocomplete for "newcomer in canada" and "newcomers to canada"; fact-check the "Welcome Canada $500 / $1,000" rumour | **P1** (planned benefits hub) |
+| Government benefits (Canada Child Benefit, groceries benefit (formerly GST/HST credit), RC66 and RC151, provincial payments, myths) | `/newcomer-benefits` | hub | KR: "benefits" is the #1 autocomplete for "newcomer in canada" and "newcomers to canada" | new 2026-09 |
 | Sending money home | - | gap | - | P2 |
 
 ## 3. Taxes

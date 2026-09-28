@@ -225,6 +225,7 @@ export const CHECKLIST_STEPS: ChecklistStep[] = [
       label: "CRA: Newcomers to Canada",
       url: "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html",
     },
+    guides: [{ label: "Every benefit newcomers can get", href: "/newcomer-benefits" }],
     confidence: "high",
   },
   {
