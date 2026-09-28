@@ -46,7 +46,7 @@ export const NEWCOMER_DEFINITIONS: NewcomerDefinition[] = [
     whoCounts: "Anyone who becomes a tax resident, whatever the immigration status: permanent residents, protected persons, and temporary residents such as students and workers.",
     unlocks: "You can apply for the Canada Child Benefit and the Canada Groceries and Essentials Benefit (formerly the GST/HST credit) before your first tax return, and your first return has special rules.",
     source: "https://www.canada.ca/en/revenue-agency/services/tax/international-non-residents/individuals-leaving-entering-canada-non-residents/newcomers-canada-immigrants.html",
-    guide: { label: "Your first tax return and the 90% rule", href: "/blog/when-newcomers-can-claim-full-non-refundable-tax-credits-in-canada-the-90-rule-explained" },
+    guide: { label: "Benefits you can apply for now", href: "/newcomer-benefits" },
     confidence: "high",
   },
   {

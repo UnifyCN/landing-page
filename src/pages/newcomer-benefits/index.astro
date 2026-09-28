@@ -1,0 +1,266 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import {
+  BENEFITS_LEAD,
+  BENEFITS_AT_A_GLANCE,
+  BENEFITS,
+  BENEFIT_MYTHS,
+  BENEFITS_FAQS,
+  BENEFITS_LAST_VERIFIED,
+  BENEFIT_YEAR,
+  type Benefit,
+} from "../../lib/newcomer-benefits";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Benefits for Newcomers", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(BENEFITS_FAQS));
+
+const payments = BENEFITS.filter((b) => b.group === "payment");
+const provincial = BENEFITS.filter((b) => b.group === "provincial");
+const free = BENEFITS.filter((b) => b.group === "free");
+const notYet = BENEFITS.filter((b) => b.group === "not-yet");
+
+const allSources = [...BENEFITS.map((b) => b.source), ...BENEFIT_MYTHS.map((m) => m.source)];
+const sources = [...new Map(allSources.map((u) => [host(u), u])).values()];
+
+const cardRows = (b: Benefit) =>
+  [
+    ["Up to", b.upTo],
+    ["Who qualifies", b.who],
+    ["Students and workers", b.temporaryResidents],
+    ["How to apply", b.howToApply],
+    ["Good to know", b.note],
+  ].filter((r): r is [string, string] => Boolean(r[1]));
+---
+
+<BaseLayout
+  title="Government Benefits for Newcomers to Canada (2026): What You Can Get"
+  description="What newcomers to Canada can get: the groceries benefit, the Canada Child Benefit, provincial payments, and free services. How to apply, and which bonuses are myths."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Benefits for Newcomers</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Benefits &amp; money</p>
+      <h1 class="cl-h1">Government benefits for newcomers to Canada</h1>
+      <p class="cl-lead" set:html={BENEFITS_LEAD} />
+    </header>
+
+    <aside class="cl-verdict" aria-label="At a glance">
+      {BENEFITS_AT_A_GLANCE.map((g) => (
+        <div class="cl-verdict-item">
+          <span class="cl-verdict-label">{g.label}</span>
+          <strong class="cl-verdict-value">{g.value}</strong>
+        </div>
+      ))}
+    </aside>
+
+    <section class="cl-block" aria-labelledby="pay-h">
+      <h2 id="pay-h" class="cl-h2">Federal payments you can apply for</h2>
+      <p class="cl-body">Maximum amounts for {BENEFIT_YEAR}. All of them go down as your family income goes up.</p>
+      <div class="cl-table-wrap" role="region" aria-labelledby="pay-h" tabindex="0">
+        <table class="cl-table cl-table--hub">
+          <thead>
+            <tr>
+              <th scope="col">Benefit</th>
+              <th scope="col">Up to</th>
+              <th scope="col" class="cl-col-extra">Who can get it</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((b) => (
+              <tr>
+                <th scope="row"><a href={`#${b.id}`}>{b.name}</a></th>
+                <td>{b.upTo}</td>
+                <td class="cl-col-extra">{b.whoShort}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul class="cl-kv-list nb-cards" role="list">
+        {payments.map((b) => (
+          <li class="cl-kv-card cl-kv-card--wide" id={b.id}>
+            <div class="cl-kv-head">
+              <span class="cl-kv-title">{b.name}</span>
+            </div>
+            {cardRows(b).map(([label, value]) => (
+              <div class="cl-kv-row">
+                <span class="cl-kv-label">{label}</span>
+                <span class="cl-kv-value">{value}</span>
+              </div>
+            ))}
+            <a class="cl-kv-link" href={b.source} target="_blank" rel="noopener noreferrer">
+              Official rules on {host(b.source)} &rarr;
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="prov-h">
+      <h2 id="prov-h" class="cl-h2">Provincial payments</h2>
+      <p class="cl-body">
+        In most provinces, the provincial child benefit comes automatically with the Canada Child
+        Benefit. Quebec is the exception: you apply to Retraite Québec yourself.
+      </p>
+      <div class="cl-table-wrap" role="region" aria-labelledby="prov-h" tabindex="0">
+        <table class="cl-table cl-table--hub">
+          <thead>
+            <tr>
+              <th scope="col">Benefit</th>
+              <th scope="col">Up to</th>
+              <th scope="col" class="cl-col-extra">How you get it</th>
+            </tr>
+          </thead>
+          <tbody>
+            {provincial.map((b) => (
+              <tr id={b.id}>
+                <th scope="row">
+                  <a href={b.source} target="_blank" rel="noopener noreferrer">{b.name}</a>
+                </th>
+                <td>{b.upTo}</td>
+                <td class="cl-col-extra">{b.howToApply}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cl-block" aria-labelledby="myth-h">
+      <h2 id="myth-h" class="cl-h2">Fact check: common myths about benefits</h2>
+      <p class="cl-body">These claims spread on social media and in search results. Here is what is true.</p>
+      <ul class="cl-kv-list" role="list">
+        {BENEFIT_MYTHS.map((m) => (
+          <li class="cl-kv-card cl-kv-card--wide">
+            <div class="cl-kv-head nb-myth-head">
+              <span class="cl-kv-title">{m.claim}</span>
+              <span class="cl-pill is-yes">{m.verdict}</span>
+            </div>
+            <p class="cl-body nb-myth-answer">{m.answer}</p>
+            <a class="cl-kv-link" href={m.source} target="_blank" rel="noopener noreferrer">
+              Source: {host(m.source)} &rarr;
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="free-h">
+      <h2 id="free-h" class="cl-h2">Free services and perks</h2>
+      <ul class="cl-kv-list" role="list">
+        {free.map((b) => (
+          <li class="cl-kv-card cl-kv-card--wide" id={b.id}>
+            <div class="cl-kv-head">
+              <span class="cl-kv-title">{b.name}</span>
+              <span class="cl-kv-sub">{b.whoShort}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">What you get</span>
+              <span class="cl-kv-value">{b.who}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">How to get it</span>
+              <span class="cl-kv-value">{b.howToApply}</span>
+            </div>
+            {b.guide && <a class="cl-kv-link" href={b.guide.href}>{b.guide.label} &rarr;</a>}
+            <a class="cl-kv-link" href={b.source} target="_blank" rel="noopener noreferrer">
+              Details on {host(b.source)} &rarr;
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="cl-microcopy">
+        Public health coverage and public school are also free once you qualify; see the
+        <a href="/health-card">health card rules in every province</a>.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="notyet-h">
+      <h2 id="notyet-h" class="cl-h2">What newcomers do not get (yet)</h2>
+      <ul class="cl-list">
+        {notYet.map((b) => (
+          <li>
+            <strong>{b.name}:</strong> {b.who}
+            (<a href={b.source} target="_blank" rel="noopener noreferrer">{host(b.source)}</a>)
+          </li>
+        ))}
+        <li>
+          <strong>Canada Workers Benefit and dental care in your first year:</strong> both need a
+          full year of residence or a previous-year tax return, so most newcomers qualify from their
+          second year.
+        </li>
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="next-h">
+      <h2 id="next-h" class="cl-h2">Apply in your first month</h2>
+      <p class="cl-body">
+        Benefit applications are one step in the
+        <a href="/new-to-canada#benefits">first-30-days checklist for newcomers</a>. Your first tax
+        return keeps the payments coming: read
+        <a href="/blog/how-do-newcomers-file-their-first-tax-return-in-canada-step-by-step-guide">how to file your first tax return</a>
+        and <a href="/blog/when-newcomers-can-claim-full-non-refundable-tax-credits-in-canada-the-90-rule-explained">the 90% rule for tax credits</a>.
+      </p>
+      <p class="cl-body cl-app">
+        The <a href="/">Unify newcomer settlement app</a> reminds you what to apply for and when,
+        in one free checklist.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Benefits for newcomers: common questions</h2>
+      <div class="cl-faq">
+        {BENEFITS_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="cl-verified">
+      Checked against
+      {sources.map((u, i) => (
+        <>
+          <a href={u} target="_blank" rel="noopener noreferrer">{host(u)}</a>{i < sources.length - 1 ? ", " : ""}
+        </>
+      ))}
+      in {BENEFITS_LAST_VERIFIED}. Amounts change every July. This page is general information,
+      not tax advice.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  .nb-cards { margin-top: 1.25rem; }
+  .nb-myth-head { align-items: flex-start; }
+  .nb-myth-head .cl-pill { flex: none; }
+  .nb-myth-answer { margin: 0.6rem 0 0; }
+</style>
