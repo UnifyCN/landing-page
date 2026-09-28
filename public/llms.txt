@@ -5,6 +5,7 @@
 Unify Social helps permanent residents, skilled workers, and international students with practical life in Canada. The website publishes free guides that are checked against official sources (IRCC, CRA, provincial governments, and professional regulators), and each guide shows the month it was last verified. The Unify app turns those steps into one checklist. The app is free on the Apple App Store. Unify Social is operated from Vancouver, British Columbia, Canada.
 
 ## Guide hubs
+- [New to Canada checklist: your first 30 days](https://unifysocial.ca/new-to-canada): What to do at the airport and in your first month in Canada, in order: SIN, bank account, health card, PR card address, phone, driver's licence, benefits, and free settlement services, for permanent residents, workers, and students.
 - [TEER categories and jobs list](https://unifysocial.ca/teer): What each TEER category (0 to 5) means, the full NOC 2021 jobs list per category, and which TEER categories qualify for Express Entry and permanent residency.
 - [Foreign credential recognition by profession](https://unifysocial.ca/credentials): How internationally trained professionals get licensed in Canada, with the regulator in every province and territory for nurses, doctors, engineers, teachers, accountants, trades, and more.
 - [Canadian resume format for newcomers](https://unifysocial.ca/canadian-resume): How to write a Canadian-style resume: what to include, what to leave out, and how to describe foreign education and experience.

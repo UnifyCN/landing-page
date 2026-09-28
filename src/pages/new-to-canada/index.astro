@@ -1,0 +1,393 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import {
+  CHECKLIST_LEAD,
+  CHECKLIST_PHASES,
+  CHECKLIST_STEPS,
+  CHECKLIST_FAQS,
+  CHECKLIST_LAST_VERIFIED,
+  AUDIENCES,
+  type Audience,
+} from "../../lib/new-to-canada";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "New to Canada Checklist", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(CHECKLIST_FAQS));
+
+const phases = CHECKLIST_PHASES.map((p) => ({
+  ...p,
+  steps: CHECKLIST_STEPS.filter((s) => s.phase === p.id),
+}));
+const countFor = (a: Audience) => CHECKLIST_STEPS.filter((s) => s.who.includes(a)).length;
+const whoLabel = (a: Audience) => AUDIENCES.find((x) => x.id === a)!.short;
+// One link per website in the "checked against" line.
+const sources = [
+  ...new Map(CHECKLIST_STEPS.map((s) => s.official.url).map((u) => [host(u), u])).values(),
+];
+---
+
+<BaseLayout
+  title="New to Canada Checklist: What to Do in Your First 30 Days (2026)"
+  description="Your first 30 days in Canada, step by step: the border, SIN, bank account, health card, PR card, driver's licence, benefits, and free settlement help."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">New to Canada Checklist</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Your first 30 days</p>
+      <h1 class="cl-h1">New to Canada checklist: what to do in your first 30 days</h1>
+      <p class="cl-lead" set:html={CHECKLIST_LEAD} />
+    </header>
+
+    <div class="nc" data-nc-root>
+      <div class="nc-bar">
+        <fieldset class="nc-who">
+          <legend class="nc-who-legend">Show the steps for</legend>
+          <div class="nc-who-options">
+            <label class="nc-who-opt">
+              <input type="radio" name="nc-who" value="all" checked />
+              <span>Everyone <span class="nc-who-count">{CHECKLIST_STEPS.length}</span></span>
+            </label>
+            {AUDIENCES.map((a) => (
+              <label class="nc-who-opt">
+                <input type="radio" name="nc-who" value={a.id} />
+                <span>{a.label} <span class="nc-who-count">{countFor(a.id)}</span></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div class="nc-progress" aria-live="polite">
+          <div class="nc-progress-text">
+            <strong data-nc-done>0</strong> of <span data-nc-total>{CHECKLIST_STEPS.length}</span> done
+          </div>
+          <div class="nc-progress-track" aria-hidden="true">
+            <div class="nc-progress-fill" data-nc-fill></div>
+          </div>
+        </div>
+      </div>
+      <p class="nc-save-note">Your ticks stay in this browser. To keep them on your phone, use the free <a href="/">Unify newcomer settlement app</a>.</p>
+
+      {phases.map((p) => (
+        <section class="nc-phase" aria-labelledby={`phase-${p.id}`}>
+          <div class="nc-phase-head">
+            <span class="nc-phase-when">{p.when}</span>
+            <h2 id={`phase-${p.id}`} class="cl-h2 nc-phase-title">{p.title}</h2>
+            <p class="nc-phase-intro">{p.intro}</p>
+          </div>
+          <ol class="nc-list" role="list">
+            {p.steps.map((s) => (
+              <li class="nc-item" id={s.id} data-who={s.who.join(" ")}>
+                <input class="nc-check" type="checkbox" id={`chk-${s.id}`} data-nc-step={s.id} />
+                <div class="nc-item-body">
+                  <h3 class="nc-item-h3">
+                    <label class="nc-item-title" for={`chk-${s.id}`}>
+                      <span class="nc-box" aria-hidden="true">
+                        <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                      </span>
+                      <span>{s.title}</span>
+                    </label>
+                  </h3>
+                  <div class="nc-meta">
+                    <span class="nc-timing">{s.timing}</span>
+                    {s.who.length < AUDIENCES.length && s.who.map((a) => <span class="cl-pill is-no">{whoLabel(a)}</span>)}
+                  </div>
+                  <p class="nc-text">{s.body}</p>
+                  {s.bring && s.bring.length > 0 && (
+                    <p class="nc-bring"><span class="nc-bring-label">Bring:</span> {s.bring.join("; ")}</p>
+                  )}
+                  <div class="nc-links">
+                    {s.guides?.map((g) => <a class="nc-link nc-link--guide" href={g.href}>{g.label} &rarr;</a>)}
+                    <a class="nc-link" href={s.official.url} target="_blank" rel="noopener noreferrer">{s.official.label} ({host(s.official.url)})</a>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">New to Canada: common questions</h2>
+      <div class="cl-faq">
+        {CHECKLIST_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="cl-body cl-app">
+      Every step on this page is also in the
+      <a href="/">Unify newcomer settlement app</a>, as one checklist that follows your status and
+      province. It is free, and it links you to other newcomers in your city.
+    </p>
+
+    <p class="cl-verified">
+      Checked against
+      {sources.map((u, i) => (
+        <>
+          <a href={u} target="_blank" rel="noopener noreferrer">{host(u)}</a>{i < sources.length - 1 ? ", " : ""}
+        </>
+      ))}
+      in {CHECKLIST_LAST_VERIFIED}. This page is general information, not legal or immigration
+      advice. Rules change; confirm on the official page before you act.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  /* Filter by audience with :has(), no JS needed. Steps that do not apply fade out of the list. */
+  .nc:has(input[name="nc-who"][value="pr"]:checked) .nc-item:not([data-who~="pr"]),
+  .nc:has(input[name="nc-who"][value="worker"]:checked) .nc-item:not([data-who~="worker"]),
+  .nc:has(input[name="nc-who"][value="student"]:checked) .nc-item:not([data-who~="student"]) {
+    display: none;
+  }
+
+  .nc { margin-top: clamp(0.5rem, 2vw, 1rem); }
+
+  .nc-bar {
+    position: sticky;
+    top: calc(var(--spacing-navbar) + 2rem);
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem 1.5rem;
+    padding: 0.85rem 1rem;
+    background: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.1);
+    border-radius: var(--radius-cta);
+    box-shadow: 0 10px 28px -20px rgba(23, 22, 22, 0.35);
+  }
+
+  .nc-who { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .nc-who-legend {
+    float: left;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    width: 100%;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .nc-who-options { clear: both; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .nc-who-opt { position: relative; cursor: pointer; }
+  .nc-who-opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .nc-who-opt > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(23, 22, 22, 0.16);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background: #ffffff;
+    transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out), border-color 0.2s var(--ease-out), transform 0.15s var(--ease-out);
+  }
+  .nc-who-opt:active > span { transform: scale(0.97); }
+  .nc-who-opt input:checked + span { background: var(--color-ink); border-color: var(--color-ink); color: #ffffff; }
+  .nc-who-opt input:focus-visible + span { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+  .nc-who-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+
+  .nc-progress { flex: 1 1 11rem; max-width: 16rem; min-width: 0; }
+  .nc-progress-text { font-family: var(--font-ui); font-size: 0.85rem; color: var(--color-muted); margin-bottom: 0.4rem; }
+  .nc-progress-text strong { color: var(--color-text); }
+  .nc-progress-track { height: 6px; border-radius: 999px; background: rgba(23, 22, 22, 0.08); overflow: hidden; }
+  .nc-progress-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--color-brand-red);
+    border-radius: inherit;
+    transform-origin: left center;
+    transform: scaleX(var(--nc-pct, 0));
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .nc-save-note { margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.5; color: var(--color-muted); }
+  .nc-save-note a { color: var(--color-brand-red); font-weight: 600; }
+
+  .nc-phase { margin-top: clamp(2.25rem, 6vw, 3.5rem); }
+  .nc-phase-head { margin-bottom: 1rem; }
+  .nc-phase-when {
+    display: inline-block;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-brand-red);
+    margin-bottom: 0.4rem;
+  }
+  .nc-phase-title { margin-bottom: 0.5rem; }
+  .nc-phase-intro { margin: 0; font-size: clamp(1rem, 2vw, 1.1rem); line-height: 1.55; color: var(--color-muted); max-width: 44rem; }
+
+  .nc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+  .nc-item {
+    position: relative;
+    padding: 1.1rem 1.25rem 1.15rem;
+    border: 1px solid rgba(23, 22, 22, 0.12);
+    border-radius: var(--radius-cta);
+    background: #ffffff;
+    scroll-margin-top: calc(var(--spacing-navbar) + 9rem);
+    transition: border-color 0.25s var(--ease-out), background-color 0.25s var(--ease-out);
+  }
+  .nc-item:has(.nc-check:checked) { background: rgba(23, 22, 22, 0.025); border-color: rgba(23, 22, 22, 0.08); }
+  .nc-item:target { border-color: var(--color-brand-red); }
+
+  .nc-check { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+
+  .nc-item-title { display: flex; align-items: flex-start; gap: 0.8rem; cursor: pointer; }
+  .nc-box {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-top: 0.1rem;
+    border: 1.5px solid rgba(23, 22, 22, 0.35);
+    border-radius: 0.45rem;
+    color: #ffffff;
+    background: #ffffff;
+    transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out), transform 0.15s var(--ease-out);
+  }
+  .nc-box svg { opacity: 0; transform: scale(0.6); transition: opacity 0.2s var(--ease-out), transform 0.25s var(--ease-out); }
+  .nc-item-title:active .nc-box { transform: scale(0.9); }
+  .nc-check:checked + .nc-item-body .nc-box { background: var(--color-brand-red); border-color: var(--color-brand-red); }
+  .nc-check:checked + .nc-item-body .nc-box svg { opacity: 1; transform: scale(1); }
+  .nc-check:focus-visible + .nc-item-body .nc-box { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+  .nc-item-title:hover .nc-box { border-color: var(--color-brand-red); }
+
+  .nc-item-h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.1rem, 2.4vw, 1.3rem);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    transition: color 0.2s var(--ease-out);
+  }
+  .nc-check:checked + .nc-item-body .nc-item-h3 { color: var(--color-muted); }
+
+  .nc-item-body > :not(.nc-item-h3) { margin-left: 2.4rem; }
+  .nc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.5rem; margin-top: 0.55rem; }
+  .nc-timing { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; color: var(--color-text); margin-right: 0.25rem; }
+  .nc-text { margin-top: 0.6rem; margin-bottom: 0; font-size: 1rem; line-height: 1.6; color: var(--color-muted); }
+  .nc-bring { margin-top: 0.5rem; margin-bottom: 0; font-size: 0.92rem; line-height: 1.55; color: var(--color-muted); }
+  .nc-bring-label { font-family: var(--font-ui); font-weight: 600; color: var(--color-text); }
+  .nc-links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; margin-top: 0.75rem; }
+  .nc-link { font-family: var(--font-ui); font-size: 0.85rem; color: var(--color-muted); text-underline-offset: 3px; }
+  .nc-link:hover { color: var(--color-brand-red); }
+  .nc-link--guide { color: var(--color-brand-red); font-weight: 600; text-decoration: none; }
+  .nc-link--guide:hover { text-decoration: underline; }
+
+  @media (max-width: 809px) {
+    .nc-bar { position: static; padding: 0.75rem; }
+    .nc-progress { max-width: none; flex-basis: 100%; }
+    .nc-item { padding: 1rem 1rem 1.05rem; }
+    .nc-item-body > :not(.nc-item-h3) { margin-left: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nc-box, .nc-box svg, .nc-progress-fill, .nc-who-opt > span, .nc-item { transition: none; }
+  }
+</style>
+
+<script>
+  // Tick state lives in localStorage so a visitor can come back to the list.
+  // Wrapped in astro:page-load (ClientRouter) with a data-attribute guard.
+  const KEY = "unify-new-to-canada-v1";
+
+  function readState(): Record<string, boolean> {
+    try {
+      return JSON.parse(localStorage.getItem(KEY) || "{}");
+    } catch {
+      return {};
+    }
+  }
+  function writeState(state: Record<string, boolean>) {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch {
+      /* storage blocked: ticks still work for this visit */
+    }
+  }
+
+  function initChecklist() {
+    const root = document.querySelector<HTMLElement>("[data-nc-root]");
+    if (!root || root.dataset.ncBound === "true") return;
+    root.dataset.ncBound = "true";
+
+    const boxes = Array.from(root.querySelectorAll<HTMLInputElement>("[data-nc-step]"));
+    const doneEl = root.querySelector<HTMLElement>("[data-nc-done]");
+    const totalEl = root.querySelector<HTMLElement>("[data-nc-total]");
+    const fill = root.querySelector<HTMLElement>("[data-nc-fill]");
+    const state = readState();
+
+    boxes.forEach((b) => (b.checked = Boolean(state[b.dataset.ncStep!])));
+
+    const update = () => {
+      const who = root.querySelector<HTMLInputElement>('input[name="nc-who"]:checked')?.value ?? "all";
+      const visible = boxes.filter((b) => {
+        if (who === "all") return true;
+        const item = b.closest<HTMLElement>(".nc-item");
+        return item?.dataset.who?.split(" ").includes(who) ?? true;
+      });
+      const done = visible.filter((b) => b.checked).length;
+      if (doneEl) doneEl.textContent = String(done);
+      if (totalEl) totalEl.textContent = String(visible.length);
+      if (fill) fill.style.setProperty("--nc-pct", String(visible.length ? done / visible.length : 0));
+    };
+
+    root.addEventListener("change", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.dataset.ncStep) {
+        state[t.dataset.ncStep] = t.checked;
+        writeState(state);
+      }
+      update();
+    });
+    update();
+  }
+
+  initChecklist();
+  document.addEventListener("astro:page-load", initChecklist);
+</script>

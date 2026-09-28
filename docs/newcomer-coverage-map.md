@@ -10,6 +10,8 @@ already ranks (TEER, health cards, licences) and never finds the gaps. This map 
 the weekly blog automation picks from. See "Rules for the weekly automation" at the bottom.
 
 Evidence column: Search Console, last 3 months to 2026-09-19 (impressions, average position).
+The 2026-09-28 keyword research ([`keyword-research-2026-09.md`](keyword-research-2026-09.md))
+added Google autocomplete, Trends, Reddit, and survey evidence; rows it changed cite it as "KR".
 Baseline on that date: 251 of 1,128 clicks (22%) went to pages other than TEER and brand pages.
 That share is the breadth metric. Re-check it monthly. The AI-assistant side is measured in
 [`ai-visibility-baseline.md`](ai-visibility-baseline.md) (20 fixed questions, three engines).
@@ -31,9 +33,10 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | Topic | Owner | Status | Evidence | Priority |
 |---|---|---|---|---|
 | Social Insurance Number (SIN) | `/blog/how-to-get-a-sin-number-in-canada-newcomer-guide` | post | 1,419 impr, pos 16 | improve post |
-| First week / first 30 days checklist for PRs and workers | `/blog/what-should-international-students-do-in-their-first-week-in-canada` (students only) | thin | 137 impr | **P1** |
+| First week / first 30 days checklist for PRs, workers, and students | `/new-to-canada` (students also: `/blog/what-should-international-students-do-in-their-first-week-in-canada`) | hub | KR: AI Overview on all newcomer head terms is this checklist; small sites on page 1 | new 2026-09 |
+| Who counts as a newcomer (CRA, bank, IRCC definitions) | - | gap | KR: People Also Ask on every newcomer SERP; "new to canada for less than 5 years" 45 impr, pos 14 | **P1** |
 | Provincial health card | `/health-card` | hub | new 2026-09-21 | - |
-| Family doctor | `/blog/how-to-find-a-family-doctor-in-bc-as-a-newcomer` (BC only) | thin | - | P2 |
+| Family doctor and walk-in clinics | `/blog/how-to-find-a-family-doctor-in-bc-as-a-newcomer` (BC only) | thin | KR: Trends walk in clinic 154, family doctor 51; 48% of newcomers had a bad experience (Pollara) | **P1** (programmatic candidate, by province) |
 | Driver's licence exchange | `/drivers-licence` | hub | new 2026-09-21 | - |
 | Car insurance | `/blog/car-insurance-for-newcomers-in-bc-icbc-autoplan-guide` (BC only) | thin | - | P2 |
 | Cell phone plan | `/blog/how-to-get-a-cell-phone-plan-in-canada-as-a-newcomer` | post | - | - |
@@ -48,7 +51,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | Build credit with no history | `/blog/how-to-build-credit-in-canada-as-a-newcomer`, `/blog/how-do-international-students-build-credit-in-canada` | post | 338 impr, pos 27 | - |
 | TFSA vs RRSP | `/blog/tfsa-vs-rrsp-for-newcomers-to-canada-which-to-open-first` | post | - | - |
 | Budgeting | `/resources/how-to-budget-your-money` (video) | thin | 5 impr | P3 |
-| Government benefits (Canada Child Benefit, GST/HST credit, forms RC66 and RC151) | - | gap | web demand, not yet checked | **P1** (planned benefits hub) |
+| Government benefits (Canada Child Benefit, GST/HST credit, forms RC66 and RC151) | - | gap | KR: "benefits" is the #1 autocomplete for "newcomer in canada" and "newcomers to canada"; fact-check the "Welcome Canada $500 / $1,000" rumour | **P1** (planned benefits hub) |
 | Sending money home | - | gap | - | P2 |
 
 ## 3. Taxes
@@ -71,7 +74,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | Canadian resume format | `/canadian-resume` | hub | new 2026-09 | - |
 | Cover letter | `/resources/how-to-write-a-cover-letter` (video) | thin | 4 impr, pos 46 | P2 |
 | Job interview | `/resources/how-to-prepare-for-a-job-interview` (video) | thin | 20 impr, pos 39 | P2 |
-| Find a job with no Canadian experience | - | gap | - | **P1** |
+| Find a job with no Canadian experience | `/blog/how-to-find-a-job-in-canada-with-no-canadian-experience` | post | KR: 88% struggled, 66% cite "Canadian experience" (Pollara); top Reddit threads | - |
 | Job search platforms | `/blog/best-platforms-for-career-guidance-for-immigrants-in-canada` | post | 238 impr | - |
 | Bridging programs | `/blog/bridging-programs-for-newcomers-in-canada-the-path-from-international-credentials-to-canadian-employment` | post | 43 impr | - |
 | Networking and mentoring | `/blog/mentoring-and-professional-networks-for-newcomers-in-canada-how-to-build-your-canadian-career-network` | post | 178 impr | - |
@@ -90,6 +93,8 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | How to immigrate | `/blog/how-to-immigrate-to-canada-in-2026` | post | 164 impr | - |
 | Citizenship | `/blog/canada-immigration-citizenship-guide` | post | 36 impr | - |
 | Work permits and PGWP | - | gap | - | P2 |
+| PR pathways by situation (student after PGWP, TEER 4 and 5, no job offer, spouse) | - | gap | KR: "how to get pr in canada as a student / after pgwp / without job offer"; rides `/teer` ranks (pos 3 to 7) | **P1** (hub off `/teer`, not legal advice) |
+| PR card after landing, PRTD, residency obligation | - | gap | KR: about 200 "pr card" autocomplete variants; Reddit PR-card megathread | P2 |
 | Express Entry and CRS | - | gap | government-dominated | P3 |
 
 ## 6. Housing
@@ -114,6 +119,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 |---|---|---|---|---|
 | Language for work, LINC | `/blog/language-for-work-programs-in-canada-beyond-linc-what-newcomers-actually-need` | post | 66 impr | - |
 | Free English and French classes (who qualifies) | - | gap | no GSC demand | P3 |
+| Language tests: IELTS vs CELPIP vs TEF, CLB conversion | - | gap | KR: Trends ielts 112, celpip 92; SERP is vendors and prep sites | P2 |
 
 ## 9. International students
 
