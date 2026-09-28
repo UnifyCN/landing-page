@@ -1,0 +1,222 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CTABand from "../../components/sections/CTABand.astro";
+import {
+  NEWCOMER_LEAD,
+  NEWCOMER_AT_A_GLANCE,
+  NEWCOMER_DEFINITIONS,
+  STATUS_TERMS,
+  NEWCOMER_FAQS,
+  NEWCOMER_LAST_VERIFIED,
+} from "../../lib/newcomer-definition";
+import { BANK_OFFERS, BANKING_RULES, BANKING_LAST_VERIFIED } from "../../lib/newcomer-banking";
+import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import "../../styles/cluster.css";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "Who Is a Newcomer in Canada", item: canonicalUrl },
+  ])
+);
+const faqLdStr = serializeLd(faqLd(NEWCOMER_FAQS));
+// One link per website in the "checked against" line.
+const allSources = [
+  ...NEWCOMER_DEFINITIONS.map((d) => d.source),
+  ...STATUS_TERMS.map((t) => t.source),
+  BANKING_RULES.lowCostAccounts.source,
+];
+const sources = [...new Map(allSources.map((u) => [host(u), u])).values()];
+---
+
+<BaseLayout
+  title="Who Is Considered a Newcomer in Canada? CRA, Bank, and IRCC Rules"
+  description="There is no single definition of a newcomer in Canada. See how the CRA, IRCC, banks, and Statistics Canada define it, and how long you count as one."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+    <script type="application/ld+json" set:html={faqLdStr} />
+  </Fragment>
+
+  <main class="cl cl--wide">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Who Is a Newcomer</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Newcomer basics</p>
+      <h1 class="cl-h1">Who is considered a newcomer in Canada?</h1>
+      <p class="cl-lead" set:html={NEWCOMER_LEAD} />
+    </header>
+
+    <aside class="cl-verdict" aria-label="At a glance">
+      {NEWCOMER_AT_A_GLANCE.map((g) => (
+        <div class="cl-verdict-item">
+          <span class="cl-verdict-label">{g.label}</span>
+          <strong class="cl-verdict-value">{g.value}</strong>
+        </div>
+      ))}
+    </aside>
+
+    <section class="cl-block" aria-labelledby="compare-h">
+      <h2 id="compare-h" class="cl-h2">How each institution defines a newcomer</h2>
+      <p class="cl-body">
+        "Newcomer" is not a legal status. Each program sets its own rule, so you can be a newcomer
+        for your bank and not for the tax agency on the same day.
+      </p>
+      <div class="cl-table-wrap" role="region" aria-labelledby="compare-h" tabindex="0">
+        <table class="cl-table cl-table--fit">
+          <thead>
+            <tr>
+              <th scope="col">Who decides</th>
+              <th scope="col">You count as a newcomer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {NEWCOMER_DEFINITIONS.map((d) => (
+              <tr>
+                <th scope="row">
+                  <span class="cl-row-label">{d.institution}</span>
+                  <a class="cl-row-sub" href={`#def-${d.id}`}>Details</a>
+                </th>
+                <td>{d.window}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cl-block" aria-labelledby="detail-h">
+      <h2 id="detail-h" class="cl-h2">Each definition in detail</h2>
+      <ul class="cl-kv-list" role="list">
+        {NEWCOMER_DEFINITIONS.map((d) => (
+          <li class="cl-kv-card cl-kv-card--wide" id={`def-${d.id}`}>
+            <div class="cl-kv-head">
+              <span class="cl-kv-title">{d.institution}</span>
+              <span class="cl-kv-sub">{d.term}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">The rule</span>
+              <span class="cl-kv-value">{d.rule}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Who counts</span>
+              <span class="cl-kv-value">{d.whoCounts}</span>
+            </div>
+            <div class="cl-kv-row">
+              <span class="cl-kv-label">Why it matters</span>
+              <span class="cl-kv-value">{d.unlocks}</span>
+            </div>
+            {d.guide && (
+              <a class="cl-kv-link" href={d.guide.href}>{d.guide.label} &rarr;</a>
+            )}
+            <a class="cl-kv-link" href={d.source} target="_blank" rel="noopener noreferrer">
+              Read the rule on {host(d.source)} &rarr;
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="cl-block" aria-labelledby="banks-h">
+      <h2 id="banks-h" class="cl-h2">"New to Canada" bank offers: how long you qualify</h2>
+      <p class="cl-body">
+        Most big banks treat you as a newcomer for 5 years; Desjardins uses 3. Separately, the six
+        largest banks must give you a no-cost chequing account in your first year in Canada.
+      </p>
+      <div class="cl-table-wrap" role="region" aria-labelledby="banks-h" tabindex="0">
+        <table class="cl-table cl-table--fit">
+          <thead>
+            <tr>
+              <th scope="col">Bank</th>
+              <th scope="col">You count as a newcomer if</th>
+            </tr>
+          </thead>
+          <tbody>
+            {BANK_OFFERS.map((b) => (
+              <tr>
+                <th scope="row"><a href={`/banking#bank-${b.slug}`}>{b.bank}</a></th>
+                <td>{b.arrivalWindow ?? b.whoQualifies ?? "Not stated on its newcomer page"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="cl-microcopy">
+        From each bank's newcomer page, checked in {BANKING_LAST_VERIFIED}. RBC is a
+        <a href="/partners/rbc">Unify partner</a>; every bank is shown in the same format. Compare
+        the full offers in our guide to <a href="/banking">bank accounts for newcomers</a>.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="terms-h">
+      <h2 id="terms-h" class="cl-h2">Newcomer, immigrant, permanent resident: the words people mix up</h2>
+      <div class="cl-table-wrap" role="region" aria-labelledby="terms-h" tabindex="0">
+        <table class="cl-table cl-table--fit">
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">What it means</th>
+            </tr>
+          </thead>
+          <tbody>
+            {STATUS_TERMS.map((t) => (
+              <tr>
+                <th scope="row">{t.term}</th>
+                <td>{t.meaning}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cl-block" aria-labelledby="next-h">
+      <h2 id="next-h" class="cl-h2">Use your newcomer years well</h2>
+      <p class="cl-body">
+        The first year matters most: it is your first tax year, your no-cost bank account year, and
+        the time to apply for benefits. Follow the
+        <a href="/new-to-canada">first-30-days checklist for newcomers</a>, compare
+        <a href="/banking">newcomer bank offers</a> before the window closes, and read
+        <a href="/blog/when-newcomers-can-claim-full-non-refundable-tax-credits-in-canada-the-90-rule-explained">the 90% rule for your first tax return</a>.
+      </p>
+      <p class="cl-body cl-app">
+        The <a href="/">Unify newcomer settlement app</a> keeps these steps in one free checklist
+        and connects you with other newcomers in your city.
+      </p>
+    </section>
+
+    <section class="cl-block" aria-labelledby="faq-h">
+      <h2 id="faq-h" class="cl-h2">Newcomer status: common questions</h2>
+      <div class="cl-faq">
+        {NEWCOMER_FAQS.map((f) => (
+          <details class="cl-faq-item">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <p class="cl-verified">
+      Checked against
+      {sources.map((u, i) => (
+        <>
+          <a href={u} target="_blank" rel="noopener noreferrer">{host(u)}</a>{i < sources.length - 1 ? ", " : ""}
+        </>
+      ))}
+      in {NEWCOMER_LAST_VERIFIED}. This page is general information, not legal or immigration advice.
+    </p>
+  </main>
+
+  <CTABand />
+</BaseLayout>
