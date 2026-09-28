@@ -23,6 +23,7 @@ const routes = [
   "/canadian-resume",
   "/banking",
   "/new-to-canada",
+  "/who-is-a-newcomer",
 ];
 
 for (const route of routes) {

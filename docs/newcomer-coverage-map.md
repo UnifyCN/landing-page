@@ -34,7 +34,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 |---|---|---|---|---|
 | Social Insurance Number (SIN) | `/blog/how-to-get-a-sin-number-in-canada-newcomer-guide` | post | 1,419 impr, pos 16 | improve post |
 | First week / first 30 days checklist for PRs, workers, and students | `/new-to-canada` (students also: `/blog/what-should-international-students-do-in-their-first-week-in-canada`) | hub | KR: AI Overview on all newcomer head terms is this checklist; small sites on page 1 | new 2026-09 |
-| Who counts as a newcomer (CRA, bank, IRCC definitions) | - | gap | KR: People Also Ask on every newcomer SERP; "new to canada for less than 5 years" 45 impr, pos 14 | **P1** |
+| Who counts as a newcomer (CRA, bank, IRCC definitions) | `/who-is-a-newcomer` | hub | KR: People Also Ask on every newcomer SERP; "new to canada for less than 5 years" 45 impr, pos 14 | new 2026-09 |
 | Provincial health card | `/health-card` | hub | new 2026-09-21 | - |
 | Family doctor and walk-in clinics | `/blog/how-to-find-a-family-doctor-in-bc-as-a-newcomer` (BC only) | thin | KR: Trends walk in clinic 154, family doctor 51; 48% of newcomers had a bad experience (Pollara) | **P1** (programmatic candidate, by province) |
 | Driver's licence exchange | `/drivers-licence` | hub | new 2026-09-21 | - |
