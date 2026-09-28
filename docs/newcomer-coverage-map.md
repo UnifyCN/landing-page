@@ -74,7 +74,7 @@ check the SERP first; **P3** = government-dominated or low demand, do last.
 | Canadian resume format | `/canadian-resume` | hub | new 2026-09 | - |
 | Cover letter | `/resources/how-to-write-a-cover-letter` (video) | thin | 4 impr, pos 46 | P2 |
 | Job interview | `/resources/how-to-prepare-for-a-job-interview` (video) | thin | 20 impr, pos 39 | P2 |
-| Find a job with no Canadian experience | - | gap | KR: 88% struggled, 66% cite "Canadian experience" (Pollara); top Reddit threads | **P1** |
+| Find a job with no Canadian experience | `/blog/how-to-find-a-job-in-canada-with-no-canadian-experience` | post | KR: 88% struggled, 66% cite "Canadian experience" (Pollara); top Reddit threads | - |
 | Job search platforms | `/blog/best-platforms-for-career-guidance-for-immigrants-in-canada` | post | 238 impr | - |
 | Bridging programs | `/blog/bridging-programs-for-newcomers-in-canada-the-path-from-international-credentials-to-canadian-employment` | post | 43 impr | - |
 | Networking and mentoring | `/blog/mentoring-and-professional-networks-for-newcomers-in-canada-how-to-build-your-canadian-career-network` | post | 178 impr | - |

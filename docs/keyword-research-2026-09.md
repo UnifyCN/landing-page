@@ -64,7 +64,7 @@ settlement.org and IRCC Help Centre featured questions.
 | # | Theme | Example queries | Signal | Google owner | Unify today |
 |---|---|---|---|---|---|
 | 1 | Health card, walk-in clinic, family doctor | "walk in clinic without health card", "how to get ohip" | Trends: walk in clinic 154, health card 127, family doctor 51. Survey: 48% bad experience | Provinces + guides | `/health-card` hub; family doctor BC only |
-| 2 | Job with no Canadian experience | "how to get a job in canada as a newcomer" | Survey: 88% struggled, 66% cite "Canadian experience". Top Reddit threads. Autocomplete | Guides (no gov answer) | **gap** |
+| 2 | Job with no Canadian experience | "how to get a job in canada as a newcomer" | Survey: 88% struggled, 66% cite "Canadian experience". Top Reddit threads. Autocomplete | Guides (no gov answer) | post (2026-09-27) |
 | 3 | Newcomer benefits and money from government | "newcomer in canada benefits", "what do new immigrants get in canada", "new pr canada benefits", "newcomer gst credit", "newcomers to canada free park pass" | #1 autocomplete for both "newcomer" seeds; PAA "Does Canada give money to new immigrants?" | CRA + fintech guides (KOHO, govguide.ca) | **gap** (planned P1) |
 | 4 | First steps after landing / checklist | "what to do after landing in canada as pr", "new to canada checklist", "things to do as a newcomer in canada" | Autocomplete; Reddit "Post PR checklist"; the AI Overview for all three head terms is this checklist | canada.ca PDF + CIC News, small sites (canadiansim.com, nych.ca, k7immigration.com) | **gap** (P1, students only today) |
 | 5 | Bank account / new-to-Canada offers | "new to canada bank offers", "best bank for newcomers", "td new to canada" | Trends "td new to canada" 100, "rbc new to canada" 18; CPC $8.20 | Banks | `/banking` (position ~47 to 57) |
@@ -124,8 +124,9 @@ Each item names the page, the queries it owns, and why it can win.
      730-day residency rule. These are post-landing questions from our exact audience, and
      forums, not IRCC, answer most of them today.
 
-6. **Job with no Canadian experience** (already P1 in the coverage map; the strongest survey
-   signal). Link to `/canadian-resume`, `/credentials`, `/teer`.
+6. **Job with no Canadian experience** (the strongest survey signal). The weekly automation
+   published `/blog/how-to-find-a-job-in-canada-with-no-canadian-experience` on 2026-09-27.
+   Link it from `/canadian-resume`, `/credentials`, `/teer`, and the checklist hub.
 
 7. **Next wave:** IELTS vs CELPIP vs TEF with CLB conversion; family doctor and walk-in clinics
    by province (a `/health-card` sibling cluster); car insurance by province.
