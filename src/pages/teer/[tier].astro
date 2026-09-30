@@ -3,6 +3,8 @@ export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
+import SearchWebAppCTA from "../../components/common/SearchWebAppCTA.astro";
+import { searchCtaForPath } from "../../lib/search-ctas";
 import { TEER_TIERS, NOC_FINDER_URL, type TeerTier } from "../../lib/teer";
 import { unitGroupsForTeer } from "../../lib/noc-2021";
 import { credentialForNoc } from "../../lib/credentials";
@@ -13,6 +15,8 @@ export async function getStaticPaths() {
 }
 
 const { tier } = Astro.props as { tier: TeerTier };
+const sourcePath = `/teer/${tier.slug}`;
+const searchCta = searchCtaForPath(sourcePath);
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
 // Full official list for this tier (NOC 2021 V1.0). The search demand for these
@@ -61,6 +65,8 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
       <span class="td-verdict-label">Express Entry</span>
       <strong class="td-verdict-value">{tier.eeVerdict}</strong>
     </aside>
+
+    {searchCta && <SearchWebAppCTA cta={searchCta} sourcePath={sourcePath} placement="intro" />}
 
     <section class="td-block" aria-labelledby="req-h">
       <h2 id="req-h" class="td-h2">What TEER {tier.tier} requires</h2>
@@ -190,6 +196,7 @@ const faqLdStr = serializeLd(faqLd(tier.faqs));
         ))}
       </ul>
     </nav>
+    {searchCta && <SearchWebAppCTA cta={searchCta} sourcePath={sourcePath} placement="end" />}
   </main>
 
   <CTABand />
