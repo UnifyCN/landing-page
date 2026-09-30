@@ -2,6 +2,8 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostNav from "../../components/blog/PostNav.astro";
 import CTABand from "../../components/sections/CTABand.astro";
+import SearchWebAppCTA from "../../components/common/SearchWebAppCTA.astro";
+import { searchCtaForPath } from "../../lib/search-ctas";
 import { getAllPosts, getPostBySlug } from "../../lib/sanity/queries";
 import { responsiveImage, urlFor } from "../../lib/sanity/client";
 import { toHTML } from "@portabletext/to-html";
@@ -93,6 +95,8 @@ const updatedDate = new Date(post.updatedAt ?? post.publishedAt).toLocaleDateStr
 });
 
 const bodyHtml = toHTML(post.body, toHTMLOptions);
+const sourcePath = `/blog/${post.slug.current}`;
+const searchCta = searchCtaForPath(sourcePath);
 
 // Edge-cached for 5 minutes by src/middleware.ts; a newly published post shows
 // within that window (the Studio preview iframe bypasses the cache).
@@ -188,6 +192,7 @@ const faqLdStr = post.faqs?.length
     )}
 
     <!-- ── Prose body ── -->
+    {searchCta && <SearchWebAppCTA cta={searchCta} sourcePath={sourcePath} placement="intro" />}
     <article class="prose" set:html={bodyHtml} />
 
     {post.faqs && post.faqs.length > 0 && (
@@ -201,6 +206,7 @@ const faqLdStr = post.faqs?.length
         ))}
       </section>
     )}
+    {searchCta && <SearchWebAppCTA cta={searchCta} sourcePath={sourcePath} placement="end" />}
   </main>
 
   <!-- ── Prev / Next ── -->

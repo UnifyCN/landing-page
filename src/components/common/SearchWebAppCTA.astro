@@ -1,0 +1,125 @@
+---
+import type { SearchCta } from '../../lib/search-ctas';
+
+interface Props {
+  cta: SearchCta;
+  sourcePath: string;
+  placement: 'intro' | 'end';
+}
+const { cta, sourcePath, placement } = Astro.props;
+const headingId = `search-cta-${placement}`;
+const appStoreUrl = 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762';
+---
+
+<aside
+  class="search-cta"
+  aria-labelledby={headingId}
+  data-search-cta
+  data-source-path={sourcePath}
+  data-topic={cta.topic}
+  data-destination={cta.destination}
+  data-placement={placement}
+>
+  <h2 id={headingId}>{cta.title}</h2>
+  <p>{cta.description}</p>
+  <div class="search-cta-actions">
+    <a class="search-cta-web" href={`https://app.unifysocial.ca${cta.destination}`} data-cta-platform="web">
+      {cta.label}<span aria-hidden="true">&rarr;</span>
+    </a>
+    <a class="search-cta-ios" href={appStoreUrl} target="_blank" rel="noopener noreferrer" data-cta-platform="ios">
+      <img src="/assets/app-store-badge-en.svg" alt="Download Unify on the App Store" width="156" height="52" loading="lazy" />
+    </a>
+  </div>
+  <p class="search-cta-note">Use Unify in your browser. Sign in or create a free account to continue.</p>
+</aside>
+
+<script>
+  type AnalyticsWindow = Window & {
+    gtag?: (command: string, event: string, properties: Record<string, string>) => void;
+  };
+  function track(event: string, cta: HTMLElement, platform?: string) {
+    // Fixed content metadata only; never collect auth state, query strings or user input.
+    const properties: Record<string, string> = {
+      source_path: cta.dataset.sourcePath ?? '',
+      topic: cta.dataset.topic ?? '',
+      destination_path: cta.dataset.destination ?? '',
+      placement: cta.dataset.placement ?? '',
+      transport_type: 'beacon',
+    };
+    if (platform) properties.platform = platform;
+    try {
+      (window as AnalyticsWindow).gtag?.('event', event, properties);
+    } catch {
+      // Measurement must never interrupt navigation.
+    }
+  }
+
+  // Document delegation survives Astro ClientRouter swaps without duplicate handlers.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>('a[data-cta-platform]');
+    const cta = link?.closest<HTMLElement>('[data-search-cta]');
+    if (link && cta) track('search_cta_click', cta, link.dataset.ctaPlatform);
+  });
+
+  let observer: IntersectionObserver | undefined;
+  function observeCtas() {
+    observer?.disconnect();
+    observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && entry.target instanceof HTMLElement) {
+          track('search_cta_view', entry.target);
+          observer?.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-search-cta]').forEach((cta) => observer?.observe(cta));
+  }
+  document.addEventListener('astro:page-load', observeCtas);
+  document.addEventListener('astro:before-swap', () => observer?.disconnect());
+</script>
+
+<style>
+  .search-cta {
+    margin-block: 2rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: var(--radius-cta);
+    background: var(--color-search-cta-surface);
+    color: var(--color-text);
+  }
+  .search-cta h2 {
+    margin: 0;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+  .search-cta p { margin: 0.75rem 0 0; font-size: 1rem; line-height: 1.6; max-width: 65ch; }
+  .search-cta-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+  .search-cta-web {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 52px;
+    max-width: 100%;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-btn);
+    background: var(--color-ink);
+    color: white;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease-out);
+  }
+  .search-cta-web:hover { background: var(--color-muted); }
+  .search-cta-web span { flex-shrink: 0; }
+  .search-cta-ios { display: inline-flex; min-height: 52px; border-radius: var(--radius-btn); }
+  .search-cta-ios img { display: block; height: 52px; width: auto; }
+  .search-cta a:focus-visible { outline: 3px solid var(--color-text); outline-offset: 4px; }
+  .search-cta .search-cta-note { color: var(--color-muted); }
+  @media (prefers-reduced-motion: reduce) { .search-cta-web { transition: none; } }
+</style>

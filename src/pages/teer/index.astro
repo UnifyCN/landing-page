@@ -3,10 +3,13 @@ export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
+import SearchWebAppCTA from "../../components/common/SearchWebAppCTA.astro";
+import { searchCtaForPath } from "../../lib/search-ctas";
 import { TEER_TIERS, TEER_HUB_FAQS, NOC_FINDER_URL, EE_2026_NOTE } from "../../lib/teer";
 import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const searchCta = searchCtaForPath('/teer')!;
 
 const breadcrumbLdStr = serializeLd(
   breadcrumbLd([
@@ -45,6 +48,8 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
         immigration programs you qualify for.
       </p>
     </header>
+
+    <SearchWebAppCTA cta={searchCta} sourcePath="/teer" placement="intro" />
 
     <!-- Comparison table (extractable for AI answers + screen readers) -->
     <section class="teer-block" aria-labelledby="compare-h">
@@ -147,6 +152,7 @@ const faqLdStr = serializeLd(faqLd(TEER_HUB_FAQS));
         ))}
       </div>
     </section>
+    <SearchWebAppCTA cta={searchCta} sourcePath="/teer" placement="end" />
   </main>
 
   <CTABand />

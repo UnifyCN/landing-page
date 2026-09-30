@@ -136,6 +136,7 @@ body::after {
   --color-cream: #ffffff;
   --color-brand-red: #D84A29;
   --color-muted: #575757;
+  --color-search-cta-surface: #f3ecd9;
 
   /* Events (/events): warm neutrals for cards, tags and the calendar */
   --color-events-line: #ebe8e4;
