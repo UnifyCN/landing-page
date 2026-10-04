@@ -44,11 +44,25 @@ const post = JSON.parse(readFileSync(jsonPath, 'utf8'));
 let kc = 0;
 const key = () => `k${kc++}`;
 const span = (text, marks = []) => ({ _type: 'span', _key: key(), text, marks });
+// Inline [text](href) links -> Portable Text link annotations.
+function inline(text) {
+  const markDefs = [], children = [];
+  let last = 0;
+  for (const m of text.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)) {
+    if (m.index > last) children.push(span(text.slice(last, m.index)));
+    const k = key();
+    markDefs.push({ _type: 'link', _key: k, href: m[2] });
+    children.push(span(m[1], [k]));
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) children.push(span(text.slice(last)));
+  return { markDefs, children };
+}
 function toBlocks(items = []) {
   return items.map((it) => {
     if (it.h2 != null) return { _type: 'block', _key: key(), style: 'h2', markDefs: [], children: [span(it.h2)] };
     if (it.h3 != null) return { _type: 'block', _key: key(), style: 'h3', markDefs: [], children: [span(it.h3)] };
-    if (it.p != null) return { _type: 'block', _key: key(), style: 'normal', markDefs: [], children: [span(it.p)] };
+    if (it.p != null) { const { markDefs, children } = inline(it.p); return { _type: 'block', _key: key(), style: 'normal', markDefs, children }; }
     if (it.li != null) {
       const c = Array.isArray(it.li) ? [span(it.li[0], ['strong']), span(' ' + it.li[1])] : [span(it.li)];
       return { _type: 'block', _key: key(), style: 'normal', listItem: 'bullet', level: 1, markDefs: [], children: c };
