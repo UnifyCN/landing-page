@@ -21,6 +21,11 @@ export interface WhatsNewEntry {
 export const WHATS_NEW: WhatsNewEntry[] = [
   {
     date: "2026-10-06",
+    title: "Group names in every language",
+    description: "Group names and descriptions now show in the language you use.",
+  },
+  {
+    date: "2026-10-06",
     title: "Unify in 7 languages, with lighter downloads",
     description:
       "Use Unify in English, French, Spanish, Arabic, Hindi, Punjabi or Vietnamese, and the app now downloads only the language you pick.",
