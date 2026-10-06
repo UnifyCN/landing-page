@@ -1,4 +1,6 @@
 ---
+import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
+
 type NavChild = { label: string; href: string; note: string };
 type NavLink = { label: string; href: string; children?: NavChild[] };
 
@@ -133,28 +135,29 @@ function isActive(paths: string) {
 
     <!-- Right side: CTA (desktop) + hamburger (mobile/tablet) -->
     <div class="flex items-center gap-3 flex-shrink-0">
-      <a
-        href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="cta-btn hidden nav-full:flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
-      >
-        Download Unify
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M2 7h10M8 3l4 4-4 4"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
+<!-- Both ways in, always rendered. The web app leads by default (desktop,
+           Android, no JS); on iPhone html[data-platform="ios"] (set before first
+           paint in BaseLayout) swaps which one is the filled button. -->
+      <div class="app-ctas hidden nav-full:flex items-center">
+        <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
+          Open Unify in your browser
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-      </a>
+        </a>
+        <a
+          href={APP_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="app-cta"
+          data-app-cta="ios"
+        >
+          Download Unify
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        </a>
+      </div>
 
       <button
         id="nav-toggle"
@@ -258,29 +261,27 @@ function isActive(paths: string) {
 
     <!-- CTA anchored to bottom -->
     <div class="mobile-nav-item mt-auto" style={`--i: ${navLinks.length}`}>
-      <a
-        href="https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="cta-btn inline-flex items-center gap-2 font-ui text-nav leading-nav tracking-cta font-medium bg-ink text-cream px-btn-x py-btn-y whitespace-nowrap no-underline"
-      >
-        Download Unify
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 14 14"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M2 7h10M8 3l4 4-4 4"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
+      <div class="app-ctas app-ctas--stacked">
+        <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
+          Open Unify in your browser
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-      </a>
-      <p class="mobile-cta-note">Free to download. No credit card required.</p>
+        </a>
+        <a
+          href={APP_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="app-cta"
+          data-app-cta="ios"
+        >
+          Download Unify
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        </a>
+      </div>
+      <p class="mobile-cta-note">Free on iPhone and in any browser. No credit card required.</p>
     </div>
   </nav>
 </div>
@@ -510,8 +511,94 @@ function isActive(paths: string) {
     }
   }
 
-  .cta-btn {
+  /* App CTAs: one filled button, one quiet link. Which is which follows the
+     device (see BaseLayout); DOM order and sizes never change, only `order`
+     and paint, so the swap costs no layout shift. */
+  .app-ctas {
+    gap: 0.25rem;
+  }
+
+  .app-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: var(--spacing-btn-y) var(--spacing-btn-x);
     border-radius: var(--radius-cta);
+    font-family: var(--font-ui);
+    font-size: var(--text-nav);
+    line-height: var(--leading-nav);
+    letter-spacing: var(--tracking-cta);
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .app-cta:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 2px;
+  }
+
+  /* Filled: the web app by default, the App Store on iPhone. */
+  .app-cta[data-app-cta="web"],
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"] {
+    order: 2;
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  .app-cta[data-app-cta="web"]:hover,
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"]:hover {
+    background-color: var(--color-brand-red);
+    color: #ffffff;
+  }
+
+  /* Quiet: the other one. */
+  .app-cta[data-app-cta="ios"],
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"] {
+    order: 1;
+    background-color: transparent;
+    color: var(--color-ink);
+  }
+
+  .app-cta[data-app-cta="ios"]:hover,
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"]:hover {
+    background-color: transparent;
+    color: var(--color-brand-red);
+  }
+
+  .app-cta[data-app-cta="ios"] svg,
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"] svg {
+    display: none;
+  }
+
+  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"] svg {
+    display: block;
+  }
+
+  /* Mobile menu: stacked, filled button on top. */
+  .app-ctas--stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .app-ctas--stacked .app-cta {
+    min-height: 2.75rem;
+  }
+
+  .app-ctas--stacked .app-cta[data-app-cta="web"],
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="ios"] {
+    order: 1;
+  }
+
+  .app-ctas--stacked .app-cta[data-app-cta="ios"],
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="web"] {
+    order: 2;
+    padding-inline: 0;
   }
 
   /* Hamburger morph */

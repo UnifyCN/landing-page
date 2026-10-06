@@ -101,6 +101,22 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Bold.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Figtree-latin.woff2" crossorigin />
 
+    <!-- Which app CTA leads (Navbar, CTABand): "ios" on iPhone, where the App
+         Store button is primary; "web" everywhere else, since the web app is
+         the only option on desktop and Android. Inline in <head> so it is set
+         before first paint (no flash, no layout shift); without JS the
+         attribute is absent and the CSS default is the web app. ClientRouter
+         replaces <html>'s attributes on each swap, so it is set again then. -->
+    <script is:inline>
+      (function () {
+        function setPlatform() {
+          document.documentElement.dataset.platform = /iPhone|iPod/.test(navigator.userAgent) ? "ios" : "web";
+        }
+        setPlatform();
+        document.addEventListener("astro:after-swap", setPlatform);
+      })();
+    </script>
+
     <ClientRouter />
 
     <script type="application/ld+json" set:html={orgLd} />
