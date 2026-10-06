@@ -14,7 +14,6 @@ export function organizationLd() {
       'https://www.linkedin.com/company/unify-social/posts/?feedView=all',
       'https://x.com/unifysocialca',
       'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762',
-      'https://app.unifysocial.ca',
     ],
     address: {
       '@type': 'PostalAddress',

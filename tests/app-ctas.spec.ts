@@ -14,6 +14,14 @@ const ANDROID_UA =
   "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36";
 
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
+const sidePadding = (el: Locator) =>
+  el.evaluate((node) => {
+    const cs = getComputedStyle(node);
+    return [cs.paddingLeft, cs.paddingRight];
+  });
+/** Marks the document so a later check can tell a client-side swap from a full reload. */
+const markDocument = (page: Page) => page.evaluate(() => ((window as Window & { __sameDoc?: boolean }).__sameDoc = true));
+const sameDocument = (page: Page) => page.evaluate(() => (window as Window & { __sameDoc?: boolean }).__sameDoc === true);
 const background = (el: Locator) => el.evaluate((node) => getComputedStyle(node).backgroundColor);
 const box = async (el: Locator) => (await el.boundingBox())!;
 
@@ -59,6 +67,10 @@ test.describe("app CTAs on desktop", () => {
     expect(await background(ios)).toBe(TRANSPARENT);
     // Filled button sits at the pill's trailing edge, the quiet link before it.
     expect((await box(ios)).x).toBeLessThan((await box(web)).x);
+    // Tab order follows what is shown: quiet link, then the filled button.
+    await ios.focus();
+    await page.keyboard.press("Tab");
+    await expect(web).toBeFocused();
   });
 
   test("the CTA band leads with the web app", async ({ page }) => {
@@ -72,8 +84,10 @@ test.describe("app CTAs on desktop", () => {
 
   test("data-platform survives a View Transition navigation", async ({ page }) => {
     await page.goto("/about");
+    await markDocument(page);
     await page.locator("a.nav-link", { hasText: "Events" }).click();
     await expect(page).toHaveURL(/\/events$/);
+    expect(await sameDocument(page), "expected a ClientRouter swap, not a full reload").toBe(true);
     await expect(page.locator("html")).toHaveAttribute("data-platform", "web");
   });
 
@@ -111,14 +125,19 @@ test.describe("app CTAs on iPhone", () => {
     expect(await background(ios)).toBe("rgb(23, 22, 22)");
     expect(await background(web)).toBe(TRANSPARENT);
     expect((await box(ios)).y).toBeLessThan((await box(web)).y);
+    // The filled button keeps its side padding; the quiet link has none.
+    expect(await sidePadding(ios)).toEqual(["13px", "13px"]);
+    expect(await sidePadding(web)).toEqual(["0px", "0px"]);
     await expect(web).toHaveAttribute("href", WEB);
   });
 
   test("data-platform is set again after a View Transition navigation", async ({ page }) => {
     await page.goto("/");
+    await markDocument(page);
     await page.locator("#nav-toggle").click();
     await page.locator("#mobile-nav a.mobile-nav-link", { hasText: "About" }).click();
     await expect(page).toHaveURL(/\/about$/);
+    expect(await sameDocument(page), "expected a ClientRouter swap, not a full reload").toBe(true);
     await expect(page.locator("html")).toHaveAttribute("data-platform", "ios");
     await expectBandPrimary(page, "ios");
   });
@@ -139,6 +158,8 @@ test.describe("app CTAs on Android", () => {
     const ios = page.locator('#mobile-nav a.app-cta[data-app-cta="ios"]');
     expect(await background(web)).toBe("rgb(23, 22, 22)");
     expect((await box(web)).y).toBeLessThan((await box(ios)).y);
+    expect(await sidePadding(web)).toEqual(["13px", "13px"]);
+    expect(await sidePadding(ios)).toEqual(["0px", "0px"]);
     // Touch target: at least 44px tall.
     expect((await box(web)).height).toBeGreaterThanOrEqual(44);
     expect((await box(ios)).height).toBeGreaterThanOrEqual(44);
@@ -167,6 +188,26 @@ test.describe("app CTAs without JavaScript", () => {
   });
 });
 
+test.describe("mobile menu on a short phone", () => {
+  test.use({ viewport: { width: 320, height: 568 } });
+
+  test("the CTAs clear the links and the menu scrolls to the note", async ({ page }) => {
+    await page.goto("/about");
+    await page.locator("#nav-toggle").click();
+    const menu = page.locator("#mobile-nav");
+    await expect(menu).toHaveClass(/is-open/);
+
+    const list = await box(menu.locator(".mobile-link-list"));
+    const ctas = await box(menu.locator(".app-ctas--stacked"));
+    expect(ctas.y).toBeGreaterThanOrEqual(list.y + list.height + 16);
+
+    // Whatever does not fit is reachable by scrolling, not clipped.
+    const note = menu.locator(".mobile-cta-note");
+    await note.scrollIntoViewIfNeeded();
+    await expect(note).toBeInViewport({ ratio: 1 });
+  });
+});
+
 test.describe("app CTAs at the narrowest phone", () => {
   test.use({ viewport: { width: 320, height: 640 } });
 
@@ -189,7 +230,6 @@ test("the Organization schema and llms.txt name the web app", async ({ page, req
   await page.goto("/about");
   const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
   const org = blocks.map((b) => JSON.parse(b)).find((ld) => ld["@type"] === "Organization");
-  expect(org.sameAs).toContain("https://app.unifysocial.ca");
   expect(org.description).toContain("app.unifysocial.ca");
 
   const llms = await (await request.get("/llms.txt")).text();

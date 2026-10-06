@@ -137,14 +137,10 @@ function isActive(paths: string) {
     <div class="flex items-center gap-3 flex-shrink-0">
 <!-- Both ways in, always rendered. The web app leads by default (desktop,
            Android, no JS); on iPhone html[data-platform="ios"] (set before first
-           paint in BaseLayout) swaps which one is the filled button. -->
+           paint in BaseLayout) swaps which one is the filled button. In the
+           pill the quiet link comes first in the DOM, matching what is shown
+           at desktop widths, so Tab moves left to right. -->
       <div class="app-ctas hidden nav-full:flex items-center">
-        <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
-          Open Unify in your browser
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-        </a>
         <a
           href={APP_STORE_URL}
           target="_blank"
@@ -154,8 +150,14 @@ function isActive(paths: string) {
         >
           Download Unify
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
+          Open Unify in your browser
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
         </a>
       </div>
 
@@ -260,13 +262,13 @@ function isActive(paths: string) {
     </ul>
 
     <!-- CTA anchored to bottom -->
-    <div class="mobile-nav-item mt-auto" style={`--i: ${navLinks.length}`}>
+    <div class="mobile-nav-item mobile-cta-block mt-auto" style={`--i: ${navLinks.length}`}>
       <div class="app-ctas app-ctas--stacked">
         <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
           Open Unify in your browser
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
         </a>
         <a
           href={APP_STORE_URL}
@@ -277,8 +279,8 @@ function isActive(paths: string) {
         >
           Download Unify
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
         </a>
       </div>
       <p class="mobile-cta-note">Free on iPhone and in any browser. No credit card required.</p>
@@ -593,12 +595,27 @@ function isActive(paths: string) {
   .app-ctas--stacked .app-cta[data-app-cta="web"],
   :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="ios"] {
     order: 1;
+    padding-inline: var(--spacing-btn-x);
   }
 
+  /* The quiet link lines up with the button's left edge, so no side padding.
+     The filled rule above restates its padding because on iPhone the same
+     element matches both this selector's first half and that one's second. */
   .app-ctas--stacked .app-cta[data-app-cta="ios"],
   :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="web"] {
     order: 2;
     padding-inline: 0;
+  }
+
+  /* Short phones and landscape: two CTAs and the note no longer fit under the
+     links, so the menu scrolls instead of clipping them. */
+  .mobile-nav {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .mobile-cta-block {
+    padding-top: 2rem;
   }
 
   /* Hamburger morph */
