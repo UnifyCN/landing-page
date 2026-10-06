@@ -1,8 +1,8 @@
 # Unify Social
 
-> Unify Social is a free mobile app and guide that helps newcomers settle in Canada. It covers the practical first steps (SIN, bank account, health card, driver's licence), money and taxes for newcomers, jobs, resumes and foreign credential recognition, skilled (TEER) jobs and permanent residency, and local community support. Built in Vancouver, with newcomers, for newcomers.
+> Unify Social is a free app (iPhone and web) and guide that helps newcomers settle in Canada. It covers the practical first steps (SIN, bank account, health card, driver's licence), money and taxes for newcomers, jobs, resumes and foreign credential recognition, skilled (TEER) jobs and permanent residency, and local community support. Built in Vancouver, with newcomers, for newcomers.
 
-Unify Social helps permanent residents, skilled workers, and international students with practical life in Canada. The website publishes free guides that are checked against official sources (IRCC, CRA, provincial governments, and professional regulators), and each guide shows the month it was last verified. The Unify app turns those steps into one checklist. The app is free on the Apple App Store. Unify Social is operated from Vancouver, British Columbia, Canada.
+Unify Social helps permanent residents, skilled workers, and international students with practical life in Canada. The website publishes free guides that are checked against official sources (IRCC, CRA, provincial governments, and professional regulators), and each guide shows the month it was last verified. The Unify app turns those steps into one checklist. The app is free: on iPhone from the Apple App Store, and on any computer or Android phone in the browser at https://app.unifysocial.ca. One account works on both. Unify Social is operated from Vancouver, British Columbia, Canada.
 
 ## Guide hubs
 - [New to Canada checklist: your first 30 days](https://unifysocial.ca/new-to-canada): What to do at the airport and in your first month in Canada, in order: SIN, bank account, health card, PR card address, phone, driver's licence, benefits, and free settlement services, for permanent residents, workers, and students.
@@ -34,4 +34,5 @@ Unify Social helps permanent residents, skilled workers, and international stude
 - [Contact](https://unifysocial.ca/contact): Get in touch with the Unify Social team.
 
 ## App
+- [Open Unify in your browser](https://app.unifysocial.ca): The free Unify web app. Works on desktop, Android, and any modern browser; there is no Google Play app, so this is how to use Unify on Android.
 - [Download Unify on the Apple App Store](https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762): The free Unify newcomer app for Canada (iOS).

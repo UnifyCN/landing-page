@@ -5,7 +5,7 @@ export function organizationLd() {
     name: 'Unify Social',
     alternateName: 'Unify',
     description:
-      'Unify is an all-in-one mobile app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Built in Vancouver.',
+      'Unify is an all-in-one app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Free on iPhone and in any web browser at app.unifysocial.ca. Built in Vancouver.',
     url: 'https://unifysocial.ca',
     logo: 'https://unifysocial.ca/assets/logo/new-unify-logo-256.png',
     sameAs: [
