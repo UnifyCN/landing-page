@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
+import { isEventsFixtureRequest } from "./lib/events/fixtures";
 
 // Edge cache for the SSR pages (/events*, /blog*).
 //
@@ -9,7 +10,9 @@ import { defineMiddleware } from "astro:middleware";
 // pages never reach here — they are static assets.
 //
 // Bypassed for the Sanity Studio preview pane, which loads the post in an
-// iframe (`Sec-Fetch-Dest: iframe`) and must show the just-published version.
+// iframe (`Sec-Fetch-Dest: iframe`) and must show the just-published version,
+// and for the e2e suite's fixture requests (dev only), which render the same
+// URL against different clocks.
 
 const CACHEABLE = [/^\/events(\/|$)/, /^\/blog(\/|$)/];
 
@@ -24,6 +27,7 @@ export const onRequest = defineMiddleware(async ({ request, url }, next) => {
     !edge ||
     request.method !== "GET" ||
     request.headers.get("Sec-Fetch-Dest") === "iframe" ||
+    isEventsFixtureRequest(request) ||
     !CACHEABLE.some((re) => re.test(url.pathname))
   ) {
     return next();

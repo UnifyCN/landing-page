@@ -2,6 +2,7 @@
 // src/lib/sanity/queries.ts): pages and components never build PostgREST
 // queries themselves.
 import { restSelect } from "./client";
+import type { EventsFixture } from "./fixtures";
 import { toEventView } from "./format";
 import type { EventRow, EventView } from "./types";
 
@@ -21,7 +22,12 @@ export interface UpcomingEvents {
   partnerEvents: EventView[];
 }
 
-export async function getUpcomingEvents(now = new Date()): Promise<UpcomingEvents> {
+// `fixture` (dev only, see ./fixtures.ts) stands in for the Supabase select so
+// the e2e suite does not depend on live rows.
+export async function getUpcomingEvents(
+  now = new Date(),
+  fixture: EventsFixture | null = null,
+): Promise<UpcomingEvents> {
   const until = new Date(now);
   until.setMonth(until.getMonth() + WINDOW_MONTHS);
   // An event stays listed until it ends, not just until it starts.
@@ -33,7 +39,7 @@ export async function getUpcomingEvents(now = new Date()): Promise<UpcomingEvent
     order: "event_datetime.asc,id.asc",
     limit: "400",
   });
-  const rows = await restSelect<EventRow>("events", params);
+  const rows = fixture ? fixture.upcoming() : await restSelect<EventRow>("events", params);
   const views = rows.map((r) => toEventView(r, now));
   return {
     featured: views.filter((e) => e.featured),
@@ -42,9 +48,13 @@ export async function getUpcomingEvents(now = new Date()): Promise<UpcomingEvent
 }
 
 /** Any event by id, past or future — detail pages stay reachable after the date. */
-export async function getEventById(id: number, now = new Date()): Promise<EventView | null> {
+export async function getEventById(
+  id: number,
+  now = new Date(),
+  fixture: EventsFixture | null = null,
+): Promise<EventView | null> {
   const params = new URLSearchParams({ select: COLUMNS, id: `eq.${id}`, limit: "1" });
-  const [row] = await restSelect<EventRow>("events", params);
+  const [row] = fixture ? [fixture.byId(id)] : await restSelect<EventRow>("events", params);
   return row ? toEventView(row, now) : null;
 }
 
@@ -53,6 +63,7 @@ export async function getMoreFromPartner(
   partnerSlug: string,
   excludeId: number,
   now = new Date(),
+  fixture: EventsFixture | null = null,
 ): Promise<EventView[]> {
   const params = new URLSearchParams({
     select: COLUMNS,
@@ -62,6 +73,8 @@ export async function getMoreFromPartner(
     order: "event_datetime.asc",
     limit: "3",
   });
-  const rows = await restSelect<EventRow>("events", params);
+  const rows = fixture
+    ? fixture.moreFromPartner(partnerSlug, excludeId)
+    : await restSelect<EventRow>("events", params);
   return rows.map((r) => toEventView(r, now));
 }

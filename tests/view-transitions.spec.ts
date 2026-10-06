@@ -103,6 +103,8 @@ test.describe("island re-binding after View Transition navigation", () => {
   });
 
   test("events agenda re-binds after Home → Events", async ({ page }) => {
+    // Fixed rows and clock instead of live Supabase data (see events.spec.ts).
+    await page.setExtraHTTPHeaders({ "x-events-fixture": "mid-month" });
     await page.goto("/");
     await page.locator("a.nav-link", { hasText: "Events" }).click();
     await expect(page).toHaveURL(/\/events$/);

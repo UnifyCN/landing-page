@@ -13,12 +13,13 @@ import type { EventView } from "../../lib/events/types";
 interface Props {
   events: EventView[];
   initial: { genre: string | null; partner: string | null; day: string | null };
+  /** The clock the page fetched `events` with (frozen under a dev fixture). */
+  now?: Date;
 }
 
-const { events, initial } = Astro.props;
+const { events, initial, now = new Date() } = Astro.props;
 const PAGE_SIZE = 15;
 
-const now = new Date();
 const groups = groupAgenda(events, now);
 
 const countBy = (key: "genre" | "partnerSlug") =>
@@ -59,13 +60,17 @@ const sidebarPartners = EVENT_PARTNER_SLUGS.map((slug) => getPartnerBySlug(slug)
   .filter((p) => p !== undefined)
   .sort((a, b) => (partnerCounts[b.slug] ?? 0) - (partnerCounts[a.slug] ?? 0));
 
-// Calendar: one grid per month from this month to the last event's month.
+// Calendar: one grid per month, from the current month (or the first event's
+// month, when an event still running began last month) to the last event's.
 const todayKey = pacificDayKey(now);
-const [ty, tm] = todayKey.split("-").map(Number);
-const lastKey = events.at(-1)?.dayKey ?? todayKey;
-const [ly, lm] = lastKey.split("-").map(Number);
+const currentMonth = todayKey.slice(0, 7);
+const eventMonths = [...new Set(events.map((e) => e.dayKey.slice(0, 7)))].sort();
+const firstMonth = eventMonths[0] && eventMonths[0] < currentMonth ? eventMonths[0] : currentMonth;
+const lastMonth = eventMonths.at(-1) && eventMonths.at(-1)! > currentMonth ? eventMonths.at(-1)! : currentMonth;
+const [fy, fm] = firstMonth.split("-").map(Number);
+const [ly, lm] = lastMonth.split("-").map(Number);
 const months: { key: string; label: string; lead: number; days: number }[] = [];
-for (let y = ty, m = tm; y < ly || (y === ly && m <= lm); m === 12 ? ((m = 1), y++) : m++) {
+for (let y = fy, m = fm; y < ly || (y === ly && m <= lm); m === 12 ? ((m = 1), y++) : m++) {
   const first = new Date(Date.UTC(y, m - 1, 1));
   months.push({
     key: `${y}-${String(m).padStart(2, "0")}`,
@@ -74,7 +79,10 @@ for (let y = ty, m = tm; y < ly || (y === ly && m <= lm); m === 12 ? ((m = 1), y
     days: new Date(Date.UTC(y, m, 0)).getUTCDate(),
   });
 }
-const activeMonth = day ? day.slice(0, 7) : months[0].key;
+// Open on the selected day's month, else the first month from now on that has
+// an event. Near a month's end the current month can have none left
+// (2026-09-30), and opening there showed a grid with nothing to pick.
+const activeMonth = day?.slice(0, 7) ?? eventMonths.find((m) => m >= currentMonth) ?? currentMonth;
 const dayCounts = events.reduce<Record<string, number>>((acc, e) => {
   acc[e.dayKey] = (acc[e.dayKey] ?? 0) + 1;
   return acc;
