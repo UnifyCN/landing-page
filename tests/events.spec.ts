@@ -11,6 +11,8 @@ import { test, expect } from "@playwright/test";
 //   mid-month  = Tue 2026-10-06, events left in the current month
 //   month-end  = Wed 2026-09-30, the current month has no events left. This is
 //                the date of the failed deploy run (Actions 36791295477).
+//   ongoing    = Sun 2026-11-01 00:15, plus one event still running from Oct 31
+//                (its own describe block at the bottom).
 const CLOCKS = ["mid-month", "month-end"] as const;
 
 for (const clock of CLOCKS) {
@@ -152,5 +154,38 @@ test.describe("events page (month-end)", () => {
     await expect(calendar.locator('[data-month="2026-09"]')).toBeVisible();
     await expect(calendar.locator('[data-month="2026-09"] [data-day-btn]')).toHaveCount(0);
     await expect(calendar.locator('[data-month="2026-09"] .is-today')).toHaveText("30");
+  });
+});
+
+test.describe("events page (ongoing)", () => {
+  // 00:15 on Nov 1; "Halloween Community Night" (Oct 31, 9 PM to 12:45 AM) is
+  // still running, so the first listed event starts in the previous month.
+  test.use({ extraHTTPHeaders: { "x-events-fixture": "ongoing" } });
+
+  test("opens on the current month and keeps the running event's month reachable", async ({ page }) => {
+    await page.goto("/events");
+    const agenda = page.locator("#events-agenda");
+    const calendar = agenda.locator("[data-calendar]");
+    await expect(agenda).toHaveAttribute("data-ev-bound", "true");
+    await expect(agenda.locator("[data-item]:not([hidden])")).toHaveCount(3);
+
+    await expect(calendar).toHaveAttribute("data-active-month", "2026-11");
+    await expect(calendar.locator("[data-month]:not([hidden])")).toHaveAttribute("data-month", "2026-11");
+    await expect(calendar.locator("[data-month]:not([hidden]) [data-day-btn]")).toHaveCount(2);
+
+    await calendar.locator('[data-month="2026-11"] [data-month-nav="-1"]').click();
+    const halloween = calendar.locator('[data-day-btn="2026-10-31"]');
+    await expect(halloween).toBeVisible();
+    await halloween.click();
+    await expect(agenda.locator("[data-item]:not([hidden])")).toHaveCount(1);
+    await expect(agenda.locator("[data-item]:not([hidden])")).toContainText("Halloween Community Night");
+  });
+
+  test("a ?day= link into the previous month opens that month", async ({ page }) => {
+    await page.goto("/events?day=2026-10-31");
+    const calendar = page.locator("#events-agenda [data-calendar]");
+    await expect(page.locator("#events-agenda")).toHaveAttribute("data-ev-bound", "true");
+    await expect(calendar.locator("[data-month]:not([hidden])")).toHaveAttribute("data-month", "2026-10");
+    await expect(calendar.locator('[data-day-btn="2026-10-31"]')).toHaveAttribute("aria-pressed", "true");
   });
 });

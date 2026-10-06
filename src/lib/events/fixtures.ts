@@ -150,12 +150,29 @@ const fixtureRows = (): EventRow[] => [
   }),
 ];
 
-const CLOCKS: Record<string, string> = {
+// `extra` is a function for the same reason as `fixtureRows`: nothing here may
+// run at module load, or the production build keeps it.
+const CLOCKS: Record<string, { now: string; extra?: () => EventRow[] }> = {
   // A Tuesday with events left in the current month.
-  "mid-month": "2026-10-06T12:00:00-07:00",
+  "mid-month": { now: "2026-10-06T12:00:00-07:00" },
   // The failed deploy run (Actions 36791295477): last day of September, every
   // upcoming event in a later month.
-  "month-end": "2026-09-30T16:28:50-07:00",
+  "month-end": { now: "2026-09-30T16:28:50-07:00" },
+  // Just past midnight on Nov 1 with one event still running from Oct 31: the
+  // first listed event starts in the month before the current one.
+  ongoing: {
+    now: "2026-11-01T00:15:00-07:00",
+    extra: () => [
+      row({
+        id: 9060,
+        title: "Halloween Community Night",
+        event_datetime: "2026-10-31T21:00:00-07:00",
+        event_end_datetime: "2026-11-01T00:45:00-07:00",
+        genre: "Socials",
+        partner_slug: "burnaby-neighbourhood-house",
+      }),
+    ],
+  },
 };
 
 const WINDOW_MONTHS = 4;
@@ -167,8 +184,8 @@ export function eventsFixture(request: Request): EventsFixture | null {
   const clock = CLOCKS[request.headers.get(FIXTURE_HEADER) ?? ""];
   if (!clock) return null;
 
-  const ROWS = fixtureRows();
-  const now = new Date(clock);
+  const ROWS = [...fixtureRows(), ...(clock.extra?.() ?? [])];
+  const now = new Date(clock.now);
   const until = new Date(now);
   until.setMonth(until.getMonth() + WINDOW_MONTHS);
   const startsAfterNow = (r: EventRow) => Date.parse(r.event_datetime) >= now.getTime();
