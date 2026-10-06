@@ -1,0 +1,200 @@
+---
+export const prerender = true;
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/sections/CTABand.astro";
+import { whatsNewNewestFirst } from "../lib/whats-new";
+import { breadcrumbLd, serializeLd } from "../lib/seo";
+import "../styles/cluster.css";
+
+const entries = whatsNewNewestFirst();
+
+const longDate = (date: string) =>
+  new Date(`${date}T12:00:00Z`).toLocaleDateString("en-CA", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+const breadcrumbLdStr = serializeLd(
+  breadcrumbLd([
+    { name: "Home", item: "https://unifysocial.ca" },
+    { name: "What's New", item: canonicalUrl },
+  ]),
+);
+---
+
+<BaseLayout
+  title="What's New in Unify: Latest App Updates | Unify Social"
+  description="The latest updates to the Unify app for newcomers to Canada: new features, speed improvements, and languages, newest first."
+  bodyBg="#ffffff"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={breadcrumbLdStr} />
+  </Fragment>
+
+  <main class="cl">
+    <nav class="cl-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">What's New</span>
+    </nav>
+
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Product updates</p>
+      <h1 class="cl-h1">What's new in Unify</h1>
+      <p class="cl-lead">
+        Unify changes often. Here is what we shipped lately, newest first.
+      </p>
+    </header>
+
+    <ol class="wn-list" role="list">
+      {
+        entries.map((entry, i) => (
+          <li class:list={["wn-item", { "wn-item--same-day": entries[i - 1]?.date === entry.date }]}>
+            {/* The date shows once per day; later entries that day keep it for screen readers. */}
+            <time
+              class:list={["wn-date", { "wn-date--repeat": entries[i - 1]?.date === entry.date }]}
+              datetime={entry.date}
+            >
+              {longDate(entry.date)}
+            </time>
+            <div class="wn-body">
+              <h2 class="wn-title">{entry.title}</h2>
+              <p class="wn-desc">{entry.description}</p>
+              {entry.link && (
+                <a class="wn-link" href={entry.link.href}>
+                  {entry.link.label}
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  /* A dated ledger: the date sits in its own column on wider screens and
+     stacks above the entry on phones. Hairlines separate days, not entries. */
+  .wn-list {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: 0;
+    border-bottom: 1px solid rgba(23, 22, 22, 0.12);
+  }
+
+  .wn-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+    padding: clamp(1.25rem, 3vw, 1.75rem) 0;
+    border-top: 1px solid rgba(23, 22, 22, 0.12);
+  }
+
+  .wn-item--same-day {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .wn-date {
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+  }
+
+  /* Same day as the entry above: visually hidden, still read out. */
+  .wn-date--repeat {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .wn-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+    line-height: 1.2;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .wn-desc {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    line-height: 1.6;
+    color: var(--color-muted);
+    max-width: 60ch;
+    text-wrap: pretty;
+  }
+
+  .wn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    margin-top: 0.35rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-brand-red);
+    text-decoration: none;
+  }
+
+  .wn-link span {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .wn-link:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .wn-link:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .wn-link:hover span {
+      transform: translateX(3px);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .wn-item {
+      grid-template-columns: 9.5rem minmax(0, 1fr);
+      column-gap: clamp(1.25rem, 4vw, 2.5rem);
+    }
+
+    .wn-date {
+      padding-top: 0.4rem;
+    }
+
+    /* Keep the empty date column so entries on one day line up. */
+    .wn-date--repeat + .wn-body {
+      grid-column: 2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wn-link span {
+      transition: none;
+    }
+  }
+</style>

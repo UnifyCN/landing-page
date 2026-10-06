@@ -81,7 +81,9 @@ const [post, allPosts] = await Promise.all([
 if (!post) {
   const legacyTarget = LEGACY_SLUG_REDIRECTS[slug!];
   if (legacyTarget) return Astro.redirect(`/blog/${legacyTarget}`, 301);
-  return Astro.redirect("/blog");
+  // A real 404 (branded, src/pages/404.astro). This used to 302 to /blog, which
+  // Google files as a soft 404 and keeps crawling.
+  return Astro.rewrite("/404");
 }
 
 const postIndex = allPosts.findIndex((p) => p.slug.current === slug);

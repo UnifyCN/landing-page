@@ -1,0 +1,138 @@
+---
+// Branded 404. Server-rendered on purpose: /blog/[slug] and /events/[event]
+// send unknown URLs here with Astro.rewrite("/404"), and a rewrite cannot
+// target a prerendered page. Unmatched paths already reached the Worker before
+// this page existed (they got Astro's bare default 404), so nothing new runs.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTABand from "../components/sections/CTABand.astro";
+import "../styles/cluster.css";
+
+export const prerender = false;
+
+const hubs = [
+  { title: "New to Canada Checklist", desc: "Your first 30 days, in order.", href: "/new-to-canada" },
+  { title: "Benefits for Newcomers", desc: "Payments and free services you can apply for.", href: "/newcomer-benefits" },
+  { title: "Banking for Newcomers", desc: "Open an account and compare newcomer offers.", href: "/banking" },
+  { title: "Health Card by Province", desc: "Waiting periods and how to apply.", href: "/health-card" },
+  { title: "Driver's Licence by Province", desc: "Which foreign licences exchange without a road test.", href: "/drivers-licence" },
+  { title: "Skilled Jobs (TEER)", desc: "TEER categories and the jobs in each one.", href: "/teer" },
+  { title: "Credential Recognition", desc: "Getting licensed in your profession.", href: "/credentials" },
+  { title: "Canadian Resume Format", desc: "What to include and what to leave out.", href: "/canadian-resume" },
+  { title: "Who Is a Newcomer", desc: "How banks, the CRA and IRCC each define it.", href: "/who-is-a-newcomer" },
+];
+
+const more = [
+  { label: "Home", href: "/" },
+  { label: "Blog", href: "/blog" },
+  { label: "Events", href: "/events" },
+  { label: "What's new", href: "/whats-new" },
+  { label: "Contact", href: "/contact" },
+];
+
+Astro.response.status = 404;
+---
+
+<BaseLayout
+  title="Page Not Found | Unify Social"
+  description="We could not find that page. Start from one of Unify's guides for newcomers to Canada."
+  bodyBg="#ffffff"
+  noindex
+>
+  <main class="cl cl--wide">
+    <header class="cl-hero nf-hero">
+      <p class="cl-eyebrow">Error 404</p>
+      <h1 class="cl-h1">We can't find that page.</h1>
+      <p class="cl-lead">
+        The link may be old, or the address may have a typo. These guides are a good place to
+        pick things back up.
+      </p>
+    </header>
+
+    <section aria-labelledby="nf-guides">
+      <h2 id="nf-guides" class="cl-h2">Guides for settling in Canada</h2>
+      <ul class="cl-cards" role="list">
+        {
+          hubs.map((hub) => (
+            <li>
+              <a class="cl-card" href={hub.href}>
+                <span class="cl-card-title">{hub.title}</span>
+                <span class="cl-card-desc">{hub.desc}</span>
+                <span class="cl-card-go">
+                  Open guide <span aria-hidden="true">&rarr;</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <nav class="nf-more" aria-label="More places to go">
+      <span class="nf-more-label">Or go to</span>
+      <ul role="list">
+        {
+          more.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </main>
+
+  <CTABand />
+</BaseLayout>
+
+<style>
+  .nf-hero {
+    padding-top: clamp(1.5rem, 5vw, 3.5rem);
+  }
+
+  .nf-more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.25rem;
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(23, 22, 22, 0.12);
+    font-family: var(--font-ui);
+  }
+
+  .nf-more-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .nf-more ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nf-more a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .nf-more a:hover {
+    color: var(--color-brand-red);
+  }
+
+  .nf-more a:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+</style>

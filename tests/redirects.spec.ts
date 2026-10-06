@@ -20,7 +20,13 @@ test("legacy TEER parens URL 301-redirects to the canonical post", async ({ page
   await expect(page.locator("main h1")).toHaveCount(1);
 });
 
-test("an unknown blog slug falls back to /blog", async ({ page }) => {
-  await page.goto("/blog/this-post-does-not-exist-xyz");
-  await expect(page).toHaveURL(/\/blog$/);
+test("an unknown blog slug is a real 404, not a redirect to /blog", async ({ page, request }) => {
+  // No redirect hop: a 302 to /blog reads as a soft 404 to Google.
+  const raw = await request.get("/blog/this-post-does-not-exist-xyz", { maxRedirects: 0 });
+  expect(raw.status()).toBe(404);
+
+  const response = await page.goto("/blog/this-post-does-not-exist-xyz");
+  expect(response!.status()).toBe(404);
+  await expect(page).toHaveURL(/\/blog\/this-post-does-not-exist-xyz$/);
+  await expect(page.locator("main h1")).toHaveText("We can't find that page.");
 });

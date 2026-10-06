@@ -142,6 +142,39 @@ for (const clock of CLOCKS) {
   });
 }
 
+test.describe("event detail status codes", () => {
+  test.use({ extraHTTPHeaders: { "x-events-fixture": "mid-month" } });
+
+  test("an unknown event id is a real 404 with the branded page", async ({ page, request }) => {
+    const raw = await request.get("/events/9999-no-such-event", { maxRedirects: 0 });
+    expect(raw.status()).toBe(404);
+
+    const response = await page.goto("/events/9999-no-such-event");
+    expect(response!.status()).toBe(404);
+    await expect(page.locator("main h1")).toHaveText("We can't find that page.");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  });
+
+  test("a URL that is not <id>-<slug> is a 404", async ({ request }) => {
+    const raw = await request.get("/events/not-an-event", { maxRedirects: 0 });
+    expect(raw.status()).toBe(404);
+  });
+
+  test("an ended event answers 404 but still shows its page and the way back", async ({ page }) => {
+    const response = await page.goto("/events/9050-library-tour-for-newcomers");
+    expect(response!.status()).toBe(404);
+    await expect(page.locator("main h1")).toHaveText("Library Tour for Newcomers");
+    await expect(page.locator(".ed-ended")).toContainText("This event has ended.");
+    await expect(page.locator(".ed-ended a", { hasText: "See upcoming events" })).toHaveAttribute("href", "/events");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  });
+
+  test("an upcoming event answers 200", async ({ request }) => {
+    const raw = await request.get("/events/9001-esl-conversation-practice", { maxRedirects: 0 });
+    expect(raw.status()).toBe(200);
+  });
+});
+
 test.describe("events page (month-end)", () => {
   test.use({ extraHTTPHeaders: { "x-events-fixture": "month-end" } });
 

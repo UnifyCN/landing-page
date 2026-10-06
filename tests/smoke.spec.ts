@@ -25,6 +25,7 @@ const routes = [
   "/new-to-canada",
   "/who-is-a-newcomer",
   "/newcomer-benefits",
+  "/whats-new",
 ];
 
 for (const route of routes) {
