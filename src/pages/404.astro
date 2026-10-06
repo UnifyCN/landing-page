@@ -29,6 +29,8 @@ const more = [
   { label: "Contact", href: "/contact" },
 ];
 
+// After a rewrite Astro.url is /404; originPathname is the address the visitor
+// asked for, so canonical and og:url name that URL rather than /404.
 Astro.response.status = 404;
 ---
 
@@ -37,6 +39,7 @@ Astro.response.status = 404;
   description="We could not find that page. Start from one of Unify's guides for newcomers to Canada."
   bodyBg="#ffffff"
   noindex
+  canonicalPath={Astro.originPathname}
 >
   <main class="cl cl--wide">
     <header class="cl-hero nf-hero">

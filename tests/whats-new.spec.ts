@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { whatsNewNewestFirst, type WhatsNewEntry } from "../src/lib/whats-new";
 
 // /whats-new renders src/lib/whats-new.ts. These assert the page's contract
 // (order, shape, links), not the wording of any one entry, so editing the list
@@ -52,5 +53,28 @@ test.describe("what's new", () => {
     await page.setViewportSize({ width: 320, height: 640 });
     await page.goto("/whats-new");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+  });
+});
+
+
+// The list in the repo is already newest first, so the page test above cannot
+// tell whether the sort works. These call it with a shuffled list.
+test.describe("whatsNewNewestFirst", () => {
+  const entry = (date: string, title: string): WhatsNewEntry => ({ date, title, description: "x" });
+
+  test("sorts by date, newest first, and keeps list order within a day", () => {
+    const sorted = whatsNewNewestFirst([
+      entry("2026-09-28", "a"),
+      entry("2026-10-06", "b"),
+      entry("2026-10-02", "c"),
+      entry("2026-10-06", "d"),
+    ]);
+    expect(sorted.map((e) => e.title)).toEqual(["b", "d", "c", "a"]);
+  });
+
+  test("rejects a date that is not a real YYYY-MM-DD day", () => {
+    for (const bad of ["2026-13-01", "2026-02-30", "Oct 6, 2026", "2026-1-5", ""]) {
+      expect(() => whatsNewNewestFirst([entry(bad, "Typo")]), bad).toThrow(/Typo/);
+    }
   });
 });

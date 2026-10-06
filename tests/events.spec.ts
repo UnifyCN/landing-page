@@ -160,6 +160,35 @@ test.describe("event detail status codes", () => {
     expect(raw.status()).toBe(404);
   });
 
+  test("an id past the column's integer range is a 404, not a redirect", async ({ request }) => {
+    // Unfixtured on purpose: live PostgREST answers 400 for these, which used
+    // to fall into the fetch-error branch and 302 to /events.
+    for (const id of ["2147483648", "99999999999999999999"]) {
+      const raw = await request.get(`/events/${id}-x`, {
+        maxRedirects: 0,
+        headers: { "x-events-fixture": "" },
+      });
+      expect(raw.status(), id).toBe(404);
+    }
+  });
+
+  test("a zero-padded id 301s to the one canonical URL", async ({ request }) => {
+    const raw = await request.get("/events/0009001-esl-conversation-practice", { maxRedirects: 0 });
+    expect(raw.status()).toBe(301);
+    expect(raw.headers().location).toBe("/events/9001-esl-conversation-practice");
+  });
+
+  test("the branded 404 is not cacheable and stays a 404 on repeat", async ({ request }) => {
+    for (let i = 0; i < 2; i++) {
+      const raw = await request.get("/events/9999-no-such-event", {
+        maxRedirects: 0,
+        headers: { "x-events-fixture": "" },
+      });
+      expect(raw.status()).toBe(404);
+      expect(raw.headers()["cache-control"] ?? "").not.toContain("s-maxage");
+    }
+  });
+
   test("an ended event answers 404 but still shows its page and the way back", async ({ page }) => {
     const response = await page.goto("/events/9050-library-tour-for-newcomers");
     expect(response!.status()).toBe(404);

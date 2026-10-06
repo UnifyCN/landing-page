@@ -16,8 +16,13 @@ import type { EventView } from "../../lib/events/types";
 
 export const prerender = false;
 
-const match = /^(\d+)(?:-(.*))?$/.exec(Astro.params.event ?? "");
-if (!match) return Astro.rewrite("/404");
+// public.events.id is a Postgres integer. An id past its range makes PostgREST
+// answer 400, which would land in the fetch-error branch below and redirect,
+// so reject those here: no such event can exist.
+const INT4_MAX = 2_147_483_647;
+const match = /^(\d{1,10})(?:-(.*))?$/.exec(Astro.params.event ?? "");
+const id = match ? Number(match[1]) : NaN;
+if (!match || id > INT4_MAX) return Astro.rewrite("/404");
 
 // Null outside `astro dev`; the e2e suite uses it for a fixed clock and rows.
 const fixture = eventsFixture(Astro.request);
@@ -25,7 +30,7 @@ const now = fixture?.now ?? new Date();
 
 let event: EventView | null = null;
 try {
-  event = await getEventById(Number(match[1]), now, fixture);
+  event = await getEventById(id, now, fixture);
 } catch (err) {
   // Supabase unreachable says nothing about whether the event exists, so this
   // is not a 404: send people to the list, which has its own fallback.
@@ -33,7 +38,8 @@ try {
   return Astro.redirect("/events");
 }
 if (!event) return Astro.rewrite("/404");
-if (match[2] !== event.slug) return Astro.redirect(event.href, 301);
+// One URL per event: a stale slug or a padded id ("0042-...") 301s to it.
+if (match[1] !== String(event.id) || match[2] !== event.slug) return Astro.redirect(event.href, 301);
 if (event.isPast) Astro.response.status = 404;
 
 const partner = event.partnerSlug ? getPartnerBySlug(event.partnerSlug) : undefined;

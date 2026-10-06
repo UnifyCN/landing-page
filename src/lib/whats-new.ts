@@ -55,8 +55,24 @@ export const WHATS_NEW: WhatsNewEntry[] = [
   },
 ];
 
-/** Newest first; entries on the same date keep their order in the list. */
+/** True for a real calendar day written YYYY-MM-DD ("2026-13-01" and "2026-02-30" are not). */
+function isCalendarDay(date: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const parsed = new Date(`${date}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
+}
+
+/**
+ * Newest first; entries on the same date keep their order in the list. Throws
+ * on a mistyped date so the build fails with the entry named, instead of the
+ * page showing "Invalid Date".
+ */
 export function whatsNewNewestFirst(entries: WhatsNewEntry[] = WHATS_NEW): WhatsNewEntry[] {
+  for (const entry of entries) {
+    if (!isCalendarDay(entry.date)) {
+      throw new Error(`whats-new: "${entry.title}" has date "${entry.date}"; use a real day as YYYY-MM-DD.`);
+    }
+  }
   return entries
     .map((entry, i) => ({ entry, i }))
     .sort((a, b) => b.entry.date.localeCompare(a.entry.date) || a.i - b.i)

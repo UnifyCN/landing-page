@@ -20,6 +20,11 @@ test.describe("404 page", () => {
     expect(response!.status()).toBe(404);
 
     await expect(page).toHaveTitle("Page Not Found | Unify Social");
+    // Canonical names the URL that was asked for, never /404.
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://unifysocial.ca/this-page-does-not-exist-xyz",
+    );
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.locator("#nav-pill")).toBeVisible();
     await expect(page.locator("footer")).toBeVisible();
