@@ -3,27 +3,36 @@ name: Deploy to Cloudflare Workers
 on:
   push:
     branches: [main]
+  # Weekly rebuild. Blog posts are server-rendered, but the sitemap is built at
+  # deploy time (astro.config.mjs reads the published slugs from Sanity), so a
+  # post published without a code push stayed out of it until the next deploy.
+  # The blog automation publishes on Sundays at 08:31 America/Vancouver
+  # (docs/weekly-blog-automation-setup.md) and takes a few minutes. GitHub cron
+  # is UTC with no daylight saving: 18:00 UTC is 11:00 PDT / 10:00 PST, at
+  # least 89 minutes after the post goes live in either season.
+  schedule:
+    - cron: "0 18 * * 0"
+  # Manual run: Actions tab, or `gh workflow run deploy.yml --ref main`.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time. A second one waits instead of cancelling the first.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm run build
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
-      - name: Run e2e smoke tests
-        run: npm run test:e2e
+      # A failing test blocks the deploy, on a schedule too: an unattended
+      # Sunday deploy must pass the same gate as a push.
+      - uses: ./.github/actions/build-and-test
 
       - name: Deploy
         run: npx wrangler deploy

@@ -1,0 +1,26 @@
+name: CI
+
+# The pass/fail check on pull requests. Same build and e2e suite that gates the
+# deploy (see .github/actions/build-and-test), without the deploy step, so it
+# needs no secrets and is safe to run for forks.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to the PR replaces the run for the previous one.
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/build-and-test

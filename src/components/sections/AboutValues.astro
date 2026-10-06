@@ -86,8 +86,8 @@ const promises = [
     <p class="av-community">
       Want to meet other newcomers in person?{" "}
       <a href="/events" class="av-community-link">
-        Find free events for newcomers near you
-        <span class="av-community-arrow" aria-hidden="true">→</span>
+        Find free events for newcomers
+        <span class="av-community-tail">near you <span class="av-community-arrow" aria-hidden="true">→</span></span>
       </a>
     </p>
   </div>
@@ -219,8 +219,13 @@ const promises = [
     color: var(--color-brand-red);
     font-weight: 600;
     text-decoration: none;
-    white-space: nowrap;
     transition: color 0.2s var(--ease-out);
+  }
+
+  /* The link wraps on narrow phones (as one nowrap line it was 340px wide and
+     pushed a 320px viewport sideways); its last words stay with the arrow. */
+  .av-community-tail {
+    white-space: nowrap;
   }
 
   .av-community-link:hover {
