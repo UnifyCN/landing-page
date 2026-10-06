@@ -14,7 +14,7 @@ You are an incredibly talented, experienced polyglot with decades of practice in
 
 - **Astro 6** — `output: 'server'` with View Transitions (`ClientRouter` in BaseLayout)
 - **Tailwind CSS v4** — via `@tailwindcss/vite`. Design tokens live in `@theme` inside `src/styles/global.css`. No JS config file.
-- **Cloudflare Workers** — `@astrojs/cloudflare` adapter, deployed via Wrangler. CI in `.github/workflows/deploy.yml` (push to `main`).
+- **Cloudflare Workers** — `@astrojs/cloudflare` adapter, deployed via Wrangler. `.github/workflows/deploy.yml` builds, runs the e2e suite, and deploys on push to `main`, on a weekly schedule (Sundays 18:00 UTC, after the blog automation, so new posts reach the sitemap), and on manual run (`gh workflow run deploy.yml --ref main`). `.github/workflows/ci.yml` runs the same build + e2e on every pull request to `main` as the "Build and e2e" check. Both use the shared steps in `.github/actions/build-and-test`; change the steps there, not in the workflows.
 - **Resend** — transactional email for forms.
 - **Cloudflare Turnstile** — spam protection on forms.
 - **Zod** — input validation in API routes.
@@ -221,7 +221,7 @@ For multi-step work, state plan + verification per step:
 
 ## Testing
 
-Lean Playwright e2e smoke layer in `tests/` (config: `playwright.config.ts`). Run with `npm run test:e2e` (`:ui` for the debugger). It runs against `npm run dev` and gates the Cloudflare deploy — a failing test blocks the `deploy.yml` job.
+Lean Playwright e2e smoke layer in `tests/` (config: `playwright.config.ts`). Run with `npm run test:e2e` (`:ui` for the debugger). It runs against `npm run dev`, runs on every pull request (`ci.yml`), and gates the Cloudflare deploy — a failing test blocks the `deploy.yml` job, including the weekly scheduled one.
 
 It is **not** a full suite (this is a content-heavy, interaction-light site). It guards exactly two things: the **View-Transition re-binding bug class** (`tests/view-transitions.spec.ts` — islands wired via `astro:page-load` that have repeatedly broken on client-side nav) and the core interactive islands (smoke routes, FAQ accordion, mobile nav, both forms). No Turnstile/Resend network is hit — form tests assert render, binding-guard attributes, and Zod `fieldErrors` only.
 

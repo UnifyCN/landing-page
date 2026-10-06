@@ -212,9 +212,7 @@ test.describe("app CTAs at the narrowest phone", () => {
   test.use({ viewport: { width: 320, height: 640 } });
 
   test("the band's buttons fit on one line each with no horizontal scroll", async ({ page }) => {
-    // /contact, not /about: AboutValues' community link is 340px wide and
-    // overflows a 320px viewport on its own (pre-existing, unrelated).
-    await page.goto("/contact");
+    await page.goto("/about");
     const { web, ios } = await bandButtons(page);
     for (const btn of [web, ios]) {
       const b = await box(btn);
