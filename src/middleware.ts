@@ -5,9 +5,10 @@ import { isEventsFixtureRequest } from "./lib/events/fixtures";
 //
 // Cloudflare does not cache responses a Worker generates, so the pages'
 // `s-maxage` header alone did nothing: every view waited on Supabase or Sanity
-// (150–600 ms TTFB, measured 2026-09-26). This stores 200 responses in the
-// data-centre cache (Workers Cache API) for the page's `s-maxage`; prerendered
-// pages never reach here — they are static assets.
+// (150–600 ms TTFB, measured 2026-09-26). This stores responses that carry
+// `s-maxage` (200s, and the 404 an ended event answers with) in the data-centre
+// cache (Workers Cache API) for that long; prerendered pages never reach here —
+// they are static assets.
 //
 // Bypassed for the Sanity Studio preview pane, which loads the post in an
 // iframe (`Sec-Fetch-Dest: iframe`) and must show the just-published version,
@@ -49,7 +50,11 @@ export const onRequest = defineMiddleware(async ({ request, url }, next) => {
 
   const res = await next();
   const cacheControl = res.headers.get("Cache-Control") ?? "";
-  if (res.status === 200 && /s-maxage=\d+/.test(cacheControl) && !res.headers.has("Set-Cookie")) {
+  // 404 is stored too, but only when the page asked for it with s-maxage: that
+  // is an ended event, which keeps its own page. The branded 404 sets no
+  // Cache-Control, so unknown URLs are never stored.
+  const storable = res.status === 200 || res.status === 404;
+  if (storable && /s-maxage=\d+/.test(cacheControl) && !res.headers.has("Set-Cookie")) {
     const stored = res.clone();
     stored.headers.set(ORIGINAL_CACHE_CONTROL, cacheControl);
     await edge.put(key, stored);

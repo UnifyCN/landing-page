@@ -1,7 +1,9 @@
 ---
 // /events/<id>-<slug>. SSR: rows come and go weekly. The id is the key; a
-// wrong or missing slug 301s to the canonical URL, an unknown id goes back to
-// /events. Past events stay reachable (links get shared) but are noindex.
+// wrong or missing slug 301s to the canonical URL. An unknown id is a real 404
+// (the branded page). An event that has ended also answers 404, but still
+// renders its own page with the "This event has ended" banner, because shared
+// links keep getting opened; it stays noindex as well.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EventCard from "../../components/events/EventCard.astro";
 import CTABand from "../../components/sections/CTABand.astro";
@@ -14,8 +16,13 @@ import type { EventView } from "../../lib/events/types";
 
 export const prerender = false;
 
-const match = /^(\d+)(?:-(.*))?$/.exec(Astro.params.event ?? "");
-if (!match) return Astro.redirect("/events");
+// public.events.id is a Postgres integer. An id past its range makes PostgREST
+// answer 400, which would land in the fetch-error branch below and redirect,
+// so reject those here: no such event can exist.
+const INT4_MAX = 2_147_483_647;
+const match = /^(\d{1,10})(?:-(.*))?$/.exec(Astro.params.event ?? "");
+const id = match ? Number(match[1]) : NaN;
+if (!match || id > INT4_MAX) return Astro.rewrite("/404");
 
 // Null outside `astro dev`; the e2e suite uses it for a fixed clock and rows.
 const fixture = eventsFixture(Astro.request);
@@ -23,12 +30,17 @@ const now = fixture?.now ?? new Date();
 
 let event: EventView | null = null;
 try {
-  event = await getEventById(Number(match[1]), now, fixture);
+  event = await getEventById(id, now, fixture);
 } catch (err) {
+  // Supabase unreachable says nothing about whether the event exists, so this
+  // is not a 404: send people to the list, which has its own fallback.
   console.error("events: detail fetch failed", err);
+  return Astro.redirect("/events");
 }
-if (!event) return Astro.redirect("/events");
-if (match[2] !== event.slug) return Astro.redirect(event.href, 301);
+if (!event) return Astro.rewrite("/404");
+// One URL per event: a stale slug or a padded id ("0042-...") 301s to it.
+if (match[1] !== String(event.id) || match[2] !== event.slug) return Astro.redirect(event.href, 301);
+if (event.isPast) Astro.response.status = 404;
 
 const partner = event.partnerSlug ? getPartnerBySlug(event.partnerSlug) : undefined;
 let more: EventView[] = [];

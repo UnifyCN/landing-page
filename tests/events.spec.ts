@@ -142,6 +142,68 @@ for (const clock of CLOCKS) {
   });
 }
 
+test.describe("event detail status codes", () => {
+  test.use({ extraHTTPHeaders: { "x-events-fixture": "mid-month" } });
+
+  test("an unknown event id is a real 404 with the branded page", async ({ page, request }) => {
+    const raw = await request.get("/events/9999-no-such-event", { maxRedirects: 0 });
+    expect(raw.status()).toBe(404);
+
+    const response = await page.goto("/events/9999-no-such-event");
+    expect(response!.status()).toBe(404);
+    await expect(page.locator("main h1")).toHaveText("We can't find that page.");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  });
+
+  test("a URL that is not <id>-<slug> is a 404", async ({ request }) => {
+    const raw = await request.get("/events/not-an-event", { maxRedirects: 0 });
+    expect(raw.status()).toBe(404);
+  });
+
+  test("an id past the column's integer range is a 404, not a redirect", async ({ request }) => {
+    // Unfixtured on purpose: live PostgREST answers 400 for these, which used
+    // to fall into the fetch-error branch and 302 to /events.
+    for (const id of ["2147483648", "99999999999999999999"]) {
+      const raw = await request.get(`/events/${id}-x`, {
+        maxRedirects: 0,
+        headers: { "x-events-fixture": "" },
+      });
+      expect(raw.status(), id).toBe(404);
+    }
+  });
+
+  test("a zero-padded id 301s to the one canonical URL", async ({ request }) => {
+    const raw = await request.get("/events/0009001-esl-conversation-practice", { maxRedirects: 0 });
+    expect(raw.status()).toBe(301);
+    expect(raw.headers().location).toBe("/events/9001-esl-conversation-practice");
+  });
+
+  test("the branded 404 is not cacheable and stays a 404 on repeat", async ({ request }) => {
+    for (let i = 0; i < 2; i++) {
+      const raw = await request.get("/events/9999-no-such-event", {
+        maxRedirects: 0,
+        headers: { "x-events-fixture": "" },
+      });
+      expect(raw.status()).toBe(404);
+      expect(raw.headers()["cache-control"] ?? "").not.toContain("s-maxage");
+    }
+  });
+
+  test("an ended event answers 404 but still shows its page and the way back", async ({ page }) => {
+    const response = await page.goto("/events/9050-library-tour-for-newcomers");
+    expect(response!.status()).toBe(404);
+    await expect(page.locator("main h1")).toHaveText("Library Tour for Newcomers");
+    await expect(page.locator(".ed-ended")).toContainText("This event has ended.");
+    await expect(page.locator(".ed-ended a", { hasText: "See upcoming events" })).toHaveAttribute("href", "/events");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  });
+
+  test("an upcoming event answers 200", async ({ request }) => {
+    const raw = await request.get("/events/9001-esl-conversation-practice", { maxRedirects: 0 });
+    expect(raw.status()).toBe(200);
+  });
+});
+
 test.describe("events page (month-end)", () => {
   test.use({ extraHTTPHeaders: { "x-events-fixture": "month-end" } });
 

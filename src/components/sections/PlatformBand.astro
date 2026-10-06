@@ -41,6 +41,10 @@ const APP_STORE_URL =
           </span>
           <span class="platform-proof-text">Sign in once - <strong>one free account</strong> works across web and mobile.</span>
         </p>
+        <a class="platform-new" href="/whats-new">
+          See what's new in Unify
+          <span aria-hidden="true">&rarr;</span>
+        </a>
       </div>
 
       <div class="platform-visual">
@@ -196,6 +200,41 @@ const APP_STORE_URL =
     font-size: 1.0625rem;
     line-height: 1.4;
     color: var(--color-text);
+  }
+  /* Quiet link to the changelog under the proof line */
+  .platform-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    margin-top: 0.5rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-brand-red);
+    text-decoration: none;
+  }
+  .platform-new span {
+    transition: transform 0.2s var(--ease-out);
+  }
+  .platform-new:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .platform-new:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+    .platform-new:hover span {
+      transform: translateX(3px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .platform-new span {
+      transition: none;
+    }
   }
   .platform-proof-text strong {
     font-weight: 700;
