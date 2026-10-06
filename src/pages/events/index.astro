@@ -5,15 +5,20 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import EventsHero from "../../components/events/EventsHero.astro";
 import EventsAgenda from "../../components/events/EventsAgenda.astro";
 import CTABand from "../../components/sections/CTABand.astro";
+import { eventsFixture } from "../../lib/events/fixtures";
 import { getUpcomingEvents, type UpcomingEvents } from "../../lib/events/queries";
 import { breadcrumbLd, serializeLd } from "../../lib/seo";
 
 export const prerender = false;
 
+// Null outside `astro dev`; the e2e suite uses it for a fixed clock and rows.
+const fixture = eventsFixture(Astro.request);
+const now = fixture?.now ?? new Date();
+
 let data: UpcomingEvents = { featured: [], partnerEvents: [] };
 let failed = false;
 try {
-  data = await getUpcomingEvents();
+  data = await getUpcomingEvents(now, fixture);
 } catch (err) {
   // Keep the page up (hero, partners, CTA) if Supabase is unreachable.
   console.error("events: upcoming fetch failed", err);
@@ -47,7 +52,7 @@ Astro.response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, st
     <EventsHero featured={data.featured} />
     {
       data.partnerEvents.length > 0 ? (
-        <EventsAgenda events={data.partnerEvents} initial={initial} />
+        <EventsAgenda events={data.partnerEvents} initial={initial} now={now} />
       ) : (
         <section class="ev-none">
           <div class="ev-none-inner">

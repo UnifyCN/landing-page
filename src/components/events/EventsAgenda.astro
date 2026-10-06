@@ -13,12 +13,13 @@ import type { EventView } from "../../lib/events/types";
 interface Props {
   events: EventView[];
   initial: { genre: string | null; partner: string | null; day: string | null };
+  /** The clock the page fetched `events` with (frozen under a dev fixture). */
+  now?: Date;
 }
 
-const { events, initial } = Astro.props;
+const { events, initial, now = new Date() } = Astro.props;
 const PAGE_SIZE = 15;
 
-const now = new Date();
 const groups = groupAgenda(events, now);
 
 const countBy = (key: "genre" | "partnerSlug") =>
@@ -74,7 +75,10 @@ for (let y = ty, m = tm; y < ly || (y === ly && m <= lm); m === 12 ? ((m = 1), y
     days: new Date(Date.UTC(y, m, 0)).getUTCDate(),
   });
 }
-const activeMonth = day ? day.slice(0, 7) : months[0].key;
+// Open on the selected day's month, else the first month that has an event.
+// Near a month's end the current month can have none left (2026-09-30), and
+// opening there showed a grid with nothing to pick.
+const activeMonth = (day ?? events[0]?.dayKey ?? todayKey).slice(0, 7);
 const dayCounts = events.reduce<Record<string, number>>((acc, e) => {
   acc[e.dayKey] = (acc[e.dayKey] ?? 0) + 1;
   return acc;
