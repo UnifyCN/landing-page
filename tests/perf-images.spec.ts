@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { partners, partnerLogoSize } from "../src/lib/partners";
 import { HERO_SIZES, HERO_SRCSET } from "../src/lib/hero-image";
 
@@ -33,9 +34,12 @@ test.describe("image dimensions", () => {
       }).observe({ type: "layout-shift", buffered: true });
     });
     // Phone width with every image held back, so the page lays out first and
-    // the images arrive late. Without width/height that moved three things:
-    // the navbar pill (logo), everything under the hero (phone screenshot),
-    // and the partner strip (logos). Production measured 0.13.
+    // the images arrive late. Without width/height the navbar pill moved when
+    // the logo arrived and everything under the hero moved when the phone
+    // screenshot did (production measured 0.13). Checked by removing the hero
+    // attributes: this fails at 0.05. It does NOT cover the partner strip,
+    // whose logos load below the fold; the "every image has width and height"
+    // test above is what guards those.
     await page.setViewportSize({ width: 390, height: 844 });
     await page.route(/\.(avif|png|jpe?g|webp|svg)(\?.*)?$/, async (route) => {
       await new Promise((resolve) => setTimeout(resolve, 700));
@@ -70,7 +74,8 @@ test.describe("brand images", () => {
   test("every partner logo is an AVIF that exists and has recorded dimensions", () => {
     for (const partner of partners) {
       expect(partner.logo, partner.slug).toMatch(/\.avif$/);
-      expect(existsSync(`public${partner.logo}`), partner.logo).toBe(true);
+      const file = fileURLToPath(new URL(`../public${partner.logo}`, import.meta.url));
+      expect(existsSync(file), partner.logo).toBe(true);
       const size = partnerLogoSize(partner.logo);
       expect(size.width, partner.logo).toBeGreaterThan(0);
       expect(size.height, partner.logo).toBeLessThanOrEqual(160);

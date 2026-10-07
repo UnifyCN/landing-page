@@ -25,11 +25,12 @@ const faqLdStr = serializeLd(faqLd(faqs));
     <script type="application/ld+json" set:html={mobileAppLdStr} />
     <script type="application/ld+json" set:html={webAppLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
+    {/* No href on purpose: a browser without imagesrcset support (Safari before
+        17.2) would preload that one file and then pick another for the <img>. */}
     <link
       rel="preload"
       as="image"
       type="image/avif"
-      href="/assets/screenshots/learn-hero-760.avif"
       imagesrcset={HERO_SRCSET}
       imagesizes={HERO_SIZES}
       fetchpriority="high"

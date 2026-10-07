@@ -1,8 +1,10 @@
 // Small AVIF versions of the images every page (or the home page) loads, plus
 // a generated file with partner logo dimensions so <img> tags can reserve
 // their space. The originals were far larger than they are ever shown:
-// a 256px, 50 KB PNG for a 40-56px logo; partner PNGs up to 136 KB for a 64px
-// strip; a 1030px phone screenshot shown at most 380px wide.
+// a 256px, 50 KB PNG for a 40-56px logo; partner PNGs up to 136 KB for a strip
+// at most 72px tall; a 1030px phone screenshot shown at most 380px wide.
+// Every run re-encodes all outputs, so expect byte-level diffs after a sharp
+// upgrade even when no source changed.
 //
 // Run after changing the logo, a partner logo, or the hero screenshot:
 //   node scripts/build-brand-images.mjs
@@ -18,7 +20,7 @@ const logoOut = "public/assets/logo/new-unify-logo-168.avif";
 await sharp(logoSrc).resize({ width: 168 }).avif({ quality: 62, effort: 9 }).toFile(logoOut);
 console.log(`logo  ${kb(logoSrc)} -> ${kb(logoOut)}`);
 
-// 2. Partner logos: shown at most 64px tall (home strip). 160px covers 2.5x.
+// 2. Partner logos: shown at most 72px tall (home strip from 1400px). 160px covers 2x.
 const MAX_HEIGHT = 160;
 const partnerDir = "public/assets/images/partners";
 const sizes = {};
