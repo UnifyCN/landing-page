@@ -105,11 +105,32 @@ test.describe("home page guide index and footer", () => {
   });
 
   for (const width of [320, 768, 1024, 1920]) {
-    test(`the guide index has no sideways scroll at ${width}px`, async ({ page }) => {
+    test(`the home page has no sideways scroll at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.goto("/");
       await page.locator("section#guides").scrollIntoViewIfNeeded();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      // Reports what sticks out, not just a number. This check has failed twice
+      // on a busy local run with scrollWidth 773 at 768px and passed on retry;
+      // nothing on the page reproduces it in isolation (not the hero entrance,
+      // not font loading), so the next occurrence should name the element.
+      const overflow = await page.evaluate(() => {
+        const limit = window.innerWidth;
+        const scrollWidth = document.documentElement.scrollWidth;
+        if (scrollWidth <= limit) return null;
+        const offenders: string[] = [];
+        const visit = (root: Document | ShadowRoot, prefix: string) => {
+          for (const el of root.querySelectorAll("*")) {
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 0 && rect.right > limit + 0.5 && rect.width < limit * 2) {
+              offenders.push(`${prefix}${el.tagName.toLowerCase()}.${String(el.className).slice(0, 40)} right=${Math.round(rect.right)}`);
+            }
+            if (el.shadowRoot) visit(el.shadowRoot, `${el.tagName.toLowerCase()} >> `);
+          }
+        };
+        visit(document, "");
+        return { scrollWidth, offenders: offenders.slice(0, 12) };
+      });
+      expect(overflow).toBeNull();
     });
   }
 });

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { webpFallback } from "../src/lib/image-fallback";
 
 // Every AVIF the site serves sits in a <picture> with a WebP (or, for the
 // logo, PNG) fallback, because Safari 15 and older cannot decode AVIF and
@@ -119,4 +120,14 @@ test.describe("with AVIF support", () => {
       expect(direct, path).toEqual([]);
     }
   });
+});
+
+test("webpFallback swaps the extension wherever a URL can end", () => {
+  expect(webpFallback("/a/photo.avif")).toBe("/a/photo.webp");
+  expect(webpFallback("/a/x-380.avif 380w, /a/x-760.avif 760w")).toBe("/a/x-380.webp 380w, /a/x-760.webp 760w");
+  expect(webpFallback("/a/photo.avif?v=2")).toBe("/a/photo.webp?v=2");
+  expect(webpFallback("/a/photo.avif#top")).toBe("/a/photo.webp#top");
+  // Not an extension: left alone.
+  expect(webpFallback("/a/avif-notes.png")).toBe("/a/avif-notes.png");
+  expect(webpFallback("/a/photo.avifx")).toBe("/a/photo.avifx");
 });

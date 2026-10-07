@@ -11,5 +11,7 @@
 // the <picture> were not there, so existing CSS on the image and its parent
 // still applies.
 export function webpFallback(avif: string): string {
-  return avif.replace(/\.avif(?=$|\s)/g, ".webp");
+  // Also inside a srcset ("a.avif 380w, b.avif 760w") and before a query string
+  // or fragment ("a.avif?v=2").
+  return avif.replace(/\.avif(?=$|[\s?#])/g, ".webp");
 }
