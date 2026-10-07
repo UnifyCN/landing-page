@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../../lib/image-fallback";
 import { partners, partnerLogoSize } from "../../lib/partners";
 ---
 
@@ -12,21 +13,27 @@ import { partners, partnerLogoSize } from "../../lib/partners";
       {
         partners.map((p) => (
           <a href={`/partners/${p.slug}`} class="partner-logo-link">
-            <img
-              src={p.logo}
-              alt={`${p.name} — a Unify Social partner`}
-              class="partner-logo"
-              {...partnerLogoSize(p.logo)}
-              loading="lazy"
-              decoding="async"
-            />
+            <picture class="contents">
+              <source srcset={p.logo} type="image/avif" />
+              <img
+                src={webpFallback(p.logo)}
+                alt={`${p.name} — a Unify Social partner`}
+                class="partner-logo"
+                {...partnerLogoSize(p.logo)}
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </a>
         ))
       }
       {
         partners.map((p) => (
           <a href={`/partners/${p.slug}`} class="partner-logo-link" aria-hidden="true" tabindex="-1">
-            <img src={p.logo} alt="" class="partner-logo" {...partnerLogoSize(p.logo)} loading="lazy" decoding="async" />
+            <picture class="contents">
+              <source srcset={p.logo} type="image/avif" />
+              <img src={webpFallback(p.logo)} alt="" class="partner-logo" {...partnerLogoSize(p.logo)} loading="lazy" decoding="async" />
+            </picture>
           </a>
         ))
       }

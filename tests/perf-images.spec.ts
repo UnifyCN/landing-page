@@ -58,7 +58,7 @@ test.describe("brand images", () => {
   test("the logo is a small AVIF with a PNG fallback, in the navbar and footer", async ({ page }) => {
     await page.goto("/about");
     for (const scope of ["#nav-pill", "footer"]) {
-      const picture = page.locator(`${scope} picture`).first();
+      const picture = page.locator(`${scope} picture:has(img[alt="Unify Social"])`).first();
       await expect(picture.locator("source")).toHaveAttribute("srcset", "/assets/logo/new-unify-logo-168.avif");
       await expect(picture.locator("source")).toHaveAttribute("type", "image/avif");
       await expect(picture.locator("img")).toHaveAttribute("src", "/assets/logo/new-unify-logo-256.png");
@@ -85,7 +85,12 @@ test.describe("brand images", () => {
   test("the hero phone has right-sized candidates and the preload matches it", async ({ page }) => {
     await page.goto("/");
     const hero = page.locator("img.hero-phone");
-    await expect(hero).toHaveAttribute("srcset", HERO_SRCSET);
+    // AVIF candidates on the <source>, the same widths as WebP on the <img>.
+    const source = page.locator("picture:has(img.hero-phone) source");
+    await expect(source).toHaveAttribute("type", "image/avif");
+    await expect(source).toHaveAttribute("srcset", HERO_SRCSET);
+    await expect(source).toHaveAttribute("sizes", HERO_SIZES);
+    await expect(hero).toHaveAttribute("srcset", HERO_SRCSET.replaceAll(".avif", ".webp"));
     await expect(hero).toHaveAttribute("sizes", HERO_SIZES);
     await expect(hero).toHaveAttribute("fetchpriority", "high");
     const preload = page.locator('link[rel="preload"][as="image"]');

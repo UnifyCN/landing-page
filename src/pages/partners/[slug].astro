@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../../lib/image-fallback";
 export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -68,7 +69,10 @@ const localBusinessLdStr = serializeLd(
     <!-- Partner header -->
     <div class="pp-header">
       <div class="pp-logo-wrap">
-        <img src={partner.logo} alt={partner.name} class="pp-logo" {...partnerLogoSize(partner.logo)} loading="eager" />
+        <picture class="contents">
+          <source srcset={partner.logo} type="image/avif" />
+          <img src={webpFallback(partner.logo)} alt={partner.name} class="pp-logo" {...partnerLogoSize(partner.logo)} loading="eager" />
+        </picture>
       </div>
 
       <div class="pp-meta">
