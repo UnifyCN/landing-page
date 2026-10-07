@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../../lib/image-fallback";
 const photos = [
   {
     src: "/assets/images/about/founders.avif",
@@ -21,8 +22,10 @@ const photos = [
     <div class="ah-photo-col">
       <div class="ah-carousel" data-active="0" data-count={photos.length}>
         {photos.map((photo, i) => (
+          <picture class="contents">
+            <source srcset={photo.src} type="image/avif" />
           <img
-            src={photo.src}
+            src={webpFallback(photo.src)}
             alt={photo.alt}
             class="ah-photo"
             loading={i === 0 ? "eager" : "lazy"}
@@ -30,6 +33,7 @@ const photos = [
             fetchpriority={i === 0 ? "high" : undefined}
             data-index={i}
           />
+          </picture>
         ))}
       </div>
       <div class="ah-controls">

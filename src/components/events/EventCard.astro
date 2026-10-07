@@ -43,7 +43,10 @@ const isFeature = variant === "feature";
         />
       ) : (
         <div class="ec-placeholder" aria-hidden="true">
-          <img src="/assets/logo/new-unify-logo-168.avif" alt="" width="168" height="168" loading="lazy" decoding="async" class="ec-placeholder-mark" />
+          <picture class="contents">
+            <source srcset="/assets/logo/new-unify-logo-168.avif" type="image/avif" />
+            <img src="/assets/logo/new-unify-logo-256.png" alt="" width="168" height="168" loading="lazy" decoding="async" class="ec-placeholder-mark" />
+          </picture>
         </div>
       )
     }

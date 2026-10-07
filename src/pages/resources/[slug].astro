@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../../lib/image-fallback";
 export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -64,7 +65,10 @@ const breadcrumbLdStr = serializeLd(
       ) : (
         <div class="rd-video-placeholder" aria-label="Video player — coming soon">
           {resource.thumbnail ? (
-            <img src={resource.thumbnail} alt={resource.title} class="rd-video-thumb" />
+            <picture class="contents">
+              {resource.thumbnail.endsWith(".avif") && <source srcset={resource.thumbnail} type="image/avif" />}
+              <img src={webpFallback(resource.thumbnail)} alt={resource.title} class="rd-video-thumb" />
+            </picture>
           ) : null}
           <div class="rd-play-circle" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none">

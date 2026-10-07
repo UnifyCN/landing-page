@@ -150,3 +150,12 @@ body::after {
   --radius-card: 16px;
 
 }
+
+/* <picture class="contents"> lets an <img> with an AVIF source and a WebP
+   fallback lay out as if the <picture> were not there. But browsers do not
+   hide <source> by default, so inside display: contents it became an empty
+   flex or grid item of the parent and picked up its gap (testimonial logos on
+   /partners moved 16px). A <source> never has anything to show. */
+picture > source {
+  display: none;
+}

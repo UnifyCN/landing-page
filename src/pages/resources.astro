@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../lib/image-fallback";
 export const prerender = true;
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CTABand from "../components/sections/CTABand.astro";
@@ -56,13 +57,16 @@ const categories: ResourceCategory[] = [
             <div class="rv-thumb">
               {(resource.thumbnail || resource.youtubeId) ? (
                 <>
+                  <picture class="contents">
+                    {resource.thumbnail?.endsWith(".avif") && <source srcset={resource.thumbnail} type="image/avif" />}
                   <img
-                    src={resource.thumbnail ?? `https://img.youtube.com/vi/${resource.youtubeId}/maxresdefault.jpg`}
+                    src={resource.thumbnail ? webpFallback(resource.thumbnail) : `https://img.youtube.com/vi/${resource.youtubeId}/maxresdefault.jpg`}
                     alt={resource.title}
                     class="rv-thumb-img"
                     loading="lazy"
                     decoding="async"
                   />
+                  </picture>
                   <div class="rv-thumb-overlay" aria-hidden="true"></div>
                 </>
               ) : null}

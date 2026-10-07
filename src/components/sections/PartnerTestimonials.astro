@@ -1,4 +1,5 @@
 ---
+import { webpFallback } from "../../lib/image-fallback";
 import { partnerLogoSize } from "../../lib/partners";
 // Replace these with real testimonials from Cedric/Savar when ready
 const testimonials = [
@@ -44,7 +45,10 @@ const testimonials = [
               {t.quote}
             </blockquote>
             <footer class="pt-attribution">
-              <img src={t.logo} alt={t.name} class="pt-logo" {...partnerLogoSize(t.logo)} loading="lazy" decoding="async" />
+              <picture class="contents">
+                <source srcset={t.logo} type="image/avif" />
+                <img src={webpFallback(t.logo)} alt={t.name} class="pt-logo" {...partnerLogoSize(t.logo)} loading="lazy" decoding="async" />
+              </picture>
               <div class="pt-attr-text">
                 <span class="pt-attr-name">{t.name}</span>
                 <span class="pt-attr-role">{t.role}</span>

@@ -12,6 +12,7 @@ const avatars = [
   { initials: "+", color: "#D4B148" },
 ];
 import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
+import { webpFallback } from "../../lib/image-fallback";
 ---
 
 <section class="hero">
@@ -78,9 +79,11 @@ import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
            ratio), so most screens take the 380 or 760px file, not the 1030px one.
            Keep `sizes` in step with .hero-phone's max-height rules below and with
            the preload in src/pages/index.astro. -->
+      <picture class="contents">
+        <source type="image/avif" srcset={HERO_SRCSET} sizes={HERO_SIZES} />
       <img
-        src="/assets/screenshots/learn-hero-760.avif"
-        srcset={HERO_SRCSET}
+        src="/assets/screenshots/learn-hero-760.webp"
+        srcset={webpFallback(HERO_SRCSET)}
         sizes={HERO_SIZES}
         width="1030"
         height="2048"
@@ -89,6 +92,7 @@ import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
         loading="eager"
         fetchpriority="high"
       />
+      </picture>
     </div>
   </div>
 </section>

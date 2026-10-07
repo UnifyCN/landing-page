@@ -6,7 +6,13 @@
 // Every run re-encodes all outputs, so expect byte-level diffs after a sharp
 // upgrade even when no source changed.
 //
-// Run after changing the logo, a partner logo, or the hero screenshot:
+// Every AVIF also gets a WebP beside it. Pages serve the AVIF through
+// <picture> with the WebP as the <img> fallback, because Safari 15 and older
+// cannot decode AVIF and showed alt text instead (the logo falls back to its
+// PNG).
+//
+// Run after changing the logo, a partner logo, the hero screenshot, or any
+// image in ALSO_NEEDS_WEBP:
 //   node scripts/build-brand-images.mjs
 // Sources are never modified. Outputs are committed.
 import sharp from "sharp";
@@ -27,10 +33,9 @@ const sizes = {};
 for (const file of readdirSync(partnerDir).filter((f) => f.endsWith(".png")).sort()) {
   const src = `${partnerDir}/${file}`;
   const out = src.replace(/\.png$/, ".avif");
-  const { width, height } = await sharp(src)
-    .resize({ height: MAX_HEIGHT, withoutEnlargement: true })
-    .avif({ quality: 60, effort: 9 })
-    .toFile(out);
+  const resized = () => sharp(src).resize({ height: MAX_HEIGHT, withoutEnlargement: true });
+  const { width, height } = await resized().avif({ quality: 60, effort: 9 }).toFile(out);
+  await resized().webp({ quality: 82, effort: 6 }).toFile(out.replace(/\.avif$/, ".webp"));
   sizes[`/assets/images/partners/${file.replace(/\.png$/, ".avif")}`] = { width, height };
   console.log(`${file.padEnd(36)} ${kb(src).padStart(9)} -> ${kb(out).padStart(8)}  ${width}x${height}`);
 }
@@ -49,5 +54,25 @@ const heroSrc = "public/assets/screenshots/learn-hero.avif";
 for (const width of [380, 760]) {
   const out = `public/assets/screenshots/learn-hero-${width}.avif`;
   await sharp(heroSrc).resize({ width }).avif({ quality: 58, effort: 9 }).toFile(out);
+  await sharp(heroSrc).resize({ width }).webp({ quality: 80, effort: 6 }).toFile(out.replace(/\.avif$/, ".webp"));
   console.log(`hero ${width}w  ${kb(out)}  (original ${kb(heroSrc)})`);
+}
+
+// 4. WebP fallbacks for the other images that exist only as AVIF. Same pixels,
+// one more format.
+const ALSO_NEEDS_WEBP = [
+  heroSrc,
+  "public/assets/screenshots/web/learn-dashboard.avif",
+  "public/assets/images/about/founders.avif",
+  "public/assets/images/about/founders-portrait.avif",
+  "public/assets/images/about/founders-portrait2.avif",
+  ...readdirSync("public/assets/images/resources")
+    .filter((f) => f.endsWith(".avif"))
+    .sort()
+    .map((f) => `public/assets/images/resources/${f}`),
+];
+for (const src of ALSO_NEEDS_WEBP) {
+  const out = src.replace(/\.avif$/, ".webp");
+  await sharp(src).webp({ quality: 80, effort: 6 }).toFile(out);
+  console.log(`webp fallback  ${src.replace("public/assets/", "").padEnd(44)} ${kb(src).padStart(9)} avif  ${kb(out).padStart(9)} webp`);
 }

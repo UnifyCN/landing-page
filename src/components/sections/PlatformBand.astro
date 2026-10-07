@@ -65,8 +65,10 @@ const APP_STORE_URL =
             </span>
           </div>
           <div class="browser-shot-wrap">
+            <picture class="contents">
+              <source srcset="/assets/screenshots/web/learn-dashboard.avif" type="image/avif" />
             <img
-              src="/assets/screenshots/web/learn-dashboard.avif"
+              src="/assets/screenshots/web/learn-dashboard.webp"
               alt="Unify web app - Learn dashboard at app.unifysocial.ca"
               class="browser-shot"
               width="1033"
@@ -74,13 +76,16 @@ const APP_STORE_URL =
               loading="lazy"
               decoding="async"
             />
+            </picture>
           </div>
         </div>
 
         <div class="platform-phone-wrap">
+          <picture class="contents">
+            <source type="image/avif" srcset="/assets/screenshots/learn-hero-380.avif 380w, /assets/screenshots/learn-hero-760.avif 760w" sizes="188px" />
           <img
-            src="/assets/screenshots/learn-hero-760.avif"
-            srcset="/assets/screenshots/learn-hero-380.avif 380w, /assets/screenshots/learn-hero-760.avif 760w"
+            src="/assets/screenshots/learn-hero-760.webp"
+            srcset="/assets/screenshots/learn-hero-380.webp 380w, /assets/screenshots/learn-hero-760.webp 760w"
             sizes="188px"
             width="1030"
             height="2048"
@@ -89,6 +94,7 @@ const APP_STORE_URL =
             loading="lazy"
             decoding="async"
           />
+          </picture>
           <span class="sync-badge" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
