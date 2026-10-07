@@ -53,20 +53,35 @@ test.describe("guide hubs", () => {
   test("HowTo data is present only where the page shows numbered steps, and matches them", async ({
     request,
   }) => {
+    const withSteps = ["/new-to-canada", "/drivers-licence"];
     for (const hub of GUIDE_HUBS) {
       const { ldTypes } = await head(request, hub.href);
-      const expected = hub.href === "/new-to-canada" || hub.href === "/drivers-licence";
-      expect(ldTypes.includes("HowTo"), hub.href).toBe(expected);
+      expect(ldTypes.includes("HowTo"), hub.href).toBe(withSteps.includes(hub.href));
     }
 
-    const licence = await head(request, "/drivers-licence");
-    const howTo = [...licence.html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
-      .map((m) => JSON.parse(m[1]))
-      .find((ld) => ld["@type"] === "HowTo");
-    expect(howTo.step).toHaveLength(5);
-    for (const step of howTo.step) {
-      // Every step in the markup is text a visitor can read on the page.
-      expect(decode(licence.html)).toContain(step.text);
+    for (const path of withSteps) {
+      const { html } = await head(request, path);
+      const howTo = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+        .map((m) => JSON.parse(m[1]))
+        .find((ld) => ld["@type"] === "HowTo");
+      expect(howTo, path).toBeTruthy();
+      expect(howTo.step.length, path).toBeGreaterThanOrEqual(5);
+      if (path === "/drivers-licence") expect(howTo.step).toHaveLength(5);
+
+      // Compare against what a visitor can read: scripts (the JSON-LD itself
+      // included), styles, comments and tags are stripped first, so the markup
+      // cannot vouch for itself.
+      const visible = decode(
+        html
+          .replace(/<script[\s\S]*?<\/script>/g, " ")
+          .replace(/<style[\s\S]*?<\/style>/g, " ")
+          .replace(/<!--[\s\S]*?-->/g, " ")
+          .replace(/<[^>]+>/g, " "),
+      ).replace(/\s+/g, " ");
+      for (const step of howTo.step) {
+        expect(visible, `${path}: step name "${step.name}"`).toContain(step.name);
+        expect(visible, `${path}: step text "${step.text.slice(0, 40)}"`).toContain(step.text);
+      }
     }
   });
 });
