@@ -7,9 +7,11 @@ import type { EventView } from "../../lib/events/types";
 
 interface Props {
   featured: EventView[];
+  /** Passed through to each card: resize covers at Cloudflare's edge. */
+  transformCovers?: boolean;
 }
 
-const { featured } = Astro.props;
+const { featured, transformCovers = false } = Astro.props;
 
 const HERO = "/assets/images/community/newcomer-community-vancouver";
 const srcset = (ext: "avif" | "jpg") =>
@@ -78,7 +80,7 @@ const stats = [
           <p class="evh-featured-sub">Open to everyone.</p>
         </div>
         <div class={`evh-featured-grid${featured.length > 3 ? " evh-featured-grid--scroll" : ""}`}>
-          {featured.map((e) => <EventCard event={e} variant="feature" />)}
+          {featured.map((e) => <EventCard event={e} variant="feature" transformCovers={transformCovers} />)}
         </div>
       </section>
     )

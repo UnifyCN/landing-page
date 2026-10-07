@@ -1,4 +1,5 @@
 ---
+import { COVER_FALLBACK, coverImage } from "../../lib/events/cover-image";
 // One event card, two layouts from the same anatomy (the web app's
 // components/community/EventCard.tsx, restyled in landing brand):
 //   feature — vertical, 4:3 cover, date badge, red top edge + "Featured" pill
@@ -14,6 +15,8 @@ interface Props {
    * the header photo for the first seconds of the connection.
    */
   eager?: boolean;
+  /** Serve the cover through Cloudflare Image Transformations (production zone only). */
+  transformCovers?: boolean;
   /**
    * Rows inside the agenda get their date from the day column; rows anywhere
    * else (detail page "More from") must carry it, or recurring events look
@@ -22,8 +25,10 @@ interface Props {
   showDate?: boolean;
 }
 
-const { event, variant, eager = false, showDate = variant === "feature" } = Astro.props;
+const { event, variant, eager = false, showDate = variant === "feature", transformCovers = false } = Astro.props;
 const isFeature = variant === "feature";
+// Resized at Cloudflare's edge for the hosts the feed uses; null with no cover.
+const cover = event.cover ? coverImage(event.cover, isFeature ? "feature" : "row", transformCovers) : null;
 ---
 
 <a href={event.href} class={`ec ec--${variant}`} data-astro-prefetch>
@@ -31,7 +36,11 @@ const isFeature = variant === "feature";
     {
       event.cover ? (
         <img
-          src={event.cover}
+          src={cover!.src}
+          srcset={cover!.srcset}
+          sizes={cover!.sizes}
+          data-original={cover!.original}
+          onerror={cover!.original ? COVER_FALLBACK : undefined}
           alt=""
           width="640"
           height="360"

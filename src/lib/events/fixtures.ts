@@ -25,6 +25,8 @@ export function isEventsFixtureRequest(request: Request): boolean {
 export interface EventsFixture {
   /** The frozen "now" every date decision on the page uses. */
   now: Date;
+  /** Render covers through /cdn-cgi/image as production does (the test serves that path). */
+  transformCovers?: boolean;
   /** Same contract as the `getUpcomingEvents` select. */
   upcoming(): EventRow[];
   /** Same contract as the `getEventById` select. */
@@ -154,7 +156,33 @@ const fixtureRows = (): EventRow[] => [
 
 // `extra` is a function for the same reason as `fixtureRows`: nothing here may
 // run at module load, or the production build keeps it.
-const CLOCKS: Record<string, { now: string; extra?: () => EventRow[] }> = {
+const CLOCKS: Record<string, { now: string; extra?: () => EventRow[]; transformCovers?: boolean }> = {
+  // Same day as "mid-month", with covers rendered the way production renders
+  // them and two more events whose covers are on hosts the feed uses.
+  "transformed-covers": {
+    now: "2026-10-06T12:00:00-07:00",
+    transformCovers: true,
+    extra: () => [
+      row({
+        id: 9070,
+        title: "Banking Basics Workshop",
+        event_datetime: "2026-10-09T10:00:00-07:00",
+        event_end_datetime: "2026-10-09T11:00:00-07:00",
+        genre: "Finance",
+        partner_slug: "sfu",
+        cover_photo_url: "https://events.sfu.ca/live/image/gid/55/width/491/height/246/crop/1/src_region/0,0,2160,1080/1_Banking.png",
+      }),
+      row({
+        id: 9071,
+        title: "Unify Gather: Fall Mixer",
+        event_datetime: "2026-10-10T18:00:00-07:00",
+        event_end_datetime: "2026-10-10T20:00:00-07:00",
+        genre: "Socials",
+        is_featured: true,
+        cover_photo_url: "https://images.pexels.com/photos/1/pexels-photo-1.jpeg?auto=compress&w=1200",
+      }),
+    ],
+  },
   // A Tuesday with events left in the current month.
   "mid-month": { now: "2026-10-06T12:00:00-07:00" },
   // The failed deploy run (Actions 36791295477): last day of September, every
@@ -194,6 +222,7 @@ export function eventsFixture(request: Request): EventsFixture | null {
 
   return {
     now,
+    transformCovers: clock.transformCovers === true,
     upcoming: () =>
       ROWS.filter(
         (r) =>
