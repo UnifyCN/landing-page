@@ -78,7 +78,7 @@ const stats = [
           <p class="evh-featured-sub">Open to everyone.</p>
         </div>
         <div class={`evh-featured-grid${featured.length > 3 ? " evh-featured-grid--scroll" : ""}`}>
-          {featured.map((e, i) => <EventCard event={e} variant="feature" eager={i < 3} />)}
+          {featured.map((e) => <EventCard event={e} variant="feature" />)}
         </div>
       </section>
     )

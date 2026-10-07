@@ -3,7 +3,7 @@ export const prerender = true;
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
-import { partners, type Partner, type PartnerCategory } from "../../lib/partners";
+import { partners, partnerLogoSize, type Partner, type PartnerCategory } from "../../lib/partners";
 import { getResourceBySlug, categoryLabels } from "../../lib/resources";
 import { breadcrumbLd, localBusinessLd, serializeLd, fitDescription } from "../../lib/seo";
 
@@ -68,7 +68,7 @@ const localBusinessLdStr = serializeLd(
     <!-- Partner header -->
     <div class="pp-header">
       <div class="pp-logo-wrap">
-        <img src={partner.logo} alt={partner.name} class="pp-logo" loading="eager" />
+        <img src={partner.logo} alt={partner.name} class="pp-logo" {...partnerLogoSize(partner.logo)} loading="eager" />
       </div>
 
       <div class="pp-meta">

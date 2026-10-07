@@ -7,7 +7,7 @@
 // island writes them back), and the canonical stays /events.
 import EventCard from "./EventCard.astro";
 import { groupAgenda, pacificDayKey, partnerLabel } from "../../lib/events/format";
-import { getPartnerBySlug } from "../../lib/partners";
+import { getPartnerBySlug, partnerLogoSize } from "../../lib/partners";
 import type { EventView } from "../../lib/events/types";
 
 interface Props {
@@ -169,7 +169,7 @@ const dayLabel = (key: string) =>
                   <li>
                     <a href={`/partners/${p.slug}`} class="ag-partner">
                       <span class="ag-partner-logo">
-                        <img src={p.logo} alt="" loading="lazy" decoding="async" />
+                        <img src={p.logo} alt="" {...partnerLogoSize(p.logo)} loading="lazy" decoding="async" />
                       </span>
                       <span class="ag-partner-text">
                         <b>{p.name}</b>

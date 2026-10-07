@@ -1,5 +1,5 @@
 ---
-import { partners } from "../../lib/partners";
+import { partners, partnerLogoSize } from "../../lib/partners";
 ---
 
 <section class="partners bg-white py-14 desktop:py-20">
@@ -16,6 +16,7 @@ import { partners } from "../../lib/partners";
               src={p.logo}
               alt={`${p.name} — a Unify Social partner`}
               class="partner-logo"
+              {...partnerLogoSize(p.logo)}
               loading="lazy"
               decoding="async"
             />
@@ -25,7 +26,7 @@ import { partners } from "../../lib/partners";
       {
         partners.map((p) => (
           <a href={`/partners/${p.slug}`} class="partner-logo-link" aria-hidden="true" tabindex="-1">
-            <img src={p.logo} alt="" class="partner-logo" loading="lazy" decoding="async" />
+            <img src={p.logo} alt="" class="partner-logo" {...partnerLogoSize(p.logo)} loading="lazy" decoding="async" />
           </a>
         ))
       }

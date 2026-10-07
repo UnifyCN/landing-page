@@ -7,6 +7,18 @@ import { organizationLd, serializeLd } from '../lib/seo';
 
 const orgLd = serializeLd(organizationLd());
 
+// Google Analytics (the <script> near the top of <head>).
+// - gtag.js is 181 KB and used to be fetched from <head> markup on every page,
+//   so it downloaded and ran while the page was still trying to paint. The
+//   queue (dataLayer) is still set up at once; the library is requested right
+//   after the first paint, at low priority. It is deliberately not held back
+//   any longer (window load, idle time): a visitor who clicks straight through
+//   to the web app would leave before it arrived and their page view would be
+//   lost.
+// - `window.gtag = gtag` matters. define:vars wraps the script in a function,
+//   so without it `gtag` is not global and every `window.gtag?.(...)` call
+//   elsewhere (SearchWebAppCTA's view and click events) silently does nothing
+//   in production.
 const GA_ID = 'G-RDVF45T3GX';
 
 interface Props {
@@ -41,24 +53,40 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     <meta name="generator" content={Astro.generator} />
 
     {import.meta.env.PROD && (
-      <Fragment>
-        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script is:inline define:vars={{ GA_ID }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){ dataLayer.push(arguments); }
-          gtag('js', new Date());
-          // Disable auto pageview — ClientRouter navigations are client-side,
-          // so we fire page_view manually on every astro:page-load instead.
-          gtag('config', GA_ID, { send_page_view: false });
-          document.addEventListener('astro:page-load', () => {
-            gtag('event', 'page_view', {
-              page_title: document.title,
-              page_location: location.href,
-              page_path: location.pathname + location.search,
-            });
+      <script is:inline define:vars={{ GA_ID }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag('js', new Date());
+        // Disable auto pageview — ClientRouter navigations are client-side,
+        // so we fire page_view manually on every astro:page-load instead.
+        gtag('config', GA_ID, { send_page_view: false });
+        document.addEventListener('astro:page-load', () => {
+          gtag('event', 'page_view', {
+            page_title: document.title,
+            page_location: location.href,
+            page_path: location.pathname + location.search,
           });
-        </script>
-      </Fragment>
+        });
+
+        (function () {
+          var loaded = false;
+          function loadGtag() {
+            if (loaded) return;
+            loaded = true;
+            var s = document.createElement('script');
+            s.async = true;
+            s.fetchPriority = 'low';
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+            document.head.appendChild(s);
+          }
+          // Two frames: the first callback runs before the first paint, the
+          // second after it.
+          requestAnimationFrame(function () { requestAnimationFrame(loadGtag); });
+          // A tab opened in the background gets no frames until it is shown.
+          setTimeout(loadGtag, 3000);
+        })();
+      </script>
     )}
 
     <link rel="icon" href="/favicon.ico" sizes="any" />

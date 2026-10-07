@@ -9,6 +9,7 @@ import GuideHubs from '../components/sections/GuideHubs.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import { faqs } from '../components/sections/faqs-data';
 import { mobileAppLd, webAppLd, faqLd, serializeLd } from '../lib/seo';
+import { HERO_SIZES, HERO_SRCSET } from '../lib/hero-image';
 
 const mobileAppLdStr = serializeLd(mobileAppLd());
 const webAppLdStr = serializeLd(webAppLd());
@@ -24,7 +25,16 @@ const faqLdStr = serializeLd(faqLd(faqs));
     <script type="application/ld+json" set:html={mobileAppLdStr} />
     <script type="application/ld+json" set:html={webAppLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
-    <link rel="preload" as="image" type="image/avif" href="/assets/screenshots/learn-hero.avif" />
+    {/* No href on purpose: a browser without imagesrcset support (Safari before
+        17.2) would preload that one file and then pick another for the <img>. */}
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      imagesrcset={HERO_SRCSET}
+      imagesizes={HERO_SIZES}
+      fetchpriority="high"
+    />
   </Fragment>
 
   <main>
