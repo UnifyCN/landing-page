@@ -4,7 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { resources, categoryLabels, type Resource } from "../../lib/resources";
-import { breadcrumbLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, serializeLd, fitTitle, fitDescription } from "../../lib/seo";
 
 export async function getStaticPaths() {
   return resources.map((r) => ({ params: { slug: r.slug }, props: { resource: r } }));
@@ -23,8 +23,8 @@ const breadcrumbLdStr = serializeLd(
 ---
 
 <BaseLayout
-  title={`${resource.title} | Unify Resources`}
-  description={resource.description}
+  title={fitTitle(`${resource.title} | Unify Resources`, `${resource.title} | Unify`)}
+  description={fitDescription(resource.seoDescription ?? resource.description)}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbLdStr} />

@@ -5,6 +5,7 @@ import Hero from '../components/sections/Hero.astro';
 import Partners from '../components/sections/Partners.astro';
 import PlatformBand from '../components/sections/PlatformBand.astro';
 import Journey from '../components/sections/Journey.astro';
+import GuideHubs from '../components/sections/GuideHubs.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import { faqs } from '../components/sections/faqs-data';
 import { mobileAppLd, webAppLd, faqLd, serializeLd } from '../lib/seo';
@@ -31,6 +32,7 @@ const faqLdStr = serializeLd(faqLd(faqs));
     <Partners />
     <PlatformBand />
     <Journey />
+    <GuideHubs />
     <FAQ />
   </main>
 </BaseLayout>

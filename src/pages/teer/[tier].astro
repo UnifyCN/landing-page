@@ -8,7 +8,7 @@ import { searchCtaForPath } from "../../lib/search-ctas";
 import { TEER_TIERS, NOC_FINDER_URL, type TeerTier } from "../../lib/teer";
 import { unitGroupsForTeer } from "../../lib/noc-2021";
 import { credentialForNoc } from "../../lib/credentials";
-import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, faqLd, serializeLd, pickDescription } from "../../lib/seo";
 
 export async function getStaticPaths() {
   return TEER_TIERS.map((t) => ({ params: { tier: t.slug }, props: { tier: t } }));
@@ -24,9 +24,18 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 // description all promise the complete list and state its size.
 const allOccupations = unitGroupsForTeer(tier.tier);
 const count = allOccupations.length;
-const exampleTitles = tier.occupations.slice(0, 2).map((o) => o.title.toLowerCase()).join(", ");
+const examples = tier.occupations.slice(0, 2).map((o) => o.title.toLowerCase());
+const shortest = tier.occupations.map((o) => o.title.toLowerCase()).sort((a, b) => a.length - b.length);
 const seoTitle = `TEER ${tier.tier} Jobs List in Canada: ${count} NOC Codes & PR Eligibility`;
-const seoDescription = `All ${count} TEER ${tier.tier} jobs in Canada with NOC 2021 codes, and whether TEER ${tier.tier} qualifies for Express Entry and PR. Includes ${exampleTitles}, and more.`;
+// Name as many example jobs as fit in 160 characters; some titles are long.
+const descriptionBase = `All ${count} TEER ${tier.tier} jobs in Canada with NOC 2021 codes, and whether TEER ${tier.tier} qualifies for Express Entry and PR.`;
+const seoDescription = pickDescription(
+  `${descriptionBase} Includes ${examples.join(", ")}, and more.`,
+  `${descriptionBase} Includes ${examples[0]} and more.`,
+  `${descriptionBase} Includes ${shortest[0]}, ${shortest[1]}, and more.`,
+  `${descriptionBase} Includes ${shortest[0]} and more.`,
+  descriptionBase,
+);
 const h1 = `TEER ${tier.tier} Jobs List in Canada: All ${count} NOC Codes & PR Eligibility`;
 
 const breadcrumbLdStr = serializeLd(

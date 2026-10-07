@@ -4,7 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { LICENCE_RULES, type LicenceRule } from "../../lib/licence-exchange";
-import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, faqLd, serializeLd, fitTitle, pickDescription } from "../../lib/seo";
 import "../../styles/cluster.css";
 
 export async function getStaticPaths() {
@@ -14,8 +14,17 @@ export async function getStaticPaths() {
 const { rule } = Astro.props as { rule: LicenceRule };
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
-const seoTitle = `${rule.shortName} Driver's Licence Exchange for Newcomers: 2026 Rules`;
-const seoDescription = `Exchange a foreign driver's licence in ${rule.name}: grace period ${rule.gracePeriod.toLowerCase()}, the ${rule.reciprocalCountries.length} jurisdictions ${rule.authority} swaps without a road test, and the tests for everyone else.`;
+// Province names and grace-period wording vary a lot in length, so each has
+// shorter fallbacks that still fit Google's 60 and 160 character limits.
+const seoTitle = fitTitle(
+  `${rule.shortName} Driver's Licence Exchange for Newcomers: 2026 Rules`,
+  `${rule.shortName} Driver's Licence Exchange for Newcomers (2026)`,
+  `${rule.shortName} Driver's Licence Exchange: 2026 Rules`,
+);
+const seoDescription = pickDescription(
+  `Exchange a foreign driver's licence in ${rule.name}: grace period ${rule.gracePeriod.toLowerCase()}, the ${rule.reciprocalCountries.length} jurisdictions ${rule.authority} swaps without a road test, and the tests for everyone else.`,
+  `Foreign driver's licence exchange in ${rule.name}: the grace period, the ${rule.reciprocalCountries.length} jurisdictions with no road test, and the tests for everyone else.`,
+);
 const h1 = `Exchanging a Foreign Driver's Licence in ${rule.name}: Countries, Tests & Deadlines`;
 
 const breadcrumbLdStr = serializeLd(

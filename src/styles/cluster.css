@@ -280,6 +280,10 @@
   border-radius: var(--radius-pill);
   white-space: nowrap;
 }
+/* In a card the pill can hold a whole phrase ("As soon as you settle (6 months
+   for permit holders)"); on one line it was wider than a 320px phone and pushed
+   the page sideways. Let it wrap there; table pills stay on one line. */
+.cl-card .cl-pill { white-space: normal; align-self: flex-start; }
 .cl-pill.is-yes { background: rgba(216, 74, 41, 0.1); color: var(--color-brand-red); }
 .cl-pill.is-no { background: rgba(23, 22, 22, 0.07); color: var(--color-text); }
 .cl-microcopy {

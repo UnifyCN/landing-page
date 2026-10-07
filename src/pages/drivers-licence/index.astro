@@ -4,7 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { LICENCE_RULES, LICENCE_HUB_FAQS } from "../../lib/licence-exchange";
-import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, faqLd, howToLd, serializeLd } from "../../lib/seo";
 import "../../styles/cluster.css";
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -16,6 +16,24 @@ const breadcrumbLdStr = serializeLd(
   ])
 );
 const faqLdStr = serializeLd(faqLd(LICENCE_HUB_FAQS));
+
+// The five steps shown under "The process in every province, in short", also
+// emitted as HowTo JSON-LD so the markup and the page cannot disagree.
+const PROCESS_STEPS = [
+  { name: "Check the list.", text: "If your country has an agreement, book an appointment and bring your licence, ID, and proof of residency." },
+  { name: "Get a translation if needed.", text: "A licence that is not in English or French needs a certified translation almost everywhere." },
+  { name: "Prove your experience.", text: "A driving record or letter from your home licensing authority can skip part of the graduated licensing program." },
+  { name: "Take the tests.", text: "Vision and knowledge tests first, then one or more road tests, depending on your experience." },
+  { name: "Watch the deadline.", text: "Driving on a foreign licence after the grace period is driving without a valid licence." },
+];
+const howToLdStr = serializeLd(
+  howToLd({
+    name: "How to exchange a foreign driver's licence in Canada",
+    description: "The steps to swap a foreign driver's licence for a provincial one, in the order every province follows.",
+    url: canonicalUrl,
+    steps: PROCESS_STEPS,
+  }),
+);
 
 // Countries that can exchange in every jurisdiction we list (intersection).
 const countryCount = new Map<string, number>();
@@ -31,6 +49,7 @@ const everywhere = [...countryCount.entries()].filter(([, n]) => n === LICENCE_R
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
+    <script type="application/ld+json" set:html={howToLdStr} />
   </Fragment>
 
   <main class="cl cl--wide">
@@ -44,7 +63,8 @@ const everywhere = [...countryCount.entries()].filter(([, n]) => n === LICENCE_R
       <p class="cl-eyebrow">Driving in Canada</p>
       <h1 class="cl-h1">Exchanging a Foreign Driver's Licence in Canada, Province by Province</h1>
       <p class="cl-lead">
-        Driver licensing is provincial. Each province keeps its own list of countries whose
+        Driver licensing in Canada is provincial, so exchanging a foreign driver's licence
+        depends on where you live. Each province keeps its own list of countries whose
         licences it swaps directly, its own grace period, and its own tests for everyone else.
         <strong>{everywhere.length ? `${everywhere.join(", ")} exchange in every province` : "No single country exchanges everywhere"}</strong>.
         Choose your province for the exact list and deadline.
@@ -102,11 +122,9 @@ const everywhere = [...countryCount.entries()].filter(([, n]) => n === LICENCE_R
     <section class="cl-block" aria-labelledby="steps-h">
       <h2 id="steps-h" class="cl-h2">The process in every province, in short</h2>
       <ol class="cl-steps">
-        <li><strong>Check the list.</strong> If your country has an agreement, book an appointment and bring your licence, ID, and proof of residency.</li>
-        <li><strong>Get a translation if needed.</strong> A licence that is not in English or French needs a certified translation almost everywhere.</li>
-        <li><strong>Prove your experience.</strong> A driving record or letter from your home licensing authority can skip part of the graduated licensing program.</li>
-        <li><strong>Take the tests.</strong> Vision and knowledge tests first, then one or more road tests, depending on your experience.</li>
-        <li><strong>Watch the deadline.</strong> Driving on a foreign licence after the grace period is driving without a valid licence.</li>
+        {PROCESS_STEPS.map((step) => (
+          <li><strong>{step.name}</strong> {step.text}</li>
+        ))}
       </ol>
     </section>
 
