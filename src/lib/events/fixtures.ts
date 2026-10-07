@@ -57,6 +57,7 @@ const fixtureRows = (): EventRow[] => [
   row({
     id: 9001,
     title: "ESL Conversation Practice",
+    cover_photo_url: "/assets/images/community/newcomer-community-vancouver-800.jpg",
     event_datetime: "2026-10-07T10:00:00-07:00",
     event_end_datetime: "2026-10-07T11:00:00-07:00",
     partner_slug: "vancouver-public-library",
@@ -102,6 +103,7 @@ const fixtureRows = (): EventRow[] => [
   row({
     id: 9100,
     title: "Unify Gather: Newcomer Social",
+    cover_photo_url: "/assets/images/community/newcomer-community-vancouver-800.jpg",
     event_datetime: "2026-10-17T18:00:00-07:00",
     event_end_datetime: "2026-10-17T21:00:00-07:00",
     genre: "Socials",

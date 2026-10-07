@@ -1,0 +1,28 @@
+---
+// The starburst logo. A 168px AVIF (about 9 KB) with the original 256px PNG
+// (50 KB) as the fallback for browsers without AVIF. width/height reserve the
+// square before the file arrives. Regenerate the AVIF with
+// scripts/build-brand-images.mjs when the logo changes.
+interface Props {
+  /** Rendered size in CSS pixels (the logo is square). */
+  size: number;
+  class?: string;
+  alt?: string;
+  loading?: "eager" | "lazy";
+}
+
+const { size, class: className, alt = "Unify Social", loading = "lazy" } = Astro.props;
+---
+
+<picture>
+  <source srcset="/assets/logo/new-unify-logo-168.avif" type="image/avif" />
+  <img
+    src="/assets/logo/new-unify-logo-256.png"
+    alt={alt}
+    width={size}
+    height={size}
+    class={className}
+    loading={loading}
+    decoding="async"
+  />
+</picture>

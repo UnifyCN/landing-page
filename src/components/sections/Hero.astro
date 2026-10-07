@@ -11,6 +11,7 @@ const avatars = [
   { initials: "RN", color: "#D84A6E" },
   { initials: "+", color: "#D4B148" },
 ];
+import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
 ---
 
 <section class="hero">
@@ -51,6 +52,8 @@ const avatars = [
             src="/assets/app-store-badge-en.svg"
             alt="Download on the App Store"
             class="hero-badge"
+            width="156"
+            height="52"
           />
         </a>
         <p class="hero-note">No credit card required</p>
@@ -71,8 +74,16 @@ const avatars = [
     </div>
 
     <div class="hero-visual">
+      <!-- Shown 181-342px wide (max-height 360/540/680 at the phone's 1030:2048
+           ratio), so most screens take the 380 or 760px file, not the 1030px one.
+           Keep `sizes` in step with .hero-phone's max-height rules below and with
+           the preload in src/pages/index.astro. -->
       <img
-        src="/assets/screenshots/learn-hero.avif"
+        src="/assets/screenshots/learn-hero-760.avif"
+        srcset={HERO_SRCSET}
+        sizes={HERO_SIZES}
+        width="1030"
+        height="2048"
         alt="Unify Social app — learn screen showing the Canada newcomer guide"
         class="hero-phone"
         loading="eager"
@@ -278,6 +289,10 @@ const avatars = [
     position: relative;
     z-index: 1;
     width: 100%;
+    /* With width/height attributes on the <img>, `auto` makes the browser use
+       their ratio: the box is reserved before the file arrives, and is the same
+       size as it was without the attributes. */
+    height: auto;
     max-height: 360px;
     object-fit: contain;
     /* Smaller blur radius (48 -> 28) cuts drop-shadow compositing cost

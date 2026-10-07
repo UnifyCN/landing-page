@@ -8,7 +8,11 @@ import type { EventView } from "../../lib/events/types";
 interface Props {
   event: EventView;
   variant: "feature" | "row";
-  /** Only the first few above-the-fold covers load eagerly. */
+  /**
+   * Load this cover eagerly. Off everywhere now: covers are hotlinked from
+   * partner sites at full size (one was 359 KB), and eager ones competed with
+   * the header photo for the first seconds of the connection.
+   */
   eager?: boolean;
   /**
    * Rows inside the agenda get their date from the day column; rows anywhere
@@ -29,14 +33,17 @@ const isFeature = variant === "feature";
         <img
           src={event.cover}
           alt=""
+          width="640"
+          height="360"
           loading={eager ? "eager" : "lazy"}
+          fetchpriority={eager ? undefined : "low"}
           decoding="async"
           referrerpolicy="no-referrer"
           class="ec-img"
         />
       ) : (
         <div class="ec-placeholder" aria-hidden="true">
-          <img src="/assets/logo/new-unify-logo-256.png" alt="" class="ec-placeholder-mark" />
+          <img src="/assets/logo/new-unify-logo-168.avif" alt="" width="168" height="168" loading="lazy" decoding="async" class="ec-placeholder-mark" />
         </div>
       )
     }

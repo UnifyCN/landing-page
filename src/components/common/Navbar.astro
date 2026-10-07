@@ -1,6 +1,7 @@
 ---
 import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
 import { GUIDE_HUBS } from "../../lib/guide-hubs";
+import BrandLogo from "./BrandLogo.astro";
 
 type NavChild = { label: string; href: string; note: string };
 // `wide`: a long menu, laid out in two columns on desktop and folded behind a
@@ -61,12 +62,7 @@ function isActive(paths: string) {
   >
     <!-- Logo — plain div, not a link -->
     <div class="flex-shrink-0">
-      <img
-        src="/assets/logo/new-unify-logo-256.png"
-        alt="Unify Social"
-        class="h-10 w-auto"
-        loading="eager"
-      />
+      <BrandLogo size={40} class="h-10 w-auto" loading="eager" />
     </div>
 
     <!-- Desktop nav links -->
@@ -202,12 +198,7 @@ function isActive(paths: string) {
   <!-- Top bar: logo + close -->
   <div class="px-6 h-navbar flex items-center justify-between flex-shrink-0">
     <div class="flex-shrink-0">
-      <img
-        src="/assets/logo/new-unify-logo-256.png"
-        alt="Unify Social"
-        class="h-10 w-auto"
-        loading="eager"
-      />
+      <BrandLogo size={40} class="h-10 w-auto" />
     </div>
     <button
       id="nav-close"

@@ -1,3 +1,5 @@
+import { PARTNER_LOGO_SIZES } from "./partner-logos.generated";
+
 export type PartnerCategory =
   | "Education"
   | "Financial"
@@ -28,7 +30,7 @@ export const partners: Partner[] = [
     slug: "rbc",
     name: "RBC - Royal Bank of Canada",
     shortName: "RBC",
-    logo: "/assets/images/partners/rbc_foundation.png",
+    logo: "/assets/images/partners/rbc_foundation.avif",
     website: "https://www.rbc.com",
     city: "Vancouver, BC",
     category: "Financial",
@@ -41,7 +43,7 @@ export const partners: Partner[] = [
     slug: "ey",
     name: "EY",
     shortName: "EY",
-    logo: "/assets/images/partners/ey.png",
+    logo: "/assets/images/partners/ey.avif",
     website: "https://www.ey.com/en_ca",
     city: "Vancouver, BC",
     category: "Financial",
@@ -56,7 +58,7 @@ export const partners: Partner[] = [
     slug: "global-connect-immigration",
     name: "Global Connect Immigration",
     shortName: "Global Connect",
-    logo: "/assets/images/partners/global_connect_immigration.png",
+    logo: "/assets/images/partners/global_connect_immigration.avif",
     website: "https://globalconnectmigration.com/",
     city: "Vancouver, BC",
     category: "Immigration Consultancies",
@@ -71,7 +73,7 @@ export const partners: Partner[] = [
     slug: "canada-shaws-consulting",
     name: "Canada Shaws Consulting Inc.",
     shortName: "Canada Shaws",
-    logo: "/assets/images/partners/canada_shaws_consulting.png",
+    logo: "/assets/images/partners/canada_shaws_consulting.avif",
     website: "https://www.immshaws.com/unify/",
     city: "Richmond, BC",
     category: "Immigration Consultancies",
@@ -86,7 +88,7 @@ export const partners: Partner[] = [
     slug: "ymca-bc",
     name: "YMCA BC",
     shortName: "YMCA BC",
-    logo: "/assets/images/partners/ymca_bc.png",
+    logo: "/assets/images/partners/ymca_bc.avif",
     website: "https://www.gv.ymca.ca",
     city: "British Columbia",
     category: "Not for Profit",
@@ -101,7 +103,7 @@ export const partners: Partner[] = [
     slug: "sfu",
     name: "Simon Fraser University",
     shortName: "SFU",
-    logo: "/assets/images/partners/sfu.png",
+    logo: "/assets/images/partners/sfu.avif",
     website: "https://www.sfu.ca",
     city: "Burnaby, BC",
     category: "Education",
@@ -116,7 +118,7 @@ export const partners: Partner[] = [
     slug: "fraser-international-college",
     name: "Fraser International College",
     shortName: "FIC",
-    logo: "/assets/images/partners/fraser_international_college.png",
+    logo: "/assets/images/partners/fraser_international_college.avif",
     website: "https://www.fraseric.ca",
     city: "Burnaby, BC",
     category: "Education",
@@ -142,7 +144,7 @@ export const partners: Partner[] = [
     slug: "united-way-bc",
     name: "United Way BC",
     shortName: "United Way",
-    logo: "/assets/images/partners/united_way_bc.png",
+    logo: "/assets/images/partners/united_way_bc.avif",
     website: "https://uwbc.ca",
     city: "Vancouver, BC",
     category: "Not for Profit",
@@ -170,7 +172,7 @@ export const partners: Partner[] = [
     slug: "vancouver-public-library",
     name: "Vancouver Public Library",
     shortName: "VPL",
-    logo: "/assets/images/partners/vancouver_public_library.png",
+    logo: "/assets/images/partners/vancouver_public_library.avif",
     website: "https://www.vpl.ca",
     city: "Vancouver, BC",
     category: "Libraries",
@@ -185,7 +187,7 @@ export const partners: Partner[] = [
     slug: "surrey-libraries",
     name: "Surrey Libraries",
     shortName: "Surrey Libraries",
-    logo: "/assets/images/partners/surrey_libraries.png",
+    logo: "/assets/images/partners/surrey_libraries.avif",
     website: "https://www.surreylibraries.ca",
     city: "Surrey, BC",
     category: "Libraries",
@@ -200,7 +202,7 @@ export const partners: Partner[] = [
     slug: "burnaby-public-library",
     name: "Burnaby Public Library",
     shortName: "BPL",
-    logo: "/assets/images/partners/burnaby_public_library.png",
+    logo: "/assets/images/partners/burnaby_public_library.avif",
     website: "https://bpl.bc.ca",
     city: "Burnaby, BC",
     category: "Libraries",
@@ -215,7 +217,7 @@ export const partners: Partner[] = [
     slug: "trout-lake-community-centre",
     name: "Trout Lake Community Centre",
     shortName: "Trout Lake CC",
-    logo: "/assets/images/partners/trout_lake_community_centre.png",
+    logo: "/assets/images/partners/trout_lake_community_centre.avif",
     website: "https://troutlakecc.com",
     city: "Vancouver, BC",
     category: "Not for Profit",
@@ -228,7 +230,7 @@ export const partners: Partner[] = [
     slug: "newcomer-jobs-canada",
     name: "Newcomer Jobs Canada",
     shortName: "Newcomer Jobs",
-    logo: "/assets/images/partners/newcomer_jobs_canada.png",
+    logo: "/assets/images/partners/newcomer_jobs_canada.avif",
     website: "https://www.newcomersjobscanada.ca/",
     city: "Canada",
     category: "Not for Profit",
@@ -243,7 +245,7 @@ export const partners: Partner[] = [
     slug: "promise-vancouver",
     name: "Promise Vancouver",
     shortName: "Promise",
-    logo: "/assets/images/partners/promise_vancouver.png",
+    logo: "/assets/images/partners/promise_vancouver.avif",
     website: "https://promisevancouver.ca",
     city: "Vancouver, BC",
     category: "Not for Profit",
@@ -271,7 +273,7 @@ export const partners: Partner[] = [
     slug: "enactus",
     name: "Enactus",
     shortName: "Enactus",
-    logo: "/assets/images/partners/enactus.png",
+    logo: "/assets/images/partners/enactus.avif",
     website: "https://enactus.ca/",
     city: "Burnaby, BC",
     category: "Not for Profit",
@@ -281,6 +283,15 @@ export const partners: Partner[] = [
       "Enactus inspires and educates post-secondary students to use innovation and entrepreneurship to solve big problems. By empowering post-secondary students at over 78 campuses across Canada through real-world, experiential learning, Enactus is fostering a community of values-driven changemakers who are using business as a catalyst for good.",
   },
 ];
+
+/**
+ * width/height attributes for a partner logo <img>, so the browser reserves
+ * its space before the file loads (the home page strip shifted without them).
+ * Sizes come from scripts/build-brand-images.mjs.
+ */
+export function partnerLogoSize(logo: string): { width?: number; height?: number } {
+  return PARTNER_LOGO_SIZES[logo] ?? {};
+}
 
 export function getPartnerBySlug(slug: string): Partner | undefined {
   return partners.find((p) => p.slug === slug);

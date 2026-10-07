@@ -1,4 +1,5 @@
 ---
+import { partnerLogoSize } from "../../lib/partners";
 // Replace these with real testimonials from Cedric/Savar when ready
 const testimonials = [
   {
@@ -6,21 +7,21 @@ const testimonials = [
       "Partnering with Unify Social has been one of the most rewarding decisions we've made. Their platform genuinely connects newcomers to our programs in a way we couldn't achieve on our own.",
     name: "Simon Fraser University",
     role: "Education Partner",
-    logo: "/assets/images/partners/sfu.png",
+    logo: "/assets/images/partners/sfu.avif",
   },
   {
     quote:
       "Unify Social understands the real challenges newcomers face. Our collaboration has helped dozens of families access the financial tools they need to build a stable future in Canada.",
     name: "RBC — Royal Bank of Canada",
     role: "Financial Partner",
-    logo: "/assets/images/partners/rbc_foundation.png",
+    logo: "/assets/images/partners/rbc_foundation.avif",
   },
   {
     quote:
       "The referrals we receive through Unify Social are warm and well-informed. Newcomers arrive at our branches already knowing what programs are available — it makes a huge difference.",
     name: "Vancouver Public Library",
     role: "Library Partner",
-    logo: "/assets/images/partners/vancouver_public_library.png",
+    logo: "/assets/images/partners/vancouver_public_library.avif",
   },
 ];
 ---
@@ -43,7 +44,7 @@ const testimonials = [
               {t.quote}
             </blockquote>
             <footer class="pt-attribution">
-              <img src={t.logo} alt={t.name} class="pt-logo" loading="lazy" decoding="async" />
+              <img src={t.logo} alt={t.name} class="pt-logo" {...partnerLogoSize(t.logo)} loading="lazy" decoding="async" />
               <div class="pt-attr-text">
                 <span class="pt-attr-name">{t.name}</span>
                 <span class="pt-attr-role">{t.role}</span>

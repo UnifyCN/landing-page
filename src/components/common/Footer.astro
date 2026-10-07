@@ -1,4 +1,5 @@
 ---
+import BrandLogo from "./BrandLogo.astro";
 const navigate = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
@@ -61,13 +62,7 @@ const socials = [
       <!-- Brand -->
       <div class="footer-brand">
         <a href="/" class="inline-block" aria-label="Unify Social home">
-          <img
-            src="/assets/logo/new-unify-logo-256.png"
-            alt="Unify Social"
-            class="h-14 w-auto"
-            loading="lazy"
-            decoding="async"
-          />
+          <BrandLogo size={56} class="h-14 w-auto" />
         </a>
 
         <p class="footer-tagline font-display text-text text-base leading-relaxed mt-6 max-w-xs">
