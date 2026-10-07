@@ -4,7 +4,7 @@ export const prerender = true;
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { HEALTH_PLANS, type HealthPlan } from "../../lib/health-coverage";
-import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, faqLd, serializeLd, fitTitle, pickDescription } from "../../lib/seo";
 import "../../styles/cluster.css";
 
 export async function getStaticPaths() {
@@ -14,10 +14,21 @@ export async function getStaticPaths() {
 const { plan } = Astro.props as { plan: HealthPlan };
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
-const seoTitle = `${plan.shortName} Health Card for Newcomers: ${plan.planShort} Wait & Steps`;
+// Longer province and plan names get a shorter variant that still fits
+// Google's 60 and 160 character limits.
+const seoTitle = fitTitle(
+  `${plan.shortName} Health Card for Newcomers: ${plan.planShort} Wait & Steps`,
+  `${plan.shortName} Health Card for Newcomers: ${plan.planShort} Wait`,
+  `${plan.shortName} Health Card for Newcomers (${plan.planShort})`,
+);
 const seoDescription = plan.hasWait
-  ? `${plan.planShort} waiting period for newcomers to ${plan.name}: ${plan.waitingPeriod.toLowerCase()}. Who qualifies, how to stay covered in the gap, documents, and how to apply.`
-  : `${plan.planShort} has no waiting period for eligible newcomers to ${plan.name}. Who qualifies (PR, work permit, students), documents, and how to apply.`;
+  ? pickDescription(
+      `${plan.planShort} waiting period for newcomers to ${plan.name}: ${plan.waitingPeriod.toLowerCase()}. Who qualifies, how to stay covered in the gap, documents, and how to apply.`,
+      `${plan.planShort} waiting period for newcomers to ${plan.name}: ${plan.waitingPeriod.toLowerCase()}. Who qualifies, documents, and how to apply.`,
+    )
+  : pickDescription(
+      `${plan.planShort} has no waiting period for eligible newcomers to ${plan.name}. Who qualifies (PR, work permit, students), documents, and how to apply.`,
+    );
 const h1 = `${plan.name} Health Card for Newcomers: ${plan.planShort} Waiting Period & How to Apply`;
 
 const breadcrumbLdStr = serializeLd(

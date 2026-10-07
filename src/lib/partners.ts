@@ -15,6 +15,12 @@ export interface Partner {
   category: PartnerCategory;
   partnershipDescription: string;
   orgDescription: string;
+  /**
+   * Meta description for /partners/[slug], at most 160 characters. Only needed
+   * when `partnershipDescription` is longer than that; say the same thing,
+   * shorter, and add no new claims.
+   */
+  seoDescription?: string;
 }
 
 export const partners: Partner[] = [
@@ -43,6 +49,8 @@ export const partners: Partner[] = [
       "EY supports Unify through their EY Ripples program, providing mentorship across product development, compliance, and broader business strategy to help strengthen and scale the platform.",
     orgDescription:
       "EY is one of the world's leading professional services firms, providing expertise across assurance, consulting, tax, and strategy to help organizations navigate complexity and drive sustainable growth.",
+    seoDescription:
+      "EY supports Unify through its EY Ripples program, with mentorship on product development, compliance, and business strategy.",
   },
   {
     slug: "global-connect-immigration",
@@ -56,6 +64,8 @@ export const partners: Partner[] = [
       "Global Connect Migration partnered with Unify to co-deliver PR Pathways workshops for newcomers and international students, supporting content creation, information refinement, and live facilitation, while providing ongoing guidance to shape Unify's product development.",
     orgDescription:
       "Global Connect Migration is a registered Canadian immigration consulting firm helping newcomers navigate permanent residency pathways, visa processes, and settlement planning with expert, personalized guidance.",
+    seoDescription:
+      "Global Connect Migration co-delivers PR Pathways workshops with Unify for newcomers and international students, and advises on Unify's product development.",
   },
   {
     slug: "canada-shaws-consulting",
@@ -69,6 +79,8 @@ export const partners: Partner[] = [
       "Canada Shaws partners with Unify to give newcomers a direct line to licensed immigration advice: through the Unify app's Trusted Services directory, newcomers can book a free introductory meeting to explore study, work, and permanent residency pathways.",
     orgDescription:
       "Established in 2015 and based in Richmond, BC, Canada Shaws Consulting Inc. is a member of Shaws Global Brand Group. Its immigration consultants are licensed by the College of Immigration and Citizenship Consultants (CICC), and the firm supports clients with study and work permits, permanent residency, visas and extensions, and business and investment pathways, with service in English, Filipino (Tagalog), Persian (Farsi), Mandarin, and Cantonese.",
+    seoDescription:
+      "Canada Shaws gives newcomers a direct line to licensed immigration advice: a free introductory meeting, booked in the Unify app's Trusted Services directory.",
   },
   {
     slug: "ymca-bc",
@@ -82,6 +94,8 @@ export const partners: Partner[] = [
       "Through a partnership with the YMCA, Unify co-hosts employment events and integrates YMCA programs and services into the app, while the YMCA amplifies Unify's reach across their community networks.",
     orgDescription:
       "YMCA BC supports families, children, and seniors in communities across British Columbia. YMCA creates vibrant and healthy communities with a shared sense of social responsibility, where children and families can thrive and experience better health in spirit, mind and body.",
+    seoDescription:
+      "Unify and the YMCA co-host employment events, YMCA programs and services are built into the Unify app, and the YMCA shares Unify across its networks.",
   },
   {
     slug: "sfu",
@@ -95,6 +109,8 @@ export const partners: Partner[] = [
       "Simon Fraser University's International Student Services partners with Unify to collaborate on events that support international students transitioning to Canada. SFU also provides funding to advance Unify's mission.",
     orgDescription:
       "One of BC's leading research universities, SFU offers newcomers pathways into higher education, English language programs, and professional development across three campuses.",
+    seoDescription:
+      "Simon Fraser University's International Student Services works with Unify on events for international students moving to Canada, and helps fund Unify's mission.",
   },
   {
     slug: "fraser-international-college",
@@ -147,6 +163,8 @@ export const partners: Partner[] = [
       "In collaboration with Burnaby Neighbourhood House, Unify hosts events through their Newcomers Welcome Space and cross-promotes programming to connect newcomers to a wider network of support.",
     orgDescription:
       "Burnaby Neighbourhood House enables people to enhance their lives and strengthen their community. They work with communities to develop innovative programs and services that meet the changing needs of a diverse population. Through childcare programs, tackling family and food security, and providing newcomer support, BNH supports all members of the Burnaby community.",
+    seoDescription:
+      "Unify hosts events with Burnaby Neighbourhood House in its Newcomers Welcome Space and cross-promotes programs to connect newcomers with more support.",
   },
   {
     slug: "vancouver-public-library",
@@ -160,6 +178,8 @@ export const partners: Partner[] = [
       "Unify partners with the Vancouver Public Library to host events and workshops across their branches, leveraging their spaces to bring newcomer programming directly into the community.",
     orgDescription:
       "Vancouver Public Library has been dedicated to meeting the lifelong learning, reading and information needs of Vancouver residents for more than 100 years, currently operating 21 branches. VPL provides free places for everyone to discover, create, and share ideas and information.",
+    seoDescription:
+      "Unify hosts events and workshops at Vancouver Public Library branches, bringing newcomer programming directly into the community.",
   },
   {
     slug: "surrey-libraries",
@@ -173,6 +193,8 @@ export const partners: Partner[] = [
       "Unify partners with the Surrey Public Library to host events and workshops across their branches, leveraging their spaces to bring newcomer programming directly into the community.",
     orgDescription:
       "Surrey Libraries connects people, sparks curiosity, and inspires lifelong learning to enhance the lives of Surrey residents across 10 branches.",
+    seoDescription:
+      "Unify hosts events and workshops at Surrey Public Library branches, bringing newcomer programming directly into the community.",
   },
   {
     slug: "burnaby-public-library",
@@ -186,6 +208,8 @@ export const partners: Partner[] = [
       "Unify partners with the Burnaby Public Library to host events and workshops across their branches, leveraging their spaces to bring newcomer programming directly into the community.",
     orgDescription:
       "Burnaby Public Library creates inclusive spaces where people can gather, learn and play across 4 branches.",
+    seoDescription:
+      "Unify hosts events and workshops at Burnaby Public Library branches, bringing newcomer programming directly into the community.",
   },
   {
     slug: "trout-lake-community-centre",
@@ -212,6 +236,8 @@ export const partners: Partner[] = [
       "Through a cross-promotional partnership, Unify and Newcomer Jobs Canada feature each other's services - ensuring newcomers have access to both the guidance and employment resources they need to build their lives in Canada.",
     orgDescription:
       "Newcomer Jobs Canada is a dedicated job board connecting newcomers to Canada with employment opportunities across the country, making the job search process more accessible for those starting their Canadian journey.",
+    seoDescription:
+      "Unify and Newcomer Jobs Canada feature each other's services, so newcomers can reach both settlement guidance and job resources as they build a life in Canada.",
   },
   {
     slug: "promise-vancouver",
@@ -225,6 +251,8 @@ export const partners: Partner[] = [
       "In collaboration with United Way, Unify hosted a Budgeting Basics workshop for Promise Vancouver's Future Leaders program participants, delivering practical financial literacy to young newcomers building their futures in Canada.",
     orgDescription:
       "Promise Vancouver offers accessible, year-round programming in Vancouver's Downtown Eastside to families who need it most. At Promise, young people find a place of belonging and purpose: children are making friends and learning self-regulation skills, youth take on deeply meaningful leadership roles, and the whole community benefits, both immediately and in the long run.",
+    seoDescription:
+      "With United Way, Unify ran a Budgeting Basics workshop for Promise Vancouver's Future Leaders program, teaching practical money skills to young newcomers.",
   },
   {
     slug: "big-brothers-big-sisters",

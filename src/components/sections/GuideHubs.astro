@@ -1,0 +1,212 @@
+---
+// Home page index of the guide hubs. Before this the home page body linked to
+// none of them: they were reachable from the footer only. Static on purpose
+// (no reveal script), so there is nothing to re-bind after a View Transition.
+// The navbar's "Guides" tab links here (/#guides).
+import { GUIDE_HUBS } from "../../lib/guide-hubs";
+
+const [first, ...rest] = GUIDE_HUBS;
+const number = (i: number) => String(i + 1).padStart(2, "0");
+---
+
+<section class="gh" id="guides" aria-labelledby="guides-heading">
+  <div class="gh-inner">
+    <header class="gh-head">
+      <p class="gh-eyebrow">Free guides</p>
+      <h2 id="guides-heading" class="gh-title">Settling in Canada, one step at a time</h2>
+      <p class="gh-sub">
+        Plain-language guides checked against official sources. Start with the checklist, then
+        open the one you need today.
+      </p>
+    </header>
+
+    <ol class="gh-list" role="list">
+      <li class="gh-item gh-item--lead">
+        <a class="gh-link" href={first.href}>
+          <span class="gh-num" aria-hidden="true">{number(0)}</span>
+          <span class="gh-text">
+            <span class="gh-name">{first.title}</span>
+            <span class="gh-desc">{first.desc} The place to start if you landed this month.</span>
+          </span>
+          <span class="gh-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+      {
+        rest.map((hub, i) => (
+          <li class="gh-item">
+            <a class="gh-link" href={hub.href}>
+              <span class="gh-num" aria-hidden="true">{number(i + 1)}</span>
+              <span class="gh-text">
+                <span class="gh-name">{hub.title}</span>
+                <span class="gh-desc">{hub.desc}</span>
+              </span>
+              <span class="gh-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* A numbered contents page rather than a wall of cards: hairlines, big
+     numerals, the first entry set wider as the place to start. */
+  .gh {
+    background: #ffffff;
+    padding: clamp(4rem, 9vw, 7rem) 0;
+    /* Anchor target of the navbar's Guides tab: clear the sticky pill. */
+    scroll-margin-top: 5rem;
+  }
+
+  .gh-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 3rem);
+  }
+
+  .gh-head {
+    max-width: 44rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .gh-eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-brand-red);
+  }
+
+  .gh-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .gh-sub {
+    margin: 1.25rem 0 0;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.55;
+    color: var(--color-muted);
+    max-width: 38rem;
+  }
+
+  .gh-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+    border-bottom: 1px solid rgba(23, 22, 22, 0.14);
+  }
+
+  .gh-item {
+    border-top: 1px solid rgba(23, 22, 22, 0.14);
+  }
+
+  /* The checklist spans the full row: it is the hub that leads to the others. */
+  .gh-item--lead {
+    grid-column: 1 / -1;
+  }
+
+  .gh-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: clamp(0.9rem, 2.5vw, 1.5rem);
+    min-height: 100%;
+    padding: clamp(1.1rem, 2.5vw, 1.5rem) 0;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .gh-num {
+    padding-top: 0.2rem;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    color: var(--color-brand-red);
+  }
+
+  .gh-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .gh-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-tight);
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .gh-desc {
+    font-size: 0.98rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+    text-wrap: pretty;
+  }
+
+  .gh-item--lead .gh-name {
+    font-size: clamp(1.5rem, 3.6vw, 2.4rem);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .gh-item--lead .gh-desc {
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    max-width: 40rem;
+  }
+
+  .gh-arrow {
+    padding-top: 0.15rem;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--color-muted);
+    transition:
+      transform 0.25s var(--ease-out),
+      color 0.2s var(--ease-out);
+  }
+
+  .gh-link:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .gh-link:hover .gh-name {
+      color: var(--color-brand-red);
+    }
+
+    .gh-link:hover .gh-arrow {
+      color: var(--color-brand-red);
+      transform: translateX(5px);
+    }
+  }
+
+  .gh-link:active .gh-name {
+    color: var(--color-brand-red);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gh-name,
+    .gh-arrow {
+      transition: none;
+    }
+  }
+</style>

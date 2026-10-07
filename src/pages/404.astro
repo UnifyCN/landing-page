@@ -5,21 +5,11 @@
 // this page existed (they got Astro's bare default 404), so nothing new runs.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CTABand from "../components/sections/CTABand.astro";
+import { GUIDE_HUBS } from "../lib/guide-hubs";
 import "../styles/cluster.css";
 
 export const prerender = false;
 
-const hubs = [
-  { title: "New to Canada Checklist", desc: "Your first 30 days, in order.", href: "/new-to-canada" },
-  { title: "Benefits for Newcomers", desc: "Payments and free services you can apply for.", href: "/newcomer-benefits" },
-  { title: "Banking for Newcomers", desc: "Open an account and compare newcomer offers.", href: "/banking" },
-  { title: "Health Card by Province", desc: "Waiting periods and how to apply.", href: "/health-card" },
-  { title: "Driver's Licence by Province", desc: "Which foreign licences exchange without a road test.", href: "/drivers-licence" },
-  { title: "Skilled Jobs (TEER)", desc: "TEER categories and the jobs in each one.", href: "/teer" },
-  { title: "Credential Recognition", desc: "Getting licensed in your profession.", href: "/credentials" },
-  { title: "Canadian Resume Format", desc: "What to include and what to leave out.", href: "/canadian-resume" },
-  { title: "Who Is a Newcomer", desc: "How banks, the CRA and IRCC each define it.", href: "/who-is-a-newcomer" },
-];
 
 const more = [
   { label: "Home", href: "/" },
@@ -55,7 +45,7 @@ Astro.response.status = 404;
       <h2 id="nf-guides" class="cl-h2">Guides for settling in Canada</h2>
       <ul class="cl-cards" role="list">
         {
-          hubs.map((hub) => (
+          GUIDE_HUBS.map((hub) => (
             <li>
               <a class="cl-card" href={hub.href}>
                 <span class="cl-card-title">{hub.title}</span>

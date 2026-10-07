@@ -1,11 +1,15 @@
 ---
 import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
+import { GUIDE_HUBS } from "../../lib/guide-hubs";
 
 type NavChild = { label: string; href: string; note: string };
-type NavLink = { label: string; href: string; children?: NavChild[] };
+// `wide`: a long menu, laid out in two columns on desktop and folded behind a
+// disclosure in the mobile overlay so it does not push everything else down.
+type NavLink = { label: string; href: string; children?: NavChild[]; wide?: boolean };
 
-// Max five top-level tabs (Find Services joins later). Secondary pages live in
-// a parent's dropdown; the parent itself still links to its own page.
+// Max five top-level tabs (all five are used now; Find Services would need one
+// to move). Secondary pages live in a parent's dropdown; the parent itself
+// still links to its own page.
 const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   {
@@ -24,13 +28,22 @@ const navLinks: NavLink[] = [
       { label: "Blog", href: "/blog", note: "Guides for settling in Canada" },
     ],
   },
+  // No /guides page: the parent goes to the home page's guide grid.
+  {
+    label: "Guides",
+    href: "/#guides",
+    wide: true,
+    children: GUIDE_HUBS.map((hub) => ({ label: hub.title, href: hub.href, note: hub.desc })),
+  },
 ];
 
 const pathname = Astro.url.pathname;
 
 // A parent is active on its own page and on any of its children's pages.
 function matchPaths(link: NavLink) {
-  return [link.href, ...(link.children?.map((c) => c.href) ?? [])].join(" ");
+  // "/#guides" is a section of the home page, not a path of its own.
+  const own = link.href.includes("#") ? [] : [link.href];
+  return [...own, ...(link.children?.map((c) => c.href) ?? [])].join(" ");
 }
 
 function isActive(paths: string) {
@@ -109,7 +122,7 @@ function isActive(paths: string) {
                     />
                   </svg>
                 </button>
-                <div class="nav-menu" id={menuId}>
+                <div class:list={["nav-menu", { "nav-menu--wide": link.wide }]} id={menuId}>
                   <ul role="list" class="nav-menu-list list-none m-0 p-0">
                     {link.children.map((child) => (
                       <li>
@@ -232,6 +245,30 @@ function isActive(paths: string) {
       {
         navLinks.map((link, i) => (
           <li class="mobile-nav-item" style={`--i: ${i}`}>
+            {link.wide && link.children ? (
+              <details class="mobile-group" open={isActive(matchPaths(link))}>
+                <summary class="mobile-nav-link mobile-group-summary font-display font-bold text-ink">
+                  {link.label}
+                  <svg width="18" height="18" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path d="M2 3.75 5 6.75l3-3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </summary>
+                <ul role="list" class="mobile-sub-list list-none m-0 p-0">
+                  {link.children.map((child) => (
+                    <li>
+                      <a
+                        href={child.href}
+                        data-match={child.href}
+                        aria-current={isActive(child.href) ? "page" : undefined}
+                        class={`mobile-sub-link font-display font-semibold no-underline${isActive(child.href) ? " mobile-nav-link-active" : ""}`}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ) : (
             <a
               href={link.href}
               data-match={link.href}
@@ -240,7 +277,8 @@ function isActive(paths: string) {
             >
               {link.label}
             </a>
-            {link.children && (
+            )}
+            {link.children && !link.wide && (
               <ul role="list" class="mobile-sub-list list-none m-0 p-0">
                 {link.children.map((child) => (
                   <li>
@@ -506,6 +544,22 @@ function isActive(paths: string) {
     color: var(--color-muted);
   }
 
+  /* Long menus (Guides): two columns, so nine links stay short enough for a
+     laptop-height window. */
+  /* Guides is the last tab, so its menu hangs from the tab's right edge and
+     grows leftwards; from the left edge it would run off a 1024px window. */
+  .nav-menu--wide {
+    left: auto;
+    right: -1rem;
+    min-width: min(34rem, calc(100vw - 4rem));
+  }
+
+  .nav-menu--wide .nav-menu-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.125rem 0.25rem;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .nav-menu,
     .nav-caret svg {
@@ -588,8 +642,11 @@ function isActive(paths: string) {
     gap: 0.25rem;
   }
 
+  /* At 320px the filled button at full nav size is 12px wider than the menu's
+     padded column, so the label scales down a step on the narrowest phones. */
   .app-ctas--stacked .app-cta {
     min-height: 2.75rem;
+    font-size: clamp(1rem, 5vw, var(--text-nav));
   }
 
   .app-ctas--stacked .app-cta[data-app-cta="web"],
@@ -698,6 +755,42 @@ function isActive(paths: string) {
     color: var(--color-brand-red);
   }
 
+  /* A folded group (Guides): the summary looks like a top-level link, with a
+     chevron that turns when it is open. */
+  .mobile-group-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .mobile-group-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-group-summary svg {
+    flex: none;
+    color: var(--color-muted);
+    transition: transform 0.24s var(--ease-out);
+  }
+
+  .mobile-group[open] .mobile-group-summary svg {
+    transform: rotate(180deg);
+  }
+
+  .mobile-group-summary:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-group-summary svg {
+      transition: none;
+    }
+  }
+
   /* Children sit indented under their parent, one step down in size */
   .mobile-sub-list {
     display: flex;
@@ -786,6 +879,10 @@ function isActive(paths: string) {
           a.removeAttribute("aria-current");
         }
       });
+    // A folded mobile group opens when the current page is one of its links.
+    document.querySelectorAll<HTMLDetailsElement>("#mobile-nav .mobile-group").forEach((group) => {
+      group.open = group.querySelector(".mobile-nav-link-active") !== null;
+    });
   }
 
   function closeDropdowns(except?: Element) {

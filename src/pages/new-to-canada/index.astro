@@ -12,7 +12,7 @@ import {
   AUDIENCES,
   type Audience,
 } from "../../lib/new-to-canada";
-import { breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, faqLd, howToLd, serializeLd } from "../../lib/seo";
 import "../../styles/cluster.css";
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
@@ -25,6 +25,18 @@ const breadcrumbLdStr = serializeLd(
   ])
 );
 const faqLdStr = serializeLd(faqLd(CHECKLIST_FAQS));
+// The checklist itself as HowTo JSON-LD: same steps, same order as the page.
+const howToLdStr = serializeLd(
+  howToLd({
+    name: "What to do in your first 30 days in Canada",
+    description:
+      "The steps to take after landing in Canada, in order: at the border, in your first week, and in the rest of your first month.",
+    url: canonicalUrl,
+    steps: CHECKLIST_PHASES.flatMap((phase) =>
+      CHECKLIST_STEPS.filter((step) => step.phase === phase.id).map((step) => ({ name: step.title, text: step.body })),
+    ),
+  }),
+);
 
 const phases = CHECKLIST_PHASES.map((p) => ({
   ...p,
@@ -39,13 +51,14 @@ const sources = [
 ---
 
 <BaseLayout
-  title="New to Canada Checklist: What to Do in Your First 30 Days (2026)"
+  title="New to Canada Checklist: First 30 Days After Landing (2026)"
   description="Your first 30 days in Canada, step by step: the border, SIN, bank account, health card, PR card, driver's licence, benefits, and free settlement help."
   bodyBg="#ffffff"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
     <script type="application/ld+json" set:html={faqLdStr} />
+    <script type="application/ld+json" set:html={howToLdStr} />
   </Fragment>
 
   <main class="cl cl--wide">

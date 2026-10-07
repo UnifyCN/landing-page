@@ -7,3 +7,5 @@ export { blogPostingLd } from './blogPostingLd';
 export { breadcrumbLd, type BreadcrumbItem } from './breadcrumbLd';
 export { localBusinessLd } from './localBusinessLd';
 export { eventLd } from './eventLd';
+export { howToLd, type HowToStep } from './howToLd';
+export { fitTitle, fitDescription, pickDescription, TITLE_MAX, DESCRIPTION_MAX } from './meta';

@@ -45,7 +45,9 @@ test.describe("navbar dropdowns", () => {
     await page.goto("/");
     await page.locator("#nav-toggle").click();
 
-    const subLinks = page.locator("#mobile-nav a.mobile-sub-link");
+    // Short groups are listed open under their parent. The long Guides group is
+    // folded behind a disclosure and covered in guides-nav.spec.ts.
+    const subLinks = page.locator("#mobile-nav .mobile-nav-item > .mobile-sub-list a.mobile-sub-link");
     await expect(subLinks).toHaveText(["Partners", "Contact", "Blog"]);
   });
 });

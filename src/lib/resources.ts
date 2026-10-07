@@ -11,6 +11,8 @@ export interface Resource {
   title: string;
   category: ResourceCategory;
   description: string;
+  /** Meta description, at most 160 characters. Only needed when `description` is longer. */
+  seoDescription?: string;
   creatorName: string;
   creatorRole: string;
   whatYoullLearn: string[];
@@ -68,6 +70,8 @@ export const resources: Resource[] = [
     category: "employment",
     description:
       "Learn what to expect in a Canadian job interview, how to answer common interview questions, what questions to ask employers, and get sample answers to get hired in Canada.",
+    seoDescription:
+      "What to expect in a Canadian job interview, how to answer common questions, what to ask employers, and sample answers to help you get hired.",
     creatorName: "Rachel Oh",
     creatorRole: "Recruitment Specialist",
     whatYoullLearn: [
@@ -86,6 +90,8 @@ export const resources: Resource[] = [
     category: "finance",
     description:
       "Learn how to manage your income and expenses, set financial goals, and explore budgeting methods, savings, interest, and debt management to take control of your finances in Canada.",
+    seoDescription:
+      "How to manage income and expenses in Canada, set financial goals, and use budgeting methods, savings, interest, and debt management.",
     creatorName: "Matthias Chun",
     creatorRole: "Financial Educator",
     whatYoullLearn: [
@@ -105,6 +111,8 @@ export const resources: Resource[] = [
     category: "healthcare",
     description:
       "Learn how British Columbia's healthcare system works, what MSP is and how to apply, how to find doctors and clinics, and access mental health support and prescriptions in BC.",
+    seoDescription:
+      "How British Columbia's healthcare system works: MSP and how to apply, finding doctors and clinics, mental health support, and prescriptions.",
     creatorName: "Talya Eryilmaz",
     creatorRole: "Settlement Advisor",
     whatYoullLearn: [
@@ -126,6 +134,8 @@ export const resources: Resource[] = [
     category: "transportation",
     description:
       "Learn what TransLink is, the types of public transit services available, how to pay your fare, plan your trips, and get tips on riding public transport safely in Metro Vancouver.",
+    seoDescription:
+      "What TransLink is, the types of public transit in Metro Vancouver, how to pay your fare, plan trips, and ride safely.",
     creatorName: "Alonso Yang",
     creatorRole: "Community Guide",
     whatYoullLearn: [

@@ -65,7 +65,7 @@ export const CHECKLIST_PHASES: { id: PhaseId; when: string; title: string; intro
 ];
 
 export const CHECKLIST_LEAD =
-  "Do these steps in order. <strong>On day 1, check your documents at the border. In week 1, apply for your SIN and your provincial health card, open a bank account, and (for permanent residents) confirm your address for the PR card.</strong> In weeks 2 to 4, exchange your driver's licence, apply for benefits, and book free settlement services. Each step links to the official page and to our full guide.";
+  "New to Canada? Do these steps in order after you land. <strong>On day 1, check your documents at the border. In week 1, apply for your SIN and your provincial health card, open a bank account, and (for permanent residents) confirm your address for the PR card.</strong> In weeks 2 to 4, exchange your driver's licence, apply for benefits, and book free settlement services. Each step links to the official page and to our full guide.";
 
 export const CHECKLIST_STEPS: ChecklistStep[] = [
   // Day 1

@@ -5,7 +5,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import CTABand from "../../components/sections/CTABand.astro";
 import { partners, type Partner, type PartnerCategory } from "../../lib/partners";
 import { getResourceBySlug, categoryLabels } from "../../lib/resources";
-import { breadcrumbLd, localBusinessLd, serializeLd } from "../../lib/seo";
+import { breadcrumbLd, localBusinessLd, serializeLd, fitDescription } from "../../lib/seo";
 
 // Day 3 §4.8: each partner category surfaces 2 contextually relevant
 // /resources/[slug] pages so /resources detail pages pick up inbound
@@ -48,7 +48,7 @@ const localBusinessLdStr = serializeLd(
 
 <BaseLayout
   title={`${partner.name} | Unify Social Partners`}
-  description={partner.partnershipDescription}
+  description={fitDescription(partner.seoDescription ?? partner.partnershipDescription)}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={breadcrumbLdStr} />
