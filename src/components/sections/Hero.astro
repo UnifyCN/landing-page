@@ -75,23 +75,20 @@ import { webpFallback } from "../../lib/image-fallback";
     </div>
 
     <div class="hero-visual">
-      <!-- Shown 181-342px wide (max-height 360/540/680 at the phone's 1030:2048
-           ratio), so most screens take the 380 or 760px file, not the 1030px one.
-           Keep `sizes` in step with .hero-phone's max-height rules below and with
-           the preload in src/pages/index.astro. -->
+      <!-- Share responsive sources with the head preload to avoid duplicate downloads. -->
       <picture class="contents">
         <source type="image/avif" srcset={HERO_SRCSET} sizes={HERO_SIZES} />
-      <img
-        src="/assets/screenshots/learn-hero-760.webp"
-        srcset={webpFallback(HERO_SRCSET)}
-        sizes={HERO_SIZES}
-        width="1030"
-        height="2048"
-        alt="Unify Social app — learn screen showing the Canada newcomer guide"
-        class="hero-phone"
-        loading="eager"
-        fetchpriority="high"
-      />
+        <img
+          src="/assets/images/hero-web-mobile-c.webp"
+          srcset={webpFallback(HERO_SRCSET)}
+          sizes={HERO_SIZES}
+          alt="Unify web app in a desktop browser beside the Unify iPhone app, both showing learning guides for newcomers in Canada"
+          class="hero-devices"
+          width="1448"
+          height="1086"
+          loading="eager"
+          fetchpriority="high"
+        />
       </picture>
     </div>
   </div>
@@ -273,35 +270,24 @@ import { webpFallback } from "../../lib/image-fallback";
     line-height: 1.4;
   }
 
-  /* ── Phone ── */
+  /* Device image */
   .hero-visual {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     opacity: 0;
-    animation: hero-phone-in 0.8s var(--ease-out) 0.2s forwards;
+    animation: hero-device-in 0.8s var(--ease-out) 0.2s forwards;
   }
 
-  /* Glow gradient removed entirely — even static, the radial gradient
-     extended above the phone container into the navbar's backdrop-filter
-     sample zone. Every scroll frame in the hero region the navbar had
-     to re-blur a complex 4-stop semi-transparent gradient. Phone with
-     drop-shadow alone is the focal point and runs cheap under blur. */
-
-  .hero-phone {
+  .hero-devices {
     position: relative;
     z-index: 1;
+    display: block;
     width: 100%;
-    /* With width/height attributes on the <img>, `auto` makes the browser use
-       their ratio: the box is reserved before the file arrives, and is the same
-       size as it was without the attributes. */
+    max-width: 42rem;
     height: auto;
-    max-height: 360px;
     object-fit: contain;
-    /* Smaller blur radius (48 -> 28) cuts drop-shadow compositing cost
-       roughly in half; alpha bumped slightly to keep the same visual weight. */
-    filter: drop-shadow(0 18px 28px rgba(23, 22, 22, 0.2));
   }
 
   /* ── Entrance animations ── */
@@ -310,7 +296,7 @@ import { webpFallback } from "../../lib/image-fallback";
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes hero-phone-in {
+  @keyframes hero-device-in {
     from { opacity: 0; transform: translateX(32px) translateY(12px); }
     to   { opacity: 1; transform: none; }
   }
@@ -323,18 +309,18 @@ import { webpFallback } from "../../lib/image-fallback";
     }
 
     .hero-inner {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1.5rem;
       padding: 0 3rem;
       align-items: center;
     }
 
-    .hero-visual {
-      justify-content: flex-start;
+    .hero-h1 {
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
     }
 
-    .hero-phone {
-      max-height: 540px;
+    .hero-visual {
+      justify-content: flex-start;
     }
 
     .hero-avatar {
@@ -356,8 +342,8 @@ import { webpFallback } from "../../lib/image-fallback";
     }
 
     .hero-inner {
-      grid-template-columns: 1fr 480px;
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2rem;
       padding: 0 5rem;
       align-items: center;
     }
@@ -365,10 +351,17 @@ import { webpFallback } from "../../lib/image-fallback";
     .hero-visual {
       justify-content: flex-start;
     }
+  }
 
-    .hero-phone {
-      max-height: 680px;
-      max-width: 380px;
+  @media (prefers-reduced-motion: reduce) {
+    .hero-rating,
+    .hero-h1,
+    .hero-desc,
+    .hero-cta-row,
+    .hero-social,
+    .hero-visual {
+      animation: none;
+      opacity: 1;
     }
   }
 </style>

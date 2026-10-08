@@ -337,16 +337,16 @@ Homepage section flow today: `Hero → Partners → PlatformBand → Journey →
 
 ### Hero
 
-- White section bg. Two-column at tablet+ (`1fr 1fr`); desktop becomes `1fr 480px` with `gap: 1rem` and `padding: 0 5rem`.
-- **Rating pill** above the H1: white pill with hairline border, 5 amber stars (`#F5A623`), copy "Rated **4.9** by **2,700+** newcomers".
-- **H1:** single plain string "The all-in-one newcomer settlement app". Weight 700, `clamp(2.5rem, 7.5vw, 5.5rem)`, `line-height: 1.02`, `letter-spacing: var(--tracking-display)`, `text-wrap: balance`. No styled spans, no italic brand-red word. (The legacy three-line styled headline is gone — do not re-introduce it.)
-- **Sub:** "Unify makes settling in Canada simpler, clearer, and more connected." (`color-muted`, `max-width: 44ch`).
-- **CTA row:** App Store badge `/assets/app-store-badge-en.svg` (height 52px, opens new tab) + "No credit card required" note.
-- **Social proof row:** five overlapping circular avatars with initials (JP, MA, LO, RN, +) on solid color discs, followed by "Join 2,700+ newcomers settling in from 84 countries". 32px on mobile, 36px tablet+.
-- **Phone:** `/assets/screenshots/learn-hero.avif`, `loading="eager"`. `max-height` 360px mobile / 540px tablet / 680px desktop (with `max-width: 380px` desktop).
-- **Animations:** scripted CSS keyframes with staggered delays — rating 0.1s, h1 0.22s, sub 0.36s, CTA 0.46s, social 0.56s; phone 0.2s via `hero-phone-in`.
+- White section background. Use two equal columns from 810px with `minmax(0, 1fr)`. At desktop widths use `gap: 2rem` and `padding: 0 5rem`.
+- **Rating pill:** white pill with a hairline border, five amber stars (`#F5A623`), and "Rated **5.0** by **35+** newcomers".
+- **H1:** plain string "The all-in-one newcomer settlement platform". Use weight 700, `clamp(2.5rem, 7.5vw, 5.5rem)` below 810px, and `clamp(2.5rem, 6vw, 5.5rem)` from 810px. Use `line-height: 1.02`, `var(--tracking-display)`, and `text-wrap: balance`. Keep "all-in-one" on one line. Do not add styled spans.
+- **Description:** "Unify makes settling in Canada simpler, clearer, and more connected. Now available on iOS and web." Use `color-muted` and `max-width: 44ch`.
+- **CTA row:** `WebAppBadge` links to `https://app.unifysocial.ca`. The App Store badge is 52px high and opens in a new tab. Keep the "No credit card required" note.
+- **Social proof:** five overlapping circular avatars (JP, MA, LO, RN, +), followed by "Join 450+ newcomers settling in Canada". Use 32px avatars on mobile and 36px from tablet widths.
+- **Hero image:** Savar selected option C on 2026-10-07. It shows a desktop browser window beside an iPhone. Use a `<picture>` with AVIF candidates at 724px and 1448px and matching WebP fallbacks. Share `srcset` and `sizes` with the head preload through `src/lib/hero-image.ts`. Preserve transparency and the 4:3 ratio. Use `loading="eager"`, `fetchpriority="high"`, explicit dimensions, `width: 100%`, `max-width: 42rem`, and `height: auto`. The separate PlatformBand still uses the original phone asset.
+- **Animations:** rating 0.1s, H1 0.22s, description 0.36s, CTA 0.46s, social proof 0.56s, and devices 0.2s via `hero-device-in`. Disable the hero animations for reduced motion.
 - App Store badge → https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762 (new tab).
-- **No glow gradient behind the phone.** Removed entirely — even static, the radial gradient sat under the navbar's `backdrop-filter` sample zone, forcing the GPU to re-blur a complex 4-stop semi-transparent gradient on every scroll frame in the hero region. Cause of the "scrolling around the hero is laggy → smooth once past" report. Drop-shadow alone (`0 18px 28px rgba(23,22,22,0.2)`, radius reduced from 48 → 28) is the focal effect now. Do NOT re-add a glow under the navbar's blur zone.
+- **Do not add a glow or an extra shadow filter to the hero image.** Option C contains its shadows. A glow in the navbar blur region previously caused slow scrolling.
 
 ### Partners
 
@@ -358,7 +358,7 @@ Homepage section flow today: `Hero → Partners → PlatformBand → Journey →
 
 - White section bg with a single warm-cream rounded card (`#f3ecd9`). Sits **between Partners and Journey** (directly above "Core Features"). Repositions Unify as web **+** mobile now that the web app at `app.unifysocial.ca` is live.
 - Eyebrow "WEB + MOBILE" (brand-red), H2 "One platform. Every device.", body copy, then **two equal CTAs**: a dark "Launch web app →" button (`var(--font-ui)`, → `https://app.unifysocial.ca`, same tab, hovers brand-red) + the App Store badge at matched height.
-- **Device cluster:** a CSS browser window (traffic-light dots + an `app.unifysocial.ca` URL pill) showing the web Social feed (`/assets/screenshots/web/social-feed.avif`), with the framed Learn phone (`/assets/screenshots/learn-hero.avif`, reused from the hero) overlapping the bottom-right. Drop-shadows only — no backdrop-filter (the navbar owns the page's blur budget).
+- **Device cluster:** a CSS browser window (traffic-light dots + an `app.unifysocial.ca` URL pill) showing the web Social feed (`/assets/screenshots/web/social-feed.avif`), with the original framed Learn phone (`/assets/screenshots/learn-hero.avif`) overlapping the bottom-right. Use drop-shadows only. Do not add backdrop-filter because the navbar uses the page's blur budget.
 - Scroll-reveal wired through `astro:page-load`, guarded by `data-platform-bound`; covered by `tests/platform-band.spec.ts`. Component: `src/components/sections/PlatformBand.astro`.
 
 ### Journey — "Key Benefits"
