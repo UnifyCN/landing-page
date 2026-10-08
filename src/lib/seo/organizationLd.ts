@@ -3,9 +3,10 @@ export function organizationLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Unify Social',
+    legalName: 'Unify Newcomer Support Society',
     alternateName: 'Unify',
     description:
-      'Unify is an all-in-one app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Free on iPhone and in any web browser at app.unifysocial.ca. Built in Vancouver.',
+      'Unify is a non-profit, all-in-one app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Free on iPhone and in any web browser at app.unifysocial.ca. Built in Vancouver.',
     url: 'https://unifysocial.ca',
     logo: 'https://unifysocial.ca/assets/logo/new-unify-logo-256.png',
     sameAs: [

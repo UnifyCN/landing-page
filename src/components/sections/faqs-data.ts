@@ -56,6 +56,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: 'Is Unify free to use?',
-    a: `<p>Yes. Unify is completely free. No credit card, no subscription.</p>`,
+    a: `<p>Yes. Unify is completely free. No credit card, no subscription. Unify is run by a non-profit, the Unify Newcomer Support Society.</p>`,
   },
 ];
