@@ -352,7 +352,7 @@ White background, top + bottom hairline borders. Three-column grid at tablet+ (`
 - **Brand column:** the starburst logo through `BrandLogo.astro` (same as the navbar) at `h-14`, links to `/`. Tagline: "An all-in-one mobile companion for newcomers in Canada. Built in Vancouver, with newcomers, for newcomers." Below: row of 38px round social pills with hairline border that fill brand-red on hover.
 - **Navigate column:** Home | About | Events | Blog | What's New | the guide hubs (all nine, including Who Is a Newcomer) | Contact. Events replaced Community (Sept 2026) when `/community` was archived.
 - **Legal column:** Privacy Policy and Terms of Service redirect to **Notion-hosted canonical pages** (URLs hardcoded in `src/components/common/Footer.astro` `legal[]`). They open in a new tab via `target="_blank" rel="noopener noreferrer"`. Don't re-add local `/privacy` or `/terms` routes — Notion is the single source of truth so legal copy doesn't drift across surfaces.
-- **Bottom bar:** `© 2026 Unify Social` — plain text, no dash, NOT a link.
+- **Bottom bar:** `© 2026 Unify Newcomer Support Society` (the registered legal name) on the left, `Unify Social is a non-profit.` on the right - plain text, no dash, NOT links. The legal name also lives in `organizationLd.ts` (`legalName`), `public/llms.txt`, the About hero, and the "Is Unify free" FAQ; keep them in sync.
 
 Socials:
 - Instagram: https://www.instagram.com/unifysocial.ca/
