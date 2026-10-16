@@ -1,8 +1,6 @@
 ---
 import WebAppBadge from "../common/WebAppBadge.astro";
-
-const APP_STORE_URL =
-  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+import StoreBadges from "../common/StoreBadges.astro";
 
 const avatars = [
   { initials: "JP", color: "#D4A948" },
@@ -37,26 +35,12 @@ import { webpFallback } from "../../lib/image-fallback";
 
       <p class="hero-desc">
         Unify makes settling in Canada simpler, clearer, and more connected. Now
-        available on iOS and web.
+        available on iOS, Android, and web.
       </p>
 
       <div class="hero-cta-row">
         <WebAppBadge />
-        <a
-          href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hero-badge-link"
-          aria-label="Download Unify on the App Store"
-        >
-          <img
-            src="/assets/app-store-badge-en.svg"
-            alt="Download on the App Store"
-            class="hero-badge"
-            width="156"
-            height="52"
-          />
-        </a>
+        <StoreBadges />
         <p class="hero-note">No credit card required</p>
       </div>
 
@@ -97,6 +81,10 @@ import { webpFallback } from "../../lib/image-fallback";
 <style>
   .hero {
     position: relative;
+    /* hero-device-in starts the devices 32px to the right; on a phone that
+       made the page scroll sideways until the animation ended. clip (not
+       hidden) adds no scroll container. */
+    overflow-x: clip;
     background-color: #ffffff;
     padding-top: 4.5rem;
     padding-bottom: 2.5rem;
@@ -195,28 +183,6 @@ import { webpFallback } from "../../lib/image-fallback";
     margin-top: 2rem;
     opacity: 0;
     animation: hero-fade-up 0.5s var(--ease-out) 0.46s forwards;
-  }
-
-  .hero-badge-link {
-    display: inline-block;
-    transition: transform 0.2s var(--ease-out), filter 0.2s ease;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .hero-badge-link:hover {
-      transform: translateY(-2px) scale(1.03);
-      filter: drop-shadow(0 6px 16px rgba(23, 22, 22, 0.15));
-    }
-  }
-
-  .hero-badge-link:active {
-    transform: scale(0.97);
-  }
-
-  .hero-badge {
-    height: 52px;
-    width: auto;
-    display: block;
   }
 
   .hero-note {

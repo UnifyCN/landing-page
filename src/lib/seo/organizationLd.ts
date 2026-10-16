@@ -6,7 +6,7 @@ export function organizationLd() {
     legalName: 'Unify Newcomer Support Society',
     alternateName: 'Unify',
     description:
-      'Unify is a non-profit, all-in-one app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Free on iPhone and in any web browser at app.unifysocial.ca. Built in Vancouver.',
+      'Unify is a non-profit, all-in-one app and guide that helps newcomers settle in Canada, covering immigration, jobs, taxes, credential recognition, and community. Free on iPhone, Android, and in any web browser at app.unifysocial.ca. Built in Vancouver.',
     url: 'https://unifysocial.ca',
     logo: 'https://unifysocial.ca/assets/logo/new-unify-logo-256.png',
     sameAs: [
@@ -15,6 +15,7 @@ export function organizationLd() {
       'https://www.linkedin.com/company/unify-social/posts/?feedView=all',
       'https://x.com/unifysocialca',
       'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762',
+      'https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend',
     ],
     address: {
       '@type': 'PostalAddress',

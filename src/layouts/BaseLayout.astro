@@ -4,6 +4,7 @@ import Navbar from '../components/common/Navbar.astro';
 import Footer from '../components/common/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
 import { organizationLd, serializeLd } from '../lib/seo';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../lib/app-links';
 
 const orgLd = serializeLd(organizationLd());
 
@@ -129,19 +130,38 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Aileron-Bold.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/Figtree-latin.woff2" crossorigin />
 
-    <!-- Which app CTA leads (Navbar, CTABand): "ios" on iPhone, where the App
-         Store button is primary; "web" everywhere else, since the web app is
-         the only option on desktop and Android. Inline in <head> so it is set
-         before first paint (no flash, no layout shift); without JS the
-         attribute is absent and the CSS default is the web app. ClientRouter
-         replaces <html>'s attributes on each swap, so it is set again then. -->
-    <script is:inline>
+    <!-- Which app CTA leads (Navbar, CTABand, store badges): "ios" on iPhone
+         and iPad, "android" on Android, "web" everywhere else. Inline in <head>
+         so it is set before first paint (no flash, no layout shift); without JS
+         the attribute is absent and the CSS default is the web app with both
+         store badges. ClientRouter replaces <html>'s attributes on each swap,
+         so it is set again then. Links marked data-store-link point to
+         /download by default (both stores + QR); on a phone they are pointed
+         straight at that phone's store. -->
+    <script is:inline define:vars={{ APP_STORE_URL, PLAY_STORE_URL }}>
       (function () {
+        function platform() {
+          var ua = navigator.userAgent;
+          if (/iPhone|iPad|iPod/.test(ua)) return "ios";
+          if (/Android/.test(ua)) return "android";
+          return "web";
+        }
         function setPlatform() {
-          document.documentElement.dataset.platform = /iPhone|iPod/.test(navigator.userAgent) ? "ios" : "web";
+          document.documentElement.dataset.platform = platform();
+        }
+        function routeStoreLinks() {
+          var p = platform();
+          if (p === "web") return;
+          var href = p === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
+          document.querySelectorAll("a[data-store-link]").forEach(function (a) {
+            a.href = href;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+          });
         }
         setPlatform();
         document.addEventListener("astro:after-swap", setPlatform);
+        document.addEventListener("astro:page-load", routeStoreLinks);
       })();
     </script>
 

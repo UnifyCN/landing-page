@@ -1,5 +1,5 @@
 ---
-import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
+import { DOWNLOAD_PATH, webAppUrl } from "../../lib/app-links";
 ---
 
 <section class="cta-wrap">
@@ -19,23 +19,19 @@ import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
         Join thousands of newcomers who use Unify to navigate life in Canada — from day one to finding home.
       </p>
       <!-- Both ways in, always rendered. The web app is the filled button by
-           default (desktop, Android, no JS); on iPhone html[data-platform="ios"]
-           (set before first paint in BaseLayout) makes it the App Store. -->
+           default (desktop, no JS); on a phone html[data-platform] (set before
+           first paint in BaseLayout) makes the download the filled one. The
+           download goes to /download (both stores + QR) until BaseLayout points
+           data-store-link at the phone's own store. -->
       <div class="cta-actions">
         <a href={webAppUrl("cta-band")} class="cta-btn" data-app-cta="web">
           Open Unify in your browser
         </a>
-        <a
-          href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="cta-btn"
-          data-app-cta="ios"
-        >
+        <a href={DOWNLOAD_PATH} class="cta-btn" data-app-cta="store" data-store-link>
           Download the App Now
         </a>
       </div>
-      <p class="cta-note">Free on iPhone and in any browser. No credit card required.</p>
+      <p class="cta-note">Free on iPhone, Android, and in any browser. No credit card required.</p>
     </div>
   </div>
 </section>
@@ -171,9 +167,10 @@ import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
     outline-offset: 3px;
   }
 
-  /* Filled: the web app by default, the App Store on iPhone. */
+  /* Filled: the web app by default, the phone's store on iPhone and Android. */
   .cta-btn[data-app-cta="web"],
-  :global(html[data-platform="ios"]) .cta-btn[data-app-cta="ios"] {
+  :global(html[data-platform="ios"]) .cta-btn[data-app-cta="store"],
+  :global(html[data-platform="android"]) .cta-btn[data-app-cta="store"] {
     order: 1;
     background-color: var(--color-brand-red);
     border-color: var(--color-brand-red);
@@ -182,8 +179,9 @@ import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
   }
 
   /* Outline: the other one. */
-  .cta-btn[data-app-cta="ios"],
-  :global(html[data-platform="ios"]) .cta-btn[data-app-cta="web"] {
+  .cta-btn[data-app-cta="store"],
+  :global(html[data-platform="ios"]) .cta-btn[data-app-cta="web"],
+  :global(html[data-platform="android"]) .cta-btn[data-app-cta="web"] {
     order: 2;
     background-color: transparent;
     border-color: rgba(255, 255, 255, 0.32);
@@ -197,12 +195,14 @@ import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
     }
 
     .cta-btn[data-app-cta="web"]:hover,
-    :global(html[data-platform="ios"]) .cta-btn[data-app-cta="ios"]:hover {
+    :global(html[data-platform="ios"]) .cta-btn[data-app-cta="store"]:hover,
+    :global(html[data-platform="android"]) .cta-btn[data-app-cta="store"]:hover {
       box-shadow: 0 12px 32px -6px rgba(216, 74, 41, 0.55);
     }
 
-    .cta-btn[data-app-cta="ios"]:hover,
-    :global(html[data-platform="ios"]) .cta-btn[data-app-cta="web"]:hover {
+    .cta-btn[data-app-cta="store"]:hover,
+    :global(html[data-platform="ios"]) .cta-btn[data-app-cta="web"]:hover,
+    :global(html[data-platform="android"]) .cta-btn[data-app-cta="web"]:hover {
       border-color: rgba(255, 255, 255, 0.7);
       background-color: rgba(255, 255, 255, 0.06);
       box-shadow: none;

@@ -1,13 +1,15 @@
 import { test, expect, type Locator, type Page } from "@playwright/test";
 
 // The sitewide app CTAs (navbar + bottom CTA band) always render both ways in:
-// the web app and the App Store. Which one is the filled button follows the
+// the web app and a download. Which one is the filled button follows the
 // device: BaseLayout's inline <head> script sets html[data-platform] before
-// first paint ("ios" on iPhone, "web" otherwise) and re-sets it after every
-// ClientRouter swap. Without JS the attribute is absent and the CSS default is
-// the web app.
+// first paint ("ios" on iPhone/iPad, "android" on Android, "web" otherwise) and
+// re-sets it after every ClientRouter swap. Without JS the attribute is absent
+// and the CSS default is the web app. The band's download goes to /download
+// until BaseLayout points it at the phone's own store.
 const WEB = /^https:\/\/app\.unifysocial\.ca\/\?utm_source=unifysocial\.ca&utm_medium=referral&utm_campaign=/;
 const APP_STORE = "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
 const IPHONE_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
 const ANDROID_UA =
@@ -32,15 +34,15 @@ async function bandButtons(page: Page) {
   await expect(band).toHaveClass(/visible/);
   return {
     web: band.locator('a.cta-btn[data-app-cta="web"]'),
-    ios: band.locator('a.cta-btn[data-app-cta="ios"]'),
+    store: band.locator('a.cta-btn[data-app-cta="store"]'),
   };
 }
 
-async function expectBandPrimary(page: Page, primary: "web" | "ios") {
-  const { web, ios } = await bandButtons(page);
+async function expectBandPrimary(page: Page, primary: "web" | "store", storeHref: string) {
+  const { web, store } = await bandButtons(page);
   await expect(web).toHaveAttribute("href", WEB);
-  await expect(ios).toHaveAttribute("href", APP_STORE);
-  const [first, second] = primary === "web" ? [web, ios] : [ios, web];
+  await expect(store).toHaveAttribute("href", storeHref);
+  const [first, second] = primary === "web" ? [web, store] : [store, web];
   expect(await background(first)).toBe("rgb(216, 74, 41)");
   expect(await background(second)).toBe(TRANSPARENT);
   expect((await box(first)).y).toBeLessThan((await box(second)).y);
@@ -73,9 +75,9 @@ test.describe("app CTAs on desktop", () => {
     await expect(web).toBeFocused();
   });
 
-  test("the CTA band leads with the web app", async ({ page }) => {
+  test("the CTA band leads with the web app and sends the download to /download", async ({ page }) => {
     await page.goto("/about");
-    await expectBandPrimary(page, "web");
+    await expectBandPrimary(page, "web", "/download");
     await expect(page.locator("section.cta-wrap a.cta-btn[data-app-cta='web']")).toHaveAttribute(
       "href",
       /utm_campaign=cta-band$/,
@@ -113,7 +115,7 @@ test.describe("app CTAs on iPhone", () => {
   test("the App Store is the filled button in the band and the menu", async ({ page }) => {
     await page.goto("/about");
     await expect(page.locator("html")).toHaveAttribute("data-platform", "ios");
-    await expectBandPrimary(page, "ios");
+    await expectBandPrimary(page, "store", APP_STORE);
 
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.locator("#nav-toggle").click();
@@ -139,17 +141,17 @@ test.describe("app CTAs on iPhone", () => {
     await expect(page).toHaveURL(/\/about$/);
     expect(await sameDocument(page), "expected a ClientRouter swap, not a full reload").toBe(true);
     await expect(page.locator("html")).toHaveAttribute("data-platform", "ios");
-    await expectBandPrimary(page, "ios");
+    await expectBandPrimary(page, "store", APP_STORE);
   });
 });
 
 test.describe("app CTAs on Android", () => {
   test.use({ userAgent: ANDROID_UA, viewport: { width: 412, height: 915 } });
 
-  test("the web app is the filled button in the band and the menu", async ({ page }) => {
+  test("Google Play is the filled button in the band; the menu still leads with the web app", async ({ page }) => {
     await page.goto("/about");
-    await expect(page.locator("html")).toHaveAttribute("data-platform", "web");
-    await expectBandPrimary(page, "web");
+    await expect(page.locator("html")).toHaveAttribute("data-platform", "android");
+    await expectBandPrimary(page, "store", PLAY_STORE);
 
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.locator("#nav-toggle").click();
@@ -175,13 +177,13 @@ test.describe("app CTAs without JavaScript", () => {
 
     const band = page.locator("section.cta-wrap");
     const web = band.locator('a.cta-btn[data-app-cta="web"]');
-    const ios = band.locator('a.cta-btn[data-app-cta="ios"]');
+    const store = band.locator('a.cta-btn[data-app-cta="store"]');
     await expect(web).toBeVisible();
-    await expect(ios).toBeVisible();
+    await expect(store).toBeVisible();
     await expect(web).toHaveAttribute("href", WEB);
-    await expect(ios).toHaveAttribute("href", APP_STORE);
+    await expect(store).toHaveAttribute("href", "/download");
     expect(await background(web)).toBe("rgb(216, 74, 41)");
-    expect(await background(ios)).toBe(TRANSPARENT);
+    expect(await background(store)).toBe(TRANSPARENT);
 
     await expect(page.locator('#nav-pill a.app-cta[data-app-cta="web"]')).toBeVisible();
     await expect(page.locator('#nav-pill a.app-cta[data-app-cta="ios"]')).toBeVisible();
@@ -213,8 +215,8 @@ test.describe("app CTAs at the narrowest phone", () => {
 
   test("the band's buttons fit on one line each with no horizontal scroll", async ({ page }) => {
     await page.goto("/about");
-    const { web, ios } = await bandButtons(page);
-    for (const btn of [web, ios]) {
+    const { web, store } = await bandButtons(page);
+    for (const btn of [web, store]) {
       const b = await box(btn);
       expect(b.x).toBeGreaterThanOrEqual(0);
       expect(b.x + b.width).toBeLessThanOrEqual(320);

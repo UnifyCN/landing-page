@@ -1,5 +1,6 @@
 ---
 import type { SearchCta } from '../../lib/search-ctas';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../../lib/app-links';
 
 interface Props {
   cta: SearchCta;
@@ -8,7 +9,6 @@ interface Props {
 }
 const { cta, sourcePath, placement } = Astro.props;
 const headingId = `search-cta-${placement}`;
-const appStoreUrl = 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762';
 ---
 
 <aside
@@ -26,9 +26,14 @@ const appStoreUrl = 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754
     <a class="search-cta-web" href={`https://app.unifysocial.ca${cta.destination}`} data-cta-platform="web">
       {cta.label}<span aria-hidden="true">&rarr;</span>
     </a>
-    <a class="search-cta-ios" href={appStoreUrl} target="_blank" rel="noopener noreferrer" data-cta-platform="ios">
-      <img src="/assets/app-store-badge-en.svg" alt="Download Unify on the App Store" width="156" height="52" loading="lazy" />
-    </a>
+    <span class="search-cta-stores">
+      <a class="search-cta-store" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" data-cta-platform="ios">
+        <img src="/assets/app-store-badge-en.svg" alt="Download Unify on the App Store" width="156" height="52" loading="lazy" />
+      </a>
+      <a class="search-cta-store" href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" data-cta-platform="android">
+        <img src="/assets/google-play-badge-en.svg" alt="Get Unify on Google Play" width="176" height="52" loading="lazy" />
+      </a>
+    </span>
   </div>
   <p class="search-cta-note">Use Unify in your browser. Sign in or create a free account to continue.</p>
 </aside>
@@ -117,8 +122,12 @@ const appStoreUrl = 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754
   }
   .search-cta-web:hover { background: var(--color-muted); }
   .search-cta-web span { flex-shrink: 0; }
-  .search-cta-ios { display: inline-flex; min-height: 52px; border-radius: var(--radius-btn); }
-  .search-cta-ios img { display: block; height: 52px; width: auto; }
+  /* The two stores wrap as one unit; on a phone only its own store shows. */
+  .search-cta-stores { display: inline-flex; flex-wrap: wrap; gap: 0.75rem; }
+  .search-cta-store { display: inline-flex; flex-shrink: 0; min-height: 52px; border-radius: var(--radius-btn); }
+  .search-cta-store img { display: block; height: 52px; width: auto; }
+  :global(html[data-platform="ios"]) .search-cta-store[data-cta-platform="android"],
+  :global(html[data-platform="android"]) .search-cta-store[data-cta-platform="ios"] { display: none; }
   .search-cta a:focus-visible { outline: 3px solid var(--color-text); outline-offset: 4px; }
   .search-cta .search-cta-note { color: var(--color-muted); }
   @media (prefers-reduced-motion: reduce) { .search-cta-web { transition: none; } }
