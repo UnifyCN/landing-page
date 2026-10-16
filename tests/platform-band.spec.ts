@@ -13,7 +13,7 @@ test.describe("WEB + MOBILE platform band", () => {
     await expect(band).toHaveAttribute("data-platform-bound", "true");
     await expect(band.locator(".platform-heading")).toContainText("One platform");
 
-    // Two equal CTAs: brand-red web-app badge → app.unifysocial.ca, + App Store badge.
+    // Web app badge -> app.unifysocial.ca, then the App Store and Google Play badges.
     await expect(band.locator("a.webapp-badge")).toHaveAttribute(
       "href",
       "https://app.unifysocial.ca",
@@ -22,7 +22,8 @@ test.describe("WEB + MOBILE platform band", () => {
     // Bring the band into view so the reveal adds .visible (opacity:1) before
     // asserting descendant image visibility.
     await band.scrollIntoViewIfNeeded();
-    await expect(band.locator(".platform-badge")).toBeVisible();
+    await expect(band.locator('.store-badge-link[data-store="ios"]')).toBeVisible();
+    await expect(band.locator('.store-badge-link[data-store="android"]')).toBeVisible();
     await expect(band.locator(".browser-shot")).toBeVisible();
     await expect(band.locator(".platform-phone")).toBeVisible();
   });

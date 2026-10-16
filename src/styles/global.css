@@ -159,3 +159,14 @@ body::after {
 picture > source {
   display: none;
 }
+
+/* App badge scale (WebAppBadge + StoreBadges size everything in em from this).
+   1rem = the full 52px badge. On a phone the web app button and that phone's
+   store badge share one line; under about 390px that line is narrower than the
+   pair, so the pair scales down with the viewport (about 41px tall at 320px,
+   above Apple's 40px minimum for the badge). */
+@media (max-width: 479px) {
+  :root {
+    --badge-font: clamp(0.78rem, 4.8vw - 0.2rem, 1rem);
+  }
+}

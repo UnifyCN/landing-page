@@ -56,6 +56,8 @@ export default defineConfig({
       // /events is SSR too (live Supabase). Its /events/<id>-<slug> detail pages
       // churn weekly, so they are left to discovery through the hub's links.
       customPages: [`${SITE}/events`, ...blogEntries.map((e) => e.url)],
+      // /download is noindex: it forwards phones to their app store.
+      filter: (page) => !/\/download\/?$/.test(page),
       serialize(item) {
         const lastmod = blogLastmod.get(item.url);
         if (lastmod) item.lastmod = lastmod;

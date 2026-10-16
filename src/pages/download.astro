@@ -1,0 +1,130 @@
+---
+// One link for "get the app" that works on any device: the navbar QR code,
+// the CTA band, and anything shared offline point here. A phone is sent
+// straight on to its own store; everyone else gets both stores, a QR code to
+// scan with their phone, and the web app. noindex and kept out of the sitemap,
+// because Googlebot's smartphone crawler is an Android UA and would be sent to
+// Google Play.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StoreBadges from "../components/common/StoreBadges.astro";
+import WebAppBadge from "../components/common/WebAppBadge.astro";
+import { APP_STORE_URL, PLAY_STORE_URL } from "../lib/app-links";
+import "../styles/cluster.css";
+
+export const prerender = true;
+---
+
+<BaseLayout
+  title="Download Unify | Unify Social"
+  description="Get Unify, the free newcomer settlement app for Canada, on iPhone, Android, or in your web browser. One free account works on every device."
+  bodyBg="#ffffff"
+  noindex
+>
+  <script is:inline define:vars={{ APP_STORE_URL, PLAY_STORE_URL }}>
+    (function () {
+      var ua = navigator.userAgent;
+      // iPadOS 13+ Safari sends a Mac user agent; a touch screen gives it away.
+      if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) location.replace(APP_STORE_URL);
+      else if (/Android/.test(ua)) location.replace(PLAY_STORE_URL);
+    })();
+  </script>
+
+  <main class="cl dl">
+    <header class="cl-hero">
+      <p class="cl-eyebrow">Free on every device</p>
+      <h1 class="cl-h1">Get Unify</h1>
+      <p class="cl-lead">
+        Unify is free on iPhone, Android, and in any web browser. One account works on all of them.
+      </p>
+    </header>
+
+    <section class="dl-card" aria-labelledby="dl-phone">
+      <div class="dl-qr">
+        <img src="/assets/qr-download.svg" alt="QR code that opens Unify in your phone's app store" width="148" height="148" />
+      </div>
+      <div class="dl-body">
+        <h2 id="dl-phone" class="dl-h2">On your phone</h2>
+        <p class="dl-text">
+          <span class="dl-scan">Scan the code with your phone camera, or tap your store below.</span>
+          <span class="dl-tap">Tap your store below.</span>
+        </p>
+        <StoreBadges />
+      </div>
+    </section>
+
+    <section class="dl-web" aria-labelledby="dl-web">
+      <h2 id="dl-web" class="dl-h2">On a computer</h2>
+      <p class="dl-text">Use Unify in your browser. No download needed.</p>
+      <WebAppBadge />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .dl {
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  .dl-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid rgba(23, 22, 22, 0.1);
+    border-radius: var(--radius-cta);
+    box-shadow: 0 1px 2px rgba(23, 22, 22, 0.04);
+  }
+
+  .dl-qr {
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border-radius: var(--radius-cta);
+    border: 1px solid rgba(23, 22, 22, 0.12);
+  }
+
+  .dl-qr img {
+    display: block;
+    width: 148px;
+    height: 148px;
+  }
+
+  .dl-body {
+    flex: 1 1 16rem;
+    min-width: 0;
+  }
+
+  .dl-h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .dl-text {
+    margin: 0.5rem 0 1.25rem;
+    color: var(--color-muted);
+    line-height: 1.5;
+  }
+
+  .dl-tap {
+    display: none;
+  }
+
+  .dl-web {
+    margin-top: clamp(1.5rem, 4vw, 2.25rem);
+    padding: 0 clamp(1.25rem, 4vw, 2rem);
+  }
+
+  /* Touch screens are the phone itself: a QR code to scan is no use there. */
+  @media (hover: none) and (pointer: coarse) {
+    .dl-qr,
+    .dl-scan {
+      display: none;
+    }
+    .dl-tap {
+      display: inline;
+    }
+  }
+</style>

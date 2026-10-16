@@ -1,5 +1,4 @@
-const APP_STORE_URL =
-  'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../app-links';
 
 const SITE = 'https://unifysocial.ca';
 
@@ -9,10 +8,10 @@ export function mobileAppLd() {
     '@type': 'MobileApplication',
     name: 'Unify - Canada Newcomer Guide',
     applicationCategory: 'EducationApplication',
-    operatingSystem: 'iOS',
+    operatingSystem: 'iOS, Android',
     url: SITE,
-    installUrl: APP_STORE_URL,
-    downloadUrl: APP_STORE_URL,
+    installUrl: [APP_STORE_URL, PLAY_STORE_URL],
+    downloadUrl: [APP_STORE_URL, PLAY_STORE_URL],
     screenshot: [
       `${SITE}/assets/screenshots/checklist.png`,
       `${SITE}/assets/screenshots/community.png`,
