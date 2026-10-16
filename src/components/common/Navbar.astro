@@ -1,5 +1,6 @@
 ---
-import { APP_STORE_URL, webAppUrl } from "../../lib/app-links";
+import { DOWNLOAD_PATH, webAppUrl } from "../../lib/app-links";
+import StoreBadges from "./StoreBadges.astro";
 import { GUIDE_HUBS } from "../../lib/guide-hubs";
 import BrandLogo from "./BrandLogo.astro";
 
@@ -144,26 +145,50 @@ function isActive(paths: string) {
 
     <!-- Right side: CTA (desktop) + hamburger (mobile/tablet) -->
     <div class="flex items-center gap-3 flex-shrink-0">
-<!-- Both ways in, always rendered. The web app leads by default (desktop,
-           Android, no JS); on iPhone html[data-platform="ios"] (set before first
-           paint in BaseLayout) swaps which one is the filled button. In the
-           pill the quiet link comes first in the DOM, matching what is shown
-           at desktop widths, so Tab moves left to right. -->
+<!-- Two buttons. "Get the app" opens a panel with a QR code and both store
+           badges on desktop (data-platform "web"); on an iPad it is a plain
+           link that BaseLayout points at the App Store, and without JS it goes
+           to /download. "Open web app" goes straight in. -->
       <div class="app-ctas hidden nav-full:flex items-center">
-        <a
-          href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="app-cta"
-          data-app-cta="ios"
-        >
-          Download Unify
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </a>
-        <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
-          Open Unify in your browser
+        <div class="get-app" id="get-app">
+          <a
+            href={DOWNLOAD_PATH}
+            class="app-cta app-cta--outline"
+            id="get-app-trigger"
+            data-app-cta="store"
+            data-store-link
+          >
+            <svg class="get-app-phone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="6" y="2" width="12" height="20" rx="2.5"></rect>
+              <path d="M11 18h2"></path>
+            </svg>
+            Get the app
+            <svg class="get-app-caret" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+              <path d="M2 3.75 5 6.75l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+          <div class="get-app-panel" id="get-app-panel" role="dialog" aria-labelledby="get-app-title">
+            <div class="get-app-card">
+              <p class="get-app-title font-display" id="get-app-title">Get Unify on your phone</p>
+              <p class="get-app-sub font-display">Scan with your phone camera. It opens the right store for your phone.</p>
+              <div class="get-app-row">
+                <img
+                  class="get-app-qr"
+                  src="/assets/qr-download.svg"
+                  alt="QR code that opens Unify in your phone's app store"
+                  width="100"
+                  height="100"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <StoreBadges lazy />
+              </div>
+              <p class="get-app-foot font-display">Free on iPhone and Android. One account everywhere.</p>
+            </div>
+          </div>
+        </div>
+        <a href={webAppUrl("navbar")} class="app-cta app-cta--filled" data-app-cta="web">
+          Open web app
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
@@ -292,27 +317,24 @@ function isActive(paths: string) {
 
     <!-- CTA anchored to bottom -->
     <div class="mobile-nav-item mobile-cta-block mt-auto" style={`--i: ${navLinks.length}`}>
+      <!-- On a phone the store link is the filled one and comes first; on
+           desktop widths in a narrow window (and without JS) the web app
+           leads. Only order and paint swap, never size. -->
       <div class="app-ctas app-ctas--stacked">
         <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
-          Open Unify in your browser
+          Open web app
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a
-          href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="app-cta"
-          data-app-cta="ios"
-        >
-          Download Unify
+        <a href={DOWNLOAD_PATH} class="app-cta" data-app-cta="store" data-store-link>
+          Get the app
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
       </div>
-      <p class="mobile-cta-note">Free on iPhone and in any browser. No credit card required.</p>
+      <p class="mobile-cta-note">Free on iPhone, Android, and in any browser. No credit card required.</p>
     </div>
   </nav>
 </div>
@@ -558,11 +580,11 @@ function isActive(paths: string) {
     }
   }
 
-  /* App CTAs: one filled button, one quiet link. Which is which follows the
-     device (see BaseLayout); DOM order and sizes never change, only `order`
-     and paint, so the swap costs no layout shift. */
+  /* App CTAs. Pill: an outlined "Get the app" (opens the download panel) and
+     a filled "Open web app". Mobile menu: the same two, stacked; which one is
+     filled follows the device (html[data-platform], set in BaseLayout). */
   .app-ctas {
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
 
   .app-cta {
@@ -580,7 +602,8 @@ function isActive(paths: string) {
     text-decoration: none;
     transition:
       background-color 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .app-cta:focus-visible {
@@ -588,71 +611,187 @@ function isActive(paths: string) {
     outline-offset: 2px;
   }
 
-  /* Filled: the web app by default, the App Store on iPhone. */
-  .app-cta[data-app-cta="web"],
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"] {
-    order: 2;
+  .app-cta--filled {
     background-color: var(--color-ink);
     color: var(--color-cream);
   }
 
-  .app-cta[data-app-cta="web"]:hover,
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"]:hover {
+  .app-cta--filled:hover {
     background-color: var(--color-brand-red);
     color: #ffffff;
   }
 
-  /* Quiet: the other one. */
-  .app-cta[data-app-cta="ios"],
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"] {
-    order: 1;
-    background-color: transparent;
+  .app-cta--outline {
+    background-color: rgba(255, 255, 255, 0.6);
     color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px rgba(23, 22, 22, 0.16);
   }
 
-  .app-cta[data-app-cta="ios"]:hover,
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"]:hover {
-    background-color: transparent;
-    color: var(--color-brand-red);
+  .app-cta--outline:hover,
+  .get-app.is-open .app-cta--outline {
+    box-shadow: inset 0 0 0 1px rgba(23, 22, 22, 0.34);
   }
 
-  .app-cta[data-app-cta="ios"] svg,
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="web"] svg {
+  .get-app-phone {
+    flex-shrink: 0;
+  }
+
+  .get-app-caret {
+    opacity: 0.7;
+    transition: transform 0.22s var(--ease-out);
+  }
+
+  .get-app.is-open .get-app-caret {
+    transform: rotate(180deg);
+  }
+
+  /* On an iPad the button is a plain link to the App Store: no panel, no caret. */
+  :global(html[data-platform="ios"]) .get-app-caret,
+  :global(html[data-platform="android"]) .get-app-caret {
     display: none;
   }
 
-  :global(html[data-platform="ios"]) .app-cta[data-app-cta="ios"] svg {
-    display: block;
+  /* Download panel. Opaque, like .nav-menu: a nested backdrop-filter would not
+     blur the page and doubles the scroll-time GPU cost. padding-top bridges
+     the gap to the button. */
+  .get-app {
+    position: relative;
   }
 
-  /* Mobile menu: stacked, filled button on top. */
+  .get-app-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    padding-top: 0.75rem;
+    width: 21rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.18s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0.22s;
+  }
+
+  .get-app.is-open .get-app-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition:
+      opacity 0.18s var(--ease-out),
+      transform 0.22s var(--ease-out),
+      visibility 0s linear 0s;
+  }
+
+  .get-app-card {
+    padding: 1.125rem;
+    background: #ffffff;
+    border: 1px solid rgba(23, 22, 22, 0.08);
+    border-radius: var(--radius-card);
+    box-shadow:
+      0 24px 48px -16px rgba(23, 22, 22, 0.25),
+      0 6px 14px -6px rgba(23, 22, 22, 0.1);
+  }
+
+  .get-app-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-nav);
+    color: var(--color-ink);
+  }
+
+  .get-app-sub {
+    margin: 0.125rem 0 0.875rem;
+    font-size: 0.84375rem;
+    line-height: 1.4;
+    color: var(--color-muted);
+  }
+
+  .get-app-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* StoreBadges sizes itself from this: 0.8rem = 41.6px badges. */
+    --badge-font: 0.8rem;
+  }
+
+  .get-app-qr {
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
+    padding: 0.5rem;
+    box-sizing: content-box;
+    border-radius: var(--radius-cta);
+    box-shadow: inset 0 0 0 1px rgba(23, 22, 22, 0.12);
+  }
+
+  .get-app-row :global(.store-badges) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+
+  .get-app-foot {
+    margin: 0.875rem 0 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(23, 22, 22, 0.08);
+    font-size: 0.78125rem;
+    color: var(--color-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .get-app-panel,
+    .get-app-caret {
+      transition: none;
+    }
+  }
+
+  /* Mobile menu: stacked, filled button on top. The web app leads by default
+     (desktop widths in a narrow window, no JS); on a phone the store does.
+     Only order and paint swap, never size, so nothing moves. */
   .app-ctas--stacked {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
 
-  /* At 320px the filled button at full nav size is 12px wider than the menu's
-     padded column, so the label scales down a step on the narrowest phones. */
+  /* At 320px the button at full nav size is wider than the menu's padded
+     column, so the label scales down a step on the narrowest phones. */
   .app-ctas--stacked .app-cta {
     min-height: 2.75rem;
     font-size: clamp(1rem, 5vw, var(--text-nav));
   }
 
   .app-ctas--stacked .app-cta[data-app-cta="web"],
-  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="ios"] {
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="store"],
+  :global(html[data-platform="android"]) .app-ctas--stacked .app-cta[data-app-cta="store"] {
     order: 1;
-    padding-inline: var(--spacing-btn-x);
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    box-shadow: none;
   }
 
-  /* The quiet link lines up with the button's left edge, so no side padding.
-     The filled rule above restates its padding because on iPhone the same
-     element matches both this selector's first half and that one's second. */
-  .app-ctas--stacked .app-cta[data-app-cta="ios"],
-  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="web"] {
+  .app-ctas--stacked .app-cta[data-app-cta="store"],
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="web"],
+  :global(html[data-platform="android"]) .app-ctas--stacked .app-cta[data-app-cta="web"] {
     order: 2;
-    padding-inline: 0;
+    background-color: transparent;
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px rgba(23, 22, 22, 0.18);
+  }
+
+  /* The outlined one carries no arrow. */
+  .app-ctas--stacked .app-cta[data-app-cta="store"] svg,
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="web"] svg,
+  :global(html[data-platform="android"]) .app-ctas--stacked .app-cta[data-app-cta="web"] svg {
+    display: none;
+  }
+
+  :global(html[data-platform="ios"]) .app-ctas--stacked .app-cta[data-app-cta="store"] svg,
+  :global(html[data-platform="android"]) .app-ctas--stacked .app-cta[data-app-cta="store"] svg {
+    display: block;
   }
 
   /* Short phones and landscape: two CTAs and the note no longer fit under the
@@ -890,6 +1029,7 @@ function isActive(paths: string) {
       caret?.addEventListener("click", () => {
         const open = !item.classList.contains("is-open");
         closeDropdowns(item);
+        setGetApp(false);
         item.classList.toggle("is-open", open);
         caret.setAttribute("aria-expanded", String(open));
       });
@@ -901,6 +1041,48 @@ function isActive(paths: string) {
 
     document.addEventListener("click", (e) => {
       if (!(e.target as Element | null)?.closest("#nav-pill .has-menu")) closeDropdowns();
+    });
+  }
+
+  // "Get the app" in the pill. On desktop (data-platform "web") it toggles the
+  // download panel; on an iPad or Android tablet it stays a plain link, which
+  // BaseLayout has pointed at that device's store. Read the platform on each
+  // click: it is set by BaseLayout and never changes within a visit.
+  const isDesktop = () => document.documentElement.dataset.platform === "web";
+
+  function setGetApp(open: boolean) {
+    const wrap = document.getElementById("get-app");
+    const trigger = document.getElementById("get-app-trigger");
+    if (!wrap || !trigger) return;
+    wrap.classList.toggle("is-open", open);
+    if (isDesktop()) trigger.setAttribute("aria-expanded", String(open));
+  }
+
+  function bindGetApp() {
+    const wrap = document.getElementById("get-app");
+    const trigger = document.getElementById("get-app-trigger");
+    if (!wrap || !trigger) return;
+    if (isDesktop()) {
+      trigger.setAttribute("role", "button");
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.setAttribute("aria-controls", "get-app-panel");
+    }
+    const toggle = (e: Event) => {
+      if (!isDesktop()) return;
+      e.preventDefault();
+      closeDropdowns();
+      setGetApp(!wrap.classList.contains("is-open"));
+    };
+    trigger.addEventListener("click", toggle);
+    // role="button" means Space must work like a click, as on a <button>.
+    trigger.addEventListener("keydown", (e) => {
+      if (e.key === " ") toggle(e);
+    });
+    wrap.addEventListener("focusout", (e) => {
+      if (!wrap.contains(e.relatedTarget as Node | null)) setGetApp(false);
+    });
+    document.addEventListener("click", (e) => {
+      if (!(e.target as Element | null)?.closest("#get-app")) setGetApp(false);
     });
   }
 
@@ -938,9 +1120,14 @@ function isActive(paths: string) {
     window.addEventListener("scroll", updateScrollState, { passive: true });
 
     bindDropdowns();
+    bindGetApp();
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Escape") return;
+      if (document.getElementById("get-app")?.classList.contains("is-open")) {
+        setGetApp(false);
+        document.getElementById("get-app-trigger")?.focus();
+      }
       const menu = document.getElementById("mobile-nav");
       if (menu?.classList.contains("is-open")) closeMenu();
       const openItem = document.querySelector<HTMLElement>("#nav-pill .has-menu.is-open");
@@ -961,6 +1148,7 @@ function isActive(paths: string) {
   document.addEventListener("astro:before-preparation", () => {
     document.body.style.overflow = "";
     closeDropdowns();
+    setGetApp(false);
     const menu = document.getElementById("mobile-nav");
     const toggle = document.getElementById("nav-toggle");
     if (menu) menu.classList.remove("is-open");

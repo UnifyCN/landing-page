@@ -70,9 +70,9 @@ test.describe("/download", () => {
     await expect(page).toHaveURL(/\/download$/);
     await expect(page.locator("main h1")).toHaveText("Get Unify");
     await expect(page.locator(".dl-qr img")).toBeVisible();
-    await expect(page.locator('a.store-badge-link[data-store="ios"]')).toHaveAttribute("href", APP_STORE);
-    await expect(page.locator('a.store-badge-link[data-store="android"]')).toHaveAttribute("href", PLAY_STORE);
-    await expect(page.locator("a.webapp-badge")).toBeVisible();
+    await expect(page.locator('main a.store-badge-link[data-store="ios"]')).toHaveAttribute("href", APP_STORE);
+    await expect(page.locator('main a.store-badge-link[data-store="android"]')).toHaveAttribute("href", PLAY_STORE);
+    await expect(page.locator("main a.webapp-badge")).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   });
 
