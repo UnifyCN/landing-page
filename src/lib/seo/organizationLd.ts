@@ -1,3 +1,5 @@
+import { APP_STORE_URL, PLAY_STORE_URL } from '../app-links';
+
 export function organizationLd() {
   return {
     '@context': 'https://schema.org',
@@ -14,8 +16,8 @@ export function organizationLd() {
       'https://www.facebook.com/p/Unify-Social-61570879043328/',
       'https://www.linkedin.com/company/unify-social/posts/?feedView=all',
       'https://x.com/unifysocialca',
-      'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762',
-      'https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend',
+      APP_STORE_URL,
+      PLAY_STORE_URL,
     ],
     address: {
       '@type': 'PostalAddress',

@@ -23,7 +23,8 @@ export const prerender = true;
   <script is:inline define:vars={{ APP_STORE_URL, PLAY_STORE_URL }}>
     (function () {
       var ua = navigator.userAgent;
-      if (/iPhone|iPad|iPod/.test(ua)) location.replace(APP_STORE_URL);
+      // iPadOS 13+ Safari sends a Mac user agent; a touch screen gives it away.
+      if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) location.replace(APP_STORE_URL);
       else if (/Android/.test(ua)) location.replace(PLAY_STORE_URL);
     })();
   </script>

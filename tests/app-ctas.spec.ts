@@ -8,7 +8,7 @@ import { test, expect, type Locator, type Page } from "@playwright/test";
 // and the CSS default is the web app. The band's download goes to /download
 // until BaseLayout points it at the phone's own store.
 const WEB = /^https:\/\/app\.unifysocial\.ca\/\?utm_source=unifysocial\.ca&utm_medium=referral&utm_campaign=/;
-const APP_STORE = "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
 const IPHONE_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
@@ -219,6 +219,27 @@ test.describe("app CTAs on iPad", () => {
     await expect(store).toHaveAttribute("target", "_blank");
     await expect(store).not.toHaveAttribute("role", "button");
     await expect(store.locator(".get-app-caret")).toBeHidden();
+  });
+});
+
+test.describe("app CTAs on iPad in desktop mode", () => {
+  // iPadOS 13+ Safari sends a Mac user agent; only the touch screen tells it apart.
+  test.use({
+    userAgent:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15",
+    viewport: { width: 1180, height: 820 },
+  });
+
+  test("is detected as ios, and a Mac with no touch screen stays web", async ({ page }) => {
+    await page.addInitScript(() => Object.defineProperty(navigator, "maxTouchPoints", { get: () => 5 }));
+    await page.goto("/about");
+    await expect(page.locator("html")).toHaveAttribute("data-platform", "ios");
+    await expect(page.locator("#get-app-trigger")).toHaveAttribute("href", APP_STORE);
+
+    const mac = await page.context().newPage();
+    await mac.goto("/about");
+    await expect(mac.locator("html")).toHaveAttribute("data-platform", "web");
+    await mac.close();
   });
 });
 

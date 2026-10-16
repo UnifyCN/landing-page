@@ -1,7 +1,4 @@
-const APP_STORE_URL =
-  'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762';
-const PLAY_STORE_URL =
-  'https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend';
+import { APP_STORE_URL, PLAY_STORE_URL } from '../app-links';
 
 const SITE = 'https://unifysocial.ca';
 

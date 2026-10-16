@@ -4,7 +4,7 @@ import { test, expect, type Page } from "@playwright/test";
 // button and both store badges; a phone shows only its own store, on one line
 // with the web app button. /download forwards phones to their store and shows
 // both stores + a QR code everywhere else.
-const APP_STORE = "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
 const IPHONE_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";

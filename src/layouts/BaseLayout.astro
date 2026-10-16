@@ -142,7 +142,8 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
       (function () {
         function platform() {
           var ua = navigator.userAgent;
-          if (/iPhone|iPad|iPod/.test(ua)) return "ios";
+          // iPadOS 13+ Safari sends a Mac user agent; a touch screen gives it away.
+          if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
           if (/Android/.test(ua)) return "android";
           return "web";
         }
