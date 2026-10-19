@@ -82,11 +82,11 @@ test.describe("brand images", () => {
     }
   });
 
-  test("the hero phone has right-sized candidates and the preload matches it", async ({ page }) => {
+  test("the hero device image has right-sized candidates and the preload matches it", async ({ page }) => {
     await page.goto("/");
-    const hero = page.locator("img.hero-phone");
+    const hero = page.locator("img.hero-devices");
     // AVIF candidates on the <source>, the same widths as WebP on the <img>.
-    const source = page.locator("picture:has(img.hero-phone) source");
+    const source = page.locator("picture:has(img.hero-devices) source");
     await expect(source).toHaveAttribute("type", "image/avif");
     await expect(source).toHaveAttribute("srcset", HERO_SRCSET);
     await expect(source).toHaveAttribute("sizes", HERO_SIZES);
@@ -96,8 +96,8 @@ test.describe("brand images", () => {
     const preload = page.locator('link[rel="preload"][as="image"]');
     await expect(preload).toHaveAttribute("imagesrcset", HERO_SRCSET);
     await expect(preload).toHaveAttribute("imagesizes", HERO_SIZES);
-    // At 1440px wide and 1x the 380px file is enough; the 1030px original is not fetched.
-    expect(await hero.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/learn-hero-380\.avif$/);
+    // At 1440px wide and 1x the 724px candidate covers the 624px image.
+    expect(await hero.evaluate((img: HTMLImageElement) => img.currentSrc)).toMatch(/hero-web-mobile-c-724\.avif$/);
   });
 });
 

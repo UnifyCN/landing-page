@@ -1,8 +1,12 @@
-// The two ways into the product. The iPhone app is the only native app (there
-// is no Google Play listing), so the web app is the route for desktop and
-// Android visitors.
-export const APP_STORE_URL = "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+// The ways into the product: the iPhone app, the Android app, and the web app.
+// Store links route by device (see BaseLayout's platform script): iPhone goes to
+// the App Store, Android to Google Play, and everything else to /download,
+// which shows both stores and a QR code.
+// The canonical App Store URL (the slug follows the listing name).
+export const APP_STORE_URL = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
+export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
 export const WEB_APP_URL = "https://app.unifysocial.ca";
+export const DOWNLOAD_PATH = "/download";
 
 /**
  * Web app entry link with landing-page attribution, in the same UTM shape as

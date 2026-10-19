@@ -22,7 +22,7 @@ for (const path of paths) {
       await expect(callout.locator('h2')).toHaveText(cta.title);
       await expect(callout.getByRole('link', { name: cta.label })).toHaveAttribute('href', `https://app.unifysocial.ca${cta.destination}`);
       await expect(callout.getByRole('link', { name: cta.label })).not.toHaveAttribute('target', '_blank');
-      await expect(callout.getByRole('link', { name: 'Download Unify on the App Store' })).toHaveAttribute('href', 'https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762');
+      await expect(callout.getByRole('link', { name: 'Download Unify on the App Store' })).toHaveAttribute('href', 'https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762');
     }
     // Sweep widths, including both sides of the site's breakpoints. CTA bounds
     // and intrinsic button wrapping must hold throughout, not just screenshots.

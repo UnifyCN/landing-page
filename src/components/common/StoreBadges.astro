@@ -1,0 +1,101 @@
+---
+// The official App Store and Google Play badges as one group, both 52px tall
+// to match WebAppBadge and scaled with it by --badge-font (global.css). In a
+// wrapping CTA row the group moves to the next line as one unit, so the two
+// stores stay together; they only stack when a full line is narrower than
+// both. On a phone only that phone's store shows (html[data-platform], set in
+// BaseLayout); desktop, iPad-as-Mac and no-JS visitors see both.
+import { APP_STORE_URL, PLAY_STORE_URL } from "../../lib/app-links";
+
+interface Props {
+  /** Lazy-load the badge images (below-the-fold placements). */
+  lazy?: boolean;
+}
+const { lazy = false } = Astro.props;
+const loading = lazy ? "lazy" : undefined;
+---
+
+<span class="store-badges">
+  <a
+    href={APP_STORE_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="store-badge-link"
+    data-store="ios"
+    aria-label="Download Unify on the App Store"
+  >
+    <img
+      src="/assets/app-store-badge-en.svg"
+      alt="Download on the App Store"
+      class="store-badge"
+      width="156"
+      height="52"
+      loading={loading}
+      decoding="async"
+    />
+  </a>
+  <a
+    href={PLAY_STORE_URL}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="store-badge-link"
+    data-store="android"
+    aria-label="Get Unify on Google Play"
+  >
+    <img
+      src="/assets/google-play-badge-en.svg"
+      alt="Get it on Google Play"
+      class="store-badge"
+      width="176"
+      height="52"
+      loading={loading}
+      decoding="async"
+    />
+  </a>
+</span>
+
+<style>
+  .store-badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75em;
+    font-size: var(--badge-font, 1rem);
+  }
+
+  .store-badge-link {
+    display: inline-block;
+    flex-shrink: 0;
+    transition:
+      transform 0.2s var(--ease-out),
+      filter 0.2s var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .store-badge-link:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: drop-shadow(0 6px 16px rgba(23, 22, 22, 0.15));
+    }
+  }
+
+  .store-badge-link:active {
+    transform: scale(0.97);
+  }
+
+  .store-badge-link:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: 9px;
+  }
+
+  .store-badge {
+    height: 3.25em;
+    width: auto;
+    display: block;
+  }
+
+  :global(html[data-platform="ios"]) .store-badge-link[data-store="android"],
+  :global(html[data-platform="android"]) .store-badge-link[data-store="ios"] {
+    display: none;
+  }
+</style>

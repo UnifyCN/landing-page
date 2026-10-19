@@ -1,7 +1,6 @@
 ---
 import WebAppBadge from "../common/WebAppBadge.astro";
-const APP_STORE_URL =
-  "https://apps.apple.com/ca/app/unify-newcomer-support/id6754875762";
+import StoreBadges from "../common/StoreBadges.astro";
 ---
 
 <section class="platform">
@@ -16,23 +15,7 @@ const APP_STORE_URL =
         </p>
         <div class="platform-cta-row">
           <WebAppBadge />
-          <a
-            href={APP_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="platform-badge-link"
-            aria-label="Download Unify on the App Store"
-          >
-            <img
-              src="/assets/app-store-badge-en.svg"
-              alt="Download on the App Store"
-              class="platform-badge"
-              width="156"
-              height="52"
-              loading="lazy"
-              decoding="async"
-            />
-          </a>
+          <StoreBadges lazy />
         </div>
         <p class="platform-proof">
           <span class="platform-proof-icon" aria-hidden="true">
@@ -185,24 +168,6 @@ const APP_STORE_URL =
     align-items: center;
     gap: 0.75rem;
     margin-top: 1.75rem;
-  }
-
-  .platform-badge-link {
-    display: inline-block;
-    transition:
-      transform 0.2s var(--ease-out),
-      filter 0.2s var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .platform-badge-link:hover {
-      transform: translateY(-2px) scale(1.03);
-      filter: drop-shadow(0 6px 16px rgba(23, 22, 22, 0.15));
-    }
-  }
-  .platform-badge {
-    height: 52px;
-    width: auto;
-    display: block;
   }
 
   /* Sync proof line */

@@ -1,7 +1,9 @@
 ---
 // The "Launch web app" CTA: a white, hairline-outlined button built to the
-// exact 52px height of Apple's App Store badge, so the two sit as a matched
-// primary (solid) + secondary (outline) pair. Used in the hero and PlatformBand.
+// exact 52px height of the App Store and Google Play badges, so they sit as one
+// matched row. Used in the hero, PlatformBand, and /download. Sized in em from
+// --badge-font (global.css), which scales it down with StoreBadges on narrow
+// phones; under 480px the label shortens to "Web app".
 const WEB_APP_URL = "https://app.unifysocial.ca";
 ---
 
@@ -13,7 +15,7 @@ const WEB_APP_URL = "https://app.unifysocial.ca";
       <line x1="12" x2="12" y1="17" y2="21" />
     </svg>
   </span>
-  <span class="webapp-badge-label">Launch web app</span>
+  <span class="webapp-badge-label"><span class="webapp-badge-full">Launch web app</span><span class="webapp-badge-short">Web app</span></span>
   <span class="webapp-badge-arrow" aria-hidden="true">&rarr;</span>
 </a>
 
@@ -21,17 +23,17 @@ const WEB_APP_URL = "https://app.unifysocial.ca";
   .webapp-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    height: 52px;
-    padding: 0 1.15rem;
+    gap: 0.55em;
+    height: 3.25em;
+    padding: 0 1.15em;
     background-color: #ffffff;
     border: 1px solid rgba(23, 22, 22, 0.18);
-    border-radius: 9px;
+    border-radius: 0.5625em;
     color: var(--color-ink);
     text-decoration: none;
     font-family: var(--font-ui);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: var(--badge-font, 1rem);
     letter-spacing: var(--tracking-cta);
     white-space: nowrap;
     box-shadow: 0 1px 2px rgba(23, 22, 22, 0.04);
@@ -45,12 +47,23 @@ const WEB_APP_URL = "https://app.unifysocial.ca";
     flex-shrink: 0;
   }
   .webapp-badge-icon svg {
-    width: 21px;
-    height: 21px;
+    width: 1.3125em;
+    height: 1.3125em;
     display: block;
   }
   .webapp-badge-label {
     line-height: 1;
+  }
+  .webapp-badge-short {
+    display: none;
+  }
+  @media (max-width: 479px) {
+    .webapp-badge-full {
+      display: none;
+    }
+    .webapp-badge-short {
+      display: inline;
+    }
   }
   .webapp-badge-arrow {
     display: inline-flex;

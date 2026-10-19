@@ -61,7 +61,7 @@ test.describe("without AVIF support", () => {
     await page.locator("section.partners").scrollIntoViewIfNeeded();
     const src = (selector: string) =>
       page.locator(selector).first().evaluate((img: HTMLImageElement) => img.currentSrc.replace(location.origin, ""));
-    await expect.poll(() => src("img.hero-phone")).toMatch(/^\/assets\/screenshots\/learn-hero(-\d+)?\.webp$/);
+    await expect.poll(() => src("img.hero-devices")).toMatch(/^\/assets\/images\/hero-web-mobile-c(-\d+)?\.webp$/);
     await expect.poll(() => src("img.partner-logo")).toMatch(/^\/assets\/images\/partners\/[a-z_]+\.webp$/);
     await expect.poll(() => src("#nav-pill img")).toBe("/assets/logo/new-unify-logo-256.png");
     expect(await page.locator("img.partner-logo").first().evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
@@ -105,7 +105,7 @@ test.describe("with AVIF support", () => {
     await page.locator("section.partners").scrollIntoViewIfNeeded();
     const src = (selector: string) =>
       page.locator(selector).first().evaluate((img: HTMLImageElement) => img.currentSrc.replace(location.origin, ""));
-    await expect.poll(() => src("img.hero-phone")).toMatch(/learn-hero-380\.avif$/);
+    await expect.poll(() => src("img.hero-devices")).toMatch(/hero-web-mobile-c-724\.avif$/);
     await expect.poll(() => src("img.partner-logo")).toMatch(/\.avif$/);
     await expect.poll(() => src("#nav-pill img")).toMatch(/new-unify-logo-168\.avif$/);
   });

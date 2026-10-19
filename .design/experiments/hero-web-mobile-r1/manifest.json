@@ -1,0 +1,50 @@
+{
+  "round": 1,
+  "route": "focused",
+  "job_kind": "new",
+  "surface": "marketing",
+  "constraint_mode": "existing-system",
+  "decision": "Choose the device composition for the web and mobile hero image.",
+  "primary_axis": "Device composition",
+  "invariants": [
+    "Existing Learn screens as input references",
+    "One desktop web display and one phone",
+    "Transparent background",
+    "No added marketing text or decoration"
+  ],
+  "source": "October 2 - Luis x Savar Web App Sync, Key Decisions, line 32",
+  "generator": "Built-in image_gen",
+  "selected_option": "C",
+  "selected_by": "Savar",
+  "selected_at": "2026-10-07",
+  "recommendation": "A",
+  "scope": "Option C integrated in the homepage hero. Local implementation; not deployed.",
+  "production_assets": ["public/assets/images/hero-web-mobile-c.avif", "public/assets/images/hero-web-mobile-c-724.avif", "public/assets/images/hero-web-mobile-c.webp", "public/assets/images/hero-web-mobile-c-724.webp"],
+  "implementation": "src/components/sections/Hero.astro",
+  "review": {
+    "independent": false,
+    "rendered": true,
+    "result": "All three have alpha transparency, show both complete device types, and display the correct app.unifysocial.ca URL. Screen content is generated from the references and is not guaranteed pixel-identical.",
+    "dimensions": "1448 x 1086"
+  },
+  "options": [
+    {
+      "id": "A",
+      "name": "Desktop monitor + phone",
+      "prompt": "Use case: compositing, product-mockup.\nAsset type: transparent landing page hero device illustration for Unify Social, a Canada newcomer settlement platform with BOTH a web app and an iOS app.\nInput image 1: supporting insert, the REAL desktop web app Learn dashboard screenshot. Input image 2: supporting insert, the REAL existing framed iPhone Learn screenshot.\nPrimary request: Make one refined studio device product image that clearly communicates web + mobile. Recompose these actual screenshots into the devices. Preserve the phone app's actual interface and its black rounded device frame exactly. Preserve the desktop dashboard's actual colorful modules, text, relative card positions and right sidebar. Desktop screenshot is taller than the display: show the top portion within the landscape web viewport, with natural bottom clipping as if scrolled to top; NEVER squeeze or stretch the screenshot and NEVER fabricate a replacement dashboard. Keep screenshot text and icons accurate. Desktop browser bar must say exactly \"app.unifysocial.ca\".\nVisual style: clean and human, tasteful matte charcoal device frames, subtly warm metal, realistic soft studio lighting, restrained contact shadows. Crisp screens with NO glare. Standalone device group only, on a genuinely TRANSPARENT alpha background. Fit entire devices comfortably inside a roughly 4:3 canvas with about 6% breathing room. The group is intended for the right column of a WHITE marketing hero. Content legibility and recognition matter more than decorative 3D perspective.\nConstraints: Exactly one desktop web display and one upright portrait iPhone. No background, no gradients, no glow, no pedestals, no scenery, no plants, no desk, no people, no extra devices. No added marketing headline, no badges, no arrows, no floating cards, no outside text, no watermark, no invented statistics. Phone and desktop both clearly recognizable. Screens are display content from provided screenshot inputs, not new app UI.\nComposition A: A refined thin-bezel desktop MONITOR on a modest compact dark metal stand, on the left, and the provided upright iPhone on the right, beside it. A small natural overlap is allowed at the monitor's right edge only, no more than 10% of screen area. Monitor uses about 72% of total group width; phone uses about 24%. Monitor body and phone heights are comparable, phone about 85% of monitor plus stand height. Both face almost straight toward the viewer so both screens remain readable. Devices share a baseline. A strong side-by-side balanced composition with no extra keyboard or mouse.",
+      "artifact": "public/assets/images/hero-web-mobile-a.png"
+    },
+    {
+      "id": "B",
+      "name": "Laptop + phone",
+      "prompt": "Use case: compositing, product-mockup.\nAsset type: transparent landing page hero device illustration for Unify Social, a Canada newcomer settlement platform with BOTH a web app and an iOS app.\nInput image 1: supporting insert, the REAL desktop web app Learn dashboard screenshot. Input image 2: supporting insert, the REAL existing framed iPhone Learn screenshot.\nPrimary request: Make one refined studio device product image that clearly communicates web + mobile. Recompose these actual screenshots into the devices. Preserve the phone app's actual interface and its black rounded device frame exactly. Preserve the desktop dashboard's actual colorful modules, text, relative card positions and right sidebar. Desktop screenshot is taller than the display: show the top portion within the landscape web viewport, with natural bottom clipping as if scrolled to top; NEVER squeeze or stretch the screenshot and NEVER fabricate a replacement dashboard. Keep screenshot text and icons accurate. Desktop browser bar must say exactly \"app.unifysocial.ca\".\nVisual style: clean and human, tasteful matte charcoal device frames, subtly warm metal, realistic soft studio lighting, restrained contact shadows. Crisp screens with NO glare. Standalone device group only, on a genuinely TRANSPARENT alpha background. Fit entire devices comfortably inside a roughly 4:3 canvas with about 6% breathing room. The group is intended for the right column of a WHITE marketing hero. Content legibility and recognition matter more than decorative 3D perspective.\nConstraints: Exactly one desktop web display and one upright portrait iPhone. No background, no gradients, no glow, no pedestals, no scenery, no plants, no desk, no people, no extra devices. No added marketing headline, no badges, no arrows, no floating cards, no outside text, no watermark, no invented statistics. Phone and desktop both clearly recognizable. Screens are display content from provided screenshot inputs, not new app UI.\nComposition B: A refined open charcoal-and-warm-silver LAPTOP on the left, with a visible slim keyboard and trackpad, and the provided upright iPhone at the front-right, gently overlapping the laptop's lower right edge. The laptop display faces almost directly toward the viewer; natural light downward perspective permits a minimal view of the keyboard. The phone stays mostly outside the laptop's screen and must not hide more than 12% of display content. The phone is about 95% of the laptop's total height. Whole laptop, keyboard corners and phone fit in frame. Compact modern device group with subtle depth.",
+      "artifact": "public/assets/images/hero-web-mobile-b.png"
+    },
+    {
+      "id": "C",
+      "name": "Browser window + phone",
+      "prompt": "Use case: compositing, product-mockup.\nAsset type: transparent landing page hero device illustration for Unify Social, a Canada newcomer settlement platform with BOTH a web app and an iOS app.\nInput image 1: supporting insert, the REAL desktop web app Learn dashboard screenshot. Input image 2: supporting insert, the REAL existing framed iPhone Learn screenshot.\nPrimary request: Make one refined studio device product image that clearly communicates web + mobile. Recompose these actual screenshots into the devices. Preserve the phone app's actual interface and its black rounded device frame exactly. Preserve the desktop dashboard's actual colorful modules, text, relative card positions and right sidebar. Desktop screenshot is taller than the display: show the top portion within the landscape web viewport, with natural bottom clipping as if scrolled to top; NEVER squeeze or stretch the screenshot and NEVER fabricate a replacement dashboard. Keep screenshot text and icons accurate. Desktop browser bar must say exactly \"app.unifysocial.ca\".\nVisual style: clean and human, tasteful matte charcoal device frames, subtly warm metal, realistic soft studio lighting, restrained contact shadows. Crisp screens with NO glare. Standalone device group only, on a genuinely TRANSPARENT alpha background. Fit entire devices comfortably inside a roughly 4:3 canvas with about 6% breathing room. The group is intended for the right column of a WHITE marketing hero. Content legibility and recognition matter more than decorative 3D perspective.\nConstraints: Exactly one desktop web display and one upright portrait iPhone. No background, no gradients, no glow, no pedestals, no scenery, no plants, no desk, no people, no extra devices. No added marketing headline, no badges, no arrows, no floating cards, no outside text, no watermark, no invented statistics. Phone and desktop both clearly recognizable. Screens are display content from provided screenshot inputs, not new app UI.\nComposition C: A large almost front-on standalone DESKTOP BROWSER WINDOW on the left and the supplied upright iPhone on the right. This is a software-led composition with NO physical laptop or monitor stand. Browser window has a thin matte charcoal perimeter, 16px-style rounded corners, and a tasteful light browser toolbar with small traffic-light dots and \"app.unifysocial.ca\" in the URL field. A restrained soft shadow gives browser slight physical depth. The browser window occupies about 75% of group width and the phone about 25%, with a tiny overlap of frame edges only. Phone height is about 110% of browser height. Screens remain sharp and readable. Balanced side-by-side device group.",
+      "artifact": "public/assets/images/hero-web-mobile-c.png"
+    }
+  ]
+}
