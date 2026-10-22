@@ -78,9 +78,34 @@ function loadPostHog() {
         // by hand on astro:page-load (below), as for GA4.
         capture_pageview: false,
         capture_pageleave: true,
+        // The landing page sends $pageview, $pageleave and cta_clicked and
+        // nothing else. Everything below is off in code, so a project setting
+        // in PostHog cannot switch it back on here:
+        // - No /flags/ request. It carries person properties posthog-js
+        //   derives from the URL and referrer ($initial_ph_keyword is a search
+        //   engine's q=), which before_send never sees. This also stops remote
+        //   config from enabling features.
+        advanced_disable_flags: true,
+        advanced_disable_feature_flags: true,
+        // - No autocapture or click-derived events: their $elements_chain
+        //   holds link hrefs and text, which the URL scrub does not cover.
+        autocapture: false,
+        rageclick: false,
+        capture_dead_clicks: false,
+        capture_heatmaps: false,
+        // - No session replay, web vitals or network timing, exception
+        //   capture, surveys, tours, chat, web experiments or console logs,
+        //   and no PostHog scripts beyond posthog-js itself.
         disable_session_recording: true,
-        // Every event, autocapture included, has its URLs scrubbed before it
-        // is sent: only utm_*, ref, gclid and fbclid survive, no fragments
+        capture_performance: false,
+        capture_exceptions: false,
+        disable_surveys: true,
+        disable_product_tours: true,
+        disable_conversations: true,
+        disable_web_experiments: true,
+        logs: { captureConsoleLogs: false },
+        disable_external_dependency_loading: true,
+        // Every event has its URLs scrubbed before it is sent: only utm_*, ref, gclid and fbclid survive, no fragments
         // (src/lib/analytics/privacy.ts). A visitor's /?email=... never
         // reaches PostHog.
         before_send: (event) => (event ? sanitizeEvent(event, location.hostname) : event),

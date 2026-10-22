@@ -200,14 +200,20 @@ test.describe("$pageview", () => {
 
 type Sent = { event: string; properties: Record<string, unknown> };
 
-/** Decode a posthog-js request body (gzip-js, base64 form, or plain JSON) into its events. */
-function decodeEvents(url: string, body: Buffer): Sent[] {
-  let text: string;
-  if (new URL(url).searchParams.get("compression") === "gzip-js") text = gunzipSync(body).toString("utf8");
-  else if (body.toString("utf8").startsWith("data=")) {
-    const data = new URLSearchParams(body.toString("utf8")).get("data") ?? "";
-    text = Buffer.from(data, "base64").toString("utf8");
-  } else text = body.toString("utf8");
+/** A posthog-js request body as text: gzip-js, base64 form (data=...), or plain. */
+function decodeBody(url: string, body: Buffer): string {
+  const gzip = body[0] === 0x1f && body[1] === 0x8b;
+  if (gzip || new URL(url).searchParams.get("compression") === "gzip-js") return gunzipSync(body).toString("utf8");
+  const raw = body.toString("utf8");
+  if (raw.startsWith("data=")) {
+    const data = new URLSearchParams(raw).get("data") ?? "";
+    return Buffer.from(data, "base64").toString("utf8");
+  }
+  return raw;
+}
+
+/** The events in a decoded request body (none for /flags/ and the like). */
+function decodeEvents(text: string): Sent[] {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -218,33 +224,66 @@ function decodeEvents(url: string, body: Buffer): Sent[] {
   return (list as Sent[]).filter((e) => typeof e?.event === "string");
 }
 
+// What the stubbed project settings ask for: session replay, autocapture,
+// heatmaps, dead clicks, web vitals, exception capture and surveys all on.
+// The tests show the landing page's own config keeps every one of them off.
+const REMOTE_CONFIG = {
+  sessionRecording: { endpoint: "/s/" },
+  autocapture_opt_out: false,
+  heatmaps: true,
+  captureDeadClicks: true,
+  capturePerformance: { web_vitals: true, network_timing: true },
+  autocaptureExceptions: true,
+  surveys: true,
+  supportedCompression: ["gzip-js", "base64"],
+};
+
 /**
  * Answer every request to PostHog's hosts locally, so nothing reaches the
- * production project, and record the events posthog-js sends.
+ * production project, and record everything posthog-js sends.
  */
 async function stubPostHogNetwork(page: Page) {
   const sent: Sent[] = [];
+  /** Every request to a PostHog host: its URL and decoded body. */
+  const traffic: { url: string; body: string }[] = [];
   const requests: string[] = [];
   page.on("request", (request) => requests.push(request.url()));
   await page.route(/^https:\/\/([a-z0-9-]+\.)*posthog\.com\//, async (route) => {
     const request = route.request();
-    const body = request.postDataBuffer();
-    if (body) sent.push(...decodeEvents(request.url(), body));
+    const raw = request.postDataBuffer();
+    const body = raw ? decodeBody(request.url(), raw) : "";
+    traffic.push({ url: request.url(), body });
+    sent.push(...decodeEvents(body));
     const isScript = new URL(request.url()).pathname.endsWith(".js");
     await route.fulfill({
       status: 200,
       contentType: isScript ? "text/javascript" : "application/json",
-      // The project config turns session recording on, so the test below
-      // shows that disable_session_recording, not the server, keeps it off.
-      body: isScript ? "" : JSON.stringify({ sessionRecording: { endpoint: "/s/" } }),
+      body: isScript ? "" : JSON.stringify(REMOTE_CONFIG),
     });
   });
   return {
     sent,
+    traffic,
     /** posthog-js itself (the Vite dep chunk) or any request to a PostHog host. */
     posthogRequests: () => requests.filter((u) => /posthog-js|posthog\.com/.test(u)),
+    /** Everything sent to PostHog, URLs and decoded bodies, as one string. */
+    everything: () => traffic.map((t) => `${t.url}\n${t.body}`).join("\n"),
   };
 }
+
+/**
+ * Wait until posthog-js has initialized (it sets its cookie). On a cold dev
+ * server Vite pre-bundles posthog-js on first request and reloads the page,
+ * which would drop a click made before it.
+ */
+async function waitForPostHog(page: Page) {
+  await expect
+    .poll(() => page.evaluate(() => /ph_phc_[^=]+_posthog=/.test(document.cookie)), { timeout: 20_000 })
+    .toBe(true);
+}
+
+/** The email and every encoding of it a request could carry. */
+const EMAIL_FORMS = ["alice", "example.test", "%40example"];
 
 /** Test-only allowlist (dev server only), read by src/scripts/analytics.ts. */
 async function allowAnalyticsHosts(page: Page, hosts: string[]) {
@@ -279,10 +318,7 @@ test.describe("PostHog", () => {
     await allowAnalyticsHosts(page, ["localhost"]);
     await recordAnalytics(page);
     await page.goto("/");
-    // Wait until posthog-js is up and talking to (stubbed) PostHog. On a cold
-    // dev server Vite pre-bundles posthog-js on first request and reloads the
-    // page, which would drop a click made before it.
-    await expect.poll(() => posthog.posthogRequests().some((u) => u.includes("posthog.com")), { timeout: 20_000 }).toBe(true);
+    await waitForPostHog(page);
     await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
 
     // These come from posthog-js's own requests, so this fails if posthog-js
@@ -308,7 +344,7 @@ test.describe("PostHog", () => {
     await page.goto("/?email=alice%40example.test&utm_source=x&gclid=y&name=Alice#frag", {
       referer: "https://www.google.com/search?q=alice%40example.test#top",
     });
-    await expect.poll(() => posthog.posthogRequests().some((u) => u.includes("posthog.com")), { timeout: 20_000 }).toBe(true);
+    await waitForPostHog(page);
     await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
 
     const sentEvent = (name: string) => posthog.sent.find((e) => e.event === name) as Sent;
@@ -345,6 +381,53 @@ test.describe("PostHog", () => {
     expect(decodeURIComponent(stored.cookie)).toContain("$initial_person_info");
     const everything = JSON.stringify(posthog.sent) + decodeURIComponent(stored.cookie);
     for (const leak of ["alice", "Alice", "example.test", "#frag", "#top"]) expect(everything, leak).not.toContain(leak);
+  });
+
+  test("no feature flag request: a search query in the referrer never leaves the page", async ({ page }) => {
+    const posthog = await stubPostHogNetwork(page);
+    await allowAnalyticsHosts(page, ["localhost"]);
+    await recordAnalytics(page);
+    await page.goto("/?utm_source=x", { referer: "https://www.google.com/search?q=alice%40example.test" });
+    await waitForPostHog(page);
+    await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
+    await expect.poll(() => posthog.sent.map((e) => e.event)).toEqual(expect.arrayContaining(["$pageview", "cta_clicked"]));
+    await page.waitForTimeout(1500);
+
+    const paths = posthog.traffic.map((t) => new URL(t.url).pathname);
+    expect(paths.filter((p) => /\/(flags|decide)\b/.test(p))).toEqual([]);
+    // Nor remote config or any other PostHog script: only event batches go out.
+    expect(paths.filter((p) => !/^\/(e|i\/v0\/e|batch)\/$/.test(p))).toEqual([]);
+    const everything = posthog.everything();
+    for (const leak of EMAIL_FORMS) expect(everything, leak).not.toContain(leak);
+  });
+
+  test("no autocapture: clicking a link with an email in its href sends nothing that carries it", async ({ page }) => {
+    const posthog = await stubPostHogNetwork(page);
+    await allowAnalyticsHosts(page, ["localhost"]);
+    await recordAnalytics(page);
+    await page.goto("/");
+    await waitForPostHog(page);
+    await page.evaluate(() => {
+      const link = document.createElement("a");
+      link.id = "leaky-link";
+      link.href = "/?email=alice%40example.test&utm_source=x";
+      link.textContent = "Continue";
+      document.querySelector("main")!.prepend(link);
+    });
+    await page.locator("#leaky-link").click();
+    // The next page view still arrives, scrubbed, with its UTM.
+    await expect
+      .poll(() => posthog.sent.filter((e) => e.event === "$pageview").map((e) => e.properties.$current_url))
+      .toContainEqual(new URL("/?utm_source=x", page.url()).href);
+    // Past a batch flush, so a queued $autocapture would have gone out.
+    await page.waitForTimeout(3500);
+
+    const events = posthog.sent.map((e) => e.event);
+    for (const off of ["$autocapture", "$rageclick", "$dead_click", "$$heatmap", "$web_vitals", "$exception"]) {
+      expect(events, off).not.toContain(off);
+    }
+    const everything = posthog.everything();
+    for (const leak of EMAIL_FORMS) expect(everything, leak).not.toContain(leak);
   });
 
   for (const [label, hosts] of [
