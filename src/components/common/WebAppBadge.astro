@@ -4,10 +4,16 @@
 // matched row. Used in the hero, PlatformBand, and /download. Sized in em from
 // --badge-font (global.css), which scales it down with StoreBadges on narrow
 // phones; under 480px the label shortens to "Web app".
-const WEB_APP_URL = "https://app.unifysocial.ca";
+import { WEB_APP_URL } from "../../lib/app-links";
+
+interface Props {
+  /** cta_clicked placement (src/scripts/analytics.ts). */
+  placement: string;
+}
+const { placement } = Astro.props;
 ---
 
-<a href={WEB_APP_URL} class="webapp-badge" aria-label="Launch the Unify web app">
+<a href={WEB_APP_URL} class="webapp-badge" aria-label="Launch the Unify web app" data-cta-placement={placement}>
   <span class="webapp-badge-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
       <rect width="20" height="14" x="2" y="3" rx="2" />

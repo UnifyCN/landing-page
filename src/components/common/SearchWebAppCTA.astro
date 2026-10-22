@@ -1,6 +1,7 @@
 ---
 import type { SearchCta } from '../../lib/search-ctas';
-import { APP_STORE_URL, PLAY_STORE_URL } from '../../lib/app-links';
+import { APP_STORE_URL } from '../../lib/app-links';
+import { playStoreUrl } from '../../lib/analytics/cta';
 
 interface Props {
   cta: SearchCta;
@@ -9,6 +10,7 @@ interface Props {
 }
 const { cta, sourcePath, placement } = Astro.props;
 const headingId = `search-cta-${placement}`;
+const ctaPlacement = `search_cta_${placement}`;
 ---
 
 <aside
@@ -22,7 +24,7 @@ const headingId = `search-cta-${placement}`;
 >
   <h2 id={headingId}>{cta.title}</h2>
   <p>{cta.description}</p>
-  <div class="search-cta-actions">
+  <div class="search-cta-actions" data-cta-placement={ctaPlacement}>
     <a class="search-cta-web" href={`https://app.unifysocial.ca${cta.destination}`} data-cta-platform="web">
       {cta.label}<span aria-hidden="true">&rarr;</span>
     </a>
@@ -30,7 +32,7 @@ const headingId = `search-cta-${placement}`;
       <a class="search-cta-store" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" data-cta-platform="ios">
         <img src="/assets/app-store-badge-en.svg" alt="Download Unify on the App Store" width="156" height="52" loading="lazy" />
       </a>
-      <a class="search-cta-store" href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" data-cta-platform="android">
+      <a class="search-cta-store" href={playStoreUrl(ctaPlacement)} target="_blank" rel="noopener noreferrer" data-cta-platform="android">
         <img src="/assets/google-play-badge-en.svg" alt="Get Unify on Google Play" width="176" height="52" loading="lazy" />
       </a>
     </span>

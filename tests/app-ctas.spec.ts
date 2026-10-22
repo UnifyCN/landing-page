@@ -10,6 +10,9 @@ import { test, expect, type Locator, type Page } from "@playwright/test";
 const WEB = /^https:\/\/app\.unifysocial\.ca\/\?utm_source=unifysocial\.ca&utm_medium=referral&utm_campaign=/;
 const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
+/** The Play link with the landing page's install referrer for one placement. */
+const play = (placement: string) =>
+  `${PLAY_STORE}&referrer=utm_source%3Dunifysocial.ca%26utm_medium%3Dwebsite%26utm_campaign%3Dlanding%26utm_content%3D${placement}`;
 const IPHONE_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
 const ANDROID_UA =
@@ -88,7 +91,7 @@ test.describe("app CTAs on desktop", () => {
     await expect(panel).toBeVisible();
     await expect(panel.locator(".get-app-qr")).toBeVisible();
     await expect(panel.locator('a.store-badge-link[data-store="ios"]')).toHaveAttribute("href", APP_STORE);
-    await expect(panel.locator('a.store-badge-link[data-store="android"]')).toHaveAttribute("href", PLAY_STORE);
+    await expect(panel.locator('a.store-badge-link[data-store="android"]')).toHaveAttribute("href", play("navbar_panel"));
     // The panel stays on screen.
     const card = await box(panel.locator(".get-app-card"));
     expect(card.x).toBeGreaterThanOrEqual(0);
@@ -187,14 +190,14 @@ test.describe("app CTAs on Android", () => {
   test("Google Play is the filled button in the band and the menu", async ({ page }) => {
     await page.goto("/about");
     await expect(page.locator("html")).toHaveAttribute("data-platform", "android");
-    await expectBandPrimary(page, "store", PLAY_STORE);
+    await expectBandPrimary(page, "store", play("cta_band"));
 
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.locator("#nav-toggle").click();
     await expect(page.locator("#mobile-nav")).toHaveClass(/is-open/);
     const web = page.locator('#mobile-nav a.app-cta[data-app-cta="web"]');
     const store = page.locator('#mobile-nav a.app-cta[data-app-cta="store"]');
-    await expect(store).toHaveAttribute("href", PLAY_STORE);
+    await expect(store).toHaveAttribute("href", play("mobile_nav"));
     expect(await background(store)).toBe("rgb(23, 22, 22)");
     expect(await background(web)).toBe(TRANSPARENT);
     expect((await box(store)).y).toBeLessThan((await box(web)).y);

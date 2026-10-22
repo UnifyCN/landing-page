@@ -8,8 +8,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import StoreBadges from "../components/common/StoreBadges.astro";
 import WebAppBadge from "../components/common/WebAppBadge.astro";
-import { APP_STORE_URL, PLAY_STORE_URL } from "../lib/app-links";
+import { APP_STORE_URL } from "../lib/app-links";
+import { playStoreUrl } from "../lib/analytics/cta";
 import "../styles/cluster.css";
+
+// The Android redirect carries the Play install referrer like every Play link.
+const PLAY_STORE_URL = playStoreUrl("download_redirect");
 
 export const prerender = true;
 ---
@@ -48,14 +52,14 @@ export const prerender = true;
           <span class="dl-scan">Scan the code with your phone camera, or tap your store below.</span>
           <span class="dl-tap">Tap your store below.</span>
         </p>
-        <StoreBadges />
+        <StoreBadges placement="download_page" />
       </div>
     </section>
 
     <section class="dl-web" aria-labelledby="dl-web">
       <h2 id="dl-web" class="dl-h2">On a computer</h2>
       <p class="dl-text">Use Unify in your browser. No download needed.</p>
-      <WebAppBadge />
+      <WebAppBadge placement="download_page" />
     </section>
   </main>
 </BaseLayout>
