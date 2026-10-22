@@ -64,3 +64,16 @@ export function playStoreUrl(placement: string): string {
   }).toString();
   return `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}`;
 }
+
+/** The production site. PostHog loads on these hosts and nowhere else. */
+export const ANALYTICS_HOSTS: readonly string[] = ["unifysocial.ca", "www.unifysocial.ca"];
+
+/**
+ * Whether PostHog may load on `hostname`. An exact-match allowlist, so
+ * localhost, LAN addresses, Vercel / Cloudflare previews and look-alike hosts
+ * can never send platform=landing events into the production project.
+ * `allowed` exists for tests only (see src/scripts/analytics.ts).
+ */
+export function isAnalyticsHost(hostname: string, allowed: readonly string[] = ANALYTICS_HOSTS): boolean {
+  return allowed.includes(hostname);
+}

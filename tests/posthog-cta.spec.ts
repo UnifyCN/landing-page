@@ -1,11 +1,13 @@
+import { gunzipSync } from "node:zlib";
 import { test, expect, type Page } from "@playwright/test";
 
 // PostHog tracking on the landing page (spec UnifyCN/mobile-app#314, ticket
-// #320). The dev server runs on localhost, where PostHog is never loaded, so
-// these tests read the analytics sink instead: src/scripts/analytics.ts
+// #320). The dev server runs on localhost, which is not on the PostHog host
+// allowlist, so most tests read the analytics sink: src/scripts/analytics.ts
 // dispatches every event it tracks as an `unify:analytics` DOM event on
-// document, whether or not PostHog is loaded. The real network payload on a
-// production build is checked separately (see the PR).
+// document, whether or not PostHog is loaded. The "PostHog" block at the end
+// runs the real posthog-js (allowlist widened to localhost, network stubbed)
+// and asserts on what it sends, and checks that nothing loads otherwise.
 type Tracked = { event: string; properties: Record<string, string> };
 type SinkWindow = Window & { __tracked: Tracked[] };
 
@@ -71,9 +73,22 @@ test.describe("cta_clicked on desktop", () => {
 
   test("the desktop Get the app disclosure and the /download link are not store clicks", async ({ page }) => {
     await page.goto("/about");
+    // Positive control: the tracker is live on this page, so an empty
+    // cta_clicked list below means "not a CTA", not "nothing is listening".
+    await expect.poll(() => tracked(page, "$pageview").then((l) => l.length)).toBe(1);
+
     await page.locator("#get-app-trigger").click();
     await page.keyboard.press("Escape");
+    const bandDownload = page.locator('section.cta-wrap a.cta-btn[data-app-cta="store"]');
+    await bandDownload.scrollIntoViewIfNeeded();
+    await expect(bandDownload).toHaveAttribute("href", "/download");
+    await bandDownload.click();
+    await expect(page).toHaveURL(/\/download$/);
     expect(await ctaClicks(page)).toEqual([]);
+
+    // Same page, same listener: a real CTA still fires.
+    await page.locator('#nav-pill a.app-cta[data-app-cta="web"]').click();
+    expect(await ctaClicks(page)).toEqual([{ target: "web_app", placement: "navbar", page: "/download" }]);
   });
 
   test("CTA band web button, after a View Transition navigation, fires exactly once", async ({ page }) => {
@@ -179,4 +194,129 @@ test.describe("$pageview", () => {
     await expect(page).toHaveURL(/\/about$/);
     await expect.poll(() => tracked(page, "$pageview").then((l) => l.map((t) => new URL(t.properties.$current_url).pathname))).toEqual(["/", "/about"]);
   });
+});
+
+// --- PostHog itself -------------------------------------------------------
+
+type Sent = { event: string; properties: Record<string, unknown> };
+
+/** Decode a posthog-js request body (gzip-js, base64 form, or plain JSON) into its events. */
+function decodeEvents(url: string, body: Buffer): Sent[] {
+  let text: string;
+  if (new URL(url).searchParams.get("compression") === "gzip-js") text = gunzipSync(body).toString("utf8");
+  else if (body.toString("utf8").startsWith("data=")) {
+    const data = new URLSearchParams(body.toString("utf8")).get("data") ?? "";
+    text = Buffer.from(data, "base64").toString("utf8");
+  } else text = body.toString("utf8");
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return [];
+  }
+  const list = Array.isArray(parsed) ? parsed : (parsed as { batch?: unknown[] }).batch ?? [parsed];
+  return (list as Sent[]).filter((e) => typeof e?.event === "string");
+}
+
+/**
+ * Answer every request to PostHog's hosts locally, so nothing reaches the
+ * production project, and record the events posthog-js sends.
+ */
+async function stubPostHogNetwork(page: Page) {
+  const sent: Sent[] = [];
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(request.url()));
+  await page.route(/^https:\/\/([a-z0-9-]+\.)*posthog\.com\//, async (route) => {
+    const request = route.request();
+    const body = request.postDataBuffer();
+    if (body) sent.push(...decodeEvents(request.url(), body));
+    const isScript = new URL(request.url()).pathname.endsWith(".js");
+    await route.fulfill({
+      status: 200,
+      contentType: isScript ? "text/javascript" : "application/json",
+      // The project config turns session recording on, so the test below
+      // shows that disable_session_recording, not the server, keeps it off.
+      body: isScript ? "" : JSON.stringify({ sessionRecording: { endpoint: "/s/" } }),
+    });
+  });
+  return {
+    sent,
+    /** posthog-js itself (the Vite dep chunk) or any request to a PostHog host. */
+    posthogRequests: () => requests.filter((u) => /posthog-js|posthog\.com/.test(u)),
+  };
+}
+
+/** Test-only allowlist (dev server only), read by src/scripts/analytics.ts. */
+async function allowAnalyticsHosts(page: Page, hosts: string[]) {
+  await page.addInitScript((list) => {
+    (window as unknown as { __unifyAnalyticsHosts: string[] }).__unifyAnalyticsHosts = list;
+  }, hosts);
+}
+
+const DESKTOP_CHROME_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+
+/**
+ * posthog-js drops every event from a likely bot: a HeadlessChrome user agent
+ * or brand, or navigator.webdriver. Playwright's Chromium is all three, so hide
+ * them here (the UA via test.use) rather than loosen the production config.
+ */
+async function looksLikeAPerson(page: Page) {
+  await page.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, "webdriver", { get: () => false });
+    Object.defineProperty(Navigator.prototype, "userAgentData", { get: () => undefined });
+  });
+}
+
+test.describe("PostHog", () => {
+  test.use({ userAgent: DESKTOP_CHROME_UA });
+  test.beforeEach(async ({ page }) => looksLikeAPerson(page));
+
+  test("on an allowed host, posthog-js loads and sends $pageview and cta_clicked with platform=landing", async ({
+    page,
+  }) => {
+    const posthog = await stubPostHogNetwork(page);
+    await allowAnalyticsHosts(page, ["localhost"]);
+    await recordAnalytics(page);
+    await page.goto("/");
+    // Wait until posthog-js is up and talking to (stubbed) PostHog. On a cold
+    // dev server Vite pre-bundles posthog-js on first request and reloads the
+    // page, which would drop a click made before it.
+    await expect.poll(() => posthog.posthogRequests().some((u) => u.includes("posthog.com")), { timeout: 20_000 }).toBe(true);
+    await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
+
+    // These come from posthog-js's own requests, so this fails if posthog-js
+    // is missing, never loads, or never captures.
+    const sentEvent = (name: string) => posthog.sent.find((e) => e.event === name)?.properties;
+    await expect.poll(() => sentEvent("cta_clicked")).toMatchObject({
+      target: "google_play",
+      placement: "hero",
+      page: "/",
+      platform: "landing",
+      token: expect.stringMatching(/^phc_/),
+    });
+    await expect.poll(() => sentEvent("$pageview")).toMatchObject({ $pathname: "/", platform: "landing" });
+    // Session recording is off: the recorder is never fetched, nothing is sent to /s/.
+    await page.waitForTimeout(1000);
+    expect(posthog.posthogRequests().filter((u) => /recorder|\/s\//.test(u))).toEqual([]);
+  });
+
+  for (const [label, hosts] of [
+    ["no override", null],
+    ["the production allowlist", ["unifysocial.ca", "www.unifysocial.ca"]],
+  ] as const) {
+    test(`a non-production host (localhost, ${label}) never loads PostHog`, async ({ page }) => {
+      const posthog = await stubPostHogNetwork(page);
+      if (hosts) await allowAnalyticsHosts(page, [...hosts]);
+      await recordAnalytics(page);
+      await page.goto("/");
+      await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
+      // The tracker ran (the sink saw the click)...
+      expect(await ctaClicks(page)).toEqual([{ target: "google_play", placement: "hero", page: "/" }]);
+      // ...and past the 3 s load fallback, posthog-js was never requested and nothing was sent.
+      await page.waitForTimeout(4000);
+      expect(posthog.posthogRequests()).toEqual([]);
+      expect(posthog.sent).toEqual([]);
+    });
+  }
 });

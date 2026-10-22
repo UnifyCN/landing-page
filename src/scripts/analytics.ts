@@ -6,13 +6,14 @@
 // - posthog-js is about 110 KB gzipped, so, like gtag.js, it is requested
 //   only after the first paint. Events tracked before it arrives wait in
 //   `pending`.
-// - Never loaded on the dev server or on a localhost preview, so local work
-//   sends nothing.
+// - Loaded only on unifysocial.ca and www.unifysocial.ca (isAnalyticsHost in
+//   src/lib/analytics/cta.ts), so localhost, LAN and preview hosts send
+//   nothing to the production project.
 // - Every tracked event is also dispatched as an `unify:analytics` DOM event
 //   on document. The e2e tests read it (tests/posthog-cta.spec.ts); nothing
 //   else listens.
 import type { PostHog } from "posthog-js";
-import { ctaClickedProperties } from "../lib/analytics/cta";
+import { ctaClickedProperties, isAnalyticsHost } from "../lib/analytics/cta";
 
 const POSTHOG_KEY = "phc_HhWBzt38eOkq5sAAKdp8kKypQEHkXojKvqM2gpu8EJw";
 const POSTHOG_HOST = "https://us.i.posthog.com";
@@ -20,8 +21,14 @@ const POSTHOG_HOST = "https://us.i.posthog.com";
 // calls reset(), so the super property is registered once.
 const SUPER_PROPERTIES = { platform: "landing" } as const;
 
-const LOCAL_HOST = /^(localhost|127(\.\d{1,3}){3}|\[::1\]|.+\.localhost)$/;
-const enabled = import.meta.env.PROD && !LOCAL_HOST.test(location.hostname);
+// The e2e tests run on the dev server at localhost. To exercise the real
+// posthog-js path they set `window.__unifyAnalyticsHosts` (an init script) to
+// an allowlist that includes localhost, and stub PostHog's network. Only the
+// dev server reads it: in a production build `import.meta.env.DEV` is false and
+// the override is compiled out, so no page can widen the allowlist.
+type TestWindow = Window & { __unifyAnalyticsHosts?: readonly string[] };
+const testHosts = import.meta.env.DEV ? (window as TestWindow).__unifyAnalyticsHosts : undefined;
+const enabled = isAnalyticsHost(location.hostname, testHosts);
 
 type Properties = Record<string, string>;
 interface Tracked {
