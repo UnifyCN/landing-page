@@ -15,6 +15,7 @@
 import type { PostHog } from "posthog-js";
 import { ctaClickedProperties, isAnalyticsHost } from "../lib/analytics/cta";
 import { sanitizeEvent, sanitizeProperties } from "../lib/analytics/privacy";
+import { SHARED_IDENTITY_OPTIONS } from "../lib/analytics/identity";
 
 const POSTHOG_KEY = "phc_HhWBzt38eOkq5sAAKdp8kKypQEHkXojKvqM2gpu8EJw";
 const POSTHOG_HOST = "https://us.i.posthog.com";
@@ -68,12 +69,9 @@ function loadPostHog() {
     .then(({ default: posthog }) => {
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_HOST,
-        // The same cookie settings as app.unifysocial.ca (Unify-Web-App
-        // lib/posthog.ts, which uses posthog-js's defaults): the identity
-        // cookie is set on .unifysocial.ca, so a landing visitor who opens the
-        // web app stays the same PostHog person.
-        persistence: "localStorage+cookie",
-        cross_subdomain_cookie: true,
+        // One PostHog person across unifysocial.ca and app.unifysocial.ca
+        // (src/lib/analytics/identity.ts).
+        ...SHARED_IDENTITY_OPTIONS,
         // ClientRouter navigations are client-side, so page views are captured
         // by hand on astro:page-load (below), as for GA4.
         capture_pageview: false,
