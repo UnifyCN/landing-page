@@ -3,8 +3,9 @@
 // - Same PostHog project as the mobile and web apps. The project key is a
 //   public client token (it ships in every page anyway), kept here as GA_ID is
 //   kept in BaseLayout.
-// - posthog-js is ~60 KB gzipped, so, like gtag.js, it is requested only after
-//   the first paint. Events tracked before it arrives wait in `pending`.
+// - posthog-js is about 110 KB gzipped, so, like gtag.js, it is requested
+//   only after the first paint. Events tracked before it arrives wait in
+//   `pending`.
 // - Never loaded on the dev server or on a localhost preview, so local work
 //   sends nothing.
 // - Every tracked event is also dispatched as an `unify:analytics` DOM event
@@ -79,9 +80,20 @@ function loadPostHog() {
 }
 
 if (enabled) {
-  // Two frames: the first callback runs before the first paint, the second
-  // after it. A tab opened in the background gets no frames until it is shown.
-  requestAnimationFrame(() => requestAnimationFrame(loadPostHog));
+  // Wait for the browser's first contentful paint. (Two animation frames, as
+  // gtag uses, measured a few ms before it.) Without paint timing, fall back
+  // to two frames. A tab opened in the background gets no paint until it is
+  // shown, hence the timeout.
+  if (PerformanceObserver.supportedEntryTypes?.includes("paint")) {
+    const observer = new PerformanceObserver((list) => {
+      if (list.getEntriesByName("first-contentful-paint").length === 0) return;
+      observer.disconnect();
+      loadPostHog();
+    });
+    observer.observe({ type: "paint", buffered: true });
+  } else {
+    requestAnimationFrame(() => requestAnimationFrame(loadPostHog));
+  }
   setTimeout(loadPostHog, 3000);
 }
 
