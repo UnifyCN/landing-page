@@ -14,12 +14,15 @@
 //   else listens.
 import type { PostHog } from "posthog-js";
 import { ctaClickedProperties, isAnalyticsHost } from "../lib/analytics/cta";
+import { sanitizeEvent, sanitizeProperties } from "../lib/analytics/privacy";
 
 const POSTHOG_KEY = "phc_HhWBzt38eOkq5sAAKdp8kKypQEHkXojKvqM2gpu8EJw";
 const POSTHOG_HOST = "https://us.i.posthog.com";
 // The platform filter for the Landing Page dashboard. The landing page never
 // calls reset(), so the super property is registered once.
 const SUPER_PROPERTIES = { platform: "landing" } as const;
+// posthog-js's persisted { r: referrer, u: url } of the visitor's first page.
+const INITIAL_PERSON_INFO = "$initial_person_info";
 
 // The e2e tests run on the dev server at localhost. To exercise the real
 // posthog-js path they set `window.__unifyAnalyticsHosts` (an init script) to
@@ -76,8 +79,22 @@ function loadPostHog() {
         capture_pageview: false,
         capture_pageleave: true,
         disable_session_recording: true,
+        // Every event, autocapture included, has its URLs scrubbed before it
+        // is sent: only utm_*, ref, gclid and fbclid survive, no fragments
+        // (src/lib/analytics/privacy.ts). A visitor's /?email=... never
+        // reaches PostHog.
+        before_send: (event) => (event ? sanitizeEvent(event, location.hostname) : event),
       });
       posthog.register(SUPER_PROPERTIES);
+      // posthog-js stores the entry URL and referrer once, unscrubbed, in its
+      // cookie, and the web app sends them as person properties on sign-up.
+      // Store a scrubbed copy first (posthog-js never overwrites it), and
+      // scrub one left by an earlier visit.
+      const entry = (posthog.get_property(INITIAL_PERSON_INFO) as Record<string, unknown> | undefined) ?? {
+        r: document.referrer || "$direct",
+        u: location.href,
+      };
+      posthog.register({ [INITIAL_PERSON_INFO]: sanitizeProperties(entry, location.hostname) });
       client = posthog;
       for (const item of pending.splice(0)) send(posthog, item);
     })

@@ -301,6 +301,52 @@ test.describe("PostHog", () => {
     expect(posthog.posthogRequests().filter((u) => /recorder|\/s\//.test(u))).toEqual([]);
   });
 
+  test("URLs are scrubbed before sending: only utm_*, ref, gclid, fbclid survive, no fragments", async ({ page }) => {
+    const posthog = await stubPostHogNetwork(page);
+    await allowAnalyticsHosts(page, ["localhost"]);
+    await recordAnalytics(page);
+    await page.goto("/?email=alice%40example.test&utm_source=x&gclid=y&name=Alice#frag", {
+      referer: "https://www.google.com/search?q=alice%40example.test#top",
+    });
+    await expect.poll(() => posthog.posthogRequests().some((u) => u.includes("posthog.com")), { timeout: 20_000 }).toBe(true);
+    await page.locator('.hero-cta-row a.store-badge-link[data-store="android"]').click();
+
+    const sentEvent = (name: string) => posthog.sent.find((e) => e.event === name) as Sent;
+    await expect.poll(() => sentEvent("cta_clicked")?.properties).toBeTruthy();
+    await expect.poll(() => sentEvent("$pageview")?.properties).toBeTruthy();
+
+    const url = new URL("/?utm_source=x&gclid=y", page.url()).href;
+    const google = "https://www.google.com/search";
+    for (const name of ["$pageview", "cta_clicked"]) {
+      expect(sentEvent(name).properties, name).toMatchObject({
+        $current_url: url,
+        $referrer: google,
+        $session_entry_url: url,
+        $session_entry_referrer: google,
+        utm_source: "x",
+        gclid: "y",
+      });
+    }
+    expect(sentEvent("cta_clicked").properties.page).toBe("/");
+
+    // The visitor's first page as posthog-js stores it on .unifysocial.ca, and
+    // as the web app later sends it ($initial_current_url, $initial_referrer,
+    // $initial_utm_source, $initial_gclid) when the visitor signs up.
+    const stored = await page.evaluate(() => {
+      const key = Object.keys(localStorage).find((k) => /^ph_phc_.+_posthog$/.test(k));
+      return { local: key ? localStorage.getItem(key) : null, cookie: document.cookie };
+    });
+    const persisted = JSON.parse(stored.local ?? "{}");
+    expect(persisted.$initial_person_info).toEqual({ r: google, u: url });
+
+    // Nothing sent to PostHog, and nothing in the cookie the web app reads,
+    // carries the email, the name, the search query or a fragment. (The raw
+    // URL stays only in this origin's localStorage, on the visitor's device.)
+    expect(decodeURIComponent(stored.cookie)).toContain("$initial_person_info");
+    const everything = JSON.stringify(posthog.sent) + decodeURIComponent(stored.cookie);
+    for (const leak of ["alice", "Alice", "example.test", "#frag", "#top"]) expect(everything, leak).not.toContain(leak);
+  });
+
   for (const [label, hosts] of [
     ["no override", null],
     ["the production allowlist", ["unifysocial.ca", "www.unifysocial.ca"]],
