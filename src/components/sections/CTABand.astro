@@ -1,5 +1,6 @@
 ---
 import { DOWNLOAD_PATH, webAppUrl } from "../../lib/app-links";
+import { playStoreUrl } from "../../lib/analytics/cta";
 ---
 
 <section class="cta-wrap">
@@ -23,11 +24,11 @@ import { DOWNLOAD_PATH, webAppUrl } from "../../lib/app-links";
            first paint in BaseLayout) makes the download the filled one. The
            download goes to /download (both stores + QR) until BaseLayout points
            data-store-link at the phone's own store. -->
-      <div class="cta-actions">
+      <div class="cta-actions" data-cta-placement="cta_band">
         <a href={webAppUrl("cta-band")} class="cta-btn" data-app-cta="web">
           Open Unify in your browser
         </a>
-        <a href={DOWNLOAD_PATH} class="cta-btn" data-app-cta="store" data-store-link>
+        <a href={DOWNLOAD_PATH} class="cta-btn" data-app-cta="store" data-store-link data-android-href={playStoreUrl("cta_band")}>
           Download the App Now
         </a>
       </div>

@@ -5,17 +5,20 @@
 // stores stay together; they only stack when a full line is narrower than
 // both. On a phone only that phone's store shows (html[data-platform], set in
 // BaseLayout); desktop, iPad-as-Mac and no-JS visitors see both.
-import { APP_STORE_URL, PLAY_STORE_URL } from "../../lib/app-links";
+import { APP_STORE_URL } from "../../lib/app-links";
+import { playStoreUrl } from "../../lib/analytics/cta";
 
 interface Props {
   /** Lazy-load the badge images (below-the-fold placements). */
   lazy?: boolean;
+  /** cta_clicked placement (src/scripts/analytics.ts) and the Google Play referrer's utm_content. */
+  placement: string;
 }
-const { lazy = false } = Astro.props;
+const { lazy = false, placement } = Astro.props;
 const loading = lazy ? "lazy" : undefined;
 ---
 
-<span class="store-badges">
+<span class="store-badges" data-cta-placement={placement}>
   <a
     href={APP_STORE_URL}
     target="_blank"
@@ -35,7 +38,7 @@ const loading = lazy ? "lazy" : undefined;
     />
   </a>
   <a
-    href={PLAY_STORE_URL}
+    href={playStoreUrl(placement)}
     target="_blank"
     rel="noopener noreferrer"
     class="store-badge-link"

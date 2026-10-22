@@ -65,7 +65,7 @@ const breadcrumbLdStr = serializeLd(
               <h2 class="wn-title">{entry.title}</h2>
               <p class="wn-desc">{entry.description}</p>
               {entry.link && (
-                <a class="wn-link" href={entry.link.href}>
+                <a class="wn-link" href={entry.link.href} data-cta-placement="whats_new">
                   {entry.link.label}
                   <span aria-hidden="true">&rarr;</span>
                 </a>

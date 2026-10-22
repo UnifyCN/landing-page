@@ -90,6 +90,13 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
       </script>
     )}
 
+    <!-- PostHog (src/scripts/analytics.ts): page views and cta_clicked, beside
+         GA4. A module script, so it never blocks parsing; posthog-js itself
+         is requested after the first paint, and never on localhost. -->
+    <script>
+      import "../scripts/analytics";
+    </script>
+
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
@@ -153,9 +160,10 @@ const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow,max-image-pre
         function routeStoreLinks() {
           var p = platform();
           if (p === "web") return;
-          var href = p === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
           document.querySelectorAll("a[data-store-link]").forEach(function (a) {
-            a.href = href;
+            // data-android-href is the Play link with this placement's install
+            // referrer (playStoreUrl in src/lib/analytics/cta.ts).
+            a.href = p === "ios" ? APP_STORE_URL : a.dataset.androidHref || PLAY_STORE_URL;
             a.target = "_blank";
             a.rel = "noopener noreferrer";
           });

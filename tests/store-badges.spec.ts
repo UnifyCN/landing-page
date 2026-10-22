@@ -6,6 +6,9 @@ import { test, expect, type Page } from "@playwright/test";
 // both stores + a QR code everywhere else.
 const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
+/** The Play link with the landing page's install referrer for one placement. */
+const play = (placement: string) =>
+  `${PLAY_STORE}&referrer=utm_source%3Dunifysocial.ca%26utm_medium%3Dwebsite%26utm_campaign%3Dlanding%26utm_content%3D${placement}`;
 const IPHONE_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
 const ANDROID_UA =
@@ -31,7 +34,7 @@ test.describe("hero store badges on desktop", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
     await expect(ios(page)).toHaveAttribute("href", APP_STORE);
-    await expect(android(page)).toHaveAttribute("href", PLAY_STORE);
+    await expect(android(page)).toHaveAttribute("href", play("hero"));
     for (const badge of [web(page), ios(page), android(page)]) {
       await expect(badge).toBeVisible();
       expect((await badge.boundingBox())!.height).toBeCloseTo(52, 0);
@@ -42,7 +45,7 @@ test.describe("hero store badges on desktop", () => {
 
 for (const [label, ua, mine, other, href] of [
   ["iPhone", IPHONE_UA, "ios", "android", APP_STORE],
-  ["Android", ANDROID_UA, "android", "ios", PLAY_STORE],
+  ["Android", ANDROID_UA, "android", "ios", play("hero")],
 ] as const) {
   test.describe(`hero store badges on ${label}`, () => {
     test.use({ userAgent: ua });
@@ -71,14 +74,14 @@ test.describe("/download", () => {
     await expect(page.locator("main h1")).toHaveText("Get Unify");
     await expect(page.locator(".dl-qr img")).toBeVisible();
     await expect(page.locator('main a.store-badge-link[data-store="ios"]')).toHaveAttribute("href", APP_STORE);
-    await expect(page.locator('main a.store-badge-link[data-store="android"]')).toHaveAttribute("href", PLAY_STORE);
+    await expect(page.locator('main a.store-badge-link[data-store="android"]')).toHaveAttribute("href", play("download_page"));
     await expect(page.locator("main a.webapp-badge")).toBeVisible();
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   });
 
   for (const [label, ua, store] of [
     ["iPhone", IPHONE_UA, APP_STORE],
-    ["Android", ANDROID_UA, PLAY_STORE],
+    ["Android", ANDROID_UA, play("download_redirect")],
   ] as const) {
     test.describe(label, () => {
       test.use({ userAgent: ua });

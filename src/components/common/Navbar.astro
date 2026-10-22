@@ -1,5 +1,6 @@
 ---
 import { DOWNLOAD_PATH, webAppUrl } from "../../lib/app-links";
+import { playStoreUrl } from "../../lib/analytics/cta";
 import StoreBadges from "./StoreBadges.astro";
 import { GUIDE_HUBS } from "../../lib/guide-hubs";
 import BrandLogo from "./BrandLogo.astro";
@@ -149,7 +150,7 @@ function isActive(paths: string) {
            badges on desktop (data-platform "web"); on an iPad it is a plain
            link that BaseLayout points at the App Store, and without JS it goes
            to /download. "Open web app" goes straight in. -->
-      <div class="app-ctas hidden nav-full:flex items-center">
+      <div class="app-ctas hidden nav-full:flex items-center" data-cta-placement="navbar">
         <div class="get-app" id="get-app">
           <a
             href={DOWNLOAD_PATH}
@@ -157,6 +158,7 @@ function isActive(paths: string) {
             id="get-app-trigger"
             data-app-cta="store"
             data-store-link
+            data-android-href={playStoreUrl("navbar")}
           >
             <svg class="get-app-phone" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="6" y="2" width="12" height="20" rx="2.5"></rect>
@@ -181,7 +183,7 @@ function isActive(paths: string) {
                   loading="lazy"
                   decoding="async"
                 />
-                <StoreBadges lazy />
+                <StoreBadges lazy placement="navbar_panel" />
               </div>
               <p class="get-app-foot font-display">Free on iPhone and Android. One account everywhere.</p>
             </div>
@@ -320,14 +322,14 @@ function isActive(paths: string) {
       <!-- On a phone the store link is the filled one and comes first; on
            desktop widths in a narrow window (and without JS) the web app
            leads. Only order and paint swap, never size. -->
-      <div class="app-ctas app-ctas--stacked">
+      <div class="app-ctas app-ctas--stacked" data-cta-placement="mobile_nav">
         <a href={webAppUrl("navbar")} class="app-cta" data-app-cta="web">
           Open web app
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </a>
-        <a href={DOWNLOAD_PATH} class="app-cta" data-app-cta="store" data-store-link>
+        <a href={DOWNLOAD_PATH} class="app-cta" data-app-cta="store" data-store-link data-android-href={playStoreUrl("mobile_nav")}>
           Get the app
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
