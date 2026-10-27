@@ -3,21 +3,23 @@ const cards = [
   {
     icon: "/assets/images/about/book.png",
     title: "Scattered information",
+    stat: "62%",
     body: "62% of newly arrived newcomers report struggling to find the settlement resources they need. With government sites, Reddit threads, and WhatsApp chats all giving different answers, it's hard to know what's current or relevant — whether you're looking for help with housing, banking, jobs, or your SIN number.",
     source: "Statistics Canada, General Social Survey on Social Identity, 2020",
   },
   {
     icon: "/assets/images/about/human.png",
     title: "Doing it alone",
+    stat: "70%",
     body: "Starting over in a new country is hard enough — but doing it without a supportive newcomer community to lean on makes it even more overwhelming. 70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers.",
     source: "Canadian Index for Measuring Integration",
   },
   {
     icon: "/assets/images/about/arrows-split.png",
     title: "No clear roadmap",
+    stat: null,
     body: "Without step by step guidance, it's easy to waste time, miss IRCC deadlines, or make costly mistakes on your newcomer journey in Canada.",
     source: null,
-    span: "full",
   },
 ];
 
@@ -99,20 +101,30 @@ const cardBaseDelay = lastLetterDelay;
     </div>
 
     <!-- 3-box grid -->
-    <div class="ap-grid">
+    <!-- Stats layout (from the about page prototype, version B): each problem
+         leads with its figure, set large, with the text and source beside it.
+         The figures are the ones each card already cites. -->
+    <ol class="ap-grid" role="list">
       {cards.map((card) => (
-        <article
-          class={`ap-card ${card.span === "full" ? "ap-card-full" : ""}`}
+        <li
+          class="ap-card"
           style={`transition-delay:${cardBaseDelay.toFixed(3)}s`}
         >
-          <div class="ap-card-head">
-            <img src={card.icon} alt="" class="ap-card-icon" aria-hidden="true" loading="lazy" decoding="async" />
-            <h3 class="ap-card-title">{card.title}</h3>
+          <div class="ap-stat-col" aria-hidden={card.stat ? "true" : undefined}>
+            {card.stat ? (
+              <span class="ap-stat">{card.stat}</span>
+            ) : (
+              <img src={card.icon} alt="" class="ap-card-icon" loading="lazy" decoding="async" width="56" height="56" />
+            )}
           </div>
-          <p class="ap-card-body">{card.body}</p>
-          {card.source && <p class="ap-card-source">{card.source}</p>}
-        </article>
+          <div class="ap-card-text">
+            <h3 class="ap-card-title">{card.title}</h3>
+            <p class="ap-card-body">{card.body}</p>
+            {card.source && <p class="ap-card-source">Source: {card.source}</p>}
+          </div>
+        </li>
       ))}
+    </ol>
     </div>
   </div>
 </section>
@@ -170,34 +182,39 @@ const cardBaseDelay = lastLetterDelay;
     max-width: 56ch;
   }
 
-  /* ── Grid ── */
+  /* ── Stats rows ── */
   .ap-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .ap-card {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
-    padding: 1.75rem;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
 
-  .ap-card-head {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    margin-bottom: 1.25rem;
+  .ap-card:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .ap-stat {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3.5rem, 9vw, 7rem);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    color: var(--color-text);
   }
 
   .ap-card-icon {
-    width: 28px;
-    height: 28px;
+    width: 56px;
+    height: 56px;
     object-fit: contain;
-    flex-shrink: 0;
   }
 
   .ap-card-title {
@@ -205,8 +222,8 @@ const cardBaseDelay = lastLetterDelay;
     font-weight: 700;
     font-size: clamp(1.25rem, 1.75vw, 1.5rem);
     color: var(--color-text);
-    margin: 0;
-    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
   }
 
   .ap-card-body {
@@ -214,22 +231,18 @@ const cardBaseDelay = lastLetterDelay;
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.65;
-    color: var(--color-text);
-    margin: 0 0 1.5rem;
-    flex: 1;
+    color: var(--color-muted);
+    margin: 0;
+    max-width: 62ch;
   }
 
   .ap-card-source {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     line-height: 1.55;
     color: var(--color-muted);
-    margin: 0;
-  }
-
-  .ap-card-full .ap-card-body {
-    margin-bottom: 0;
+    margin: 0.75rem 0 0;
   }
 
   /* ── Reveal animation ──
@@ -308,17 +321,10 @@ const cardBaseDelay = lastLetterDelay;
       padding: 0 3rem;
     }
 
-    .ap-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
     .ap-card {
-      padding: 2rem;
-    }
-
-    .ap-card-full {
-      grid-column: 1 / -1;
+      grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
     }
   }
 
@@ -328,12 +334,8 @@ const cardBaseDelay = lastLetterDelay;
       padding: 0 5rem;
     }
 
-    .ap-grid {
-      gap: 1.75rem;
-    }
-
     .ap-card {
-      padding: 2.25rem;
+      padding: 2.5rem 0;
     }
   }
 </style>
