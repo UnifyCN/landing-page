@@ -1,160 +1,275 @@
 ---
+// Home page partners: every partner logo in one calm grid. Hovering or focusing
+// a logo shows what kind of partner it is (always shown on touch screens), and
+// each logo links to its partner page. The first time the section scrolls into
+// view the logos start out as the six arms of the Unify logo and settle into
+// the grid; it plays once, only transform and opacity move, and with reduced
+// motion (or without JS) the grid is simply there.
 import { webpFallback } from "../../lib/image-fallback";
 import { partners, partnerLogoSize } from "../../lib/partners";
+
+// "RBC - Royal Bank of Canada" reads better as the short name on a logo tile.
+const displayName = (name: string) => name.replace(/ - .*/, "");
+const kindLabel: Record<string, string> = {
+  "Not for Profit": "Non-profit",
+  Education: "School",
+  Libraries: "Library",
+  Financial: "Bank and finance",
+  "Immigration Consultancies": "Immigration consultancy",
+};
 ---
 
-<section class="partners bg-white py-14 desktop:py-20">
-  <p class="partners-label">
-    Our Partners
-  </p>
-
-  <div class="partners-track-wrapper">
-    <div class="partners-track">
+<section class="partners" aria-labelledby="partners-heading" data-partners>
+  <div class="pw-inner">
+    <h2 class="pw-head" id="partners-heading">
+      <strong>Built with {partners.length} partners.</strong>
+      <span>Hover or tap a logo to see who they are.</span>
+    </h2>
+    <ul class="pw-grid" role="list">
       {
-        partners.map((p) => (
-          <a href={`/partners/${p.slug}`} class="partner-logo-link">
-            <picture class="contents">
-              <source srcset={p.logo} type="image/avif" />
-              <img
-                src={webpFallback(p.logo)}
-                alt={`${p.name} — a Unify Social partner`}
-                class="partner-logo"
-                {...partnerLogoSize(p.logo)}
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </a>
+        partners.map((p, i) => (
+          <li class="pw-cell" style={`--i:${i}`}>
+            <a class="pw-tile" href={`/partners/${p.slug}`}>
+              <picture class="contents">
+                <source srcset={p.logo} type="image/avif" />
+                <img
+                  src={webpFallback(p.logo)}
+                  alt={displayName(p.name)}
+                  class="partner-logo"
+                  {...partnerLogoSize(p.logo)}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <span class="pw-kind">{kindLabel[p.category] ?? p.category}</span>
+            </a>
+          </li>
         ))
       }
-      {
-        partners.map((p) => (
-          <a href={`/partners/${p.slug}`} class="partner-logo-link" aria-hidden="true" tabindex="-1">
-            <picture class="contents">
-              <source srcset={p.logo} type="image/avif" />
-              <img src={webpFallback(p.logo)} alt="" class="partner-logo" {...partnerLogoSize(p.logo)} loading="lazy" decoding="async" />
-            </picture>
-          </a>
-        ))
-      }
-    </div>
+    </ul>
   </div>
 </section>
 
 <style>
-  .partners-label {
+  .partners {
+    background-color: #ffffff;
+    padding: 3.5rem 0;
+  }
+
+  .pw-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .pw-head {
+    margin: 0 0 1.5rem;
     font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--color-muted);
+  }
+
+  .pw-head strong {
     font-weight: 700;
-    font-size: clamp(1.25rem, 2vw, 1.75rem);
-    line-height: 1.1;
-    letter-spacing: var(--tracking-tight);
     color: var(--color-text);
-    text-align: center;
-    margin: 0 0 3rem;
   }
 
-  .partners-track-wrapper {
-    overflow: hidden;
+  .pw-grid {
+    /* offsetParent for the cells, so the load-in measures from the grid */
     position: relative;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 10%,
-      black 90%,
-      transparent
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 10%,
-      black 90%,
-      transparent
-    );
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid rgba(23, 22, 22, 0.08);
+    border-left: 1px solid rgba(23, 22, 22, 0.08);
   }
 
-  .partners-track {
-    display: flex;
-    align-items: center;
-    gap: 5.5rem;
-    width: max-content;
-    animation: marquee 40s linear infinite;
+  .pw-cell {
+    border-right: 1px solid rgba(23, 22, 22, 0.08);
+    border-bottom: 1px solid rgba(23, 22, 22, 0.08);
   }
 
-  /* Pause on hover for entire track */
-  @media (hover: hover) and (pointer: fine) {
-    .partners-track-wrapper:hover .partners-track {
-      animation-play-state: paused;
-    }
+  .pw-tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: clamp(84px, 9vw, 112px);
+    padding: 1rem;
+    overflow: hidden;
+    text-decoration: none;
+    border-radius: 2px;
   }
 
-  .partner-logo-link {
-    flex-shrink: 0;
-    display: flex;
-    border-radius: 6px;
-  }
-
-  .partner-logo-link:focus-visible {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 4px;
+  .pw-tile:focus-visible {
+    outline: 2px solid #b83c1e;
+    outline-offset: -2px;
   }
 
   .partner-logo {
-    height: 56px;
+    max-height: 46px;
+    max-width: 80%;
     width: auto;
-    opacity: 0.85;
-    transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.45s var(--ease-out);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .partner-logo:hover {
+  .pw-kind {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.6rem;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--color-text);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.4s var(--ease-out);
+  }
+
+  .pw-tile:is(:hover, :focus-visible) .partner-logo {
+    transform: translateY(-10px);
+  }
+
+  .pw-tile:is(:hover, :focus-visible) .pw-kind {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Touch screens have no hover: show who each partner is up front. */
+  @media (hover: none) {
+    .pw-kind {
       opacity: 1;
-      transform: translateY(-2px);
+      transform: none;
+    }
+
+    .partner-logo {
+      transform: translateY(-10px);
     }
   }
 
   @media (min-width: 810px) {
-    .partner-logo {
-      height: 64px;
+    .pw-inner {
+      padding: 0 3rem;
+    }
+
+    .pw-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 1400px) {
-    .partner-logo {
-      height: 72px;
-    }
+  /* ── Load-in: the logos start as the six arms of the Unify logo ──
+     JS adds .pw-armed (and each cell's --dx/--dy, measured from the grid)
+     only when the section is below the fold and motion is allowed, so the
+     grid is never hidden without it. .pw-in plays the settle once. */
+  .partners.pw-armed .pw-cell {
+    transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0) scale(0.42);
+    opacity: 0;
   }
 
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+  .partners.pw-armed .pw-grid {
+    border-color: transparent;
   }
 
-  /* Pause marquee when offscreen — saves compositor cycles when not visible */
-  .partners.is-offscreen .partners-track {
-    animation-play-state: paused;
+  .partners.pw-armed .pw-cell {
+    border-color: transparent;
+  }
+
+  .partners.pw-armed.pw-shape .pw-cell {
+    opacity: 1;
+    transition:
+      opacity 0.45s var(--ease-out) calc(var(--i) * 18ms);
+  }
+
+  .partners.pw-armed.pw-in .pw-cell {
+    transform: none;
+    opacity: 1;
+    border-color: rgba(23, 22, 22, 0.08);
+    transition:
+      transform 0.9s var(--ease-drawer) calc(var(--i) * 22ms),
+      border-color 0.4s ease calc(0.6s + var(--i) * 22ms);
+  }
+
+  .partners.pw-armed.pw-in .pw-grid {
+    border-color: rgba(23, 22, 22, 0.08);
+    transition: border-color 0.4s ease 0.9s;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .partners-track {
-      animation: none;
+    .partner-logo,
+    .pw-kind {
+      transition: none;
     }
   }
 </style>
 
 <script>
-  function initPartnersMarquee() {
-    const section = document.querySelector<HTMLElement>(".partners");
-    if (!section || section.dataset.partnersInit) return;
-    section.dataset.partnersInit = "1";
-    section.classList.add("is-offscreen");
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        section.classList.toggle("is-offscreen", !entry.isIntersecting);
+  // Arms the load-in once per page view, then plays it when the section
+  // scrolls into view. Re-binds on View Transition navigations through the
+  // data-partners-bound guard.
+  function initPartners() {
+    const section = document.querySelector<HTMLElement>("[data-partners]");
+    if (!section || section.dataset.partnersBound === "true") return;
+    section.dataset.partnersBound = "true";
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const grid = section.querySelector<HTMLElement>(".pw-grid")!;
+    // Already showing (a tall window, or a reload halfway down): no load-in.
+    // A sliver under the fold is fine to hold back.
+    if (grid.getBoundingClientRect().top < window.innerHeight - 80) return;
+
+    const cells = [...grid.querySelectorAll<HTMLElement>(".pw-cell")];
+    // Each cell's offset from where it sits in the grid to a spot on one of
+    // the logo's six arms, around the grid's centre. Layout coordinates
+    // (offsetLeft/Top), so no transform affects the reading.
+    const place = () => {
+      const cx = grid.clientWidth / 2;
+      const cy = grid.clientHeight / 2;
+      const unit = Math.min(grid.clientWidth, 520) / 9;
+      const perArm = Math.ceil(cells.length / 6);
+      cells.forEach((cell, i) => {
+        const arm = i % 6;
+        const step = Math.floor(i / 6);
+        const angle = ((30 + 60 * arm - 90) * Math.PI) / 180;
+        const r = unit * (1.6 + (step * 2.4) / Math.max(1, perArm - 1));
+        const tx = cx + Math.cos(angle) * r;
+        const ty = cy + Math.sin(angle) * r;
+        cell.style.setProperty("--dx", `${Math.round(tx - (cell.offsetLeft + cell.offsetWidth / 2))}px`);
+        cell.style.setProperty("--dy", `${Math.round(ty - (cell.offsetTop + cell.offsetHeight / 2))}px`);
+      });
+    };
+    place();
+    section.classList.add("pw-armed");
+    // The grid can reflow before the section is reached (rotation, resize).
+    const onResize = () => place();
+    window.addEventListener("resize", onResize, { passive: true });
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        window.removeEventListener("resize", onResize);
+        // First the logo shape appears, then the logos settle into the grid.
+        section.classList.add("pw-shape");
+        window.setTimeout(() => section.classList.add("pw-in"), 650);
+        // Clean up once the settle has finished, so hover transforms are plain.
+        window.setTimeout(() => {
+          section.classList.remove("pw-armed", "pw-shape", "pw-in");
+        }, 650 + 900 + cells.length * 22 + 200);
       },
-      { threshold: 0 },
+      { threshold: 0.35 },
     );
-    observer.observe(section);
+    io.observe(grid);
   }
 
-  document.addEventListener("astro:page-load", initPartnersMarquee);
+  initPartners();
+  document.addEventListener("astro:page-load", initPartners);
 </script>
