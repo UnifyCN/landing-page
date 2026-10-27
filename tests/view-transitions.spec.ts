@@ -13,6 +13,15 @@ async function openNavMenu(page: Page, parent: string) {
 // handler — the regression class behind several past production bugs.
 
 test.describe("island re-binding after View Transition navigation", () => {
+  test("home hero re-binds after About → Home", async ({ page }) => {
+    await page.goto("/about");
+    await page.locator("a.nav-link", { hasText: "Home" }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator("[data-hero]")).toHaveAttribute("data-hero-bound", "true");
+    await page.locator(".feats button[data-f='learn']").click();
+    await expect(page.locator(".scr img.on")).toHaveAttribute("data-f", "learn");
+  });
+
   test("AboutHero carousel works after Home → About", async ({ page }) => {
     await page.goto("/");
     await page.locator("a.nav-link", { hasText: "About" }).click();
