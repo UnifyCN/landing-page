@@ -50,6 +50,7 @@ test.describe("shapeshifting navbar, desktop", () => {
   test("the Get the app panel still opens from the pill and keeps the bar open", async ({ page }) => {
     await page.goto("/");
     await scrollDown(page);
+    await page.waitForTimeout(700); // the fold has finished
     await page.locator("#get-app-trigger").click();
     await expect(page.locator("#get-app")).toHaveClass(/is-open/);
     await page.mouse.move(700, 700);
@@ -122,3 +123,21 @@ for (const [name, device] of [
     });
   });
 }
+
+test.describe("compact pill on a phone does not block the page beside it", () => {
+  const { defaultBrowserType: _engine, ...phone } = devices["iPhone 13"];
+  test.use(phone);
+
+  test("a tap just left of the pill reaches the page, not the bar", async ({ page }) => {
+    await page.goto("/");
+    await scrollDown(page);
+    // let the fold finish (0.5s), so the buttons have slid into the pill
+    await page.waitForTimeout(700);
+    const pill = (await page.locator(".nav-bg--pill").boundingBox())!;
+    const hit = await page.evaluate(
+      ([x, y]) => !!document.elementFromPoint(x, y)?.closest("#nav-wrap"),
+      [pill.x - 20, pill.y + pill.height / 2],
+    );
+    expect(hit).toBe(false);
+  });
+});

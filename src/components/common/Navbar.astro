@@ -438,8 +438,15 @@ function isActive(paths: string) {
   /* Logo, links and right-hand group slide or fade; nothing changes size. */
   .nav-logo,
   .nav-right {
-    pointer-events: auto;
     transition: transform 0.5s var(--ease-drawer);
+  }
+
+  /* Only the visible controls take pointer events. The right-hand group's own
+     box is wider than the pill in the compact state (it still holds the faded
+     phone button), so it must not catch taps beside the pill. */
+  .nav-logo,
+  .nav-right > * {
+    pointer-events: auto;
   }
 
   .nav-links {
