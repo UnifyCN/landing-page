@@ -56,20 +56,27 @@ function isActive(paths: string) {
 }
 ---
 
-<!-- Sticky wrapper — pointer-events-none so it doesn't block page content below the pill -->
-<div class="sticky top-5 z-50 flex justify-center px-4 pointer-events-none">
+<!-- Sticky wrapper. At the top of the page the navbar is a full-width bar; once
+     the page scrolls it folds into a compact pill (logo + app buttons) and opens
+     back up on hover, keyboard focus or a tap. Only transform and opacity animate:
+     the two glass backgrounds cross-fade and the logo and buttons slide by
+     offsets measured on resize (--nav-dx-l / --nav-dx-r), so nothing reflows.
+     pointer-events-none so the empty part of the bar never blocks the page. -->
+<div class="nav-wrap sticky top-0 z-50 pointer-events-none" id="nav-wrap" data-compact="false">
+  <div class="nav-bg nav-bg--full" aria-hidden="true"></div>
+  <div class="nav-bg nav-bg--pill" aria-hidden="true"></div>
   <div
     id="nav-pill"
-    class="nav-pill pointer-events-auto flex items-center gap-6 w-auto pl-5 pr-3 py-2.5"
+    class="nav-pill nav-row flex items-center justify-between gap-6"
   >
     <!-- Logo — plain div, not a link -->
-    <div class="flex-shrink-0">
+    <div class="nav-logo flex-shrink-0">
       <BrandLogo size={40} class="h-10 w-auto" loading="eager" />
     </div>
 
     <!-- Desktop nav links -->
     <nav
-      class="hidden nav-full:flex items-center gap-6"
+      class="nav-links hidden nav-full:flex items-center gap-6"
       aria-label="Main navigation"
     >
       <ul role="list" class="flex items-center gap-7 list-none m-0 p-0">
@@ -145,7 +152,7 @@ function isActive(paths: string) {
     </nav>
 
     <!-- Right side: CTA (desktop) + hamburger (mobile/tablet) -->
-    <div class="flex items-center gap-3 flex-shrink-0">
+    <div class="nav-right flex items-center gap-3 flex-shrink-0">
 <!-- Two buttons. "Get the app" opens a panel with a QR code and both store
            badges on desktop (data-platform "web"); on an iPad it is a plain
            link that BaseLayout points at the App Store, and without JS it goes
@@ -197,6 +204,13 @@ function isActive(paths: string) {
         </a>
       </div>
 
+      <!-- Below the full desktop nav: one app button in the full bar, the one for
+           this device (store on a phone, web app elsewhere). It fades out when
+           the bar folds into the pill. -->
+      <div class="nav-mini-wrap nav-full:hidden" data-cta-placement="navbar">
+        <a href={DOWNLOAD_PATH} class="nav-mini nav-mini--store" data-store-link data-android-href={playStoreUrl("navbar")}>Get the app</a>
+        <a href={webAppUrl("navbar")} class="nav-mini nav-mini--web">Open web app</a>
+      </div>
       <button
         id="nav-toggle"
         type="button"
@@ -342,8 +356,21 @@ function isActive(paths: string) {
 </div>
 
 <style>
-  .nav-pill {
-    position: relative;
+  /* ── Shapeshifting bar ──
+     Two glass layers with the same backdrop blur the old pill used
+     (blur(14px) saturate(160%), see CLAUDE.md before raising it). Only one is
+     visible at a time; the hidden one also gets visibility: hidden after its
+     fade so the browser stops compositing its blur. */
+  .nav-wrap {
+    --nav-h: 72px;
+    --nav-pill-top: 14px;
+    --nav-pill-h: 58px;
+    height: var(--nav-h);
+  }
+
+  .nav-bg {
+    position: absolute;
+    pointer-events: auto;
     background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.72) 0%,
@@ -351,20 +378,14 @@ function isActive(paths: string) {
     );
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    border-radius: var(--radius-pill);
-    box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.2),
-      0 8px 24px -8px rgba(23, 22, 22, 0.14),
-      0 2px 6px -2px rgba(23, 22, 22, 0.08);
     transition:
-      background 0.3s ease,
-      box-shadow 0.3s ease;
+      opacity 0.32s var(--ease-out),
+      transform 0.5s var(--ease-drawer),
+      visibility 0s linear 0s;
   }
 
   /* Subtle top gloss highlight — simulates liquid refraction */
-  .nav-pill::before {
+  .nav-bg::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -378,17 +399,167 @@ function isActive(paths: string) {
     mix-blend-mode: overlay;
   }
 
-  .nav-pill.is-scrolled {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.85) 0%,
-      rgba(255, 255, 255, 0.65) 100%
-    );
+  .nav-bg--full {
+    inset: 0;
+    border-bottom: 1px solid rgba(23, 22, 22, 0.07);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  }
+
+  .nav-bg--pill {
+    left: 50%;
+    top: var(--nav-pill-top);
+    width: var(--nav-pill-w, 320px);
+    height: var(--nav-pill-h);
+    margin-left: calc(var(--nav-pill-w, 320px) / -2);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: var(--radius-pill);
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
-      inset 0 -1px 0 0 rgba(255, 255, 255, 0.25),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.2),
       0 14px 32px -10px rgba(23, 22, 22, 0.22),
       0 3px 10px -2px rgba(23, 22, 22, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.96);
+    transition:
+      opacity 0.32s var(--ease-out),
+      transform 0.5s var(--ease-drawer),
+      visibility 0s linear 0.32s;
+  }
+
+  .nav-row {
+    position: relative;
+    height: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  /* Logo, links and right-hand group slide or fade; nothing changes size. */
+  .nav-logo,
+  .nav-right {
+    transition: transform 0.5s var(--ease-drawer);
+  }
+
+  /* Only the visible controls take pointer events. The right-hand group's own
+     box is wider than the pill in the compact state (it still holds the faded
+     phone button), so it must not catch taps beside the pill. */
+  .nav-logo,
+  .nav-right > * {
+    pointer-events: auto;
+  }
+
+  .nav-links {
+    pointer-events: auto;
+    transition:
+      opacity 0.24s var(--ease-out),
+      transform 0.4s var(--ease-drawer);
+  }
+
+  .nav-mini-wrap {
+    transition: opacity 0.24s var(--ease-out);
+  }
+
+  /* Compact: the pill */
+  .nav-wrap[data-compact="true"] .nav-bg--full {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.32s var(--ease-out),
+      visibility 0s linear 0.32s;
+  }
+
+  .nav-wrap[data-compact="true"] .nav-bg--pill {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.32s var(--ease-out),
+      transform 0.5s var(--ease-drawer),
+      visibility 0s linear 0s;
+  }
+
+  .nav-wrap[data-compact="true"] .nav-logo {
+    transform: translate3d(var(--nav-dx-l, 0px), var(--nav-dy, 0px), 0);
+  }
+
+  .nav-wrap[data-compact="true"] .nav-right {
+    transform: translate3d(var(--nav-dx-r, 0px), var(--nav-dy, 0px), 0);
+  }
+
+  .nav-wrap[data-compact="true"] .nav-links {
+    opacity: 0;
+    transform: translate3d(0, var(--nav-dy, 0px), 0) scale(0.97);
+    pointer-events: none;
+  }
+
+  .nav-wrap[data-compact="true"] .nav-mini-wrap {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* The device's own app button (BaseLayout sets html[data-platform]). */
+  @media (max-width: 1023px) {
+    .nav-mini-wrap {
+      display: flex;
+    }
+  }
+
+  .nav-mini {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 0.85rem;
+    border-radius: var(--radius-btn);
+    background: var(--color-ink);
+    color: #ffffff;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .nav-mini:hover {
+    background: #b83c1e;
+  }
+
+  .nav-mini:focus-visible {
+    outline: 2px solid #b83c1e;
+    outline-offset: 2px;
+  }
+
+  .nav-mini--store,
+  :global(html[data-platform="ios"]) .nav-mini--web,
+  :global(html[data-platform="android"]) .nav-mini--web {
+    display: none;
+  }
+
+  :global(html[data-platform="ios"]) .nav-mini--store,
+  :global(html[data-platform="android"]) .nav-mini--store {
+    display: inline-flex;
+  }
+
+  @media (min-width: 1024px) {
+    .nav-row {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-bg,
+    .nav-bg--pill,
+    .nav-logo,
+    .nav-right,
+    .nav-links,
+    .nav-mini-wrap,
+    .nav-wrap[data-compact="true"] .nav-bg--full,
+    .nav-wrap[data-compact="true"] .nav-bg--pill {
+      transition: none;
+    }
   }
 
   /* Desktop nav link — red underline grows from center on hover */
@@ -980,10 +1151,136 @@ function isActive(paths: string) {
 </style>
 
 <script>
+  // ── Shapeshifting bar ──
+  // Full at the top of the page, a compact pill once scrolled, and full again
+  // while the pointer is over it, keyboard focus is inside it, a menu or the
+  // Get the app panel is open, or after a tap (until the next scroll).
+  const COMPACT_AFTER = 24; // px of scroll before the bar folds
+  let scrolledPast = false;
+  let hovering = false;
+  let focused = false;
+  let tapped = false;
+  let tapScrollY = 0;
+  let frame = 0;
+
+  function navWrap() {
+    return document.getElementById("nav-wrap");
+  }
+
+  function applyState() {
+    const wrap = navWrap();
+    if (!wrap) return;
+    const anyOpen = !!document.querySelector("#nav-pill .has-menu.is-open, #get-app.is-open");
+    const compact = scrolledPast && !hovering && !focused && !tapped && !anyOpen;
+    if (wrap.dataset.compact !== String(compact)) wrap.dataset.compact = String(compact);
+  }
+
+  // Offsets for the compact pill. Read in layout coordinates (offsetLeft /
+  // offsetWidth ignore transforms), so measuring is the same in both states.
+  function measure() {
+    const wrap = navWrap();
+    const row = document.getElementById("nav-pill");
+    const logo = row?.querySelector<HTMLElement>(".nav-logo");
+    const right = row?.querySelector<HTMLElement>(".nav-right");
+    if (!wrap || !row || !logo || !right) return;
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+    const toggle = document.getElementById("nav-toggle");
+    const ctas = right.querySelector<HTMLElement>(".app-ctas");
+    // What stays in the pill on the right: both app buttons on desktop, the
+    // menu button below that.
+    const keep = desktop ? ctas : toggle;
+    if (!keep) return;
+    const padL = 18;
+    const padR = desktop ? 8 : 12;
+    const gap = desktop ? 24 : 20;
+    const pillW = padL + logo.offsetWidth + gap + keep.offsetWidth + padR;
+    const rowW = row.clientWidth;
+    const pillLeft = (rowW - pillW) / 2;
+    const rightEdge = right.offsetLeft + right.offsetWidth;
+    wrap.style.setProperty("--nav-pill-w", `${Math.round(pillW)}px`);
+    wrap.style.setProperty("--nav-dx-l", `${Math.round(pillLeft + padL - logo.offsetLeft)}px`);
+    wrap.style.setProperty("--nav-dx-r", `${Math.round(pillLeft + pillW - padR - rightEdge)}px`);
+    const styles = getComputedStyle(wrap);
+    const navH = parseFloat(styles.getPropertyValue("--nav-h")) || 72;
+    const pillTop = parseFloat(styles.getPropertyValue("--nav-pill-top")) || 14;
+    const pillH = parseFloat(styles.getPropertyValue("--nav-pill-h")) || 58;
+    wrap.style.setProperty("--nav-dy", `${Math.round(pillTop + pillH / 2 - navH / 2)}px`);
+  }
+
+  // One read of scrollY per frame at most, whatever the scroll event rate.
   function updateScrollState() {
-    const pill = document.getElementById("nav-pill");
-    if (!pill) return;
-    pill.classList.toggle("is-scrolled", window.scrollY > 10);
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const y = window.scrollY;
+      const past = y > COMPACT_AFTER;
+      if (tapped && Math.abs(y - tapScrollY) > 48) tapped = false;
+      if (past !== scrolledPast || !past) scrolledPast = past;
+      applyState();
+    });
+  }
+
+  function bindShapeshift() {
+    const wrap = navWrap();
+    if (!wrap) return;
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    let leaveTimer = 0;
+    // pointerover/pointerout bubble from the visible parts (the wrapper itself
+    // has pointer-events: none, so it gets no enter/leave of its own).
+    wrap.addEventListener("pointerover", (e) => {
+      if (e.pointerType !== "mouse" || !fine.matches) return;
+      window.clearTimeout(leaveTimer);
+      if (!hovering) {
+        hovering = true;
+        applyState();
+      }
+    });
+    wrap.addEventListener("pointerout", (e) => {
+      if (e.pointerType !== "mouse" || wrap.contains(e.relatedTarget as Node | null)) return;
+      window.clearTimeout(leaveTimer);
+      leaveTimer = window.setTimeout(() => {
+        hovering = false;
+        applyState();
+      }, 180);
+    });
+    wrap.addEventListener("focusin", () => {
+      focused = true;
+      applyState();
+    });
+    wrap.addEventListener("focusout", (e) => {
+      if (wrap.contains(e.relatedTarget as Node | null)) return;
+      focused = false;
+      applyState();
+    });
+    // Touch: a tap on the pill (not on a link or button) opens the full bar
+    // until the page scrolls on or the user taps elsewhere.
+    wrap.addEventListener("click", (e) => {
+      if (wrap.dataset.compact !== "true") return;
+      if ((e.target as Element).closest("a, button")) return;
+      tapped = true;
+      tapScrollY = window.scrollY;
+      applyState();
+    });
+    document.addEventListener("click", (e) => {
+      if (!tapped || wrap.contains(e.target as Node)) return;
+      tapped = false;
+      applyState();
+    });
+    // Menus and the Get the app panel keep the bar full while open.
+    new MutationObserver(applyState).observe(wrap, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    // Re-measure when anything in the bar changes size (fonts, resize, breakpoint).
+    let measureFrame = 0;
+    const remeasure = () => {
+      if (measureFrame) return;
+      measureFrame = requestAnimationFrame(() => {
+        measureFrame = 0;
+        measure();
+      });
+    };
+    const ro = new ResizeObserver(remeasure);
+    ro.observe(wrap);
+    wrap.querySelectorAll(".nav-logo, .nav-right, .app-ctas").forEach((el) => ro.observe(el));
+    measure();
   }
 
   // The navbar persists across View Transitions, so the server-rendered active
@@ -1120,6 +1417,7 @@ function isActive(paths: string) {
     document.getElementById("nav-close")?.addEventListener("click", closeMenu);
 
     window.addEventListener("scroll", updateScrollState, { passive: true });
+    bindShapeshift();
 
     bindDropdowns();
     bindGetApp();
