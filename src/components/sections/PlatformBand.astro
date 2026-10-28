@@ -366,7 +366,9 @@ import StoreBadges from "../common/StoreBadges.astro";
     // Phone outline (0 to 18%), marker travels (15% to 60%), browser outline
     // (62% to 92%), then a short rest.
     const frame = (t: number) => {
-      if (!onScreen) {
+      // Stops off screen, and for good once the section leaves the DOM (a
+      // View Transition to another page).
+      if (!onScreen || !stage.isConnected) {
         raf = 0;
         return;
       }
