@@ -13,6 +13,8 @@ test.describe("about problem stats", () => {
       await expect(rows.nth(i).locator(".ap-card-source")).toContainText("Source:");
     }
     await expect(rows.nth(2).locator(".ap-stat")).toHaveCount(0);
+    // No figure for "No clear roadmap": a broken dotted route stands in for it.
+    await expect(rows.nth(2).locator(".ap-noroute")).toBeVisible();
   });
 
   test("no horizontal scroll from 320 to 1920", async ({ page }) => {
