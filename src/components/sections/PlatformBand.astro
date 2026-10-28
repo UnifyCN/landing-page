@@ -1,94 +1,82 @@
 ---
+// "One platform, every device": the web app and the phone app side by side,
+// both showing the same Learn lessons (real screenshots). When the section
+// scrolls into view the Housing lessons are outlined on the phone, a marker
+// travels to the browser, and the same Housing card lights up there. It plays
+// on a loop while the section is on screen, pauses off screen, and with
+// reduced motion shows the end state (both outlined) without moving.
 import WebAppBadge from "../common/WebAppBadge.astro";
 import StoreBadges from "../common/StoreBadges.astro";
 ---
 
-<section class="platform">
+<section class="platform" aria-labelledby="platform-heading">
   <div class="platform-inner">
-    <div class="platform-grid">
-      <div class="platform-text">
-        <span class="platform-eyebrow">Web + Mobile</span>
-        <h2 class="platform-heading">One platform. Every device.</h2>
-        <p class="platform-desc">
-          Start on the web, pick up on your phone - your checklist, lessons,
-          and community circle stay perfectly in sync, wherever you are.
-        </p>
-        <div class="platform-cta-row">
-          <WebAppBadge placement="platform_band" />
-          <StoreBadges lazy placement="platform_band" />
-        </div>
-        <p class="platform-proof">
-          <span class="platform-proof-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-              <path d="M21 3v5h-5" />
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-              <path d="M3 21v-5h5" />
-            </svg>
-          </span>
-          <span class="platform-proof-text">Sign in once - <strong>one free account</strong> works across web and mobile.</span>
-        </p>
-        <a class="platform-new" href="/whats-new">
-          See what's new in Unify
-          <span aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
+    <div class="platform-head">
+      <h2 class="platform-heading" id="platform-heading">One platform, every device.</h2>
+      <p class="platform-desc">
+        One free account on iPhone, Android, and the web. Your checklist, lessons, and circle stay in sync.
+      </p>
+    </div>
 
-      <div class="platform-visual">
-        <div class="platform-browser">
-          <div class="browser-bar" aria-hidden="true">
-            <span class="browser-dot" style="background:#ff5f57"></span>
-            <span class="browser-dot" style="background:#febc2e"></span>
-            <span class="browser-dot" style="background:#28c840"></span>
-            <span class="browser-url">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm3 8H9V6a3 3 0 016 0v3z" />
-              </svg>
-              app.unifysocial.ca
-            </span>
-          </div>
-          <div class="browser-shot-wrap">
-            <picture class="contents">
-              <source srcset="/assets/screenshots/web/learn-dashboard.avif" type="image/avif" />
+    <div class="platform-stage" data-sync>
+      <figure class="platform-phone">
+        <span class="shot">
+          <picture class="contents">
+            <source type="image/avif" srcset="/assets/screenshots/hero/learn-360.avif 360w, /assets/screenshots/hero/learn-720.avif 720w" sizes="(min-width: 810px) 218px, 150px" />
+            <img
+              src="/assets/screenshots/hero/learn-360.webp"
+              srcset="/assets/screenshots/hero/learn-360.webp 360w, /assets/screenshots/hero/learn-720.webp 720w"
+              sizes="(min-width: 810px) 218px, 150px"
+              alt="Learn in the Unify iPhone app, with the Housing lessons"
+              width="360"
+              height="768"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <span class="ping ping-phone" aria-hidden="true"></span>
+        </span>
+      </figure>
+
+      <svg class="sync-path" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+        <path class="sync-line" d="M0 40 C 60 40, 80 12, 200 16" />
+        <circle class="sync-dot" r="7" cx="0" cy="40" />
+      </svg>
+
+      <figure class="platform-browser">
+        <div class="browser-bar" aria-hidden="true">
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-url">app.unifysocial.ca</span>
+        </div>
+        <span class="shot browser-shot-wrap">
+          <picture class="contents">
+            <source srcset="/assets/screenshots/web/learn-dashboard.avif" type="image/avif" />
             <img
               src="/assets/screenshots/web/learn-dashboard.webp"
-              alt="Unify web app - Learn dashboard at app.unifysocial.ca"
+              alt="Learn in the Unify web app at app.unifysocial.ca, with the same Housing lessons"
               class="browser-shot"
               width="1033"
               height="1128"
               loading="lazy"
               decoding="async"
             />
-            </picture>
-          </div>
-        </div>
-
-        <div class="platform-phone-wrap">
-          <picture class="contents">
-            <source type="image/avif" srcset="/assets/screenshots/learn-hero-380.avif 380w, /assets/screenshots/learn-hero-760.avif 760w" sizes="188px" />
-          <img
-            src="/assets/screenshots/learn-hero-760.webp"
-            srcset="/assets/screenshots/learn-hero-380.webp 380w, /assets/screenshots/learn-hero-760.webp 760w"
-            sizes="188px"
-            width="1030"
-            height="2048"
-            alt="Unify mobile app - the same Learn screen, synced from the web"
-            class="platform-phone"
-            loading="lazy"
-            decoding="async"
-          />
           </picture>
-          <span class="sync-badge" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-              <path d="M21 3v5h-5" />
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-              <path d="M3 21v-5h5" />
-            </svg>
-          </span>
-        </div>
-      </div>
+          <span class="ping ping-web" aria-hidden="true"></span>
+        </span>
+      </figure>
     </div>
+    <p class="platform-note">The same Housing lessons on your phone and in your browser.</p>
+
+    <div class="platform-cta-row">
+      <WebAppBadge placement="platform_band" />
+      <StoreBadges lazy placement="platform_band" />
+    </div>
+    <a class="platform-new" href="/whats-new">
+      See what's new in Unify
+      <span aria-hidden="true">&rarr;</span>
+    </a>
   </div>
 </section>
 
@@ -98,317 +86,257 @@ import StoreBadges from "../common/StoreBadges.astro";
     padding: 3.5rem 0;
   }
 
-  /* Container matches the rest of the site (Journey/Partners use
-     max-w-layout = 1600px with px-6 / desktop:px-16) so the band's edges
-     line up with the Core Features content below it. */
   .platform-inner {
     max-width: var(--spacing-layout);
     margin: 0 auto;
     padding: 0 1.5rem;
+    text-align: center;
   }
 
-  .platform-grid {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    align-items: center;
-    padding-top: clamp(2rem, 5vw, 3.25rem);
-    border-top: 1px solid rgba(23, 22, 22, 0.1);
-    overflow: visible;
-  }
-
-  /* Scroll-reveal - hidden state gated behind the JS-set data attribute so the
-     static / no-JS render shows the full content. */
-  .platform[data-platform-bound="true"] .platform-grid {
-    opacity: 0;
-    transform: translateY(28px);
-    transition:
-      opacity 0.8s var(--ease-out),
-      transform 0.8s var(--ease-out);
-  }
-  .platform[data-platform-bound="true"].visible .platform-grid {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .platform-eyebrow {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(0.9375rem, 1.2vw, 1.125rem);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--color-brand);
+  .platform-head {
+    max-width: 46rem;
+    margin: 0 auto 2.25rem;
   }
 
   .platform-heading {
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2rem, 4.6vw, 3rem);
-    line-height: 1.02;
-    letter-spacing: var(--tracking-tight);
-    color: var(--color-ink);
-    margin: 0.6rem 0 0;
+    font-size: clamp(2rem, 4.4vw, 3.5rem);
+    line-height: 1.04;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-text);
     text-wrap: balance;
   }
 
   .platform-desc {
+    margin: 1rem auto 0;
+    max-width: 40ch;
     font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1.0625rem;
-    line-height: 1.55;
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
+    line-height: 1.6;
     color: var(--color-muted);
-    margin: 1rem 0 0;
-    max-width: 36rem;
+    text-wrap: pretty;
   }
 
-  .platform-cta-row {
-    display: flex;
-    flex-wrap: wrap;
+  /* ── Stage: phone, path, browser ── */
+  .platform-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.3fr) minmax(0, 1.28fr);
     align-items: center;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
+    max-width: 980px;
+    margin: 0 auto;
   }
 
-  /* Sync proof line */
-  .platform-proof {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.55rem;
-    margin: 1.75rem 0 0;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.0625rem;
-    line-height: 1.4;
-    color: var(--color-text);
+  .platform-phone {
+    justify-self: end;
+    width: 100%;
+    max-width: 232px;
+    margin: 0;
+    padding: 6px;
+    border-radius: 26px;
+    background: var(--color-ink);
+    box-shadow: 0 26px 50px -26px rgba(23, 22, 22, 0.45);
   }
-  /* Quiet link to the changelog under the proof line */
-  .platform-new {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 2.75rem;
-    margin-top: 0.5rem;
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--color-brand-red);
-    text-decoration: none;
+
+  .platform-phone img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
   }
-  .platform-new span {
-    transition: transform 0.2s var(--ease-out);
-  }
-  .platform-new:focus-visible {
-    outline: 2px solid var(--color-brand-red);
-    outline-offset: 3px;
-    border-radius: 4px;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .platform-new:hover {
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
-    }
-    .platform-new:hover span {
-      transform: translateX(3px);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .platform-new span {
-      transition: none;
-    }
-  }
-  .platform-proof-text strong {
-    font-weight: 700;
-    color: var(--color-ink);
-  }
-  .platform-proof-icon {
-    display: inline-flex;
-    flex-shrink: 0;
-    margin-top: 2px;
-    color: var(--color-brand);
-  }
-  .platform-proof-icon svg {
-    width: 20px;
-    height: 20px;
+
+  .shot {
+    position: relative;
     display: block;
   }
 
-  /* ── Device cluster ── */
-  .platform-visual {
-    position: relative;
-    width: 100%;
-  }
-
   .platform-browser {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    background-color: #ffffff;
-    border: 1px solid rgba(23, 22, 22, 0.08);
-    border-radius: 14px;
+    margin: 0;
     overflow: hidden;
+    border-radius: 12px;
+    background: #ffffff;
     box-shadow:
-      0 1px 1px rgba(23, 22, 22, 0.04),
-      0 28px 56px -22px rgba(23, 22, 22, 0.4);
+      0 30px 60px -34px rgba(23, 22, 22, 0.45),
+      0 0 0 1px rgba(23, 22, 22, 0.08);
   }
 
   .browser-bar {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    height: 38px;
-    padding: 0 0.85rem;
-    background-color: #f1f1f1;
-    border-bottom: 1px solid #e4e4e4;
+    gap: 5px;
+    height: 26px;
+    padding: 0 10px;
+    background: #f3ede4;
   }
 
   .browser-dot {
-    width: 11px;
-    height: 11px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
+    background: #d9d1c5;
   }
 
   .browser-url {
-    flex: 1;
-    margin-left: 0.5rem;
-    max-width: 280px;
-    height: 23px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    background-color: #ffffff;
-    border: 1px solid #e4e4e4;
-    border-radius: 7px;
-    font-family: var(--font-display);
-    font-size: 0.75rem;
+    margin-left: 8px;
+    height: 16px;
+    padding: 0 8px;
+    border-radius: 5px;
+    background: #ffffff;
+    font: 500 0.66rem/16px var(--font-ui);
     color: var(--color-muted);
-    white-space: nowrap;
-  }
-  .browser-url svg {
-    width: 10px;
-    height: 10px;
-    opacity: 0.5;
   }
 
+  /* Show the top 3/4 of the dashboard (the Continue Learning cards). */
   .browser-shot-wrap {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
   }
-  .browser-shot {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    display: block;
-  }
 
-  /* Phone + sync badge share a positioning wrapper so the badge always
-     sits at the phone's top-left corner - the junction with the browser. */
-  .platform-phone-wrap {
-    position: absolute;
-    right: 0;
-    bottom: -2rem;
-    width: 32%;
-    max-width: 150px;
-    z-index: 2;
-  }
-  .platform-phone {
+  .browser-shot {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
-    filter: drop-shadow(0 18px 28px rgba(23, 22, 22, 0.28));
   }
 
-  .sync-badge {
+  .sync-path {
+    width: 100%;
+    height: 60px;
+    overflow: visible;
+  }
+
+  .sync-line {
+    fill: none;
+    stroke: rgba(23, 22, 22, 0.25);
+    stroke-width: 2;
+    stroke-dasharray: 4 6;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sync-dot {
+    fill: #e2532a;
+    opacity: 0;
+  }
+
+  /* Outlines over the Housing card on each screen, in % of the screenshot. */
+  .ping {
     position: absolute;
-    top: 8%;
-    left: -18px;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    border: 1px solid rgba(23, 22, 22, 0.08);
-    box-shadow: 0 6px 16px -4px rgba(23, 22, 22, 0.25);
-    display: grid;
-    place-items: center;
-    color: var(--color-brand);
-  }
-  .sync-badge svg {
-    width: 19px;
-    height: 19px;
-    display: block;
-  }
-  .sync-badge::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid var(--color-brand);
-    animation: sync-pulse 2.6s var(--ease-out) infinite;
+    border: 3px solid #e2532a;
+    border-radius: 12px;
+    opacity: 0;
+    transform: scale(0.94);
+    transition:
+      opacity 0.35s ease,
+      transform 0.5s var(--ease-out);
+    pointer-events: none;
   }
 
-  @keyframes sync-pulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.5;
+  .ping-phone {
+    left: 2%;
+    width: 47%;
+    top: 57.5%;
+    height: 14.5%;
+  }
+
+  .ping-web {
+    left: 33.6%;
+    width: 33.4%;
+    top: 29.4%;
+    height: 35.4%;
+  }
+
+  .platform-stage.p-on .ping-phone,
+  .platform-stage.w-on .ping-web {
+    opacity: 1;
+    transform: none;
+  }
+
+  .platform-note {
+    margin: 1.25rem auto 0;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .platform-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .platform-new {
+    display: inline-flex;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.5rem 0;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #b5391c;
+    text-decoration: none;
+  }
+
+  .platform-new span {
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .platform-new:hover span {
+    transform: translateX(4px);
+  }
+
+  .platform-new:focus-visible {
+    outline: 2px solid #b83c1e;
+    outline-offset: 3px;
+  }
+
+  /* Scroll reveal (progressive: only with JS, see the script) */
+  .platform.animate .platform-stage {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s var(--ease-out),
+      transform 0.7s var(--ease-out);
+  }
+
+  .platform.animate.visible .platform-stage {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 700px) {
+    .platform-stage {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 0.5rem;
     }
-    70%,
-    100% {
-      transform: scale(1.7);
-      opacity: 0;
+
+    .platform-phone {
+      justify-self: center;
+      max-width: 162px;
+    }
+
+    .sync-path {
+      width: 60px;
+      transform: rotate(90deg);
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .platform[data-platform-bound="true"] .platform-grid {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-    .sync-badge::after {
-      animation: none;
-    }
-  }
-
-  /* ── Tablet+ ── */
   @media (min-width: 810px) {
     .platform {
       padding: 4.5rem 0;
     }
-    .platform-grid {
-      grid-template-columns: 1.05fr 1fr;
-      gap: 3rem;
-    }
-    .platform-phone-wrap {
-      bottom: -2.5rem;
-      width: 30%;
-      max-width: 172px;
+
+    .platform-inner {
+      padding: 0 3rem;
     }
   }
 
-  /* ── Desktop ── (≥1400px: match Journey's px-16 gutter) */
-  @media (min-width: 1400px) {
-    .platform-inner {
-      padding: 0 4rem;
-    }
-    .platform-grid {
-      grid-template-columns: 1.2fr 1fr;
-      gap: 4.5rem;
-    }
-    .platform-phone-wrap {
-      max-width: 188px;
-      bottom: -3rem;
-    }
-    .sync-badge {
-      width: 44px;
-      height: 44px;
-      left: -22px;
-    }
-    .sync-badge svg {
-      width: 22px;
-      height: 22px;
+  @media (prefers-reduced-motion: reduce) {
+    .ping {
+      transition: none;
     }
   }
 </style>
@@ -418,26 +346,60 @@ import StoreBadges from "../common/StoreBadges.astro";
     const section = document.querySelector<HTMLElement>("section.platform");
     if (!section || section.dataset.platformBound === "true") return;
     section.dataset.platformBound = "true";
+    const stage = section.querySelector<HTMLElement>("[data-sync]")!;
+    const line = stage.querySelector<SVGPathElement>(".sync-line")!;
+    const dot = stage.querySelector<SVGCircleElement>(".sync-dot")!;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      section.classList.add("visible");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // End state, no motion: the same card outlined on both screens.
+      stage.classList.add("p-on", "w-on");
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            section.classList.add("visible");
-            obs.unobserve(entry.target);
+    section.classList.add("animate");
+    const len = line.getTotalLength();
+    const CYCLE = 3200;
+    let onScreen = false;
+    let raf = 0;
+    let start = 0;
+
+    // Phone outline (0 to 18%), marker travels (15% to 60%), browser outline
+    // (62% to 92%), then a short rest.
+    const frame = (t: number) => {
+      // Stops off screen, and for good once the section leaves the DOM (a
+      // View Transition to another page).
+      if (!onScreen || !stage.isConnected) {
+        raf = 0;
+        return;
+      }
+      if (!start) start = t;
+      const k = ((t - start) % CYCLE) / CYCLE;
+      stage.classList.toggle("p-on", k < 0.18);
+      stage.classList.toggle("w-on", k > 0.62 && k < 0.92);
+      const m = Math.min(1, Math.max(0, (k - 0.15) / 0.45));
+      const eased = m < 0.5 ? 2 * m * m : 1 - Math.pow(-2 * m + 2, 2) / 2;
+      const pt = line.getPointAtLength(eased * len);
+      dot.setAttribute("cx", String(pt.x));
+      dot.setAttribute("cy", String(pt.y));
+      dot.style.opacity = k > 0.12 && k < 0.64 ? "1" : "0";
+      raf = requestAnimationFrame(frame);
+    };
+
+    new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        if (onScreen) {
+          section.classList.add("visible");
+          if (!raf) {
+            start = 0;
+            raf = requestAnimationFrame(frame);
           }
-        });
+        }
       },
-      { threshold: 0.15 },
-    );
-    observer.observe(section);
+      { threshold: 0.25 },
+    ).observe(stage);
   }
 
+  initPlatformBand();
   document.addEventListener("astro:page-load", initPlatformBand);
 </script>
