@@ -114,11 +114,9 @@ const cardBaseDelay = lastLetterDelay;
             {card.stat ? (
               <span class="ap-stat">{card.stat}</span>
             ) : (
-              <svg class="ap-noroute" viewBox="0 0 220 96" aria-hidden="true">
-                <path class="ap-noroute-a" d="M8 74 C 34 74, 44 30, 82 34" />
-                <path class="ap-noroute-b" d="M132 58 C 160 70, 176 22, 212 26" />
-                <circle cx="8" cy="74" r="7" />
-                <circle cx="212" cy="26" r="7" />
+              <svg class="ap-noroute" viewBox="0 0 200 80" aria-hidden="true">
+                <path d="M6 60 C 40 10, 70 70, 100 40" />
+                <path d="M128 30 C 150 12, 170 50, 194 20" />
               </svg>
             )}
           </div>
@@ -220,21 +218,17 @@ const cardBaseDelay = lastLetterDelay;
      drawn at the height of the figures above it. */
   .ap-noroute {
     display: block;
-    width: clamp(9rem, 20vw, 15rem);
+    width: min(100%, 180px);
     height: auto;
     overflow: visible;
   }
 
   .ap-noroute path {
     fill: none;
-    stroke: var(--color-text);
-    stroke-width: 12;
+    stroke: #e2532a;
+    stroke-width: 5;
     stroke-linecap: round;
-    stroke-dasharray: 0.5 22;
-  }
-
-  .ap-noroute circle {
-    fill: var(--color-text);
+    stroke-dasharray: 2 12;
   }
 
   .ap-card-title {
