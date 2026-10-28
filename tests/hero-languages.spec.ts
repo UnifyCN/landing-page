@@ -49,6 +49,28 @@ test.describe("home hero", () => {
     await expect(page.locator(".scr img.on")).toHaveAttribute("data-f", "learn");
   });
 
+  test("moving the pointer out does not undo a keyboard pause", async ({ page }) => {
+    await page.goto("/");
+    await page.locator(".hero-visual .phone").hover();
+    await page.locator(".feats button[data-f='learn']").focus();
+    await page.mouse.move(5, 890);
+    const paused = await pressedFeature(page);
+    await page.waitForTimeout(3600);
+    expect(await pressedFeature(page)).toBe(paused);
+  });
+
+  test("turning reduced motion on stops the cycling", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("[data-hero]")).toHaveAttribute("data-hero-bound", "true");
+    await page.mouse.move(5, 890);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const feature = await pressedFeature(page);
+    const word = await shownWord(page);
+    await page.waitForTimeout(3600);
+    expect(await pressedFeature(page)).toBe(feature);
+    expect(await shownWord(page)).toBe(word);
+  });
+
   test("a language chip shows the welcome in that language and stops the cycle", async ({ page }) => {
     await page.goto("/");
     await page.locator(".hero-langs button[lang='pa']").click();

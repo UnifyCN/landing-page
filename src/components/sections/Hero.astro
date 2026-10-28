@@ -129,7 +129,9 @@ const features = [
     const hero = document.querySelector<HTMLElement>("[data-hero]");
     if (!hero || hero.dataset.heroBound === "true") return;
     hero.dataset.heroBound = "true";
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Read again on every tick, so turning reduced motion on stops the cycling.
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduce = motion.matches;
 
     const words = [...hero.querySelectorAll<HTMLElement>(".hero-words > span")];
     const langBtns = [...hero.querySelectorAll<HTMLButtonElement>(".hero-langs button")];
@@ -148,7 +150,7 @@ const features = [
     if (!reduce) {
       const wordTimer = setInterval(() => {
         if (!hero.isConnected) return clearInterval(wordTimer);
-        if (!pinned && !document.hidden) showWord((wi + 1) % words.length);
+        if (!pinned && !document.hidden && !motion.matches) showWord((wi + 1) % words.length);
       }, 2600);
     }
 
@@ -158,7 +160,7 @@ const features = [
     const shows = [...orbit.querySelectorAll<HTMLElement>(".scr [data-f]")];
     const chips = [...hero.querySelectorAll<HTMLButtonElement>(".feats button")];
     const order = chips.map((c) => c.dataset.f!);
-    let fi = 0, lockedF: string | null = null, paused = false;
+    let fi = 0, lockedF: string | null = null, pointerIn = false, focusIn = false;
     const setF = (f: string) => {
       fi = order.indexOf(f);
       pets.forEach((p) => p.classList.toggle("on", p.dataset.f === f));
@@ -176,15 +178,16 @@ const features = [
       p.addEventListener("click", () => { lockedF = p.dataset.f!; setF(lockedF); });
     });
     chips.forEach((c) => c.addEventListener("click", () => { lockedF = lockedF === c.dataset.f ? null : c.dataset.f!; setF(c.dataset.f!); }));
-    visual.addEventListener("pointerenter", () => { paused = true; });
-    visual.addEventListener("pointerleave", () => { paused = false; });
-    visual.addEventListener("focusin", () => { paused = true; });
-    visual.addEventListener("focusout", () => { paused = false; });
+    // Hover and focus pause separately, so leaving one does not undo the other.
+    visual.addEventListener("pointerenter", () => { pointerIn = true; });
+    visual.addEventListener("pointerleave", () => { pointerIn = false; });
+    visual.addEventListener("focusin", () => { focusIn = true; });
+    visual.addEventListener("focusout", () => { focusIn = false; });
     if (reduce) { orbit.classList.add("still"); return; }
     setTimeout(() => orbit.querySelector(".hero-ring")?.classList.add("ready"), 1600);
     const featureTimer = setInterval(() => {
       if (!hero.isConnected) return clearInterval(featureTimer);
-      if (!paused && !lockedF && !document.hidden) setF(order[(fi + 1) % order.length]);
+      if (!pointerIn && !focusIn && !lockedF && !document.hidden && !motion.matches) setF(order[(fi + 1) % order.length]);
     }, 3200);
   }
   initHero();
