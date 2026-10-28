@@ -105,6 +105,7 @@ test.describe("home hero timers", () => {
       }) as typeof window.clearInterval;
     });
     await page.goto("/");
+    await expect(page.locator("[data-hero]")).toHaveAttribute("data-hero-bound", "true");
     for (let i = 0; i < 3; i++) {
       await page.locator("a.nav-link", { hasText: "Events" }).click();
       await expect(page).toHaveURL(/\/events$/);
