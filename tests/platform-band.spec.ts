@@ -33,8 +33,16 @@ test.describe("WEB + MOBILE platform band", () => {
     await page.goto("/");
     const stage = page.locator("section.platform [data-sync]");
     await stage.scrollIntoViewIfNeeded();
-    await expect(stage).toHaveClass(/p-on/);
-    await expect(stage).toHaveClass(/w-on/, { timeout: 4000 });
+    // The classes are short-lived (about 0.6s and 1s of a 3.2s cycle), so check
+    // on every frame, and allow more than one full cycle.
+    const lightsUp = (cls: string) =>
+      page.waitForFunction(
+        (c) => document.querySelector("section.platform [data-sync]")?.classList.contains(c),
+        cls,
+        { polling: "raf", timeout: 8000 },
+      );
+    await lightsUp("p-on");
+    await lightsUp("w-on");
   });
 
   test("with reduced motion it shows both outlines and does not move", async ({ page }) => {
