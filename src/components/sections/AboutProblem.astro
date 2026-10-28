@@ -1,125 +1,51 @@
 ---
+// About page, "The Problem": the stats layout from about version A. Each
+// problem leads with the figure it cites, set large beside its text and
+// source; "No clear roadmap" has no figure, so it gets a broken dotted route.
 const cards = [
   {
-    icon: "/assets/images/about/book.png",
-    title: "Scattered information",
     stat: "62%",
-    body: "62% of newly arrived newcomers report struggling to find the settlement resources they need. With government sites, Reddit threads, and WhatsApp chats all giving different answers, it's hard to know what's current or relevant — whether you're looking for help with housing, banking, jobs, or your SIN number.",
+    title: "Scattered information",
+    body: "62% of newly arrived newcomers report struggling to find the settlement resources they need. With government sites, Reddit threads, and WhatsApp chats all giving different answers, it's hard to know what's current or relevant, whether you're looking for help with housing, banking, jobs, or your SIN number.",
     source: "Statistics Canada, General Social Survey on Social Identity, 2020",
   },
   {
-    icon: "/assets/images/about/human.png",
-    title: "Doing it alone",
     stat: "70%",
-    body: "Starting over in a new country is hard enough — but doing it without a supportive newcomer community to lean on makes it even more overwhelming. 70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers.",
+    title: "Doing it alone",
+    body: "Starting over in a new country is hard enough. Doing it without a supportive newcomer community to lean on makes it even more overwhelming. 70% of newcomers and international students in Canada struggle to adapt because of cultural differences and language barriers.",
     source: "Canadian Index for Measuring Integration",
   },
   {
-    icon: "/assets/images/about/arrows-split.png",
-    title: "No clear roadmap",
     stat: null,
+    title: "No clear roadmap",
     body: "Without step by step guidance, it's easy to waste time, miss IRCC deadlines, or make costly mistakes on your newcomer journey in Canada.",
     source: null,
   },
 ];
-
-// SSR letter split for the headline. Pre-computing transition-delay per
-// letter at render time means the letter spans exist in the initial HTML —
-// no FOUC and no runtime DOM thrash.
-type Token =
-  | { kind: "space"; text: string }
-  | { kind: "word"; letters: { ch: string; delay: number }[] };
-
-const LETTER_STAGGER = 0.014;
-const LETTER_BASE = 0.2;
-
-function tokenize(text: string, startIndex: number): { tokens: Token[]; nextIndex: number } {
-  const tokens: Token[] = [];
-  let i = startIndex;
-  for (const part of text.split(/(\s+)/)) {
-    if (part.length === 0) continue;
-    if (/^\s+$/.test(part)) {
-      tokens.push({ kind: "space", text: part });
-      continue;
-    }
-    const letters = [...part].map((ch) => {
-      const delay = LETTER_BASE + i * LETTER_STAGGER;
-      i++;
-      return { ch, delay };
-    });
-    tokens.push({ kind: "word", letters });
-  }
-  return { tokens, nextIndex: i };
-}
-
-const strong = tokenize("Settling in Canada", 0);
-const muted = tokenize("feels harder than it should", strong.nextIndex);
-const lastLetterDelay = LETTER_BASE + (muted.nextIndex - 1) * LETTER_STAGGER;
-// Sub paragraph and cards begin their fade at the same moment as the last
-// letter of "feels harder than it should" — so they arrive together with
-// the headline rather than after it.
-const subDelay = lastLetterDelay.toFixed(3);
-const cardBaseDelay = lastLetterDelay;
 ---
 
-<section class="ap">
+<section class="ap" aria-labelledby="ap-heading">
   <div class="ap-inner">
-    <!-- Heading -->
-    <div class="ap-head">
-      <span class="ap-pill">The Problem</span>
-      <h2 class="ap-headline">
-        <span class="ap-headline-strong">
-          {strong.tokens.map((tok) =>
-            tok.kind === "space" ? (
-              tok.text
-            ) : (
-              <span class="ap-word">
-                {tok.letters.map((l) => (
-                  <span class="ap-letter" style={`transition-delay:${l.delay.toFixed(3)}s`}>{l.ch}</span>
-                ))}
-              </span>
-            )
-          )}
-        </span><br />
-        <span class="ap-headline-muted">
-          {muted.tokens.map((tok) =>
-            tok.kind === "space" ? (
-              tok.text
-            ) : (
-              <span class="ap-word">
-                {tok.letters.map((l) => (
-                  <span class="ap-letter" style={`transition-delay:${l.delay.toFixed(3)}s`}>{l.ch}</span>
-                ))}
-              </span>
-            )
-          )}
-        </span>
-      </h2>
-      <p class="ap-sub" style={`transition-delay:${subDelay}s`}>
-        Moving to a new country is more than paperwork – it's rebuilding your life from scratch. Yet most newcomers run into three avoidable problems:
-      </p>
-    </div>
+    <p class="ap-pill">The Problem</p>
+    <h2 class="ap-headline" id="ap-heading">
+      <span class="ap-headline-strong">Settling in Canada</span>
+      <span class="ap-headline-muted">feels harder than it should</span>
+    </h2>
+    <p class="ap-sub">
+      Moving to a new country is more than paperwork. It's rebuilding your life from scratch. Yet most newcomers run into three avoidable problems:
+    </p>
 
-    <!-- 3-box grid -->
-    <!-- Stats layout (from the about page prototype, version B): each problem
-         leads with its figure, set large, with the text and source beside it.
-         The figures are the ones each card already cites. -->
     <ol class="ap-grid" role="list">
       {cards.map((card) => (
-        <li
-          class="ap-card"
-          style={`transition-delay:${cardBaseDelay.toFixed(3)}s`}
-        >
-          <div class="ap-stat-col" aria-hidden={card.stat ? "true" : undefined}>
-            {card.stat ? (
-              <span class="ap-stat">{card.stat}</span>
-            ) : (
-              <svg class="ap-noroute" viewBox="0 0 200 80" aria-hidden="true">
-                <path d="M6 60 C 40 10, 70 70, 100 40" />
-                <path d="M128 30 C 150 12, 170 50, 194 20" />
-              </svg>
-            )}
-          </div>
+        <li class="ap-card">
+          {card.stat ? (
+            <p class="ap-stat" aria-hidden="true">{card.stat}</p>
+          ) : (
+            <svg class="ap-noroute" viewBox="0 0 200 80" aria-hidden="true">
+              <path d="M6 60 C 40 10, 70 70, 100 40" />
+              <path d="M128 30 C 150 12, 170 50, 194 20" />
+            </svg>
+          )}
           <div class="ap-card-text">
             <h3 class="ap-card-title">{card.title}</h3>
             <p class="ap-card-body">{card.body}</p>
@@ -128,14 +54,13 @@ const cardBaseDelay = lastLetterDelay;
         </li>
       ))}
     </ol>
-    </div>
   </div>
 </section>
 
 <style>
   .ap {
     background-color: #ffffff;
-    padding: 5rem 0 6rem;
+    padding: 4.5rem 0;
   }
 
   .ap-inner {
@@ -144,82 +69,70 @@ const cardBaseDelay = lastLetterDelay;
     padding: 0 1.5rem;
   }
 
-  /* ── Heading ── */
-  .ap-head {
-    text-align: center;
-    margin: 0 auto 4rem;
-    max-width: 880px;
-  }
-
   .ap-pill {
-    display: inline-block;
-    background-color: rgba(0, 0, 0, 0.04);
-    color: var(--color-text);
-    padding: 0.5rem 1.25rem;
-    border-radius: 999px;
-    font-family: var(--font-display);
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 2rem;
+    margin: 0 0 1rem;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b5391c;
   }
 
   .ap-headline {
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.25rem, 6vw, 4.5rem);
-    line-height: 1.05;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.02;
     letter-spacing: var(--tracking-display);
-    margin: 0 0 1.75rem;
+    text-wrap: balance;
   }
 
-  .ap-headline-strong { color: var(--color-text); }
-  .ap-headline-muted  { color: var(--color-muted); }
+  .ap-headline-strong {
+    color: var(--color-text);
+  }
+
+  .ap-headline-muted {
+    color: #8a847e;
+  }
 
   .ap-sub {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(1rem, 1.3vw, 1.125rem);
-    line-height: 1.65;
-    color: var(--color-muted);
-    margin: 0 auto;
+    margin: 1.25rem 0 0;
     max-width: 56ch;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-muted);
   }
 
-  /* ── Stats rows ── */
   .ap-grid {
     list-style: none;
-    margin: 0;
+    margin: 2.5rem 0 0;
     padding: 0;
   }
 
   .ap-card {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+    gap: 1.5rem 3rem;
+    align-items: center;
     padding: 2rem 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .ap-card:last-child {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(23, 22, 22, 0.1);
   }
 
   .ap-stat {
-    display: block;
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(3.5rem, 9vw, 7rem);
+    font-size: clamp(3.5rem, 9vw, 7.5rem);
     line-height: 0.85;
     letter-spacing: -0.06em;
     color: var(--color-text);
   }
 
-  /* "No clear roadmap" has no figure: a route that breaks off in the middle,
-     drawn at the height of the figures above it. */
   .ap-noroute {
-    display: block;
     width: min(100%, 180px);
-    height: auto;
     overflow: visible;
   }
 
@@ -232,143 +145,40 @@ const cardBaseDelay = lastLetterDelay;
   }
 
   .ap-card-title {
+    margin: 0 0 0.5rem;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
     color: var(--color-text);
-    margin: 0 0 0.5rem;
-    letter-spacing: -0.02em;
   }
 
   .ap-card-body {
+    margin: 0;
+    max-width: 60ch;
     font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1rem;
     line-height: 1.65;
     color: var(--color-muted);
-    margin: 0;
-    max-width: 62ch;
   }
 
   .ap-card-source {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 0.8125rem;
-    line-height: 1.55;
-    color: var(--color-muted);
     margin: 0.75rem 0 0;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: #6b6763;
   }
 
-  /* ── Reveal animation ──
-     Hidden state is gated on html.js-anim so the inline script that runs
-     before the section paints can apply it pre-paint. .visible flips it.
-     Per-element transition-delay is set inline via SSR. */
-  .ap-pill {
-    transition:
-      opacity 0.7s var(--ease-out),
-      transform 0.7s var(--ease-out);
-  }
-
-  .ap-sub,
-  .ap-card {
-    transition:
-      opacity 1.4s var(--ease-out),
-      transform 1.4s var(--ease-out);
-  }
-
-  .ap-word {
-    display: inline-block;
-    white-space: nowrap;
-  }
-
-  .ap-letter {
-    display: inline-block;
-    transition:
-      opacity 0.55s var(--ease-out),
-      transform 0.8s cubic-bezier(0.22, 1.18, 0.36, 1);
-  }
-
-  body.js-ready .ap .ap-pill,
-  body.js-ready .ap .ap-sub,
-  body.js-ready .ap .ap-card {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-
-  body.js-ready .ap .ap-letter {
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-
-  body.js-ready .ap.visible .ap-pill,
-  body.js-ready .ap.visible .ap-sub,
-  body.js-ready .ap.visible .ap-card {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  body.js-ready .ap.visible .ap-letter {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  body.js-ready .ap.visible .ap-pill { transition-delay: 0.05s; }
-
-  @media (prefers-reduced-motion: reduce) {
-    body.js-ready .ap .ap-pill,
-    body.js-ready .ap .ap-sub,
-    body.js-ready .ap .ap-card,
-    body.js-ready .ap .ap-letter {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-  }
-
-  /* ── Tablet ── */
-  @media (min-width: 810px) {
-    .ap {
-      padding: 6rem 0 7rem;
-    }
-
-    .ap-inner {
-      padding: 0 3rem;
-    }
-
+  @media (max-width: 700px) {
     .ap-card {
-      grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
-      gap: 3rem;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
       align-items: start;
     }
   }
 
-  /* ── Desktop ── */
-  @media (min-width: 1400px) {
+  @media (min-width: 810px) {
     .ap-inner {
-      padding: 0 5rem;
-    }
-
-    .ap-card {
-      padding: 2.5rem 0;
+      padding: 0 3rem;
     }
   }
 </style>
-
-<script>
-  document.addEventListener("astro:page-load", () => {
-    document.body.classList.add("js-ready");
-    const section = document.querySelector<HTMLElement>(".ap");
-    if (!section || section.classList.contains("visible") || section.dataset.apBound) return;
-    section.dataset.apBound = "1";
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          section.classList.add("visible");
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(section);
-  });
-</script>
