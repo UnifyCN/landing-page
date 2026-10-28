@@ -46,7 +46,9 @@ test.describe("island re-binding after View Transition navigation", () => {
 
     const section = page.locator("[data-partners]");
     await expect(section).toHaveAttribute("data-partners-bound", "true");
+    await expect(section).toHaveClass(/pw-armed/);
     await page.locator(".pw-grid").scrollIntoViewIfNeeded();
+    await expect(section).toHaveClass(/pw-in/);
     await expect(page.locator(".pw-cell").first()).toHaveCSS("opacity", "1");
   });
 
