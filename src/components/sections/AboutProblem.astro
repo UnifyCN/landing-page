@@ -114,7 +114,12 @@ const cardBaseDelay = lastLetterDelay;
             {card.stat ? (
               <span class="ap-stat">{card.stat}</span>
             ) : (
-              <img src={card.icon} alt="" class="ap-card-icon" loading="lazy" decoding="async" width="56" height="56" />
+              <svg class="ap-noroute" viewBox="0 0 220 96" aria-hidden="true">
+                <path class="ap-noroute-a" d="M8 74 C 34 74, 44 30, 82 34" />
+                <path class="ap-noroute-b" d="M132 58 C 160 70, 176 22, 212 26" />
+                <circle cx="8" cy="74" r="7" />
+                <circle cx="212" cy="26" r="7" />
+              </svg>
             )}
           </div>
           <div class="ap-card-text">
@@ -211,10 +216,25 @@ const cardBaseDelay = lastLetterDelay;
     color: var(--color-text);
   }
 
-  .ap-card-icon {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
+  /* "No clear roadmap" has no figure: a route that breaks off in the middle,
+     drawn at the height of the figures above it. */
+  .ap-noroute {
+    display: block;
+    width: clamp(7rem, 16vw, 12rem);
+    height: auto;
+    overflow: visible;
+  }
+
+  .ap-noroute path {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-dasharray: 0.5 20;
+  }
+
+  .ap-noroute circle {
+    fill: var(--color-text);
   }
 
   .ap-card-title {
