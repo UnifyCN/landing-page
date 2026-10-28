@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, devices } from "@playwright/test";
 import { partners } from "../src/lib/partners";
 
 // Home page partners: one grid of every partner logo with its kind shown on
@@ -58,5 +58,22 @@ test.describe("home partners", () => {
       await page.locator(".pw-grid").scrollIntoViewIfNeeded();
       expect(await page.evaluate(() => document.documentElement.scrollWidth), `${width}px`).toBeLessThanOrEqual(width);
     }
+  });
+});
+
+test.describe("home partners on a phone", () => {
+  // Phone size, touch and user agent, without switching browser engine.
+  const { defaultBrowserType: _engine, ...phone } = devices["Pixel 7"];
+  test.use(phone);
+
+  test("with no hover, each logo shows its kind up front and a tap opens the partner", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const tile = page.locator(".pw-tile").first();
+    await tile.scrollIntoViewIfNeeded();
+    await expect(tile.locator(".pw-kind")).toHaveCSS("opacity", "1");
+    const box = (await tile.boundingBox())!;
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(new RegExp(`/partners/${partners[0].slug}$`));
   });
 });

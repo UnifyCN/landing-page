@@ -38,6 +38,18 @@ test.describe("island re-binding after View Transition navigation", () => {
     await expect(carousel).toHaveAttribute("data-active", "0");
   });
 
+  test("home partners load-in re-binds after About → Home", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/about");
+    await page.locator("a.nav-link", { hasText: "Home" }).click();
+    await expect(page).toHaveURL(/\/$/);
+
+    const section = page.locator("[data-partners]");
+    await expect(section).toHaveAttribute("data-partners-bound", "true");
+    await page.locator(".pw-grid").scrollIntoViewIfNeeded();
+    await expect(page.locator(".pw-cell").first()).toHaveCSS("opacity", "1");
+  });
+
   test("FAQ accordion works after About → Home", async ({ page }) => {
     await page.goto("/about");
     await page.locator("a.nav-link", { hasText: "Home" }).click();
