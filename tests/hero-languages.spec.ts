@@ -82,3 +82,47 @@ test.describe("home hero, reduced motion", () => {
     expect(hidden).toEqual([]);
   });
 });
+
+test.describe("home hero timers", () => {
+  test("stop once the hero leaves the page, so visits do not pile them up", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.addInitScript(() => {
+      const w = window as Window & { __live?: number };
+      w.__live = 0;
+      const set = window.setInterval.bind(window);
+      const clear = window.clearInterval.bind(window);
+      const ids = new Set<number>();
+      window.setInterval = ((fn: TimerHandler, ms?: number, ...a: unknown[]) => {
+        const id = set(fn, ms, ...a);
+        if (ms === 2600 || ms === 3200) ids.add(id);
+        w.__live = ids.size;
+        return id;
+      }) as typeof window.setInterval;
+      window.clearInterval = ((id?: number) => {
+        if (id !== undefined) ids.delete(id);
+        w.__live = ids.size;
+        clear(id);
+      }) as typeof window.clearInterval;
+    });
+    await page.goto("/");
+    for (let i = 0; i < 3; i++) {
+      await page.locator("a.nav-link", { hasText: "Events" }).click();
+      await expect(page).toHaveURL(/\/events$/);
+      await page.waitForTimeout(3400);
+      await page.locator("a.nav-link", { hasText: "Home" }).click();
+      await expect(page.locator("[data-hero]")).toHaveAttribute("data-hero-bound", "true");
+    }
+    // Only the current hero's two timers are left.
+    expect(await page.evaluate(() => (window as Window & { __live?: number }).__live)).toBe(2);
+  });
+});
+
+test.describe("home hero, reduced motion without JS", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("the CSS alone stops the ring", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await expect(page.locator(".hero .spin")).toHaveCSS("animation-name", "none");
+  });
+});

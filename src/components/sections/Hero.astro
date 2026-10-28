@@ -143,7 +143,14 @@ const features = [
       langBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i)));
     };
     langBtns.forEach((b) => b.addEventListener("click", () => { pinned = true; showWord(Number(b.dataset.i)); }));
-    if (!reduce) setInterval(() => { if (!pinned && !document.hidden) showWord((wi + 1) % words.length); }, 2600);
+    // Timers stop themselves once this hero leaves the DOM (a View Transition
+    // to another page), so they never pile up across visits to the home page.
+    if (!reduce) {
+      const wordTimer = setInterval(() => {
+        if (!hero.isConnected) return clearInterval(wordTimer);
+        if (!pinned && !document.hidden) showWord((wi + 1) % words.length);
+      }, 2600);
+    }
 
     const orbit = hero.querySelector<HTMLElement>("[data-orbit]")!;
     const visual = hero.querySelector<HTMLElement>(".hero-visual")!;
@@ -175,7 +182,10 @@ const features = [
     visual.addEventListener("focusout", () => { paused = false; });
     if (reduce) { orbit.classList.add("still"); return; }
     setTimeout(() => orbit.querySelector(".hero-ring")?.classList.add("ready"), 1600);
-    setInterval(() => { if (!paused && !lockedF && !document.hidden) setF(order[(fi + 1) % order.length]); }, 3200);
+    const featureTimer = setInterval(() => {
+      if (!hero.isConnected) return clearInterval(featureTimer);
+      if (!paused && !lockedF && !document.hidden) setF(order[(fi + 1) % order.length]);
+    }, 3200);
   }
   initHero();
   document.addEventListener("astro:page-load", initHero);
@@ -420,6 +430,7 @@ const features = [
   @media (prefers-reduced-motion: reduce) {
     .hero-rating, .hero-welcome, .hero-h1, .hero-desc, .hero-langs, .hero-cta-row, .hero-visual { animation: none; opacity: 1; }
     .pet path { animation: none; transition: none; }
-    .hero-words > span, .scr img, .note { transition: none; }
+    .spin { animation: none; }
+    .hero-words > span, .scr img, .note, .hero-langs button, .feats button { transition: none; }
   }
 </style>
