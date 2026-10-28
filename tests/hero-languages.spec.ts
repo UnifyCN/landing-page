@@ -108,7 +108,10 @@ test.describe("home hero timers", () => {
     for (let i = 0; i < 3; i++) {
       await page.locator("a.nav-link", { hasText: "Events" }).click();
       await expect(page).toHaveURL(/\/events$/);
-      await page.waitForTimeout(3400);
+      // each timer clears itself on its next tick once the hero is gone
+      await expect
+        .poll(() => page.evaluate(() => (window as Window & { __live?: number }).__live), { timeout: 5000 })
+        .toBe(0);
       await page.locator("a.nav-link", { hasText: "Home" }).click();
       await expect(page.locator("[data-hero]")).toHaveAttribute("data-hero-bound", "true");
     }
