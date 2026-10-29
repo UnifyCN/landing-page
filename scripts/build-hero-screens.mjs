@@ -1,20 +1,21 @@
-// The four phone screens the home hero cycles through (Checklist, AI
-// Companion, Community, Learn). Each is cut out of the frame-0 poster of the
-// matching demo video in public/assets/demos/posters/, so the hero shows the
-// same real app screens as the core features section, without the phone
-// frame (the hero draws its own).
+// The Learn phone screen shown in the home web app section (PlatformBand.astro).
+// It is cut out of the frame-0 poster of the Learn demo video in
+// public/assets/demos/posters/, so it shows the same real app screen as the
+// core features section, without the phone frame (the section draws its own).
+// (Written for the #37 hero, which cycled four screens; that hero was taken
+// off the site, and only the Learn screen is still used.)
 //
-// Outputs: public/assets/screenshots/hero/<name>-{360,720}.{avif,webp}, all
-// 9:19.2 (the hero phone's screen ratio). The hero serves the AVIF through
-// <picture> with the WebP as the <img> fallback (Safari 15 and older).
+// Outputs: public/assets/screenshots/hero/learn-{360,720}.{avif,webp}, all
+// 9:19.2. Served as AVIF through <picture> with the WebP as the <img>
+// fallback (Safari 15 and older).
 //
-// Run after re-recording a demo or regenerating its poster:
+// Run after re-recording the Learn demo or regenerating its poster:
 //   node scripts/build-hero-screens.mjs
 // Sources are never modified. Outputs are committed.
 import sharp from "sharp";
 import { mkdirSync, statSync } from "node:fs";
 
-const NAMES = ["checklist", "ai", "social", "learn"];
+const NAMES = ["learn"];
 const WIDTHS = [360, 720];
 const RATIO = 19.2 / 9;
 const OUT = "public/assets/screenshots/hero";

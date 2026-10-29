@@ -1,14 +1,7 @@
-// The hero phone's screens (scripts/build-hero-screens.mjs) and the size they
-// are shown at. Shared by the hero <picture>s and the head preload of the first
-// screen, so the browser downloads one file, not two.
-const BASE = "/assets/screenshots/hero";
+// Shared by the hero picture and head preload to avoid duplicate downloads.
+const BASE = "/assets/images/hero-web-mobile-c";
 
-/** AVIF candidates for one hero screen ("checklist", "ai", "social", "learn"). */
-export const heroScreenSrcset = (name: string) => `${BASE}/${name}-360.avif 360w, ${BASE}/${name}-720.avif 720w`;
+export const HERO_SRCSET = `${BASE}-724.avif 724w, ${BASE}.avif 1448w`;
 
-/** The first screen, the one visible on load (preloaded). */
-export const HERO_SRCSET = heroScreenSrcset("checklist");
-
-// The phone is 33% of a ring at most 540px wide (desktop), 42% of one at most
-// 420px wide under 810px; the screen is the phone minus its 7px frame.
-export const HERO_SIZES = "(min-width: 810px) 172px, 162px";
+// Match the equal hero columns, container padding, and mobile image width cap.
+export const HERO_SIZES = "(min-width: 1440px) 624px, (min-width: 1400px) calc((100vw - 12rem) / 2), (min-width: 810px) calc((100vw - 7.5rem) / 2), (min-width: 720px) 672px, calc(100vw - 3rem)";
