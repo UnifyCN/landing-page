@@ -338,7 +338,7 @@ Homepage section flow today: `Hero → Partners → PlatformBand → Journey →
 ### Hero
 
 - White section background. Use two equal columns from 810px with `minmax(0, 1fr)`. At desktop widths use `gap: 2rem` and `padding: 0 5rem`.
-- **Rating pill:** white pill with a hairline border, five amber stars (`#F5A623`), and "Rated **5.0** by **35+** newcomers".
+- **Rating pill:** white pill with a hairline border, five amber stars (`#F5A623`), and "Rated **<value>** by **<count>+** newcomers" (numbers from `src/lib/app-rating.ts`).
 - **H1:** plain string "The all-in-one newcomer settlement platform". Use weight 700, `clamp(2.5rem, 7.5vw, 5.5rem)` below 810px, and `clamp(2.5rem, 6vw, 5.5rem)` from 810px. Use `line-height: 1.02`, `var(--tracking-display)`, and `text-wrap: balance`. Keep "all-in-one" on one line. Do not add styled spans.
 - **Description:** "Unify makes settling in Canada simpler, clearer, and more connected. Now available on iOS and web." Use `color-muted` and `max-width: 44ch`.
 - **CTA row:** `WebAppBadge` links to `https://app.unifysocial.ca`. The App Store badge is 52px high and opens in a new tab. Keep the "No credit card required" note.

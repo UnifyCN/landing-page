@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { APP_RATING, APP_RATING_COUNT_LABEL } from "../src/lib/app-rating";
 
 // The home hero (Hero.astro): H1, web app button, both store badges, and the
 // web plus phone image. The badge clicks are answered by a stub so the test
@@ -44,4 +45,11 @@ test("each hero store badge opens its store in a new tab", async ({ page, contex
     expect(tab.url()).toBe(href);
     await tab.close();
   }
+});
+
+test("the hero rating reads from src/lib/app-rating.ts", async ({ page }) => {
+  await page.goto("/");
+  const pill = hero(page).locator(".hero-rating");
+  await expect(pill).toHaveText(`Rated ${APP_RATING.value} by ${APP_RATING_COUNT_LABEL} newcomers`);
+  await expect(pill).toHaveAttribute("aria-label", `Rated ${APP_RATING.value} out of 5 by ${APP_RATING_COUNT_LABEL} newcomers`);
 });

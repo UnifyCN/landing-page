@@ -11,12 +11,13 @@ const avatars = [
 ];
 import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
 import { webpFallback } from "../../lib/image-fallback";
+import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
 ---
 
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-rating" aria-label="Rated 5.0 out of 5 by 35+ newcomers">
+      <div class="hero-rating" aria-label={`Rated ${APP_RATING.value} out of 5 by ${APP_RATING_COUNT_LABEL} newcomers`}>
         <span class="hero-stars" aria-hidden="true">
           {[...Array(5)].map(() => (
             <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +26,7 @@ import { webpFallback } from "../../lib/image-fallback";
           ))}
         </span>
         <span class="hero-rating-text">
-          Rated <strong>5.0</strong> by <strong>35+</strong> newcomers
+          Rated <strong>{APP_RATING.value}</strong> by <strong>{APP_RATING_COUNT_LABEL}</strong> newcomers
         </span>
       </div>
 
