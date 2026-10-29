@@ -1,23 +1,43 @@
 ---
+// Home hero: the Unify logo's six shapes around a phone, the app's features
+// revealed one by one, and "Welcome" in the seven languages the app speaks.
+// Features and the welcome cycle on their own; hovering or focusing the
+// visual pauses them, a click pins one, and reduced motion keeps everything
+// still. The phone screens are cut from the core-features demo posters by
+// scripts/build-hero-screens.mjs.
 import WebAppBadge from "../common/WebAppBadge.astro";
 import StoreBadges from "../common/StoreBadges.astro";
-
-const avatars = [
-  { initials: "JP", color: "#D4A948" },
-  { initials: "MA", color: "#E47793" },
-  { initials: "LO", color: "#6E54B8" },
-  { initials: "RN", color: "#D84A6E" },
-  { initials: "+", color: "#D4B148" },
-];
-import { HERO_SIZES, HERO_SRCSET } from "../../lib/hero-image";
+import { HERO_SIZES, heroScreenSrcset } from "../../lib/hero-image";
 import { webpFallback } from "../../lib/image-fallback";
-import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
+import { APP_RATING } from "../../lib/app-rating";
+
+const langs = [
+  { code: "en", word: "Welcome", name: "English" },
+  { code: "fr", word: "Bienvenue", name: "Français" },
+  { code: "es", word: "Bienvenido", name: "Español" },
+  { code: "vi", word: "Chào mừng", name: "Tiếng Việt" },
+  { code: "hi", word: "स्वागत है", name: "हिन्दी" },
+  { code: "pa", word: "ਜੀ ਆਇਆਂ ਨੂੰ", name: "ਪੰਜਾਬੀ" },
+  { code: "ar", word: "أهلاً وسهلاً", name: "العربية" },
+];
+
+// The six U shapes of the starburst logo, scaled up; each one is a feature.
+const R = 270, h = 62, a = 38;
+const U = `M${-a} ${-R - h}V${-R}a${a} ${a} 0 0 0 ${2 * a} 0V${-R - h}`;
+const features = [
+  { id: "checklist", label: "Checklist", color: "#E2532A", img: "checklist", alt: "Unify app: a personalised settlement checklist" },
+  { id: "companion", label: "AI Companion", color: "#FFB062", img: "ai", alt: "Unify app: the AI Companion" },
+  { id: "circles", label: "Circles", color: "#6E9BD9", img: "social", alt: "Unify app: the community feed" },
+  { id: "learn", label: "Learn", color: "#E2532A", img: "learn", alt: "Unify app: short lessons in Learn" },
+  { id: "events", label: "Events", color: "#FFB062", note: "Workshops and meetups with partners like Vancouver Public Library and SFU." },
+  { id: "guides", label: "Free guides", color: "#6E9BD9", note: "Banking, health cards, licences, benefits and more, checked against official sources." },
+];
 ---
 
-<section class="hero">
+<section class="hero" data-hero>
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-rating" aria-label={`Rated ${APP_RATING.value} out of 5 by ${APP_RATING_COUNT_LABEL} newcomers`}>
+      <div class="hero-rating" aria-label={`Rated ${APP_RATING.value} out of 5 from ${APP_RATING.count} App Store ratings`}>
         <span class="hero-stars" aria-hidden="true">
           {[...Array(5)].map(() => (
             <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -26,71 +46,163 @@ import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
           ))}
         </span>
         <span class="hero-rating-text">
-          Rated <strong>{APP_RATING.value}</strong> by <strong>{APP_RATING_COUNT_LABEL}</strong> newcomers
+          <strong>{APP_RATING.value}</strong> from <strong>{APP_RATING.count}</strong> App Store ratings
         </span>
       </div>
 
-      <h1 class="hero-h1">
-        The all-in-one newcomer settlement platform
-      </h1>
+      <p class="hero-welcome" aria-hidden="true">
+        <span class="hero-words">
+          {langs.map((l, i) => (
+            <span lang={l.code} dir={l.code === "ar" ? "rtl" : undefined} class:list={{ on: i === 0 }}>{l.word}</span>
+          ))}
+        </span>
+      </p>
+
+      <h1 class="hero-h1">Let's get you settled in Canada.</h1>
 
       <p class="hero-desc">
-        Unify makes settling in Canada simpler, clearer, and more connected. Now
-        available on iOS, Android, and web.
+        Unify is the all-in-one newcomer settlement platform. Now available on iOS, Android, and web.
       </p>
+
+      <div class="hero-langs" role="group" aria-label="Unify works in 7 languages">
+        <span class="hero-langs-label">Unify works in 7 languages:</span>
+        {langs.map((l, i) => (
+          <button type="button" lang={l.code} data-i={i} aria-pressed={i === 0 ? "true" : "false"}>{l.name}</button>
+        ))}
+      </div>
 
       <div class="hero-cta-row">
         <WebAppBadge placement="hero" />
         <StoreBadges placement="hero" />
         <p class="hero-note">No credit card required</p>
       </div>
-
-      <div class="hero-social">
-        <div class="hero-avatars" aria-hidden="true">
-          {avatars.map((a) => (
-            <span class="hero-avatar" style={`background-color: ${a.color};`}>
-              {a.initials}
-            </span>
-          ))}
-        </div>
-        <p class="hero-social-text">
-          Join 700+ newcomers settling in Canada with Unify
-        </p>
-      </div>
     </div>
 
     <div class="hero-visual">
-      <!-- Share responsive sources with the head preload to avoid duplicate downloads. -->
-      <picture class="contents">
-        <source type="image/avif" srcset={HERO_SRCSET} sizes={HERO_SIZES} />
-        <img
-          src="/assets/images/hero-web-mobile-c.webp"
-          srcset={webpFallback(HERO_SRCSET)}
-          sizes={HERO_SIZES}
-          alt="Unify web app in a desktop browser beside the Unify iPhone app, both showing learning guides for newcomers in Canada"
-          class="hero-devices"
-          width="1448"
-          height="1086"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </picture>
+      <div class="orbit" data-orbit>
+        <svg class="hero-ring" viewBox="-380 -380 760 760" aria-hidden="true">
+          <g class="spin">
+            {features.map((f, i) => (
+              <g class="pet" data-f={f.id} style={`--a:${30 + 60 * i}deg`}><path d={U} stroke={f.color} style={`animation-delay:${0.35 + i * 0.07}s`} /></g>
+            ))}
+          </g>
+        </svg>
+        <div class="phone" aria-live="polite">
+          <div class="scr">
+            {features.filter((f) => f.img).map((f, i) => (
+              <picture class="contents">
+                <source type="image/avif" srcset={heroScreenSrcset(f.img!)} sizes={HERO_SIZES} />
+                <img
+                  data-f={f.id}
+                  class:list={["hero-screen", { on: i === 0 }]}
+                  src={`/assets/screenshots/hero/${f.img}-360.webp`}
+                  srcset={webpFallback(heroScreenSrcset(f.img!))}
+                  sizes={HERO_SIZES}
+                  alt={f.alt}
+                  width="360"
+                  height="768"
+                  loading="eager"
+                  decoding="async"
+                  fetchpriority={i === 0 ? "high" : "low"}
+                />
+              </picture>
+            ))}
+            {features.filter((f) => f.note).map((f) => (
+              <div class="note" data-f={f.id}><b>{f.label}</b>{f.note}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="feats" role="group" aria-label="Show a feature">
+        {features.map((f, i) => (
+          <button type="button" data-f={f.id} aria-pressed={i === 0 ? "true" : "false"} style={`--c:${f.color}`}><i></i>{f.label}</button>
+        ))}
+      </div>
     </div>
   </div>
 </section>
 
+<script>
+  // Welcome word: cycles through the 7 languages; a language chip pins one.
+  // Features: cycle every 3.2s; hover or focus pauses; a click pins one.
+  // Reduced motion: no cycling, no spin, nothing moves on its own.
+  function initHero() {
+    const hero = document.querySelector<HTMLElement>("[data-hero]");
+    if (!hero || hero.dataset.heroBound === "true") return;
+    hero.dataset.heroBound = "true";
+    // Read again on every tick, so turning reduced motion on stops the cycling.
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reduce = motion.matches;
+
+    const words = [...hero.querySelectorAll<HTMLElement>(".hero-words > span")];
+    const langBtns = [...hero.querySelectorAll<HTMLButtonElement>(".hero-langs button")];
+    let wi = 0, pinned = false;
+    const showWord = (i: number) => {
+      if (i === wi) return;
+      const old = words[wi];
+      old.classList.remove("on"); old.classList.add("out");
+      setTimeout(() => old.classList.remove("out"), 700);
+      wi = i; words[wi].classList.add("on");
+      langBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i)));
+    };
+    langBtns.forEach((b) => b.addEventListener("click", () => { pinned = true; showWord(Number(b.dataset.i)); }));
+    // Timers stop themselves once this hero leaves the DOM (a View Transition
+    // to another page), so they never pile up across visits to the home page.
+    if (!reduce) {
+      const wordTimer = setInterval(() => {
+        if (!hero.isConnected) return clearInterval(wordTimer);
+        if (!pinned && !document.hidden && !motion.matches) showWord((wi + 1) % words.length);
+      }, 2600);
+    }
+
+    const orbit = hero.querySelector<HTMLElement>("[data-orbit]")!;
+    const visual = hero.querySelector<HTMLElement>(".hero-visual")!;
+    const pets = [...orbit.querySelectorAll<SVGGElement>(".pet")];
+    const shows = [...orbit.querySelectorAll<HTMLElement>(".scr [data-f]")];
+    const chips = [...hero.querySelectorAll<HTMLButtonElement>(".feats button")];
+    const order = chips.map((c) => c.dataset.f!);
+    let fi = 0, lockedF: string | null = null, pointerIn = false, focusIn = false;
+    const setF = (f: string) => {
+      fi = order.indexOf(f);
+      pets.forEach((p) => p.classList.toggle("on", p.dataset.f === f));
+      // the phone keeps the last real screen behind a text card
+      const hasImg = shows.some((s) => s.tagName === "IMG" && s.dataset.f === f);
+      shows.forEach((s) => {
+        if (s.tagName === "IMG") { if (hasImg) s.classList.toggle("on", s.dataset.f === f); }
+        else s.classList.toggle("on", s.dataset.f === f);
+      });
+      chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.f === f)));
+    };
+    setF(order[0]);
+    pets.forEach((p) => {
+      p.addEventListener("pointerenter", () => { if (!lockedF) setF(p.dataset.f!); });
+      p.addEventListener("click", () => { lockedF = p.dataset.f!; setF(lockedF); });
+    });
+    chips.forEach((c) => c.addEventListener("click", () => { lockedF = lockedF === c.dataset.f ? null : c.dataset.f!; setF(c.dataset.f!); }));
+    // Hover and focus pause separately, so leaving one does not undo the other.
+    visual.addEventListener("pointerenter", () => { pointerIn = true; });
+    visual.addEventListener("pointerleave", () => { pointerIn = false; });
+    visual.addEventListener("focusin", () => { focusIn = true; });
+    visual.addEventListener("focusout", () => { focusIn = false; });
+    if (reduce) { orbit.classList.add("still"); return; }
+    setTimeout(() => orbit.querySelector(".hero-ring")?.classList.add("ready"), 1600);
+    const featureTimer = setInterval(() => {
+      if (!hero.isConnected) return clearInterval(featureTimer);
+      if (!pointerIn && !focusIn && !lockedF && !document.hidden && !motion.matches) setF(order[(fi + 1) % order.length]);
+    }, 3200);
+  }
+  initHero();
+  document.addEventListener("astro:page-load", initHero);
+</script>
+
 <style>
   .hero {
     position: relative;
-    /* hero-device-in starts the devices 32px to the right; on a phone that
-       made the page scroll sideways until the animation ended. clip (not
-       hidden) adds no scroll container. */
     overflow-x: clip;
     background-color: #ffffff;
     padding-top: 4.5rem;
     padding-bottom: 2.5rem;
   }
-
   .hero-inner {
     position: relative;
     max-width: 1440px;
@@ -102,7 +214,7 @@ import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
     align-items: center;
   }
 
-  /* ── Rating pill ── */
+  /* ── Rating pill (unchanged style) ── */
   .hero-rating {
     display: inline-flex;
     align-items: center;
@@ -112,42 +224,51 @@ import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
     border: 1px solid rgba(23, 22, 22, 0.1);
     border-radius: 9999px;
     box-shadow: 0 1px 2px rgba(23, 22, 22, 0.04);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     opacity: 0;
     animation: hero-fade-up 0.5s var(--ease-out) 0.1s forwards;
   }
-
-  .hero-stars {
-    display: inline-flex;
-    gap: 0.125rem;
-    color: #F5A623;
-  }
-
-  .hero-stars svg {
-    width: 14px;
-    height: 14px;
-    display: block;
-  }
-
+  .hero-stars { display: inline-flex; gap: 0.125rem; color: #F5A623; }
+  .hero-stars svg { width: 14px; height: 14px; display: block; }
   .hero-rating-text {
     font-family: var(--font-display);
     font-size: 0.8125rem;
-    font-weight: 400;
     color: var(--color-text);
     letter-spacing: -0.005em;
     line-height: 1;
   }
+  .hero-rating-text strong { font-weight: 700; }
 
-  .hero-rating-text strong {
-    font-weight: 700;
+  /* ── Welcome word: decorative, the headline carries the meaning ── */
+  .hero-welcome {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(2rem, 4.4vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    opacity: 0;
+    animation: hero-fade-up 0.6s var(--ease-out) 0.16s forwards;
   }
+  .hero-words { display: inline-grid; }
+  .hero-words > span {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(0.3em);
+    transition: opacity 0.5s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .hero-words > span.on { opacity: 1; transform: none; }
+  .hero-words > span.out { opacity: 0; transform: translateY(-0.3em); }
+  .hero-words > span:is([lang="hi"], [lang="pa"], [lang="ar"]) { letter-spacing: 0; font-weight: 400; }
 
-  /* ── Headline ── */
+  /* ── Headline (same style as before) ── */
   .hero-h1 {
     margin: 0;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(2.5rem, 7.5vw, 5.5rem);
+    font-size: clamp(2.5rem, 5.6vw, 4.5rem);
     line-height: 1.02;
     letter-spacing: var(--tracking-display);
     color: var(--color-text);
@@ -155,180 +276,165 @@ import { APP_RATING, APP_RATING_COUNT_LABEL } from "../../lib/app-rating";
     opacity: 0;
     animation: hero-fade-up 0.6s var(--ease-out) 0.22s forwards;
   }
-
-  .hero-h1 em {
-    font-style: italic;
-    font-weight: 700;
-  }
-
-  /* ── Body copy ── */
   .hero-desc {
     font-family: var(--font-display);
-    font-weight: 400;
     font-size: clamp(1rem, 1.4vw, 1.1875rem);
     line-height: 1.6;
     color: var(--color-muted);
-    margin: 1.5rem 0 0;
+    margin: 1.25rem 0 0;
     max-width: 44ch;
     opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.36s forwards;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.32s forwards;
   }
 
-  /* ── CTA row ── */
+  /* ── Language switcher ── */
+  .hero-langs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.4s forwards;
+  }
+  .hero-langs-label {
+    width: 100%;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin-bottom: 0.125rem;
+  }
+  .hero-langs button,
+  .feats button {
+    font-family: var(--font-ui), "Noto Sans Devanagari", "Noto Sans Gurmukhi", "Noto Sans Arabic", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    min-height: 36px;
+    padding: 0 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(23, 22, 22, 0.12);
+    background: #ffffff;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.3s var(--ease-out);
+  }
+  .hero-langs button:hover, .feats button:hover { transform: translateY(-1px); border-color: rgba(23, 22, 22, 0.3); }
+  .hero-langs button[aria-pressed="true"], .feats button[aria-pressed="true"] { background: var(--color-ink); border-color: var(--color-ink); color: #ffffff; }
+  .hero-langs button:focus-visible, .feats button:focus-visible { outline: 2px solid var(--color-brand-red); outline-offset: 2px; }
+
   .hero-cta-row {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin-top: 1.75rem;
     opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.46s forwards;
+    animation: hero-fade-up 0.5s var(--ease-out) 0.48s forwards;
   }
-
   .hero-note {
     flex-basis: 100%;
     font-family: var(--font-display);
     font-size: 0.8125rem;
     color: var(--color-muted);
-    opacity: 0.7;
     margin: 0.25rem 0 0;
   }
 
-  /* ── Social proof row ── */
-  .hero-social {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
-    opacity: 0;
-    animation: hero-fade-up 0.5s var(--ease-out) 0.56s forwards;
-  }
-
-  .hero-avatars {
-    display: inline-flex;
-  }
-
-  .hero-avatar {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-family: var(--font-display);
-    font-size: 0.625rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    border: 2px solid #ffffff;
-    box-shadow: 0 1px 2px rgba(23, 22, 22, 0.06);
-  }
-
-  .hero-avatar + .hero-avatar {
-    margin-left: -0.5rem;
-  }
-
-  .hero-social-text {
-    font-family: var(--font-display);
-    font-size: 0.8125rem;
-    color: var(--color-muted);
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  /* Device image */
+  /* ── Logo ring + phone ── */
+  /* Slides in without fading: the first phone screen is the largest image on
+     the first screen, and an opacity animation would hold back its first
+     paint (and the page's LCP) until the fade ends. */
   .hero-visual {
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    opacity: 0;
-    animation: hero-device-in 0.8s var(--ease-out) 0.2s forwards;
+    animation: hero-slide-up 0.8s var(--ease-out) 0.1s both;
   }
-
-  .hero-devices {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    max-width: 42rem;
-    height: auto;
-    object-fit: contain;
+  .orbit { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1; margin-inline: auto; }
+  .hero-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .spin { transform-origin: 0 0; animation: hero-turn 90s linear infinite; }
+  .orbit:hover .spin, .orbit.still .spin { animation-play-state: paused; }
+  .orbit.still .spin { animation: none; }
+  .pet { transform: rotate(var(--a)); }
+  .pet path {
+    fill: none;
+    stroke-width: 52;
+    stroke-linecap: round;
+    pointer-events: stroke;
+    cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.4s ease;
+    animation: hero-petal-in 1s cubic-bezier(0.34, 1.45, 0.64, 1) both;
   }
+  .hero-ring.ready .pet path { animation: none; }
+  .pet.on path { transform: translateY(-24px); }
+  .orbit:has(.pet.on) .pet:not(.on) path { opacity: 0.6; }
+  .phone {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 33%;
+    aspect-ratio: 9 / 19.2;
+    translate: -50% -50%;
+    border-radius: 30px;
+    background: var(--color-ink);
+    padding: 7px;
+    box-shadow: 0 30px 60px -28px rgba(23, 22, 22, 0.45);
+  }
+  .scr { position: relative; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; background: #ffffff; }
+  .scr img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: top;
+    opacity: 0; transform: scale(1.04);
+    transition: opacity 0.5s var(--ease-out), transform 0.8s var(--ease-out);
+  }
+  .scr img.on { opacity: 1; transform: none; }
+  .note {
+    position: absolute; inset: auto 8px 8px;
+    background: #ffffff; border: 1px solid rgba(23, 22, 22, 0.08);
+    border-radius: 16px; padding: 0.75rem;
+    font-family: var(--font-display); font-size: 0.75rem; line-height: 1.35; color: var(--color-text);
+    box-shadow: 0 10px 30px -12px rgba(23, 22, 22, 0.35);
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+  .note b { display: block; font-weight: 700; font-size: 0.9375rem; letter-spacing: -0.02em; margin-bottom: 0.2rem; }
+  .note.on { opacity: 1; transform: none; }
+  .feats { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem; margin-top: 0.75rem; }
+  .feats button { font-size: 0.8125rem; padding: 0 0.65rem; min-height: 34px; }
+  @media (min-width: 810px) and (max-width: 1199px) { .feats { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; } }
+  .feats button { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .feats button i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
 
-  /* ── Entrance animations ── */
   @keyframes hero-fade-up {
     from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  @keyframes hero-device-in {
-    from { opacity: 0; transform: translateX(32px) translateY(12px); }
-    to   { opacity: 1; transform: none; }
+  @keyframes hero-slide-up {
+    from { transform: translateY(20px); }
+    to { transform: none; }
   }
+  @keyframes hero-turn { to { transform: rotate(360deg); } }
+  @keyframes hero-petal-in { from { transform: translateY(60px) scale(0.6); opacity: 0; } }
 
-  /* ── Tablet ── */
+  @media (max-width: 809px) {
+    .orbit { max-width: 420px; }
+    .phone { width: 42%; }
+    .hero-ring { inset: -10%; width: 120%; height: 120%; }
+    .hero-visual { overflow: clip; padding: 0.5rem 0; }
+  }
   @media (min-width: 810px) {
-    .hero {
-      padding-top: 5rem;
-      padding-bottom: 3rem;
-    }
-
+    .hero { padding-top: 5rem; padding-bottom: 3rem; }
     .hero-inner {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1.5rem;
       padding: 0 3rem;
-      align-items: center;
-    }
-
-    .hero-h1 {
-      font-size: clamp(2.5rem, 6vw, 5.5rem);
-    }
-
-    .hero-visual {
-      justify-content: flex-start;
-    }
-
-    .hero-avatar {
-      width: 2.25rem;
-      height: 2.25rem;
-      font-size: 0.6875rem;
-    }
-
-    .hero-social-text {
-      font-size: 0.875rem;
     }
   }
-
-  /* ── Desktop ── */
   @media (min-width: 1400px) {
-    .hero {
-      padding-top: 5.5rem;
-      padding-bottom: 4rem;
-    }
-
-    .hero-inner {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 2rem;
-      padding: 0 5rem;
-      align-items: center;
-    }
-
-    .hero-visual {
-      justify-content: flex-start;
-    }
+    .hero { padding-top: 5.5rem; padding-bottom: 4rem; }
+    .hero-inner { gap: 2rem; padding: 0 5rem; }
   }
-
   @media (prefers-reduced-motion: reduce) {
-    .hero-rating,
-    .hero-h1,
-    .hero-desc,
-    .hero-cta-row,
-    .hero-social,
-    .hero-visual {
-      animation: none;
-      opacity: 1;
-    }
+    .hero-rating, .hero-welcome, .hero-h1, .hero-desc, .hero-langs, .hero-cta-row, .hero-visual { animation: none; opacity: 1; }
+    .pet path { animation: none; transition: none; }
+    .spin { animation: none; }
+    .hero-words > span, .scr img, .note, .hero-langs button, .feats button { transition: none; }
   }
 </style>
