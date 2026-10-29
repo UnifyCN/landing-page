@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
-// The home hero (Hero.astro): H1, web app button, and both store badges. The
+// The home hero (Hero.astro): H1, web app button, both store badges, and the
+// web plus phone image. The
 // badge clicks are answered by a stub so the test never leaves for the real
 // stores; it checks that each click opens the right store in a new tab.
 const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
@@ -17,6 +18,9 @@ for (const width of [375, 1440]) {
     await page.goto("/");
     await expect(hero(page).locator("h1")).toHaveText("The all-in-one newcomer settlement platform");
     await expect(hero(page).locator("a.webapp-badge")).toBeVisible();
+    const devices = hero(page).locator("img.hero-devices");
+    await expect(devices).toBeVisible();
+    await expect.poll(() => devices.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
     for (const [store, href] of [["ios", APP_STORE], ["android", PLAY_HERO]] as const) {
       const link = badge(page, store);
       await expect(link).toBeVisible();
