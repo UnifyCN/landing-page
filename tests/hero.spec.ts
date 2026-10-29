@@ -1,9 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
 // The home hero (Hero.astro): H1, web app button, both store badges, and the
-// web plus phone image. The
-// badge clicks are answered by a stub so the test never leaves for the real
-// stores; it checks that each click opens the right store in a new tab.
+// web plus phone image. The badge clicks are answered by a stub so the test
+// never leaves for the real stores; it checks that each click opens the right
+// store in a new tab.
 const APP_STORE = "https://apps.apple.com/ca/app/unify-canada-newcomer-guide/id6754875762";
 const PLAY_STORE = "https://play.google.com/store/apps/details?id=com.anonymous.unifyfrontend";
 const PLAY_HERO = `${PLAY_STORE}&referrer=utm_source%3Dunifysocial.ca%26utm_medium%3Dwebsite%26utm_campaign%3Dlanding%26utm_content%3Dhero`;
