@@ -28,8 +28,11 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
     },
   ],
+  // Fails the run if the dev server reloads pages mid-run (see the file).
+  globalSetup: "./tests/support/dev-reload-guard.ts",
   webServer: {
-    command: "npm run dev",
+    // `npm run dev` with its output also written to a log for the guard.
+    command: "node tests/support/dev-server.mjs",
     url: "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
