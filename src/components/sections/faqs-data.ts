@@ -35,7 +35,6 @@ export const faqs: FaqItem[] = [
   <li><strong>Community Events and Workshops</strong><span>In-person and virtual events for networking, learning, and peer connection — career workshops, newcomer panels, skill-building sessions, and social meetups.</span></li>
   <li><strong>Discussion Forum</strong><span>A community space to ask questions, share experiences, and get advice on housing, banking, internships, or navigating Canadian culture.</span></li>
   <li><strong>Interest-Based Groups</strong><span>Smaller communities organized around shared interests, career goals, industries, cultural backgrounds, or life stages.</span></li>
-  <li><strong>Unify Circles</strong><span>Small-group matching that connects you with up to three other newcomers who share your background and arrived around the same time — placed together in a private group chat.</span></li>
 </ul>
 <p>Together, these make Unify more than a resource platform — it's an active community where newcomers build friendships and grow alongside others navigating life in Canada.</p>`,
   },
