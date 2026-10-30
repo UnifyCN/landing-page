@@ -49,7 +49,31 @@ export default defineConfig({
     inlineStylesheets: 'always',
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // Dev only. Vite pre-bundles a dependency the first time a page asks for
+    // it, then reloads every open page. A cold `astro dev` (CI, or the e2e
+    // run) did that mid-test and wiped page state, so the form and nav tests
+    // failed at random. Listing our late deps here bundles them at startup.
+    optimizeDeps: {
+      include: [
+        'astro/virtual-modules/transitions.js',
+        'astro/virtual-modules/transitions-router.js',
+        'astro/virtual-modules/transitions-types.js',
+        'astro/virtual-modules/transitions-events.js',
+        'astro/virtual-modules/transitions-swap-functions.js',
+        'posthog-js',
+      ],
+    },
+    environments: {
+      // Pages and API routes render in the workerd `ssr` environment:
+      // ClientRouter imports transitions.js there, the forms' API routes zod
+      // and resend.
+      ssr: {
+        optimizeDeps: {
+          include: ['astro/virtual-modules/transitions.js', 'zod', 'resend'],
+        },
+      },
+    },
   },
   integrations: [
     sitemap({
