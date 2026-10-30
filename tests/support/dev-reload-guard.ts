@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
+import { setTimeout as sleep } from "node:timers/promises";
 import { DEV_SERVER_LOG } from "./dev-server-log.mjs";
 
 // Fails the run when the dev server pre-bundled a dependency mid-run.
@@ -11,10 +12,26 @@ import { DEV_SERVER_LOG } from "./dev-server-log.mjs";
 //
 // Playwright starts the web server before global setup and stops it after
 // global teardown, so the function returned here sees everything the server
-// printed during the run.
+// printed during the run. It covers `npm run test:e2e` (and CI). In UI mode
+// global setup runs once per session, so single runs there are not checked.
 
-const MARKER = /new dependencies optimized:\s*(.+)/;
+const NEW_DEPS = /new dependencies optimized:\s*(.+)/;
+// With DEBUG=vite:deps Vite skips the line above but still prints this one.
+const RELOAD = /optimized dependencies changed\. reloading/;
 const ANSI = /\x1b\[[0-9;]*m/g;
+
+// Vite logs a discovery shortly after it happens and the wrapper writes the
+// log asynchronously, so wait until the log stops growing before reading it.
+async function waitForQuietLog(quietMs = 1000, maxMs = 10_000) {
+  const deadline = Date.now() + maxMs;
+  let size = statSync(DEV_SERVER_LOG).size;
+  while (Date.now() < deadline) {
+    await sleep(quietMs);
+    const next = statSync(DEV_SERVER_LOG).size;
+    if (next === size) return;
+    size = next;
+  }
+}
 
 export default function globalSetup() {
   if (!existsSync(DEV_SERVER_LOG)) return;
@@ -24,22 +41,27 @@ export default function globalSetup() {
   // A server reused from an earlier run: check only what it prints from now.
   const offset = startedAt >= runStart ? 0 : statSync(DEV_SERVER_LOG).size;
 
-  return () => {
-    const output = readFileSync(DEV_SERVER_LOG).subarray(offset).toString("utf8").replace(ANSI, "");
+  return async () => {
+    await waitForQuietLog();
+    const lines = readFileSync(DEV_SERVER_LOG).subarray(offset).toString("utf8").replace(ANSI, "").split("\n");
     const libraries = [
       ...new Set(
-        output
-          .split("\n")
-          .map((line) => line.match(MARKER)?.[1])
+        lines
+          .map((line) => line.match(NEW_DEPS)?.[1])
           .filter((list): list is string => Boolean(list))
           .flatMap((list) => list.split(",").map((name) => name.trim()))
           .filter(Boolean),
       ),
     ];
-    if (libraries.length === 0) return;
+    const reloaded = lines.some((line) => RELOAD.test(line));
+    if (libraries.length === 0 && !reloaded) return;
+    const what =
+      libraries.length > 0
+        ? `${libraries.length === 1 ? "a library" : "libraries"} late: ${libraries.join(", ")}`
+        : "a library late (its name is not in the log, likely because DEBUG=vite:deps is set; run again without it to see the name)";
     throw new Error(
       [
-        `The dev server reloaded every open page mid-run because it pre-bundled ${libraries.length === 1 ? "a library" : "libraries"} late: ${libraries.join(", ")}.`,
+        `The dev server reloaded every open page mid-run because it pre-bundled ${what}.`,
         "Tests caught by a reload fail at random, so this run fails even if they passed.",
         "Fix: add each one to an optimizeDeps include list in astro.config.mjs:",
         "vite.optimizeDeps if browser code imports it, vite.environments.ssr.optimizeDeps",
