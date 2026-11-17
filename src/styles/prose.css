@@ -10,6 +10,37 @@
   color: #2a2a2a;
   max-width: 720px;
   margin: 0 auto;
+  overflow-wrap: anywhere;
+}
+
+.prose h2[id],
+.prose h3[id] {
+  scroll-margin-top: calc(var(--spacing-navbar) + 2rem);
+}
+
+.prose h2[id]:focus-visible,
+.prose h3[id]:focus-visible {
+  outline: 2px solid var(--color-brand-red);
+  outline-offset: 4px;
+}
+
+.prose .article-photo {
+  margin: 2rem auto;
+}
+
+.prose .article-photo img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-btn);
+}
+
+.prose .article-photo figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-muted);
 }
 
 /* ── Headings ── */

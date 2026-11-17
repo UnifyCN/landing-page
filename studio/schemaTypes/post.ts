@@ -48,7 +48,14 @@ export default defineType({
     }),
     defineField({ name: 'publishedAt', title: 'Published At', type: 'datetime', validation: (R) => R.required() }),
     defineField({ name: 'updatedAt', title: 'Updated At', type: 'datetime' }),
-    defineField({ name: 'thumbnail', title: 'Thumbnail', type: 'image', options: { hotspot: true }, validation: (R) => R.required() }),
+    defineField({
+      name: 'thumbnail',
+      title: 'Thumbnail',
+      type: 'image',
+      description: 'Cover image for the article header and blog cards. Insert photos in Body to show them within the article.',
+      options: { hotspot: true },
+      validation: (R) => R.required(),
+    }),
     defineField({
       name: 'order',
       title: 'Order',
@@ -66,9 +73,31 @@ export default defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
+      description: 'Select Heading 2 or Heading 3 in the style menu to add a section to the automatic table of contents. Insert Image within Body to add article photos.',
       of: [
         { type: 'block' },
-        { type: 'image', options: { hotspot: true } },
+        {
+          type: 'image',
+          options: { hotspot: true },
+          validation: (R) => R.assetRequired().warning('Select a photo or remove this empty image block.'),
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Alternative text',
+              type: 'string',
+              description: 'Describe what the photo shows for readers who cannot see it. Do not use the file name.',
+              validation: (R) => R.custom((value) => typeof value === 'string' && value.trim().length > 0
+                ? true
+                : 'Add a short description of this photo.').warning(),
+            }),
+            defineField({
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+              description: 'Optional text below the photo. Include a photo credit here if needed.',
+            }),
+          ],
+        },
         { type: 'table' },
         { type: 'richTable' },
       ],

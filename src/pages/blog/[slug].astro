@@ -6,7 +6,7 @@ import SearchWebAppCTA from "../../components/common/SearchWebAppCTA.astro";
 import { searchCtaForPath } from "../../lib/search-ctas";
 import { getAllPosts, getPostBySlug } from "../../lib/sanity/queries";
 import { responsiveImage, urlFor } from "../../lib/sanity/client";
-import { toHTML } from "@portabletext/to-html";
+import { renderBlogBody } from "../../lib/sanity/blog-body";
 import { blogPostingLd, breadcrumbLd, faqLd, serializeLd } from "../../lib/seo";
 import { blogCategoryLabel, toBlogCategory } from "../../lib/blog-categories.js";
 import "../../styles/prose.css";
@@ -28,54 +28,13 @@ const LEGACY_SLUG_REDIRECTS: Record<string, string> = {
     "how-to-get-pr-in-canada-lmia-and-pnp-for-international-workers",
 };
 
-const toHTMLOptions: any = {
-  components: {
-    types: {
-      // @sanity/table — plain string cells, first row = header
-      table: ({ value }: any) => {
-        const rows: any[] = value.rows ?? [];
-        if (!rows.length) return '';
-
-        const [headerRow, ...bodyRows] = rows;
-        const thead = `<thead><tr>${
-          (headerRow.cells as string[]).map((c) => `<th>${c}</th>`).join('')
-        }</tr></thead>`;
-        const tbody = bodyRows.length
-          ? `<tbody>${bodyRows.map((row: any) =>
-              `<tr>${(row.cells as string[]).map((c) => `<td>${c}</td>`).join('')}</tr>`
-            ).join('')}</tbody>`
-          : '';
-        return `<table>${thead}${tbody}</table>`;
-      },
-      // Custom richTable — cells are objects with PortableText value (migrated content)
-      richTable: ({ value }: any) => {
-        const rows: any[] = value.rows ?? [];
-        if (!rows.length) return '';
-
-        const headerCount: number = value.headerRows ?? 0;
-        const header = rows.slice(0, headerCount);
-        const body = rows.slice(headerCount);
-
-        const renderCells = (cells: any[], tag: 'th' | 'td') =>
-          cells.map((cell: any) => `<${tag}>${toHTML(cell.value ?? [], toHTMLOptions)}</${tag}>`).join('');
-
-        const thead = header.length
-          ? `<thead><tr>${renderCells(header[0].cells, 'th')}</tr></thead>`
-          : '';
-        const tbody = body.length
-          ? `<tbody>${body.map((row: any) => `<tr>${renderCells(row.cells, 'td')}</tr>`).join('')}</tbody>`
-          : '';
-
-        return `<table>${thead}${tbody}</table>`;
-      },
-    },
-  },
-};
-
 const { slug } = Astro.params;
+const fixture = import.meta.env.DEV && Astro.request.headers.has("x-blog-fixture")
+  ? (await import("../../../tests/support/blog-fixtures")).blogFixture(Astro.request, slug!)
+  : null;
 const [post, allPosts] = await Promise.all([
-  getPostBySlug(slug!),
-  getAllPosts(),
+  fixture ? Promise.resolve(fixture) : getPostBySlug(slug!),
+  fixture ? Promise.resolve([fixture]) : getAllPosts(),
 ]);
 
 if (!post) {
@@ -96,7 +55,7 @@ const updatedDate = new Date(post.updatedAt ?? post.publishedAt).toLocaleDateStr
   day: "numeric",
 });
 
-const bodyHtml = toHTML(post.body, toHTMLOptions);
+const { html: bodyHtml, contents } = renderBlogBody(post.body);
 const sourcePath = `/blog/${post.slug.current}`;
 const searchCta = searchCtaForPath(sourcePath);
 
@@ -195,6 +154,18 @@ const faqLdStr = post.faqs?.length
 
     <!-- ── Prose body ── -->
     {searchCta && <SearchWebAppCTA cta={searchCta} sourcePath={sourcePath} placement="intro" />}
+    {contents.length > 0 && (
+      <nav class="post-contents" aria-label="Table of contents">
+        <p class="post-contents-label">In this article</p>
+        <ol>
+          {contents.map((entry) => (
+            <li class:list={{ "post-contents-subsection": entry.level === 3 }}>
+              <a href={`#${encodeURIComponent(entry.id)}`}>{entry.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
     <article class="prose" set:html={bodyHtml} />
 
     {post.faqs && post.faqs.length > 0 && (
@@ -221,6 +192,48 @@ const faqLdStr = post.faqs?.length
 </BaseLayout>
 
 <style>
+  .post-contents {
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    padding: 1.25rem 0;
+    border-block: 1px solid rgba(23, 22, 22, 0.1);
+  }
+  .post-contents-label {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+  .post-contents ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .post-contents-subsection {
+    padding-left: 1.25rem;
+  }
+  .post-contents a {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding-block: 0.5rem;
+    color: var(--color-ink);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: rgba(23, 22, 22, 0.2);
+    text-underline-offset: 3px;
+  }
+  .post-contents a:hover {
+    text-decoration-color: var(--color-brand-red);
+  }
+  .post-contents a:focus-visible {
+    outline: 2px solid var(--color-brand-red);
+    outline-offset: 3px;
+    border-radius: var(--radius-btn);
+  }
+
   /* Key takeaway callout (answer-first block for snippets + AI) */
   .post-takeaway {
     margin: 0 0 2rem;

@@ -29,6 +29,7 @@ export const onRequest = defineMiddleware(async ({ request, url }, next) => {
     request.method !== "GET" ||
     request.headers.get("Sec-Fetch-Dest") === "iframe" ||
     isEventsFixtureRequest(request) ||
+    (import.meta.env.DEV && request.headers.has("x-blog-fixture")) ||
     !CACHEABLE.some((re) => re.test(url.pathname))
   ) {
     return next();
